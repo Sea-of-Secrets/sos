@@ -1,0 +1,12 @@
+{
+  "extends": ["next/core-web-vitals", "prettier"],
+  "rules": {
+    "no-warning-comments": [
+      "warn",
+      {
+        "terms": ["TODO", "FIXME", "XXX", "BUG"],
+        "location": "anywhere"
+      }
+    ]
+  }
+}
