@@ -1,22 +1,28 @@
 #!/usr/bin/env sh
 
-if [ -z "$BRANCHES_TO_SKIP" ]; then
-  BRANCHES_TO_SKIP="master develop release hotfix"
-fi
-
-CURRENT_BRANCH=$(git symbolic-ref --short HEAD)
+# 현재 브랜치 이름 가져오기
+BRANCH_NAME=$(git symbolic-ref --short HEAD)
+BRANCH_NAME="${BRANCH_NAME##*/}"
 
 # master 및 develop 브랜치에서는 작업을 스킵
-if [ "$CURRENT_BRANCH" = "master" ] || [ "$CURRENT_BRANCH" = "develop" ]; then
+if [ "$BRANCH_NAME" = "master" ] || [ "$BRANCH_NAME" = "develop" ]; then
   exit 0
 fi
 
-CURRENT_BRANCH="${CURRENT_BRANCH##*/}"
-JIRA_ID=$(echo "$CURRENT_BRANCH" | grep -o 'S10P22A710-[0-9]\+')
+# 브랜치 이름을 "/" 기준으로 분할하여 배열로 저장
+IFS='/' read -ra BRANCH_PARTS <<< "$BRANCH_NAME"
+LAST_PART="${BRANCH_PARTS[-1]}"  # 브랜치명의 마지막 부분 가져오기
 
-BRANCH_EXCLUDED=$(echo "$BRANCHES_TO_SKIP" | grep -c "^$CURRENT_BRANCH$")
-BRANCH_IN_COMMIT=$(grep -c "$JIRA_I85760991 2D" "$1")
+# 정규 표현식을 사용하여 브랜치의 마지막 부분이 "S10P22A710-숫자" 형식을 따르는지 확인
+if ! echo "$LAST_PART" | grep -qE '^S10P22A710-[0-9]+$'; then
+  echo "작업형태/팀/작업명/S10P22A710-숫자 형식의 브랜치명을 사용해주세요."
+  exit 1
+fi
 
-if [ -n "$JIRA_ID" ] && [ "$BRANCH_EXCLUDED" -ne 1 ] && [ "$BRANCH_IN_COMMIT" -lt 1 ]; then 
+# JIRA 이슈 번호 추출
+JIRA_ID="$LAST_PART"
+
+# 커밋 메시지에 JIRA 이슈 번호가 없는 경우에만 추가
+if ! grep -q "$JIRA_ID" "$1"; then
   sed -i.bak -e "\$s/$/ $JIRA_ID/" "$1"
 fi
