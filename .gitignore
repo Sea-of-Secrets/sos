@@ -1,2 +1,5 @@
+# root githook
+node_modules/
+
 # backend
 .idea/

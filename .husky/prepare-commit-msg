@@ -1,0 +1,22 @@
+#!/usr/bin/env sh
+
+if [ -z "$BRANCHES_TO_SKIP" ]; then
+  BRANCHES_TO_SKIP="master develop release hotfix"
+fi
+
+CURRENT_BRANCH=$(git symbolic-ref --short HEAD)
+
+# master 및 develop 브랜치에서는 작업을 스킵
+if [ "$CURRENT_BRANCH" = "master" ] || [ "$CURRENT_BRANCH" = "develop" ]; then
+  exit 0
+fi
+
+CURRENT_BRANCH="${CURRENT_BRANCH##*/}"
+JIRA_ID=$(echo "$CURRENT_BRANCH" | grep -o 'S10P22A710-[0-9]\+')
+
+BRANCH_EXCLUDED=$(echo "$BRANCHES_TO_SKIP" | grep -c "^$CURRENT_BRANCH$")
+BRANCH_IN_COMMIT=$(grep -c "$JIRA_I85760991 2D" "$1")
+
+if [ -n "$JIRA_ID" ] && [ "$BRANCH_EXCLUDED" -ne 1 ] && [ "$BRANCH_IN_COMMIT" -lt 1 ]; then 
+  sed -i.bak -e "\$s/$/ $JIRA_ID/" "$1"
+fi

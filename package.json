@@ -1,0 +1,13 @@
+{
+  "name": "S10P22A710",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://lab.ssafy.com/s10-blockchain-nft-sub2/S10P22A710.git",
+  "license": "MIT",
+  "scripts": {
+    "postinstall": "husky install"
+  },
+  "devDependencies": {
+    "husky": "^9.0.11"
+  }
+}
