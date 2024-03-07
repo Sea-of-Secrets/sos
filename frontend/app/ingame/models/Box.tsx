@@ -17,7 +17,11 @@ export default function Box(props: ThreeElements["mesh"]) {
       onPointerOut={event => setHover(false)}
     >
       <boxGeometry args={[1, 1, 1]} />
-      <meshStandardMaterial color={hovered ? "hotpink" : "orange"} />
+      <meshStandardMaterial
+        metalness={0}
+        roughness={1}
+        color={hovered ? "hotpink" : "orange"}
+      />
     </mesh>
   );
 }
