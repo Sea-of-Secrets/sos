@@ -19,7 +19,7 @@ export default function IngameClient({ gameId }: { gameId: string }) {
     <>
       {loading && <Loading />}
       <Canvas
-        camera={{ position: [0, 1000, 500], far: 10000, fov: 50 }}
+        camera={{ position: [0, 700, 500], far: 10000, fov: 50 }}
         onCreated={() => setLoading(false)}
       >
         <directionalLight position={[1, 1, 1]} />
@@ -38,9 +38,16 @@ function IngameThree() {
   return (
     <>
       {/* 여기에 Edges를 띄운다.. */}
-      {DUMMY_DATA.nodeList.map(node => (
-        <Node key={node.nodeId} node={node} />
-      ))}
+      {DUMMY_DATA.nodeList.map(node => {
+        // 도둑 노드
+        if (node.nodeId >= 1 && node.nodeId <= 189) {
+          return <Node key={node.nodeId} node={node} />;
+        }
+        // 경찰 노드
+        else if (node.nodeId >= 200 && node.nodeId <= 373) {
+          return <Node key={node.nodeId} node={node} />;
+        }
+      })}
       <Map />
     </>
   );

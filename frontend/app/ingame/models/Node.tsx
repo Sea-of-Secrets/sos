@@ -43,7 +43,7 @@ export default function Node({ node, ...props }: NodeProps) {
         {...props}
         ref={mesh}
         position={[x, 50, y]}
-        scale={2}
+        scale={1.5}
         onClick={handleClickPiece}
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
@@ -55,7 +55,7 @@ export default function Node({ node, ...props }: NodeProps) {
       <Text
         position={[x, 52, y]}
         rotation={[Math.PI / 2, Math.PI, Math.PI]}
-        fontSize={12}
+        fontSize={6}
         color="black"
       >
         {type === "도둑" ? node.nodeNumber : "X"}
