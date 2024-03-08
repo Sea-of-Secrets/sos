@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STOMP Communication Example</title>
+</head>
+<body>
+<h1>STOMP Communication Example</h1>
+<form id="messageForm">
+    <label for="messageInput">Enter Message:</label>
+    <input type="text" id="messageInput" required>
+    <button type="submit">Send</button>
+</form>
+<ul id="messageList"></ul>
+
+<!-- Include STOMP.js library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js" crossorigin="anonymous"></script>
+
+<script>
+    // Establish connection
+    var socket = new WebSocket('ws://localhost:8080/game');
+    var client = Stomp.over(socket);
+
+    // Connect to STOMP broker
+    client.connect({}, function (frame) {
+        console.log('Connected: ' + frame);
+        client.subscribe('/sub', function (message) {
+            showMessage(JSON.parse(message.body));
+        });
+    });
+
+    // Function to send message
+    function sendMessage(message) {
+        client.send("/pub/game", {}, JSON.stringify({'message': message}));
+    }
+
+    // Function to display received message
+    function showMessage(message) {
+        var messageList = document.getElementById('messageList');
+        var listItem = document.createElement('li');
+        listItem.textContent = message.message;
+        messageList.appendChild(listItem);
+    }
+
+    // Form submission handling
+    var messageForm = document.getElementById('messageForm');
+    messageForm.addEventListener('submit', function (event) {
+        event.preventDefault();
+        var messageInput = document.getElementById('messageInput');
+        var message = messageInput.value.trim();
+        if (message !== '') {
+            sendMessage(message);
+            messageInput.value = '';
+        }
+    });
+</script>
+</body>
+</html>
