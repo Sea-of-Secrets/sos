@@ -33,6 +33,7 @@
     "eslint-config-next": "14.1.2",
     "eslint-config-prettier": "^9.1.0",
     "jest-environment-jsdom": "^29.7.0",
+    "leva": "^0.9.35",
     "postcss": "^8",
     "prettier": "^3.2.5",
     "tailwindcss": "^3.3.0",
