@@ -1,27 +1,29 @@
 "use client";
 
-import { useRef } from "react";
+import { Suspense, useRef } from "react";
 import { Canvas, useLoader } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { Mesh } from "three";
 import Shiba from "./Shiba";
 import PirateNode from "./PirateNode";
+import NavyNode from "./NavyNode";
+import Line from "./Line";
 
 function GameBoard() {
-  const fileUrl = "/old_map_3d_model/scene.gltf";
+  const fileUrl = "/cartoon_low_poly_world_map/scene.gltf";
   const mesh = useRef<Mesh>(null!);
   const board = useLoader(GLTFLoader, fileUrl);
 
   return (
-    <mesh ref={mesh} position={[0, 2, 0]} scale={250}>
+    <mesh ref={mesh} position={[0, 0, 0]} scale={1500}>
       <primitive object={board.scene} />
     </mesh>
   );
 }
 
 export default function Board() {
-  const test = [
+  const Pirate = [
     [120, 60],
     [383, 46],
     [522, 52],
@@ -123,21 +125,48 @@ export default function Board() {
     [147, 517],
     [243, 558],
   ];
+  const Navy = [
+    [116, 103],
+    [140, 136],
+    [535, 354],
+    [461, 371],
+    [484, 405],
+  ];
+  const TmpLine = [
+    [
+      [-241, 50, -126],
+      [-211, 50, -148],
+      [-217, 50, -91],
+      [-166, 50, -142],
+    ],
+    [
+      [-108, 50, -152],
+      [-166, 50, -142],
+    ],
+  ];
   return (
     <div className="flex justify-center items-center h-screen">
       <Canvas camera={{ position: [0, 1000, 500], far: 10000, fov: 50 }}>
+        <Suspense>
+          <GameBoard />
+          {/* <Shiba /> */}
+          {Pirate.map((position, index) => (
+            <PirateNode
+              key={index}
+              number={index + 1}
+              x={position[0] - 701}
+              y={position[1] - 496}
+            />
+          ))}
+          {Navy.map((position, index) => (
+            <NavyNode key={index} x={position[0] - 701} y={position[1] - 496} />
+          ))}
+          {TmpLine.map((array, index) => (
+            <Line key={index} position={array} />
+          ))}
+        </Suspense>
         <OrbitControls />
-        <ambientLight />
-        {/* <GameBoard /> */}
-        {/* <Shiba /> */}
-        {test.map((position, index) => (
-          <PirateNode
-            key={index}
-            number={index + 1}
-            x={position[0] - 701}
-            y={position[1] - 496}
-          />
-        ))}
+        <ambientLight intensity={2} />
       </Canvas>
     </div>
   );

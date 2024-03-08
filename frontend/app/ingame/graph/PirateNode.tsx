@@ -14,19 +14,16 @@ const PirateNode = ({ number, x, y }: PirateNodeProps) => {
   const mesh = useRef<Mesh>(null!);
   return (
     <group>
-      <mesh ref={mesh} position={[x, 2, y]} scale={2}>
-        <Cylinder args={[4, 5, 2]}>
-          <meshPhongMaterial color="#ffffff" />
+      <mesh ref={mesh} position={[x, 50, y]} scale={2}>
+        <Cylinder args={[4, 5, 2]} material-color="white">
           <Edges color="black" />
         </Cylinder>
       </mesh>
       <Text
-        position={[x, 4, y]}
+        position={[x, 52, y]}
         rotation={[Math.PI / 2, Math.PI, Math.PI]}
         fontSize={12}
         color="black"
-        // anchorX="center"
-        // anchorY="middle"
       >
         {number}
       </Text>
