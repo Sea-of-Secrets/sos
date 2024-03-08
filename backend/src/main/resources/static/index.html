@@ -14,6 +14,15 @@
 </form>
 <ul id="messageList"></ul>
 
+
+<button id="login">login</button>
+
+<script>
+    var loginButton = document.getElementById('login');
+    loginButton.addEventListener('click', function () {
+        window.location.href = `http://localhost:8080/members/login`;
+    })
+</script>
 <!-- Include STOMP.js library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js" crossorigin="anonymous"></script>
 
@@ -54,6 +63,9 @@
             messageInput.value = '';
         }
     });
+
+
+
 </script>
 </body>
 </html>
