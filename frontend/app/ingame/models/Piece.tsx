@@ -10,7 +10,7 @@ export default function Piece(props: ThreeElements["mesh"]) {
   const [active, setActive] = useState(false);
 
   const handleClickPiece = useCallback((e: ThreeEvent<MouseEvent>) => {
-    setActive(!active);
+    setActive(prev => !prev);
   }, []);
 
   const handlePointerOver = useCallback(() => {
