@@ -2,28 +2,23 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { Cylinder, Text, Edges } from "@react-three/drei";
 import { PrimitiveProps, ThreeEvent } from "@react-three/fiber";
+import { GraphNode } from "./Node.types";
+import { metalness } from "three/examples/jsm/nodes/Nodes.js";
 
 interface NodeProps extends Omit<PrimitiveProps, "object"> {
-  type?: string; // TODO: 경찰인지 도둑인지
-  nodeNumber?: number;
-  nodeId: number;
-  position: [number, number];
+  node: GraphNode;
 }
 
-// TODO: "type"으로 구분한다.
-export default function Node({
-  type,
-  nodeNumber,
-  nodeId,
-  position,
-  ...props
-}: NodeProps) {
+// TODO: node를 "type"으로 구분하기 때문에 type에 따라 다른 Node를 보여줘야한다.
+export default function Node({ node, ...props }: NodeProps) {
+  const { type, nodeId, position } = node;
+
   const [x, y] = position;
   const mesh = useRef<THREE.Mesh>(null);
   const [isHover, setIsHover] = useState(false);
 
   const handleClickPiece = useCallback((e: ThreeEvent<MouseEvent>) => {
-    console.log(e);
+    console.log(`노드ID:${nodeId} / 노드타입:${type}`, e);
   }, []);
 
   const handlePointerOver = useCallback(() => {
@@ -47,29 +42,23 @@ export default function Node({
       <mesh
         {...props}
         ref={mesh}
-        data-id={nodeId}
         position={[x, 50, y]}
         scale={2}
         onClick={handleClickPiece}
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
       >
-        <Cylinder args={[4, 5, 2]} material-color="white">
+        <Cylinder args={[4, 5, 2]} material-color="orange">
           <Edges color="black" />
         </Cylinder>
       </mesh>
-      {/* <mesh ref={mesh} position={[x, 50, y]} scale={2}>
-        <Cylinder args={[4, 5, 2]} material-color="white">
-          <Edges color="black" />
-        </Cylinder>
-      </mesh> */}
       <Text
         position={[x, 52, y]}
         rotation={[Math.PI / 2, Math.PI, Math.PI]}
         fontSize={12}
         color="black"
       >
-        {nodeNumber}
+        {type === "도둑" ? node.nodeNumber : "X"}
       </Text>
     </group>
   );

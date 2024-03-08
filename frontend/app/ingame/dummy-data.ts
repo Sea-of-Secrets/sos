@@ -1,3 +1,53 @@
+import { GraphNode } from "./models/Node.types";
+
+export const nodeList: GraphNode[] = [
+  {
+    nodeId: 1,
+    position: [120, 60],
+    nodeNumber: 1,
+    type: "도둑",
+  },
+  {
+    nodeId: 2,
+    position: [383, 46],
+    nodeNumber: 2,
+    type: "도둑",
+  },
+  {
+    nodeId: 3,
+    position: [522, 52],
+    nodeNumber: 3,
+    type: "도둑",
+  },
+  {
+    nodeId: 4,
+    position: [735, 52],
+    nodeNumber: 4,
+    type: "도둑",
+  },
+  {
+    nodeId: 5,
+    position: [841, 50],
+    nodeNumber: 5,
+    type: "도둑",
+  },
+  {
+    nodeId: 6,
+    position: [116, 103],
+    type: "경찰",
+  },
+  {
+    nodeId: 7,
+    position: [140, 136],
+    type: "경찰",
+  },
+  {
+    nodeId: 8,
+    position: [535, 354],
+    type: "경찰",
+  },
+];
+
 export const pirateNodeList: [number, number][] = [
   [120, 60],
   [383, 46],
