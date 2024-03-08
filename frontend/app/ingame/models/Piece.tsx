@@ -1,0 +1,51 @@
+import * as THREE from "three";
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useFrame, ThreeElements, ThreeEvent } from "@react-three/fiber";
+
+const PIECE_SIZE = 0.03;
+
+export default function Piece(props: ThreeElements["mesh"]) {
+  const meshRef = useRef<THREE.Mesh>(null!);
+  const [hovered, setHover] = useState(false);
+  const [active, setActive] = useState(false);
+
+  const handleClickPiece = useCallback((e: ThreeEvent<MouseEvent>) => {
+    setActive(!active);
+  }, []);
+
+  const handlePointerOver = useCallback(() => {
+    setHover(true);
+  }, []);
+
+  const handlePointerOut = useCallback(() => {
+    setHover(false);
+  }, []);
+
+  useFrame((state, delta) => (meshRef.current.rotation.x += delta));
+
+  useEffect(() => {
+    if (hovered) {
+      document.querySelector("canvas")!.style.cursor = "pointer";
+    } else {
+      document.querySelector("canvas")!.style.cursor = "default";
+    }
+  }, [hovered]);
+
+  return (
+    <mesh
+      {...props}
+      ref={meshRef}
+      scale={active ? 1.5 : 1}
+      onClick={handleClickPiece}
+      onPointerOver={handlePointerOver}
+      onPointerOut={handlePointerOut}
+    >
+      <boxGeometry args={[PIECE_SIZE, PIECE_SIZE, PIECE_SIZE]} />
+      <meshStandardMaterial
+        metalness={0}
+        roughness={1}
+        color={hovered ? "tomato" : "orange"}
+      />
+    </mesh>
+  );
+}
