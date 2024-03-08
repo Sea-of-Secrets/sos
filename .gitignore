@@ -1,5 +1,8 @@
 # root githook
 node_modules/
 
+#frontend
+package-lock.json
+
 # backend
 .idea/
