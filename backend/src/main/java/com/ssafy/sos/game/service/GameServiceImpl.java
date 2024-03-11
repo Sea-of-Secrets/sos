@@ -31,6 +31,23 @@ public class GameServiceImpl implements GameService {
         }
 
         System.out.println(Arrays.toString(treasures));
+        board.setTreasures(treasures);
         return treasures;
+    }
+
+    // 해적 시작위치 지정
+    @Override
+    public int initPirateStart() {
+        int[] treasures = board.getTreasures();
+        System.out.println("treasure = " + Arrays.toString(treasures));
+        Random rand = new Random();
+
+        return treasures[rand.nextInt(4)];
+    }
+
+    // 해군 시작위치 지정 (3개)
+    @Override
+    public void initMarineStart() {
+
     }
 }
