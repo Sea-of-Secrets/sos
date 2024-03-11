@@ -42,7 +42,7 @@ export default function Node({ node, ...props }: NodeProps) {
       <mesh
         {...props}
         ref={mesh}
-        position={[x, 50, y]}
+        position={[x, 30, y]}
         scale={1.5}
         onClick={handleClickPiece}
         onPointerOver={handlePointerOver}
@@ -53,7 +53,7 @@ export default function Node({ node, ...props }: NodeProps) {
         </Cylinder>
       </mesh>
       <Text
-        position={[x, 52, y]}
+        position={[x, 32, y]}
         rotation={[Math.PI / 2, Math.PI, Math.PI]}
         fontSize={6}
         color="black"
