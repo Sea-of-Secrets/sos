@@ -3,6 +3,7 @@ package com.ssafy.sos.game.service;
 import com.ssafy.sos.game.domain.Board;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Arrays;
 import java.util.Random;
@@ -43,6 +44,13 @@ public class GameServiceImpl implements GameService {
         Random rand = new Random();
 
         return treasures[rand.nextInt(4)];
+    }
+
+    // 해적 이동 가능 위치 조회
+    @Override
+    public int[] findPirateAvailableNode(int nodeNumber) {
+        int[] temp = {1, 2, 3};
+        return temp;
     }
     
 }
