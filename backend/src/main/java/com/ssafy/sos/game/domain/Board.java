@@ -14,6 +14,8 @@ public class Board {
     private int[] three;
     private int[] four;
 
+    private int[] treasure;
+
     public Board() {
         this.graph = new int[][] {
                 // 0
