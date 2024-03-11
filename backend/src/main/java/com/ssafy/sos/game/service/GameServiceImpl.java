@@ -91,4 +91,14 @@ public class GameServiceImpl implements GameService {
         Collections.shuffle(marineStartList);
         return new int[]{marineStartList.get(0), marineStartList.get(1), marineStartList.get(2)};
     }
+
+    // 해군 이동 가능 위치 조회
+    @Override
+    public int[] findMarineAvailableNode(int nodeNumber) {
+        // 현재 자리에서 bfs를 돌면서
+
+        // 0~2칸 이동 가능하다 (단, 하얀점을 칸수로 세지 않음)
+
+        // 0~2칸 내의 모든 노드가 이동 가능한 노드 (단, 하얀칸은 칸수로 세지 않음)
+    }
 }

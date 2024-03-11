@@ -5,4 +5,5 @@ public interface GameService {
     int initPirateStart();
     int[] findPirateAvailableNode(int nodeNumber);
     int[] initMarineStart();
+    int[] findMarineAvailableNode(int nodeNumber);
 }
