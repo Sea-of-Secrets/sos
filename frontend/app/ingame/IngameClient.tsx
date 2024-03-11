@@ -1,19 +1,34 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 
+import { createSocket } from "~/sockets/createSocket";
 import Loading from "./components/Loading";
 import Map from "./models/Map";
 
 import * as DUMMY_DATA from "../ingame/dummy-data";
 import Node from "./models/Node";
 
+const socket = createSocket();
+
 // TODO: Canvas만 로딩됐다고 끝이 아니라 안에 모델, 텍스쳐도 다 로딩이 되어야함.
 // 나중에 이 로딩을 상태관리로 만들자.
 export default function IngameClient({ gameId }: { gameId: string }) {
   const [loading, setLoading] = useState(true);
+
+  const onConnect = useCallback(() => {
+    console.log("Hello Socket!");
+  }, []);
+
+  useEffect(() => {
+    socket.connect(onConnect);
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [onConnect]);
 
   return (
     <>
