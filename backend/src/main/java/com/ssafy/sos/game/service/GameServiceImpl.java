@@ -44,10 +44,5 @@ public class GameServiceImpl implements GameService {
 
         return treasures[rand.nextInt(4)];
     }
-
-    // 해군 시작위치 지정 (3개)
-    @Override
-    public void initMarineStart() {
-
-    }
+    
 }
