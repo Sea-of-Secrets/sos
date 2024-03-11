@@ -4,8 +4,7 @@ import com.ssafy.sos.game.domain.Board;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
-import java.util.Random;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -44,5 +43,12 @@ public class GameServiceImpl implements GameService {
 
         return treasures[rand.nextInt(4)];
     }
-    
+
+    @Override
+    public int[] initMarineStart() {
+        int[] marineStartList = board.getMarineStartList();
+        Collections.shuffle(Arrays.asList(marineStartList));
+        int[] startNode = {marineStartList[0], marineStartList[1], marineStartList[2]};
+        return startNode;
+    }
 }
