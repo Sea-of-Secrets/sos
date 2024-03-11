@@ -1,7 +1,10 @@
 package com.ssafy.sos.game.domain;
 
-import java.util.HashMap;
+import lombok.Data;
+import org.springframework.stereotype.Component;
 
+@Data
+@Component
 public class Board {
     private int[][] graph;
     private int[][] water;
@@ -10,6 +13,9 @@ public class Board {
     private int[] two;
     private int[] three;
     private int[] four;
+
+    private int[] treasures;
+    private int[] marineStartList;
 
     public Board() {
         this.graph = new int[][] {
@@ -460,6 +466,10 @@ public class Board {
                 129, 130, 132, 133, 142, 145, 146, 147, 148, 149,
                 150, 151, 165, 168, 169, 170, 171, 172, 183, 185,
                 186, 187, 188
+        };
+
+        this.marineStartList = new int[] {
+                93, 94, 97, 106, 109, 200
         };
 
     }

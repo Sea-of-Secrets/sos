@@ -9,9 +9,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.apache.tomcat.util.codec.binary.Base64;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.json.JsonParser;
@@ -30,27 +28,22 @@ import java.util.StringTokenizer;
 @RequestMapping("/members")
 public class MemberController {
 
-    @Value("${kakao.client.id}")
+    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String KAKAO_CLIENT_ID;
 
-    @Value("${kakao.client.secret}")
+    @Value("${spring.security.oauth2.client.registration.kakao.client-secret}")
     private String KAKAO_CLIENT_SECRET;
 
-    @Value("${kakao.redirect.url}")
+    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
     private String KAKAO_REDIRECT_URL;
 
     private final static String KAKAO_AUTH_URI = "https://kauth.kakao.com";
     private final static String KAKAO_API_URI = "https://kapi.kakao.com";
-    private org.json.simple.parser.JSONParser jsonParser;
     private MemberService memberService;
 
     @Autowired
     public void MemberController(MemberService memberService) {
         this.memberService = memberService;
-    }
-    @PostConstruct
-    public void init() {
-        jsonParser = new JSONParser();
     }
 
     @GetMapping("/login")
@@ -64,7 +57,7 @@ public class MemberController {
 
     @GetMapping("/success")
     @ResponseBody
-    public ResponseEntity<?> getAuthorizationCode(@RequestParam("code") String code) throws ParseException {
+    public ResponseEntity<?> getAuthorizationCode(@RequestParam("code") String code) {
         //header 생성
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded;charset=utf-8");
