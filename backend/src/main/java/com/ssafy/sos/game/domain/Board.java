@@ -1,7 +1,10 @@
 package com.ssafy.sos.game.domain;
 
-import java.util.HashMap;
+import lombok.Data;
+import org.springframework.stereotype.Component;
 
+@Data
+@Component
 public class Board {
     private int[][] graph;
     private int[][] water;
