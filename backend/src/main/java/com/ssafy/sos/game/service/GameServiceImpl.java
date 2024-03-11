@@ -26,7 +26,7 @@ public class GameServiceImpl implements GameService {
         for (int[] allArray : allArrays) {
             selectedArray = allArray;
             randomIndex = rand.nextInt(selectedArray.length);
-            treasures[index] = randomIndex;
+            treasures[index] = selectedArray[randomIndex];
             index++;
         }
 
