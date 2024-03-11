@@ -1,19 +1,30 @@
 package com.ssafy.sos.game.service;
 
 import org.assertj.core.api.Assertions;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Arrays;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 @SpringBootTest
 class GameServiceImplTest {
     @Autowired
     GameService gameService;
+
     @Test
-    void 보물섬_위치_설정() {
-        gameService.setPirateTreasure();
+    public void 보물섬_위치_지정() throws Exception {
+        // given
+        int[] treasures = gameService.setPirateTreasure();
+
+        // when
+        boolean result = (treasures != null);
+
+        // then
+        assertTrue(result);
     }
 
     @Test

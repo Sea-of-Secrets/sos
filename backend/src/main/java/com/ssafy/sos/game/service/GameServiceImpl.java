@@ -26,19 +26,19 @@ public class GameServiceImpl implements GameService {
         for (int[] allArray : allArrays) {
             selectedArray = allArray;
             randomIndex = rand.nextInt(selectedArray.length);
-            treasures[index] = randomIndex;
+            treasures[index] = selectedArray[randomIndex];
             index++;
         }
 
         System.out.println(Arrays.toString(treasures));
-        board.setTreasure(treasures);
+        board.setTreasures(treasures);
         return treasures;
     }
 
     // 해적 시작위치 지정
     @Override
     public int initPirateStart() {
-        int[] treasures = board.getTreasure();
+        int[] treasures = board.getTreasures();
         System.out.println("treasure = " + Arrays.toString(treasures));
         Random rand = new Random();
 
@@ -47,7 +47,7 @@ public class GameServiceImpl implements GameService {
 
     // 해군 시작위치 지정 (3개)
     @Override
-    public int[] initMarineStart() {
+    public void initMarineStart() {
 
     }
 }
