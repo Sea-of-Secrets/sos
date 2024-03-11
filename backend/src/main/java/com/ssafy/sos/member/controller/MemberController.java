@@ -14,13 +14,13 @@ import java.io.IOException;
 @RequestMapping("/members")
 public class MemberController {
 
-    @Value("${kakao.client.id}")
+    @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
     private String KAKAO_CLIENT_ID;
 
-    @Value("${kakao.client.secret}")
+    @Value("${spring.security.oauth2.client.registration.kakao.client-secret}")
     private String KAKAO_CLIENT_SECRET;
 
-    @Value("${kakao.redirect.url}")
+    @Value("${spring.security.oauth2.client.registration.kakao.redirect-uri}")
     private String KAKAO_REDIRECT_URL;
 
     private final static String KAKAO_AUTH_URI = "https://kauth.kakao.com";
