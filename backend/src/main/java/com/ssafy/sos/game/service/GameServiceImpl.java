@@ -5,8 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Arrays;
-import java.util.Random;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -52,5 +51,13 @@ public class GameServiceImpl implements GameService {
         int[] temp = {1, 2, 3};
         return temp;
     }
-    
+
+
+    @Override
+    public int[] initMarineStart() {
+        int[] marineStartList = board.getMarineStartList();
+        Collections.shuffle(Arrays.asList(marineStartList));
+        int[] startNode = {marineStartList[0], marineStartList[1], marineStartList[2]};
+        return startNode;
+    }
 }
