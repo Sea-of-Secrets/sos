@@ -13,8 +13,8 @@ export default function Edge({ position, ...props }: EdgeProps) {
     <mesh ref={mesh} {...props}>
       <Line
         points={[
-          [position[0][0], 30, position[0][1]],
-          [position[1][0], 30, position[1][1]],
+          [position[0][0], 10, position[0][1]],
+          [position[1][0], 10, position[1][1]],
         ]}
         color="black"
         lineWidth={2}
