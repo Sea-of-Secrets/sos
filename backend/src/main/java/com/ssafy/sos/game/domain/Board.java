@@ -17,6 +17,9 @@ public class Board {
     private int[] treasures;
     private int[] marineStartList;
 
+    // 0: 해적 / 1: 해군1 / 2 해군2 / 3: 해군3
+    private int[] currentPosition;
+
     public Board() {
         this.graph = new int[][] {
                 // 0
@@ -471,6 +474,6 @@ public class Board {
                 93, 94, 97, 106, 109, 200
         };
 
+        this.currentPosition = new int[4];
+        };
     }
-
-}
