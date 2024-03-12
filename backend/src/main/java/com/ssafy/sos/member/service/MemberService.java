@@ -41,7 +41,7 @@ public class MemberService {
         return false;
     }
 
-    public Member getKakaoMember(String idToken) {
+    public Member getKakaoMemberInfo(String idToken) {
         //검증 완료 되었으니 id_token 파싱
         StringTokenizer st = new StringTokenizer(idToken, ".");
         String header = st.nextToken();
