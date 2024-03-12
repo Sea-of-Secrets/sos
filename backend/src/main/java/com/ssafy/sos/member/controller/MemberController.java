@@ -9,6 +9,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,7 @@ import java.util.StringTokenizer;
 @Controller
 @CrossOrigin("*")
 @RequestMapping("/members")
+@RequiredArgsConstructor
 public class MemberController {
 
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
@@ -40,12 +42,7 @@ public class MemberController {
 
     private final static String KAKAO_AUTH_URI = "https://kauth.kakao.com";
     private final static String KAKAO_API_URI = "https://kapi.kakao.com";
-    private MemberService memberService;
-
-    @Autowired
-    public void MemberController(MemberService memberService) {
-        this.memberService = memberService;
-    }
+    private final MemberService memberService;
 
     @GetMapping("/login")
     public void login(HttpServletResponse response) throws IOException {

@@ -3,17 +3,26 @@ package com.ssafy.sos.member.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.sos.member.domain.AuthorizationCode;
 import com.ssafy.sos.member.domain.Member;
+import com.ssafy.sos.member.repository.MemberRepository;
+import lombok.AllArgsConstructor;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.checkerframework.checker.units.qual.A;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.Optional;
 import java.util.StringTokenizer;
 
 @Service
+@AllArgsConstructor
 public class MemberService {
+
+    private final MemberRepository memberRepository;
+
     public void checkMember(Member member) {
 
     }
@@ -48,7 +57,6 @@ public class MemberService {
         String payload = st.nextToken();
         String secret = st.nextToken();
 
-        System.out.println("payload = " + payload);
         byte[] decoded = Base64.decodeBase64(payload);
         ObjectMapper objectMapper = new ObjectMapper();
         Member member = null;
@@ -56,6 +64,11 @@ public class MemberService {
             member = objectMapper.readValue(decoded, Member.class);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+
+        Optional<Member> bySub = memberRepository.findBySub(member.getSub());
+        if (bySub.isEmpty()) {
+            memberRepository.save(member);
         }
 
         return member;
