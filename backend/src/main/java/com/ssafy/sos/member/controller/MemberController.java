@@ -55,7 +55,7 @@ public class MemberController {
 
     @GetMapping("/success")
     @ResponseBody
-    public ResponseEntity<?> getAuthorizationCode(@RequestParam("code") String code) {
+    public ResponseEntity<?> getAuthorizationCode(@RequestParam("code") String code, HttpServletResponse response) {
         //header 생성
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded;charset=utf-8");
@@ -72,14 +72,14 @@ public class MemberController {
 
         //요청
         RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<AuthorizationCode> response = restTemplate.exchange(
+        ResponseEntity<AuthorizationCode> responseForKakao = restTemplate.exchange(
                 "https://kauth.kakao.com/oauth/token",
                 HttpMethod.POST,
                 httpEntity,
                 AuthorizationCode.class
         );
 
-        AuthorizationCode authorizationCode = response.getBody();
+        AuthorizationCode authorizationCode = responseForKakao.getBody();
 
         //액세스 토큰 토큰 검증
         boolean result = memberService.checkAuthorizationCode(authorizationCode.getAccess_token());
@@ -89,11 +89,20 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
-        //카카오 유저 정보 가져오기
+        //카카오 유저 정보 가져와서 memberDto로 만들기
         Member member = memberService.getKakaoMemberInfo(authorizationCode.getId_token());
         MemberDto memberDto = new MemberDto();
         memberDto.setNickname(member.getNickname());
         memberDto.setPicture(member.getPicture());
+        memberDto.setSub(member.getSub());
+
+        //jwt 발급
+        String jwt = memberService.generateJwtToken(memberDto);
+
+        Cookie cookie = new Cookie("access_token", jwt);
+        cookie.setHttpOnly(true);
+
+        response.addCookie(cookie);
 
         //이후 로직 처리
         return ResponseEntity.status(HttpStatus.OK)

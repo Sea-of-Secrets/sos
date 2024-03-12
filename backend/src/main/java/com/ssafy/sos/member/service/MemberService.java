@@ -3,7 +3,10 @@ package com.ssafy.sos.member.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.sos.member.domain.AuthorizationCode;
 import com.ssafy.sos.member.domain.Member;
+import com.ssafy.sos.member.domain.MemberDto;
 import com.ssafy.sos.member.repository.MemberRepository;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.AllArgsConstructor;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.checkerframework.checker.units.qual.A;
@@ -14,14 +17,14 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Optional;
-import java.util.StringTokenizer;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final String secretKey = "jwtForSeaOfSecretsOfTeam710OfSamsungSoftwareAcademyForYouth";
 
     public void checkMember(Member member) {
 
@@ -48,6 +51,26 @@ public class MemberService {
         }
 
         return false;
+    }
+
+    public String generateJwtToken(MemberDto memberDto) {
+        Map<String, Object> payloads = new HashMap<>();
+        Map<String, Object> headers = new HashMap<>();
+
+        headers.put("alg", "HS256");
+        headers.put("typ", "JWT");
+        payloads.put("name", memberDto.getNickname());
+        payloads.put("picture", memberDto.getPicture());
+        payloads.put("sub", memberDto.getSub());
+
+
+        return Jwts.builder()
+                .setHeader(headers)
+                .setClaims(payloads)
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(System.currentTimeMillis() + 60 * 1000 * 60))
+                .signWith(SignatureAlgorithm.HS256, secretKey)
+                .compact();
     }
 
     public Member getKakaoMemberInfo(String idToken) {

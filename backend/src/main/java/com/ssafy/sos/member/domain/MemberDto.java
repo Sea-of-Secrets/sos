@@ -8,4 +8,5 @@ import lombok.NoArgsConstructor;
 public class MemberDto {
     private String nickname;
     private String picture;
+    private String sub;
 }
