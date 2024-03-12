@@ -1,0 +1,1 @@
+ALTER TABLE Member convert to charset utf8;
