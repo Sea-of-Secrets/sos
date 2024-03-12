@@ -1,4 +1,4 @@
-package com.ssafy.sos.game;
+package com.ssafy.sos.game.message.client;
 
 import lombok.Data;
 
