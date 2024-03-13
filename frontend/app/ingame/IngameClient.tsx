@@ -5,16 +5,14 @@ import React, { useCallback, useEffect, useState, useRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, CameraControls } from "@react-three/drei";
 
-import { createSocket } from "~/sockets/createSocket";
 import Loading from "./components/Loading";
 import Map from "./models/Map";
-
-import * as DUMMY_DATA from "../ingame/dummy-data";
 import Node from "./models/Node";
 import Edge from "./models/Edge";
 import Piece from "./models/Shiba";
 
-const socket = createSocket();
+import * as DUMMY_DATA from "../ingame/dummy-data";
+import { gameSocket } from "~/sockets";
 
 // TODO: Canvas만 로딩됐다고 끝이 아니라 안에 모델, 텍스쳐도 다 로딩이 되어야함.
 // 나중에 이 로딩을 상태관리로 만들자.
@@ -42,10 +40,10 @@ export default function IngameClient({ gameId }: { gameId: string }) {
   }, []);
 
   useEffect(() => {
-    socket.connect(onConnect);
+    gameSocket.connect(onConnect);
 
     return () => {
-      socket.disconnect();
+      gameSocket.disconnect();
     };
   }, [onConnect]);
 
