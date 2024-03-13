@@ -4,7 +4,6 @@ import com.ssafy.sos.game.domain.Board;
 import com.ssafy.sos.game.domain.Game;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 
 @Service
@@ -238,7 +237,7 @@ public class GameServiceImpl implements GameService {
             rout.add(node);
             int currentNode = node;
             while (previousNode[currentNode] != 0) {
-                rout.addFirst(previousNode[currentNode]);
+                rout.add(0, previousNode[currentNode]);
                 currentNode = previousNode[currentNode];
             }
             resultMap.put(node, rout);

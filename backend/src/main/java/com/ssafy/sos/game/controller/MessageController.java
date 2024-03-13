@@ -1,6 +1,7 @@
 package com.ssafy.sos.game.controller;
 
 import com.ssafy.sos.game.domain.Board;
+import com.ssafy.sos.game.domain.Game;
 import com.ssafy.sos.game.message.client.ClientMessage;
 import com.ssafy.sos.game.message.client.ClientInitMessage;
 import com.ssafy.sos.game.message.server.ServerMessage;
@@ -49,27 +50,27 @@ public class MessageController {
 
         System.out.println(message);
         String gameId = message.getGameId();
+        String sender = message.getSender();
+        Game game = board.getGameMap().get(gameId);
 
         ServerMessage serverMessage = null;
         // 해적 시작 지점 지정
         if (message.getMessage().equals("INIT_PIRATE_START")) {
-            // TODO: add parameter node
-            gameService.initPirateStart();
+            gameService.initPirateStart(gameId, message.getNode());
             serverMessage = ServerMessage.builder()
                     .gameId(gameId)
                     .message("INIT_PIRATE_START")
-                    .game(board.getGameMap().get(gameId))
+                    .game(game)
                     .build();
         }
 
         // 해군 시작 지점 지정
         if (message.getMessage().equals("INIT_MARINE_START")) {
-            // TODO: add parameter node and role number
-            gameService.initMarineStart();
+            gameService.initMarineStart(gameId, game.getPlayers().get(sender), message.getNode());
             serverMessage = ServerMessage.builder()
                     .gameId(gameId)
                     .message("INIT_MARINE_START")
-                    .game(board.getGameMap().get(gameId))
+                    .game(game)
                     .build();
         }
 
