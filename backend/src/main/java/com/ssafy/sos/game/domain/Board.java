@@ -16,7 +16,6 @@ public class Board {
     private int[] three;
     private int[] four;
 
-    private int[] treasures;
     private int[] marineStartList;
 
     private HashMap<String, Game> gameMap;
@@ -475,6 +474,8 @@ public class Board {
                 93, 94, 97, 106, 109, 200
         };
 
+        // 테스트용
+        this.gameMap = new HashMap<>();
+        this.gameMap.put("1", new Game());
     }
-
 }
