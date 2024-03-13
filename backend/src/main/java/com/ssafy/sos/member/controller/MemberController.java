@@ -2,12 +2,14 @@ package com.ssafy.sos.member.controller;
 
 import com.ssafy.sos.member.domain.AuthorizationCode;
 import com.ssafy.sos.member.domain.Member;
+import com.ssafy.sos.member.domain.MemberDto;
 import com.ssafy.sos.member.service.MemberService;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,7 @@ import java.util.StringTokenizer;
 @Controller
 @CrossOrigin("*")
 @RequestMapping("/members")
+@RequiredArgsConstructor
 public class MemberController {
 
     @Value("${spring.security.oauth2.client.registration.kakao.client-id}")
@@ -39,12 +42,7 @@ public class MemberController {
 
     private final static String KAKAO_AUTH_URI = "https://kauth.kakao.com";
     private final static String KAKAO_API_URI = "https://kapi.kakao.com";
-    private MemberService memberService;
-
-    @Autowired
-    public void MemberController(MemberService memberService) {
-        this.memberService = memberService;
-    }
+    private final MemberService memberService;
 
     @GetMapping("/login")
     public void login(HttpServletResponse response) throws IOException {
@@ -88,14 +86,18 @@ public class MemberController {
 
         //액세스 토큰 유효하지 않음
         if (!result) {
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
 
         //카카오 유저 정보 가져오기
-        Member member = memberService.getKakaoMember(authorizationCode.getId_token());
-        System.out.println(member);
+        Member member = memberService.getKakaoMemberInfo(authorizationCode.getId_token());
+        MemberDto memberDto = new MemberDto();
+        memberDto.setNickname(member.getNickname());
+        memberDto.setPicture(member.getPicture());
 
         //이후 로직 처리
-        return response;
+        return ResponseEntity.status(HttpStatus.OK)
+                .header("access_token", authorizationCode.getAccess_token())
+                .body(memberDto);
     }
 }
