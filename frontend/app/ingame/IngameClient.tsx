@@ -1,11 +1,12 @@
 "use client";
 
 import style from "./EventHandler.module.scss";
-import React, { useCallback, useEffect, useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls, CameraControls } from "@react-three/drei";
 
 import Loading from "./components/Loading";
+import RoundViewer from "./components/RoundViewer";
 import Map from "./models/Map";
 import Node from "./models/Node";
 import Edge from "./models/Edge";
@@ -35,21 +36,22 @@ export default function IngameClient({ gameId }: { gameId: string }) {
   ];
   const newMoveableNodes = [89, 106, 108, 126, 127, 128];
 
-  const onConnect = useCallback(() => {
-    console.log("Hello Socket!");
-  }, []);
+  // const onConnect = useCallback(() => {
+  //   console.log("Hello Socket!");
+  // }, []);
 
-  useEffect(() => {
-    gameSocket.connect(onConnect);
+  // useEffect(() => {
+  //   gameSocket.connect(onConnect);
 
-    return () => {
-      gameSocket.disconnect();
-    };
-  }, [onConnect]);
+  //   return () => {
+  //     gameSocket.disconnect();
+  //   };
+  // }, [onConnect]);
 
   return (
     <>
       {loading && <Loading />}
+      <RoundViewer />
       <Canvas
         camera={{
           position: [0, 700, 500],
