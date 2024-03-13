@@ -74,7 +74,7 @@ public class MessageController {
         }
 
         if (serverMessage != null) {
-            sendingOperations.convertAndSend("/sub" + "/" + gameId, serverMessage);
+            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
         } else {
             throw new RuntimeException();
         }
