@@ -3,7 +3,7 @@ package com.ssafy.sos.member.controller;
 import com.ssafy.sos.member.domain.AuthorizationCode;
 import com.ssafy.sos.member.domain.Member;
 import com.ssafy.sos.member.domain.MemberDto;
-import com.ssafy.sos.member.service.MemberService;
+import com.ssafy.sos.member.service.CustomOAuth2UserService;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.json.JsonParser;
 import org.springframework.http.*;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -42,9 +43,9 @@ public class MemberController {
 
     private final static String KAKAO_AUTH_URI = "https://kauth.kakao.com";
     private final static String KAKAO_API_URI = "https://kapi.kakao.com";
-    private final MemberService memberService;
+    private final OAuth2UserService memberService;
 
-    @GetMapping("/login")
+    @GetMapping("/kakao")
     public void login(HttpServletResponse response) throws IOException {
         response.sendRedirect(KAKAO_AUTH_URI + "/oauth/authorize"
                 + "?client_id=" + KAKAO_CLIENT_ID
@@ -52,61 +53,52 @@ public class MemberController {
                 + "&response_type=code"
         );
     }
-
-    @GetMapping("/success")
-    @ResponseBody
-    public ResponseEntity<?> getAuthorizationCode(@RequestParam("code") String code, HttpServletResponse response) {
-        //header 생성
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.add(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded;charset=utf-8");
-
-        //body 생성
-        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        params.add("grant_type", "authorization_code");
-        params.add("client_id", KAKAO_CLIENT_ID);
-        params.add("redirect_uri", KAKAO_REDIRECT_URL);
-        params.add("code", code);
-
-        //header + body
-        HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, httpHeaders);
-
-        //요청
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<AuthorizationCode> responseForKakao = restTemplate.exchange(
-                "https://kauth.kakao.com/oauth/token",
-                HttpMethod.POST,
-                httpEntity,
-                AuthorizationCode.class
-        );
-
-        AuthorizationCode authorizationCode = responseForKakao.getBody();
-
-        //액세스 토큰 토큰 검증
-        boolean result = memberService.checkAuthorizationCode(authorizationCode.getAccess_token());
-
-        //액세스 토큰 유효하지 않음
-        if (!result) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-
-        //카카오 유저 정보 가져와서 memberDto로 만들기
-        Member member = memberService.getKakaoMemberInfo(authorizationCode.getId_token());
-        MemberDto memberDto = new MemberDto();
-        memberDto.setNickname(member.getNickname());
-        memberDto.setPicture(member.getPicture());
-        memberDto.setSub(member.getSub());
-
-        //jwt 발급
-        String jwt = memberService.generateJwtToken(memberDto);
-
-        Cookie cookie = new Cookie("access_token", jwt);
-        cookie.setHttpOnly(true);
-
-        response.addCookie(cookie);
-
-        //이후 로직 처리
-        return ResponseEntity.status(HttpStatus.OK)
-                .header("access_token", authorizationCode.getAccess_token())
-                .body(memberDto);
-    }
+//
+//    @GetMapping("/success")
+//    @ResponseBody
+//    public ResponseEntity<?> getAuthorizationCode(@RequestParam("code") String code) {
+//        //header 생성
+//        HttpHeaders httpHeaders = new HttpHeaders();
+//        httpHeaders.add(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded;charset=utf-8");
+//
+//        //body 생성
+//        MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
+//        params.add("grant_type", "authorization_code");
+//        params.add("client_id", KAKAO_CLIENT_ID);
+//        params.add("redirect_uri", KAKAO_REDIRECT_URL);
+//        params.add("code", code);
+//
+//        //header + body
+//        HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(params, httpHeaders);
+//
+//        //요청
+//        RestTemplate restTemplate = new RestTemplate();
+//        ResponseEntity<AuthorizationCode> response = restTemplate.exchange(
+//                "https://kauth.kakao.com/oauth/token",
+//                HttpMethod.POST,
+//                httpEntity,
+//                AuthorizationCode.class
+//        );
+//
+//        AuthorizationCode authorizationCode = response.getBody();
+//
+//        //액세스 토큰 토큰 검증
+//        boolean result = memberService.checkAuthorizationCode(authorizationCode.getAccess_token());
+//
+//        //액세스 토큰 유효하지 않음
+//        if (!result) {
+//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+//        }
+//
+//        //카카오 유저 정보 가져오기
+//        Member member = memberService.getKakaoMemberInfo(authorizationCode.getId_token());
+//        MemberDto memberDto = new MemberDto();
+//        memberDto.setNickname(member.getNickname());
+//        memberDto.setPicture(member.getPicture());
+//
+//        //이후 로직 처리
+//        return ResponseEntity.status(HttpStatus.OK)
+//                .header("access_token", authorizationCode.getAccess_token())
+//                .body(memberDto);
+//    }
 }

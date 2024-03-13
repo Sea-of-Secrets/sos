@@ -9,4 +9,8 @@ public class MemberDto {
     private String nickname;
     private String picture;
     private String sub;
+
+    private String role;
+    private String name;
+    private String username;
 }
