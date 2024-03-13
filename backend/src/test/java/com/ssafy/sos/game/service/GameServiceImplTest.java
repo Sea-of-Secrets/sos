@@ -132,13 +132,12 @@ class GameServiceImplTest {
         game.getCurrentPosition()[0] = 1;
         game.getCurrentPosition()[2] = 0;
         game.getCurrentPosition()[3] = 0;
-
-        System.out.println(gameService.findMarineAvailableNode(gameId, 201));
-//        for (int i = 201; i <= 373; i++) {
-//            HashMap<Integer, Stack<Integer>> marineMovableNode =  gameService.findMarineAvailableNode(gameId, 201);
-// 기존 검사 완료 하였음 (로그 출력 정리 위해 주석처리)
-//             System.out.println(marineMovableNode);
-//        }
+        
+        for (int i = 201; i <= 373; i++) {
+            HashMap<Integer, List<Integer>> marineMovableNode =  gameService.findMarineAvailableNode(gameId, 201);
+            // 기존 검사 완료 하였음 (로그 출력 정리 위해 주석처리)
+            System.out.println(marineMovableNode);
+        }
 
         // 검사2: 다른 해군이 포함된 경우
     }

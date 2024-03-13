@@ -238,7 +238,7 @@ public class GameServiceImpl implements GameService {
             rout.add(node);
             int currentNode = node;
             while (previousNode[currentNode] != 0) {
-                rout.addFirst(previousNode[currentNode]);
+                rout.add(0, previousNode[currentNode]);
                 currentNode = previousNode[currentNode];
             }
             resultMap.put(node, rout);
