@@ -5,11 +5,7 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class MemberDto {
-    private String nickname;
-    private String picture;
-    private String sub;
-
+public class UserDTO {
     private String role;
     private String name;
     private String username;

@@ -1,30 +1,13 @@
 package com.ssafy.sos.member.controller;
 
-import com.ssafy.sos.member.domain.AuthorizationCode;
-import com.ssafy.sos.member.domain.Member;
-import com.ssafy.sos.member.domain.MemberDto;
-import com.ssafy.sos.member.service.CustomOAuth2UserService;
-import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.apache.tomcat.util.codec.binary.Base64;
-import org.apache.tomcat.util.json.JSONParser;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.json.JsonParser;
-import org.springframework.http.*;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.stereotype.Controller;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.util.StringTokenizer;
 
 @Controller
 @CrossOrigin("*")

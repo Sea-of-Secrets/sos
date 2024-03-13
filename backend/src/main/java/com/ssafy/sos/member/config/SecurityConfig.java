@@ -25,29 +25,18 @@ import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
-//@RequiredArgsConstructor
 public class SecurityConfig {
-    private final CustomOAuth2UserService memberService;
+
+    private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
-    private final CustomOAuth2FailHandler customOAuth2FailHandler;
     private final JWTUtil jwtUtil;
 
-    @Autowired
-    public SecurityConfig(CustomOAuth2UserService memberService, CustomSuccessHandler customSuccessHandler, CustomOAuth2FailHandler customOAuth2FailHandler, JWTUtil jwtUtil) {
-        this.memberService = memberService;
-        System.out.println("memberService 주입" + memberService);
+    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomSuccessHandler customSuccessHandler, JWTUtil jwtUtil) {
+
+        this.customOAuth2UserService = customOAuth2UserService;
         this.customSuccessHandler = customSuccessHandler;
-        this.customOAuth2FailHandler = customOAuth2FailHandler;
         this.jwtUtil = jwtUtil;
     }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() { // security를 적용하지 않을 리소스
-        return web -> web.ignoring()
-                // error endpoint를 열어줘야 함, favicon.ico 추가!
-                .requestMatchers("/error", "/favicon.ico");
-    }
-
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -64,54 +53,52 @@ public class SecurityConfig {
         http
                 .httpBasic((auth) -> auth.disable());
 
+        //JWTFilter 추가
+        http
+                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+
+
         //oauth2
         http
                 .oauth2Login((oauth2) -> oauth2
+                        .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
+                                .userService(customOAuth2UserService))
+                        .successHandler(customSuccessHandler)
+                );
 
-                                .userInfoEndpoint(userInfo -> userInfo.userService(memberService))
-                                .successHandler(customSuccessHandler)
-//                                .failureHandler(customOAuth2FailHandler)
-
-
-                                );
-//        JWTFilter 추가
-//        http
-//                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
         //경로별 인가 작업
-//        http
-//                .authorizeHttpRequests((auth) -> auth
-//                        .requestMatchers("/").permitAll()
-//                        .anyRequest().authenticated());
-        http.authorizeRequests().requestMatchers("*").permitAll();
+        http
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/").permitAll()
+                        .anyRequest().authenticated());
 
         //세션 설정 : STATELESS
         http
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
+        http
+                .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
 
-//        http
-//                .cors(corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
-//
-//                    @Override
-//                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
-//
-//                        CorsConfiguration configuration = new CorsConfiguration();
-//
-//                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
-//                        configuration.setAllowedMethods(Collections.singletonList("*"));
-//                        configuration.setAllowCredentials(true);
-//                        configuration.setAllowedHeaders(Collections.singletonList("*"));
-//                        configuration.setMaxAge(3600L);
-//
-//                        configuration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
-//                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
-//
-//                        return configuration;
-//                    }
-//                }));
+                    @Override
+                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+
+                        CorsConfiguration configuration = new CorsConfiguration();
+
+                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                        configuration.setAllowedMethods(Collections.singletonList("*"));
+                        configuration.setAllowCredentials(true);
+                        configuration.setAllowedHeaders(Collections.singletonList("*"));
+                        configuration.setMaxAge(3600L);
+
+                        configuration.setExposedHeaders(Collections.singletonList("Set-Cookie"));
+                        configuration.setExposedHeaders(Collections.singletonList("Authorization"));
+
+                        return configuration;
+                    }
+                }));
+
 
         return http.build();
     }
-
 }

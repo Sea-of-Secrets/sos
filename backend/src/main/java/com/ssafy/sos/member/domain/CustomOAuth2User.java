@@ -8,9 +8,9 @@ import java.util.Collection;
 import java.util.Map;
 
 public class CustomOAuth2User implements OAuth2User {
-    private final MemberDto memberDto;
+    private final UserDTO memberDto;
 
-    public CustomOAuth2User(MemberDto memberDto) {
+    public CustomOAuth2User(UserDTO memberDto) {
 
         this.memberDto = memberDto;
     }
