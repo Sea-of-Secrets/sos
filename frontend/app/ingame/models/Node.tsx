@@ -6,15 +6,16 @@ import { GraphNode } from "./Node.types";
 
 interface NodeProps extends Omit<PrimitiveProps, "object"> {
   node: GraphNode;
-  nextMoveableNodes: number[];
+  isNextMoveableNode: boolean;
 }
 
 // TODO: node를 "type"으로 구분하기 때문에 type에 따라 다른 Node를 보여줘야한다.
-export default function Node({ node, nextMoveableNodes, ...props }: NodeProps) {
+export default function Node({
+  node,
+  isNextMoveableNode,
+  ...props
+}: NodeProps) {
   const { type, nodeId, position } = node;
-  const cylinderColor = nextMoveableNodes?.includes(nodeId)
-    ? "tomato"
-    : "orange";
 
   const [x, y] = position;
   const mesh = useRef<THREE.Mesh>(null);
@@ -51,7 +52,10 @@ export default function Node({ node, nextMoveableNodes, ...props }: NodeProps) {
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
       >
-        <Cylinder args={[4, 5, 2]} material-color={cylinderColor}>
+        <Cylinder
+          args={[4, 5, 2]}
+          material-color={isNextMoveableNode ? "tomato" : "orange"}
+        >
           <Edges color="black" />
         </Cylinder>
       </mesh>
