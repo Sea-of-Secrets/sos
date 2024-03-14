@@ -5,9 +5,14 @@ import { Line } from "@react-three/drei";
 
 interface EdgeProps extends Omit<PrimitiveProps, "object"> {
   position: [number[], number[]];
+  isNextNodeEdge: boolean;
 }
 
-export default function Edge({ position, ...props }: EdgeProps) {
+export default function Edge({
+  position,
+  isNextNodeEdge,
+  ...props
+}: EdgeProps) {
   const mesh = useRef<THREE.Mesh>(null);
   return (
     <mesh ref={mesh} {...props}>
@@ -16,11 +21,11 @@ export default function Edge({ position, ...props }: EdgeProps) {
           [position[0][0], 10, position[0][1]],
           [position[1][0], 10, position[1][1]],
         ]}
-        color="black"
-        lineWidth={2}
+        color={isNextNodeEdge ? "white" : "black"}
+        lineWidth={3}
         dashed={true}
-        dashSize={3}
-        gapSize={3}
+        dashSize={5}
+        gapSize={5}
       />
     </mesh>
   );
