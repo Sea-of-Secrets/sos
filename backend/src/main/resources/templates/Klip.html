@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+<script src="/js/klipSDK-2.2.1.min.js" type="module"></script>
+<script type="module">
+    let qrValue;
+    let currentAccount;
+
+    const connectKlip = async () => {
+        // Auth 요청해서 Request key 얻기
+        try{
+            const bappName = 'Test BAPP'
+            const successLink = ''
+            const failLink = ''
+            const result = await klipSDK.prepare.auth({bappName, successLink, failLink});
+            if (result.err) {
+            } else if (result.request_key) {
+                // 얻은 request key를 url로 하는 QR 코드 생성하는 QRvalue SET STATE
+                qrValue = `https://klipwallet.com/?target=/a2a?request_key=${result.request_key}`;
+                alert(qrValue)
+                // Auth 요청 인증 결과를 받는 Result call polling
+                let timer = setInterval(() =>
+                {
+                    axios.get(`https://a2a-api.klipwallet.com/v2/a2a/result?request_key=${result.request_key}`)
+                        .then( async (response)=> {
+                            if(response.data.status === "completed"){
+                                const selectedAddress = response.data.result.klaytn_address;
+                                currentAccount = response.data.result.klaytn_address;
+                            }
+                        });
+                }, 1000);
+            }
+            return true;
+        }
+        catch (error) {
+            console.log(error);
+            return false;
+        }
+    }
+
+    connectKlip()
+
+
+    const generateButton = document.getElementById('generateButton');
+    const qrcodeContainer = document.getElementById('qrcode');
+    const downloadButton = document.getElementById('downloadButton');
+
+    generateButton.addEventListener('click', () => {
+        qrcodeContainer.innerHTML = ''; // Clear previous QR code
+        QRCode.toCanvas(qrValue, { width: 256 }, function (error, canvas) {
+            if (error) console.error(error);
+            console.log("hi")
+            qrcodeContainer.appendChild(canvas);
+        });
+    });
+
+    downloadButton.addEventListener('click', () => {
+        const canvas = qrcodeContainer.querySelector('canvas');
+        if (canvas) {
+            const image = canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+            const link = document.createElement('a');
+            link.download = 'qrcode.png';
+            link.href = image;
+            link.click();
+        }
+    });
+
+    // Generate initial QR code
+    generateButton.click();
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<body>
+<div class="container mx-auto p-8">
+    <div class="max-w-md mx-auto">
+        <div class="bg-white p-6 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-bold mb-4 text-gray-800">QR 코드 생성기</h2>
+            <button id="generateButton" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">실행</button>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-lg mt-6">
+            <h3 class="text-xl font-bold mb-4 text-gray-800">생성된 QR 코드</h3>
+            <div id="qrcode" class="mb-4"></div>
+            <button id="downloadButton" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">다운로드</button>
+        </div>
+    </div>
+</div>
+</body>
+<script>
+    // alert("hi")
+</script>
+<!--<script type="module" src="/js/klipSDK-2.2.1.min.js">-->
+<!--    -->
+<!--</script>-->
+</html>
