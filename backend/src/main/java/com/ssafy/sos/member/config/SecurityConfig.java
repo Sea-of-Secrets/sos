@@ -61,6 +61,7 @@ public class SecurityConfig {
                 .httpBasic((auth) -> auth.disable());
 
 //        //JWTFilter 추가
+        //임시로 없앰
 //        http
 //                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
