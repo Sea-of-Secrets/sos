@@ -131,7 +131,7 @@ class GameServiceImplTest {
         game = board.getGameMap().get(gameId);
 
         for (int i = 201; i <= 373; i++) {
-            HashMap<Integer, List<Integer>> marineMovableNode =  gameService.findMarineAvailableNode(gameId, i);
+            HashMap<Integer, Deque<Integer>> marineMovableNode =  gameService.findMarineAvailableNode(gameId, i);
             // 기존 검사 완료 하였음 (로그 출력 정리 위해 주석처리)
             // System.out.println(marineMovableNode);
         }

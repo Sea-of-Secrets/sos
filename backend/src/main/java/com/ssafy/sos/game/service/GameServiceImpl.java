@@ -180,7 +180,7 @@ public class GameServiceImpl implements GameService {
 
     // 해군 이동 가능 위치 조회
     @Override
-    public HashMap<Integer, List<Integer>> findMarineAvailableNode(String gameId, int nodeNumber) {
+    public HashMap<Integer, Deque<Integer>> findMarineAvailableNode(String gameId, int nodeNumber) {
         // 0-1 BFS 으로 이동가능 모든 노드 경로 추적하며 탐색
         int[][] graph = board.getGraph();
         game = board.getGameMap().get(gameId);
@@ -231,13 +231,13 @@ public class GameServiceImpl implements GameService {
                 .mapToInt(i -> i)
                 .toArray();
 
-        HashMap<Integer, List<Integer>> resultMap = new HashMap<>();
+        HashMap<Integer, Deque<Integer>> resultMap = new HashMap<>();
         for (int node : availableNode) {
-            List<Integer> rout = new ArrayList<>();
+            Deque<Integer> rout = new LinkedList<>();
             rout.add(node);
             int currentNode = node;
             while (previousNode[currentNode] != 0) {
-                rout.add(0, previousNode[currentNode]);
+                rout.addFirst(previousNode[currentNode]);
                 currentNode = previousNode[currentNode];
             }
             resultMap.put(node, rout);
