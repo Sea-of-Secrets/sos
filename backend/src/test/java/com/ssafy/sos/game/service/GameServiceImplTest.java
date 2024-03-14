@@ -159,4 +159,21 @@ class GameServiceImplTest {
         Assertions.assertThat(gameService.findMarineAvailableNode(gameId, 262).get(273))
                 .isEqualTo(check);
     }
+
+    @Test
+    public void move() {
+        game = board.getGameMap().get(gameId);
+
+        // 해적 이동 - 해군 노드로 이동하려는 경우
+        Assertions.assertThat(gameService.move(gameId, 200, 0)).isFalse();
+
+        // 해군1 이동 - 정상 이동
+        gameService.move(gameId, 201, 1);
+        List<Integer> marineOneRoute = game.getMarineOneRoute();
+        Assertions.assertThat(marineOneRoute.get(marineOneRoute.size()-1) == 201).isTrue();
+
+        // 해군2 이동 - 해적 노드로 이동하려는 경우
+        Assertions.assertThat(gameService.move(gameId, 1, 2)).isFalse();
+
+    }
 }
