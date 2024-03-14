@@ -6,7 +6,7 @@ import { Canvas } from "@react-three/fiber";
 import { OrbitControls, CameraControls } from "@react-three/drei";
 
 import Loading from "./components/Loading";
-import RoundViewer from "./components/RoundViewer";
+
 import Map from "./models/Map";
 import Node from "./models/Node";
 import Edge from "./models/Edge";
@@ -14,6 +14,8 @@ import Piece from "./models/Shiba";
 
 import * as DUMMY_DATA from "../ingame/dummy-data";
 import { gameSocket } from "~/sockets";
+import Round from "./components/Round";
+import Turn from "./components/Turn";
 
 // TODO: Canvas만 로딩됐다고 끝이 아니라 안에 모델, 텍스쳐도 다 로딩이 되어야함.
 // 나중에 이 로딩을 상태관리로 만들자.
@@ -51,7 +53,8 @@ export default function IngameClient({ gameId }: { gameId: string }) {
   return (
     <>
       {loading && <Loading />}
-      <RoundViewer />
+      <Round topLeft={[60, 1]} />
+      <Turn topLeft={[360, 1]} currentTurn={1} />
       <Canvas
         camera={{
           position: [0, 700, 500],
@@ -63,7 +66,7 @@ export default function IngameClient({ gameId }: { gameId: string }) {
         <CameraControls ref={cameraControlRef} />
         <directionalLight position={[1, 1, 1]} />
         <ambientLight intensity={2} />
-        {/* <OrbitControls target={[0, 1, 0]} /> */}
+        <OrbitControls target={[0, 1, 0]} />
         <axesHelper scale={10} />
         <IngameThree nextMoveableNodes={nextMoveableNodes} />
       </Canvas>

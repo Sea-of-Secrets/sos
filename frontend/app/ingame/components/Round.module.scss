@@ -2,7 +2,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
+
   background: none;
   z-index: 99;
 
@@ -11,17 +11,17 @@
   align-items: center;
 
   > div {
-    width: 500px;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     gap: 10px;
 
     // #b67352 #965e43
 
-    background-color: #69432f;
+    // background-color: #69432f;
     padding: 10px;
-    border: 3px solid #291a12;
+    border: 3px solid;
     border-radius: 10px;
   }
 }
