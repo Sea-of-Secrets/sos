@@ -5,22 +5,18 @@
     <title>Title</title>
 </head>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
-<!--<script src="/js/klipSDK-2.2.1.min.js" type="module">-->
+<script src="/js/klipSDK-2.2.1.min.js" type="module"></script>
 <script type="module">
-    // import { prepare, request, getResult, getCardList } from "../static/js/klipSDK-2.2.1.min.js"
-    import "../static/js/klipSDK-2.2.1.min.js"
-    alert("alert")
     let qrValue;
     let currentAccount;
 
     const connectKlip = async () => {
-        alert("connectKlip");
         // Auth 요청해서 Request key 얻기
         try{
             const bappName = 'Test BAPP'
             const successLink = ''
             const failLink = ''
-            const result = await prepare.auth({bappName, successLink, failLink});
+            const result = await klipSDK.prepare.auth({bappName, successLink, failLink});
             if (result.err) {
             } else if (result.request_key) {
                 // 얻은 request key를 url로 하는 QR 코드 생성하는 QRvalue SET STATE
