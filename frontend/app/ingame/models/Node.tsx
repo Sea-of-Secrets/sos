@@ -1,20 +1,21 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
-import { Cylinder, Text, Edges } from "@react-three/drei";
+import { Cylinder, Box, Text, Edges } from "@react-three/drei";
 import { PrimitiveProps, ThreeEvent } from "@react-three/fiber";
 import { GraphNode } from "./Node.types";
 
 interface NodeProps extends Omit<PrimitiveProps, "object"> {
   node: GraphNode;
-  nextMoveableNodes: number[];
+  isNextMoveableNode: boolean;
 }
 
 // TODO: node를 "type"으로 구분하기 때문에 type에 따라 다른 Node를 보여줘야한다.
-export default function Node({ node, nextMoveableNodes, ...props }: NodeProps) {
+export default function Node({
+  node,
+  isNextMoveableNode,
+  ...props
+}: NodeProps) {
   const { type, nodeId, position } = node;
-  const cylinderColor = nextMoveableNodes?.includes(nodeId)
-    ? "tomato"
-    : "orange";
 
   const [x, y] = position;
   const mesh = useRef<THREE.Mesh>(null);
@@ -42,19 +43,42 @@ export default function Node({ node, nextMoveableNodes, ...props }: NodeProps) {
 
   return (
     <group>
-      <mesh
-        {...props}
-        ref={mesh}
-        position={[x, 10, y]}
-        scale={1.5}
-        onClick={handleClickPiece}
-        onPointerOver={handlePointerOver}
-        onPointerOut={handlePointerOut}
-      >
-        <Cylinder args={[4, 5, 2]} material-color={cylinderColor}>
-          <Edges color="black" />
-        </Cylinder>
-      </mesh>
+      {type === "도둑" && (
+        <mesh
+          {...props}
+          ref={mesh}
+          position={[x, 10, y]}
+          scale={1.5}
+          onClick={handleClickPiece}
+          onPointerOver={handlePointerOver}
+          onPointerOut={handlePointerOut}
+        >
+          <Cylinder
+            args={[4, 5, 2]}
+            material-color={isNextMoveableNode ? "tomato" : "orange"}
+          >
+            <Edges color="black" />
+          </Cylinder>
+        </mesh>
+      )}
+      {type === "경찰" && (
+        <mesh
+          {...props}
+          ref={mesh}
+          position={[x, 10, y]}
+          scale={1.5}
+          onClick={handleClickPiece}
+          onPointerOver={handlePointerOver}
+          onPointerOut={handlePointerOut}
+        >
+          <Box
+            args={[3, 2, 3]}
+            material-color={isNextMoveableNode ? "tomato" : "#888888"}
+          >
+            <Edges color="black" />
+          </Box>
+        </mesh>
+      )}
       {type === "도둑" && (
         <Text
           position={[x, 12, y]}

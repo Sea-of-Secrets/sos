@@ -1,83 +1,95 @@
 "use client";
 
 import style from "./EventHandler.module.scss";
-import React, { useCallback, useEffect, useState, useRef } from "react";
-import { Canvas } from "@react-three/fiber";
+
+import React, { useState, useRef, useEffect } from "react";
 import { OrbitControls, CameraControls } from "@react-three/drei";
+import { Canvas, useFrame } from "@react-three/fiber";
+import TWEEN from "@tweenjs/tween.js";
 
-import { createSocket } from "~/sockets/createSocket";
+import usePiece from "~/store/piece";
+import useCamera from "~/store/camera";
+
 import Loading from "./components/Loading";
-import Map from "./models/Map";
+import Round from "./components/Round";
+import Turn from "./components/Turn";
 
-import * as DUMMY_DATA from "../ingame/dummy-data";
+import Map from "./models/Map";
 import Node from "./models/Node";
 import Edge from "./models/Edge";
 import Piece from "./models/Shiba";
 
-const socket = createSocket();
+import * as DUMMY_DATA from "../ingame/dummy-data";
 
 // TODO: Canvas만 로딩됐다고 끝이 아니라 안에 모델, 텍스쳐도 다 로딩이 되어야함.
 // 나중에 이 로딩을 상태관리로 만들자.
 export default function IngameClient({ gameId }: { gameId: string }) {
   const [loading, setLoading] = useState(true);
-  // const [nowNode, setNowNode] = useState();
-  // const [nowNodePosition, setNowNodePosition] = useState();
-  const cameraPosition = [0, 700, 500];
-
-  // 다음으로 이동 가능한 노드 리스트
+  const [nowNode, setNowNode] = useState();
+  const [nowNodePosition, setNowNodePosition] = useState([]);
   const [nextMoveableNodes, setNextMoveableNodes] = useState([]);
-  const cameraControlRef = useRef<CameraControls | null>(null);
+  const [nextNodeEdge, setNextNodeEdge] = useState([]);
+  const cameraControlRef = useRef<CameraControls | null>(null!);
+  const { camera, setCamera } = useCamera();
 
-  // 소켓 통신을 통해 받게 된 정보
-  const nowNode = 107;
-  const nowNodePosition = [
-    DUMMY_DATA.nodeArr[nowNode][0],
-    30,
-    DUMMY_DATA.nodeArr[nowNode][1],
-  ];
+  // 소켓 통신을 통해 받게 될 데이터
   const newMoveableNodes = [89, 106, 108, 126, 127, 128];
+  const newNodeEdge = [
+    [107, 309],
+    [309, 106],
+  ];
 
-  const onConnect = useCallback(() => {
-    console.log("Hello Socket!");
-  }, []);
+  // 말 이동 프레임별 업데이트
+  const Tween = () => {
+    useFrame(() => {
+      TWEEN.update();
+    });
+    return null;
+  };
+
+  // const onConnect = useCallback(() => {
+  //   console.log("Hello Socket!");
+  // }, []);
 
   useEffect(() => {
-    socket.connect(onConnect);
-
-    return () => {
-      socket.disconnect();
-    };
-  }, [onConnect]);
+    setCamera(cameraControlRef.current);
+  }, [cameraControlRef.current]);
 
   return (
     <>
       {loading && <Loading />}
+      <Round topLeft={[60, 1]} />
+      <Turn topLeft={[360, 1]} currentTurn={1} />
       <Canvas
         camera={{
-          position: [0, 700, 500],
+          position: [0, 800, 500],
           far: 10000,
           fov: 50,
         }}
         onCreated={() => setLoading(false)}
       >
+        <Tween />
         <CameraControls ref={cameraControlRef} />
         <directionalLight position={[1, 1, 1]} />
         <ambientLight intensity={2} />
-        {/* <OrbitControls target={[0, 1, 0]} /> */}
+        <OrbitControls target={[0, 1, 0]} />
         <axesHelper scale={10} />
-        <IngameThree nextMoveableNodes={nextMoveableNodes} />
+        <IngameThree
+          nextMoveableNodes={nextMoveableNodes}
+          nextNodeEdge={nextNodeEdge}
+        />
       </Canvas>
       <EventHandler
         newMoveableNodes={newMoveableNodes}
         setNextMoveableNodes={setNextMoveableNodes}
-        cameraControlRef={cameraControlRef}
-        nowNodePosition={nowNodePosition}
+        newNodeEdge={newNodeEdge}
+        setNextNodeEdge={setNextNodeEdge}
       />
     </>
   );
 }
 
-function IngameThree({ nextMoveableNodes }: any) {
+function IngameThree({ nextMoveableNodes, nextNodeEdge }: any) {
   // 여기서 좀 빵빵해질듯...? 소켓 코드랑...
   const renderedEdges = new Set();
 
@@ -93,7 +105,9 @@ function IngameThree({ nextMoveableNodes }: any) {
             <Node
               key={node.nodeId}
               node={node}
-              nextMoveableNodes={nextMoveableNodes}
+              isNextMoveableNode={
+                nextMoveableNodes?.includes(node.nodeId) ? true : false
+              }
             />
           );
         }
@@ -113,9 +127,14 @@ function IngameThree({ nextMoveableNodes }: any) {
             <Edge
               key={edgeKey}
               position={[
-                DUMMY_DATA.nodeArr[index + 200],
                 DUMMY_DATA.nodeArr[edge],
+                DUMMY_DATA.nodeArr[index + 200],
               ]}
+              isNextNodeEdge={nextNodeEdge.some(
+                ([start, end]: number[]) =>
+                  (start === index + 200 && end === edge) ||
+                  (start === edge && end === index + 200),
+              )}
             />
           );
         });
@@ -131,28 +150,43 @@ function IngameThree({ nextMoveableNodes }: any) {
 function EventHandler({
   newMoveableNodes,
   setNextMoveableNodes,
-  cameraControlRef,
-  nowNodePosition,
+  newNodeEdge,
+  setNextNodeEdge,
 }: any) {
-  const movePiece = () => {};
+  const { movePirate } = usePiece();
+  const { pieceCamera, mapCamera } = useCamera();
   const [isNextMoveableNodes, setIsNextMoveableNodes] = useState(true);
+  const [isNewNodeEdge, setIsNewNodeEdge] = useState(true);
+  const [isFocused, setIsFocused] = useState(false);
+  const [isMoved, setIsMoved] = useState(false);
 
+  // 이동 가능 노드 표시
   const handleNextMoveableNodes = () => {
     setIsNextMoveableNodes(!isNextMoveableNodes);
-    setNextMoveableNodes(isNextMoveableNodes ? newMoveableNodes : null);
+    setNextMoveableNodes(isNextMoveableNodes ? newMoveableNodes : []);
   };
 
-  const focusPiece = () => {
-    cameraControlRef.current?.setLookAt(
-      0,
-      100,
-      50,
-      nowNodePosition[0],
-      100,
-      nowNodePosition[2],
-      true,
-    );
-    cameraControlRef.current?.zoomTo(1, true);
+  // 다음 노드 경로 표시
+  const handleNextNodeEdge = () => {
+    setIsNewNodeEdge(!isNewNodeEdge);
+    setNextNodeEdge(isNewNodeEdge ? newNodeEdge : []);
+  };
+
+  // 말 포커싱
+  const handleFocusPiece = () => {
+    if (!isFocused) {
+      pieceCamera(DUMMY_DATA.nodeArr[107]);
+      setIsFocused(true);
+    } else {
+      mapCamera();
+      setIsFocused(false);
+    }
+  };
+
+  // 말 이동
+  const handleMovePiece = () => {
+    setIsMoved(!isMoved);
+    movePirate(isMoved ? DUMMY_DATA.nodeArr[107] : [-30, 100]);
   };
 
   return (
@@ -160,10 +194,13 @@ function EventHandler({
       <button className={style.greenbutton} onClick={handleNextMoveableNodes}>
         {isNextMoveableNodes ? "이동 가능 노드 표시" : "이동 가능 노드 미표시"}
       </button>
-      <button className={style.greenbutton} onClick={focusPiece}>
-        말 포커싱
+      <button className={style.greenbutton} onClick={handleNextNodeEdge}>
+        {isNewNodeEdge ? "다음 경로 표시" : "다음 경로 미표시"}
       </button>
-      <button className={style.redbutton} onClick={movePiece}>
+      <button className={style.greenbutton} onClick={handleFocusPiece}>
+        {isFocused ? "전체 포커싱" : "말 포커싱"}
+      </button>
+      <button className={style.greenbutton} onClick={handleMovePiece}>
         말 이동
       </button>
     </div>

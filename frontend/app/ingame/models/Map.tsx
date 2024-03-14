@@ -2,7 +2,6 @@ import * as THREE from "three";
 import React, { useRef } from "react";
 import { PrimitiveProps, useLoader } from "@react-three/fiber";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { OrbitControls } from "@react-three/drei";
 
 type MapProps = Omit<PrimitiveProps, "object">;
 
