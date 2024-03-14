@@ -1,16 +1,15 @@
 package com.ssafy.sos.member.domain;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.util.HashMap;
 import java.util.Map;
 
 public class KakaoResponse implements OAuth2Response {
-    private Map<String, Object> attributes;
-    private Map<String, Object> kakaoAccountAttributes;
-    private Map<String, Object> profileAttributes;
+    private final Map<String, Object> attributes;
 
     public KakaoResponse(Map<String, Object> attributes) {
         this.attributes = attributes;
-        this.kakaoAccountAttributes = (Map<String, Object>) attributes.get("kakao_account");
-        this.profileAttributes = (Map<String, Object>) attributes.get("profile");
     }
 
     @Override
@@ -27,13 +26,14 @@ public class KakaoResponse implements OAuth2Response {
 
     @Override
     public String getEmail() {
-
-        return kakaoAccountAttributes.get("email").toString();
+        return null;
     }
 
     @Override
     public String getName() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Map<String, String> properties = objectMapper.convertValue(attributes.get("properties"), Map.class);
 
-        return kakaoAccountAttributes.get("nickname").toString();
+        return properties.get("nickname");
     }
 }
