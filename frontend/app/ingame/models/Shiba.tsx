@@ -3,14 +3,24 @@
 import { useRef } from "react";
 import { useLoader } from "@react-three/fiber";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
-import { Mesh } from "three";
+import { PrimitiveProps } from "@react-three/fiber";
 
-export default function Shiba() {
+interface EdgeProps extends Omit<PrimitiveProps, "object"> {
+  position: number[];
+}
+
+export default function Shiba({ position, ...props }: EdgeProps) {
   const fileUrl = "/shiba/scene.gltf";
-  const mesh = useRef<Mesh>(null!);
+  const mesh = useRef(null!);
   const gltf = useLoader(GLTFLoader, fileUrl);
   return (
-    <mesh ref={mesh} position={[0, 3, 0]} scale={1}>
+    <mesh
+      ref={mesh}
+      position={[position[0], 26, position[1]]}
+      scale={15}
+      rotation={[0, 0, 0]}
+      {...props}
+    >
       <primitive object={gltf.scene} />
     </mesh>
   );

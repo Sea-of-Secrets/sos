@@ -12,4 +12,8 @@ export type SquareNode = BaseNode & {
   type: "경찰";
 };
 
-export type GraphNode = CircleNode | SquareNode;
+export type EmptyNode = BaseNode & {
+  type: "Empty";
+};
+
+export type GraphNode = CircleNode | SquareNode | EmptyNode;

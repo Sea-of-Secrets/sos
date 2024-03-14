@@ -3,6 +3,8 @@ package com.ssafy.sos.game.domain;
 import lombok.Data;
 import org.springframework.stereotype.Component;
 
+import java.util.HashMap;
+
 @Data
 @Component
 public class Board {
@@ -14,8 +16,9 @@ public class Board {
     private int[] three;
     private int[] four;
 
-    private int[] treasures;
     private int[] marineStartList;
+
+    private HashMap<String, Game> gameMap;
 
     public Board() {
         this.graph = new int[][] {
@@ -471,6 +474,8 @@ public class Board {
                 93, 94, 97, 106, 109, 200
         };
 
+        // 테스트용
+        this.gameMap = new HashMap<>();
+        this.gameMap.put("1", new Game());
     }
-
 }
