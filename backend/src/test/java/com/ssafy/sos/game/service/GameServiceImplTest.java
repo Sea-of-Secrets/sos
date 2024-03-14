@@ -12,6 +12,7 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+
 @SpringBootTest
 class GameServiceImplTest {
     @Autowired
@@ -99,12 +100,21 @@ class GameServiceImplTest {
     public void findPirateAvailableNode() {
         // 검사1 : 모든 해적 위치 경우의 수 검사
         for (int i = 1; i <= 188; i++) {
-            HashMap<Integer, Stack<Integer>> pirateMovableNode =  gameService.findPirateAvailableNode(gameId, i);
+            HashMap<Integer, Deque<Integer>> pirateMovableNode =  gameService.findPirateAvailableNode(gameId, i);
             // 기존 검사 완료 하였음 (로그 출력 정리 위해 주석처리)
             // System.out.println(pirateMovableNode);
         }
 
-        // 검사2 : 해군이 길을 가로막고 있는 경우, 해당 경로를 우회한 길을 안내하는지 검사
+        // 검사2 : 특정 노드에서의 해적 이동 가능 위치 조회 결과가 올바르게 나오는지 검사
+        // 169의 경우
+        Assertions.assertThat(gameService.findPirateAvailableNode(gameId, 169))
+                .containsKeys(146, 148, 170, 171, 187, 188);
+
+        // 91의 경우
+        Assertions.assertThat(gameService.findPirateAvailableNode(gameId, 91))
+                .containsKeys(74, 75, 87, 88, 89, 90, 92, 109);
+
+        // 검사3 : 해군이 길을 가로막고 있는 경우, 해당 경로를 우회한 길을 안내하는지 검사
         // 51 - 256 - 267 - 52 이동 불가능함
         game = board.getGameMap().get(gameId);
         game.getCurrentPosition()[1] = 256;

@@ -64,14 +64,14 @@ public class GameServiceImpl implements GameService {
 
     // 해적 이동 가능 위치 조회
     @Override
-    public HashMap<Integer, Stack<Integer>> findPirateAvailableNode(String gameId, int nodeNumber) {
-        // BFS 으로 이동가능 모든 노드 탐색
+    public HashMap<Integer, Deque<Integer>> findPirateAvailableNode(String gameId, int nodeNumber) {
+        // BFS 으로 이동가능 모든 노드 탐색 및 직전 경로 저장
         game = board.getGameMap().get(gameId);
         int[][] graph = board.getGraph();
         Queue<Integer> queue = new LinkedList<>();
         boolean[] visited = new boolean[374];
+        int[] previousNode = new int[374];
         ArrayList<Integer> result = new ArrayList<>();
-        int[] currentPosition = game.getCurrentPosition();
 
         queue.add(nodeNumber);
         visited[nodeNumber] = true;
@@ -95,51 +95,28 @@ public class GameServiceImpl implements GameService {
                     else {
                         queue.add(next);
                     }
+                    previousNode[next] = now;
                     visited[next] = true;
                 }
             }
         }
+
         // result(ArrayList)를 배열로 바꾸기
         int[] availableNode = result.stream()
                 .mapToInt(i -> i)
                 .toArray();
 
-        // 최종 반환할 해시맵
-        HashMap<Integer, Stack<Integer>> resultMap = new HashMap<>();
-
-        // 각각의 이동가능한 노드를 DFS 돌며 경로추적 및 저장
+        // 직전 경로 배열 타고 이동하며 경로 추출
+        HashMap<Integer, Deque<Integer>> resultMap = new HashMap<>();
         for (int node : availableNode) {
-            Stack<Integer> stack = new Stack<>();
-            boolean[] stackVisited = new boolean[374];
-            stack.push(nodeNumber);
-            stackVisited[nodeNumber] = true;
-            while(!stack.isEmpty()) {
-                int now = stack.peek();
-                // 현재 위치가 종료 지점이라면 break
-                if (now == node) {
-                    break;
-                }
-                boolean hasChild = false;
-                for (int next : graph[now]) {
-                    // 해군이 해당 노드에 서있을 경우 || 이미 방문한 노드의 경우
-                    if (currentPosition[1] == next || currentPosition[2] == next || currentPosition[3] == next || stackVisited[next]) {
-                        continue;
-                    }
-                    // 해적 노드(하얀점)의 경우 이동 불가
-                    if (next != node && next != nodeNumber && next <= 199) {
-                        continue;
-                    }
-                    stack.push(next);
-                    stackVisited[next] = true;
-                    hasChild = true;
-                    break;
-                }
-                if (!hasChild) {
-                    stack.pop();
-                }
+            Deque<Integer> route = new LinkedList<>();
+            route.add(node);
+            int currentNode = node;
+            while (previousNode[currentNode] != 0) {
+                route.addFirst(previousNode[currentNode]);
+                currentNode = previousNode[currentNode];
             }
-            // 경로
-            resultMap.put(node, stack);
+            resultMap.put(node, route);
         }
         return resultMap;
     }
@@ -233,14 +210,14 @@ public class GameServiceImpl implements GameService {
 
         HashMap<Integer, Deque<Integer>> resultMap = new HashMap<>();
         for (int node : availableNode) {
-            Deque<Integer> rout = new LinkedList<>();
-            rout.add(node);
+            Deque<Integer> route = new LinkedList<>();
+            route.add(node);
             int currentNode = node;
             while (previousNode[currentNode] != 0) {
-                rout.addFirst(previousNode[currentNode]);
+                route.addFirst(previousNode[currentNode]);
                 currentNode = previousNode[currentNode];
             }
-            resultMap.put(node, rout);
+            resultMap.put(node, route);
         }
         return resultMap;
     }
