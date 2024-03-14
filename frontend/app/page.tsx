@@ -8,6 +8,9 @@ export default function Home() {
       <Link className="button" style={{ zIndex: 999 }} href="/ingame">
         인게임 테스트 페이지로 click!
       </Link>
+      <Link className="button" style={{ zIndex: 999 }} href="/room">
+        대기방으로
+      </Link>
     </main>
   );
 }

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
-import { Cylinder, Text, Edges } from "@react-three/drei";
+import { Cylinder, Box, Text, Edges } from "@react-three/drei";
 import { PrimitiveProps, ThreeEvent } from "@react-three/fiber";
 import { GraphNode } from "./Node.types";
 
@@ -43,22 +43,42 @@ export default function Node({
 
   return (
     <group>
-      <mesh
-        {...props}
-        ref={mesh}
-        position={[x, 10, y]}
-        scale={1.5}
-        onClick={handleClickPiece}
-        onPointerOver={handlePointerOver}
-        onPointerOut={handlePointerOut}
-      >
-        <Cylinder
-          args={[4, 5, 2]}
-          material-color={isNextMoveableNode ? "tomato" : "orange"}
+      {type === "도둑" && (
+        <mesh
+          {...props}
+          ref={mesh}
+          position={[x, 10, y]}
+          scale={1.5}
+          onClick={handleClickPiece}
+          onPointerOver={handlePointerOver}
+          onPointerOut={handlePointerOut}
         >
-          <Edges color="black" />
-        </Cylinder>
-      </mesh>
+          <Cylinder
+            args={[4, 5, 2]}
+            material-color={isNextMoveableNode ? "tomato" : "orange"}
+          >
+            <Edges color="black" />
+          </Cylinder>
+        </mesh>
+      )}
+      {type === "경찰" && (
+        <mesh
+          {...props}
+          ref={mesh}
+          position={[x, 10, y]}
+          scale={1.5}
+          onClick={handleClickPiece}
+          onPointerOver={handlePointerOver}
+          onPointerOut={handlePointerOut}
+        >
+          <Box
+            args={[3, 2, 3]}
+            material-color={isNextMoveableNode ? "tomato" : "#888888"}
+          >
+            <Edges color="black" />
+          </Box>
+        </mesh>
+      )}
       {type === "도둑" && (
         <Text
           position={[x, 12, y]}
