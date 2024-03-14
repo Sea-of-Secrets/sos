@@ -15,12 +15,24 @@
 <ul id="messageList"></ul>
 
 
-<button id="login">login</button>
+<button id="kakao">카카오</button>
+<button id="naver">네이버</button>
+<button id="google">구글</button>
 
 <script>
-    var loginButton = document.getElementById('login');
+    var loginButton = document.getElementById('kakao');
     loginButton.addEventListener('click', function () {
-        window.location.href = `http://localhost:8080/members/login`;
+        window.location.href = `http://localhost:8080/members/kakao`;
+    })
+
+    var loginButton = document.getElementById('naver');
+    loginButton.addEventListener('click', function () {
+        window.location.href = `http://localhost:8080/members/naver`;
+    })
+
+    var loginButton = document.getElementById('google');
+    loginButton.addEventListener('click', function () {
+        window.location.href = `http://localhost:8080/members/google`;
     })
 </script>
 <!-- Include STOMP.js library -->

@@ -1,1 +1,2 @@
-ALTER TABLE Member convert to charset utf8;
+use sos;
+ALTER TABLE user_entity convert to charset utf8;
