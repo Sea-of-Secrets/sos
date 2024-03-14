@@ -221,4 +221,35 @@ public class GameServiceImpl implements GameService {
         }
         return resultMap;
     }
+
+    @Override
+    public boolean move(String gameId, int nodeNumber, int role) {
+        Game game = board.getGameMap().get(gameId);
+        if (game == null) return false;
+
+        int[] currentPosition = game.getCurrentPosition();
+
+        // 현재 위치 변경 : nodeNumber와 role의 유효성 검사
+        if ((role == 0 && nodeNumber >= 1 && nodeNumber <= 188) ||
+                ((role >= 1 && role <= 3) && nodeNumber >= 200 && nodeNumber <= 373)) {
+            currentPosition[role] = nodeNumber;
+        } else {
+            return false;
+        }
+
+        // 이동 경로에 추가
+        switch (role) {
+            case 0:
+                game.getPirateRoute().add(nodeNumber);
+            case 1:
+                game.getMarineOneRoute().add(nodeNumber);
+            case 2:
+                game.getMarineTwoRoute().add(nodeNumber);
+            case 3:
+                game.getMarineThreeRoute().add(nodeNumber);
+        }
+
+        return true;
+    }
+
 }
