@@ -4,6 +4,7 @@ import com.ssafy.sos.game.domain.Board;
 import com.ssafy.sos.game.domain.Game;
 import com.ssafy.sos.game.message.client.ClientMessage;
 import com.ssafy.sos.game.message.client.ClientInitMessage;
+import com.ssafy.sos.game.message.client.ClientMoveMessage;
 import com.ssafy.sos.game.message.server.ServerMessage;
 import com.ssafy.sos.game.service.GameService;
 import lombok.RequiredArgsConstructor;
@@ -70,6 +71,39 @@ public class MessageController {
             serverMessage = ServerMessage.builder()
                     .gameId(gameId)
                     .message("INIT_MARINE_START")
+                    .game(game)
+                    .build();
+        }
+
+        if (serverMessage != null) {
+            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+        } else {
+            throw new RuntimeException();
+        }
+    }
+
+    @MessageMapping("/move")
+    public void move(ClientMoveMessage message) {
+        System.out.println(message);
+        String gameId = message.getGameId();
+        String sender = message.getSender();
+        Game game = board.getGameMap().get(gameId);
+
+        ServerMessage serverMessage = null;
+        if (message.getMessage().equals("MOVE_PIRATE")) {
+            // TODO: 해적 이동 알고리즘 추가
+            serverMessage = ServerMessage.builder()
+                    .gameId(gameId)
+                    .message("MOVE_PIRATE")
+                    .game(game)
+                    .build();
+        }
+
+        if (message.getMessage().equals("MOVE_MARINE")) {
+            // TODO: 해군 이동 알고리즘 추가
+            serverMessage = ServerMessage.builder()
+                    .gameId(gameId)
+                    .message("MOVE_MARINE")
                     .game(game)
                     .build();
         }
