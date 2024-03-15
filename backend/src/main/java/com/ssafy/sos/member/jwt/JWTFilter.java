@@ -1,4 +1,4 @@
-package com.ssafy.sos.member;
+package com.ssafy.sos.member.jwt;
 
 import com.ssafy.sos.member.domain.CustomOAuth2User;
 import com.ssafy.sos.member.domain.UserDTO;

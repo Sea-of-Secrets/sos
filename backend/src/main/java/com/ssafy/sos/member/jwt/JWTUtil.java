@@ -1,4 +1,4 @@
-package com.ssafy.sos.member;
+package com.ssafy.sos.member.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
