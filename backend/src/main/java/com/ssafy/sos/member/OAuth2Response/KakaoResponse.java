@@ -1,8 +1,7 @@
-package com.ssafy.sos.member.domain;
+package com.ssafy.sos.member.OAuth2Response;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import java.util.HashMap;
 import java.util.Map;
 
 public class KakaoResponse implements OAuth2Response {
