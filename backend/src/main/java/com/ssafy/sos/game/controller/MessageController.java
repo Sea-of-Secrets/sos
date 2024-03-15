@@ -46,6 +46,34 @@ public class MessageController {
         sendingOperations.convertAndSend("/sub", message);
     }
 
+    @MessageMapping("/room")
+    public void makeRoom(ClientMessage message) throws Exception {
+        System.out.println(message);
+        String sender = message.getSender();
+
+        ServerMessage serverMessage = null;
+        String gameId = null;
+        if (message.getMessage().equals("MAKE_ROOM")) {
+            // TODO: member에서 sender로 nickname 가져오기
+            String nickname = "nickname";
+            gameId = gameService.makeRoom(nickname);
+
+            if (gameId != null) {
+                serverMessage = ServerMessage.builder()
+                        .message("MAKE_ROOM")
+                        .gameId(gameId)
+                        .build();
+            }
+        }
+
+        if (serverMessage != null) {
+            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+        } else {
+            throw new RuntimeException();
+        }
+
+    }
+
     @MessageMapping("/init")
     public void init(ClientInitMessage message) throws Exception {
 

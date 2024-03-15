@@ -12,4 +12,6 @@ public interface GameService {
     int[] initMarineStartRandom(String gameId, int MarineNumber);
     HashMap<Integer, Deque<Integer>> findMarineAvailableNode(String gameId, int nodeNumber);
     boolean move(String gameId, int nodeNumber, int role);
+
+    String makeRoom(String nickname);
 }

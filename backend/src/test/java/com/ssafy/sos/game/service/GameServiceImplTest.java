@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -185,5 +186,21 @@ class GameServiceImplTest {
         // 해군2 이동 - 해적 노드로 이동하려는 경우
         Assertions.assertThat(gameService.move(gameId, 1, 2)).isFalse();
 
+    }
+
+    @Test
+    public void makeRoom() {
+        // gameMap에 이미 방 아이디가 꽉 찼을 때 -> 더 이상 방을 못 만들게 해야 함
+        for (char c = 'A'; c <= 'Z'; c++) {
+            // 숫자 000부터 999까지 반복문으로 생성
+            for (int i = 0; i <= 999; i++) {
+                // 숫자를 세 자리 문자열로 변환하여 출력
+                String number = String.format("%03d", i);
+                String roomNumber = c + number;
+                board.getGameMap().put(roomNumber, new Game());
+            }
+        }
+
+        assertThrows(RuntimeException.class, () -> gameService.makeRoom("nickname"));
     }
 }
