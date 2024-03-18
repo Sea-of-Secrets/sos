@@ -1,5 +1,6 @@
 import Link from "next/link";
 import style from "./page.module.scss";
+import HomeClient from "./HomeClient";
 
 export default function Home() {
   return (
@@ -11,11 +12,16 @@ export default function Home() {
       <Link className="button" href="/room">
         대기방으로
       </Link>
-      <a href="http://localhost:8080/oauth2/authorization/naver">naver login</a>
-      <a href="http://localhost:8080/oauth2/authorization/kakao">kakao login</a>
-      <a href="http://localhost:8080/oauth2/authorization/google">
+      <Link href="http://localhost:8080/oauth2/authorization/naver">
+        naver login
+      </Link>
+      <Link href="http://localhost:8080/oauth2/authorization/kakao">
+        kakao login
+      </Link>
+      <Link href="http://localhost:8080/oauth2/authorization/google">
         google login
-      </a>
+      </Link>
+      <HomeClient />
     </main>
   );
 }
