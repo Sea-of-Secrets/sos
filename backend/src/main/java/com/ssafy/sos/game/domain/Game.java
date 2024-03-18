@@ -21,13 +21,16 @@ public class Game {
     private int turn; // 현재 턴
     private int round; // 현재 라운드
 
-    public Game() {
+    public Game(String gameId) {
+        this.gameId = gameId;
         this.currentPosition = new int[] {0, 0, 0, 0};
         this.treasures = new int[] {0, 0, 0, 0};
         this.pirateRoute = new ArrayList<>();
         this.marineOneRoute = new ArrayList<>();
         this.marineTwoRoute = new ArrayList<>();
         this.marineThreeRoute = new ArrayList<>();
+        this.turn = 1;
+        this.round = 1;
         players = new HashMap<>();
     }
 

@@ -272,7 +272,9 @@ public class GameServiceImpl implements GameService {
                 board.getGameMap().containsKey(gameId)
         );
 
-        board.getGameMap().put(gameId, new Game());
+        board.getGameMap().put(gameId, new Game(gameId));
+        board.getGameMap().get(gameId).getPlayers().put(nickname, -1);
+
         return gameId;
     }
 
