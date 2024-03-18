@@ -19,13 +19,17 @@ export default function Room() {
     }
   };
 
+  const onConnect = () => {
+    subscribe(`/백엔드api주소${roomId}`, message => {
+      const data = JSON.parse(message.body);
+      if (data) {
+      }
+    });
+  };
+
   // TODO 연결 될 때 내 정보 서버 전달, 서버에서 전달받아서 people 정보 갱신
   // 방장이면 게임 시작 기능도 넣기
   useEffect(() => {
-    const onConnect = () => {
-      console.log("소켓 연결 완료");
-    };
-
     connect(onConnect);
 
     return () => {
