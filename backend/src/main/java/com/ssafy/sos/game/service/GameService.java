@@ -14,4 +14,5 @@ public interface GameService {
     boolean move(String gameId, int nodeNumber, int role);
 
     String makeRoom(String nickname);
+    boolean enterRoom(String gameId, String nickname);
 }

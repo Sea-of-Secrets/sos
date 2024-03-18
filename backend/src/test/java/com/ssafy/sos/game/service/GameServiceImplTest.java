@@ -209,4 +209,13 @@ class GameServiceImplTest {
 
         assertThrows(RuntimeException.class, () -> gameService.makeRoom("nickname"));
     }
+
+    @Test
+    public void enterRoom() {
+        // 이미 생성되어 있는 방에만 입장할 수 있음
+        String gameId = gameService.makeRoom("Player1");
+        boolean result = gameService.enterRoom(gameId, "Player2");
+
+        Assertions.assertThat(result).isTrue();
+    }
 }
