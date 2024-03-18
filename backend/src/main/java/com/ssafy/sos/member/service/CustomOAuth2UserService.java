@@ -1,5 +1,9 @@
 package com.ssafy.sos.member.service;
 
+import com.ssafy.sos.member.OAuth2Response.GoogleResponse;
+import com.ssafy.sos.member.OAuth2Response.KakaoResponse;
+import com.ssafy.sos.member.OAuth2Response.NaverResponse;
+import com.ssafy.sos.member.OAuth2Response.OAuth2Response;
 import com.ssafy.sos.member.domain.*;
 import com.ssafy.sos.member.repository.UserRepository;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;

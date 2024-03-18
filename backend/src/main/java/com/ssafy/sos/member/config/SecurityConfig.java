@@ -1,13 +1,10 @@
 package com.ssafy.sos.member.config;
 
-import com.ssafy.sos.member.CustomOAuth2FailHandler;
 import com.ssafy.sos.member.CustomSuccessHandler;
-import com.ssafy.sos.member.JWTFilter;
-import com.ssafy.sos.member.JWTUtil;
+import com.ssafy.sos.member.jwt.JWTFilter;
+import com.ssafy.sos.member.jwt.JWTUtil;
 import com.ssafy.sos.member.service.CustomOAuth2UserService;
 import jakarta.servlet.http.HttpServletRequest;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,8 +12,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
-import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -75,10 +70,13 @@ public class SecurityConfig {
                 );
 
         //경로별 인가 작업
-        http
-                .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/**").permitAll()
-                        .anyRequest().authenticated());
+//        http
+//                .authorizeHttpRequests((auth) -> auth
+//                        .requestMatchers("/**").permitAll()
+//                        .anyRequest().authenticated());
+
+        http.authorizeHttpRequests((auth) -> auth.anyRequest().permitAll());
+
 //        http
 //                .authorizeHttpRequests((auth) -> auth
 //                        .requestMatchers("/*").permitAll());
@@ -97,6 +95,7 @@ public class SecurityConfig {
                         CorsConfiguration configuration = new CorsConfiguration();
 
                         configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                        configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setAllowedHeaders(Collections.singletonList("*"));

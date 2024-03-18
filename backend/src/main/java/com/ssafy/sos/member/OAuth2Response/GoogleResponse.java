@@ -1,4 +1,4 @@
-package com.ssafy.sos.member.domain;
+package com.ssafy.sos.member.OAuth2Response;
 
 import java.util.Map;
 

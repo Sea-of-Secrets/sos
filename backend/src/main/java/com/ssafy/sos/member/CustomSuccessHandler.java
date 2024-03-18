@@ -1,6 +1,7 @@
 package com.ssafy.sos.member;
 
 import com.ssafy.sos.member.domain.CustomOAuth2User;
+import com.ssafy.sos.member.jwt.JWTUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,8 +28,6 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException, IOException {
-        System.out.println("여긴가?");
-        System.out.println("CustomSuccessHandler.onAuthenticationSuccess");
         //OAuth2User
         CustomOAuth2User customUserDetails = (CustomOAuth2User) authentication.getPrincipal();
 

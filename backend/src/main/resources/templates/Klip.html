@@ -8,12 +8,14 @@
 <script src="/js/klipSDK-2.2.1.min.js" type="module"></script>
 <script type="module">
     let qrValue;
+
+    let selectedAddress;
     let currentAccount;
 
     const connectKlip = async () => {
         // Auth 요청해서 Request key 얻기
         try{
-            const bappName = 'Test BAPP'
+            const bappName = 'SOS'
             const successLink = ''
             const failLink = ''
             const result = await klipSDK.prepare.auth({bappName, successLink, failLink});
@@ -21,19 +23,34 @@
             } else if (result.request_key) {
                 // 얻은 request key를 url로 하는 QR 코드 생성하는 QRvalue SET STATE
                 qrValue = `https://klipwallet.com/?target=/a2a?request_key=${result.request_key}`;
-                alert(qrValue)
+
                 // Auth 요청 인증 결과를 받는 Result call polling
                 let timer = setInterval(() =>
                 {
                     axios.get(`https://a2a-api.klipwallet.com/v2/a2a/result?request_key=${result.request_key}`)
                         .then( async (response)=> {
                             if(response.data.status === "completed"){
-                                const selectedAddress = response.data.result.klaytn_address;
+                                selectedAddress = response.data.result.klaytn_address;
                                 currentAccount = response.data.result.klaytn_address;
+
+                                const body = {
+                                    address : selectedAddress,
+                                    account : currentAccount
+                                }
+
+                                //이후 로직 백엔드에 전달
+                                axios.post(`http://localhost:8080/nft/success`, body)
+                                    .then((response) => {
+                                        const wallet = response.data;
+
+                                        alert(JSON.stringify(wallet) + " 연동 성공")
+                                    })
+                                    .catch((e) => alert(e.message.value))
                             }
                         });
                 }, 1000);
             }
+
             return true;
         }
         catch (error) {
@@ -53,7 +70,7 @@
         qrcodeContainer.innerHTML = ''; // Clear previous QR code
         QRCode.toCanvas(qrValue, { width: 256 }, function (error, canvas) {
             if (error) console.error(error);
-            console.log("hi")
+
             qrcodeContainer.appendChild(canvas);
         });
     });

@@ -1,4 +1,4 @@
-package com.ssafy.sos.member.domain;
+package com.ssafy.sos.member.OAuth2Response;
 
 public interface OAuth2Response {
     //제공자 (Ex. naver, google, ...)
