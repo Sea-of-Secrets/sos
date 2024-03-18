@@ -473,9 +473,6 @@ public class Board {
         this.marineStartList = new int[] {
                 93, 94, 97, 106, 109, 200
         };
-
-        // 테스트용
-        this.gameMap = new HashMap<>();
-        this.gameMap.put("1", new Game());
+        
     }
 }
