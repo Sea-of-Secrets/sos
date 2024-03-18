@@ -473,6 +473,7 @@ public class Board {
         this.marineStartList = new int[] {
                 93, 94, 97, 106, 109, 200
         };
-        
+
+        this.gameMap = new HashMap<>();
     }
 }

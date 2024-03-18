@@ -4,6 +4,7 @@ import com.ssafy.sos.game.domain.Board;
 import com.ssafy.sos.game.domain.Game;
 import org.assertj.core.api.Assertions;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -25,7 +26,12 @@ class GameServiceImplTest {
     Game game;
 
     // 테스트용 gameId
-    String gameId = "1";
+    String gameId = "A710";
+
+    @BeforeEach
+    public void initGameMap() {
+        board.getGameMap().put(gameId, new Game(gameId));
+    }
 
     @Test
     // 보물섬 위치 지정
@@ -197,7 +203,7 @@ class GameServiceImplTest {
                 // 숫자를 세 자리 문자열로 변환하여 출력
                 String number = String.format("%03d", i);
                 String roomNumber = c + number;
-                board.getGameMap().put(roomNumber, new Game());
+                board.getGameMap().put(roomNumber, new Game(roomNumber));
             }
         }
 
