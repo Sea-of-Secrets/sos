@@ -222,4 +222,17 @@ class GameServiceImplTest {
         Assertions.assertThat(result).isTrue();
     }
 
+    @Test
+    public void arrest() {
+        // given
+        game = board.getGameMap().get(gameId);
+        game.getCurrentPosition()[0] = 1;
+
+        // when
+        boolean result = gameService.arrest(gameId, 1);
+
+        // then
+        Assertions.assertThat(result).isTrue();
+    }
+
 }

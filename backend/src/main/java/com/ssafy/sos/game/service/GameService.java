@@ -13,4 +13,5 @@ public interface GameService {
     HashMap<Integer, Deque<Integer>> findMarineAvailableNode(String gameId, int nodeNumber);
     boolean move(String gameId, int nodeNumber, int role);
     boolean investigate(String gameId, int nodeNumber, int role);
+    boolean arrest(String gameId, int nodeNumber);
 }
