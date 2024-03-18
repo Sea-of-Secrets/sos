@@ -72,8 +72,8 @@ export default function Node({
           onPointerOut={handlePointerOut}
         >
           <Box
-            args={[3, 2, 3]}
-            material-color={isNextMoveableNode ? "tomato" : "#888888"}
+            args={[7, 2, 7]}
+            material-color={isNextMoveableNode ? "tomato" : "blue"}
           >
             <Edges color="black" />
           </Box>
