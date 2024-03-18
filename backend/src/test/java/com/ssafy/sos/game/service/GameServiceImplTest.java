@@ -4,12 +4,14 @@ import com.ssafy.sos.game.domain.Board;
 import com.ssafy.sos.game.domain.Game;
 import org.assertj.core.api.Assertions;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.*;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 
@@ -24,7 +26,12 @@ class GameServiceImplTest {
     Game game;
 
     // 테스트용 gameId
-    String gameId = "1";
+    String gameId = "A710";
+
+    @BeforeEach
+    public void initGameMap() {
+        board.getGameMap().put(gameId, new Game(gameId));
+    }
 
     @Test
     // 보물섬 위치 지정
@@ -185,6 +192,31 @@ class GameServiceImplTest {
         // 해군2 이동 - 해적 노드로 이동하려는 경우
         Assertions.assertThat(gameService.move(gameId, 1, 2)).isFalse();
 
+    }
+
+    @Test
+    public void makeRoom() {
+        // gameMap에 이미 방 아이디가 꽉 찼을 때 -> 더 이상 방을 못 만들게 해야 함
+        for (char c = 'A'; c <= 'Z'; c++) {
+            // 숫자 000부터 999까지 반복문으로 생성
+            for (int i = 0; i <= 999; i++) {
+                // 숫자를 세 자리 문자열로 변환하여 출력
+                String number = String.format("%03d", i);
+                String roomNumber = c + number;
+                board.getGameMap().put(roomNumber, new Game(roomNumber));
+            }
+        }
+
+        assertThrows(RuntimeException.class, () -> gameService.makeRoom("nickname"));
+    }
+
+    @Test
+    public void enterRoom() {
+        // 이미 생성되어 있는 방에만 입장할 수 있음
+        String gameId = gameService.makeRoom("Player1");
+        boolean result = gameService.enterRoom(gameId, "Player2");
+
+        Assertions.assertThat(result).isTrue();
     }
 
     @Test
