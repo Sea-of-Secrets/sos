@@ -2,6 +2,7 @@ package com.ssafy.sos.game.service;
 
 import com.ssafy.sos.game.domain.Board;
 import com.ssafy.sos.game.domain.Game;
+import com.ssafy.sos.game.domain.Investigate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.*;
@@ -252,4 +253,45 @@ public class GameServiceImpl implements GameService {
         return true;
     }
 
+    @Override
+    public boolean investigate(String gameId, int nodeNumber, int role) {
+        Game game = board.getGameMap().get(gameId);
+        Investigate investigate = game.getInvestigate();
+
+        HashMap<Integer, Boolean> nodes = investigate.getNodes();
+        if (nodes == null) {
+            // 인접한 노드 중 해적 노드만 가져오기
+            int[] adjList = null;
+            if (role == 1 || role == 2 || role == 3) {
+                adjList = Arrays.stream(board.getGraph()[game.getCurrentPosition()[role]])
+                        .filter(adjacentNode -> adjacentNode < 200)
+                        .toArray();
+            } else {
+                throw new RuntimeException();
+            }
+
+            nodes = new HashMap<>();
+            for (int j : adjList) {
+                nodes.put(j, false);
+            }
+        }
+
+        nodes.put(nodeNumber, true);
+
+        // 조사 성공/실패
+        // 해적이 지나간 경로에 조사하려는 노드 번호가 포함되었을 경우 true 반환
+        if (game.getPirateRoute().contains(nodeNumber)) {
+            investigate.setSuccess(true);
+            return true;
+        } else {
+            investigate.setSuccess(false);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean arrest(String gameId, int nodeNumber) {
+        Game game = board.getGameMap().get(gameId);
+        return game.getCurrentPosition()[0] == nodeNumber;
+    }
 }

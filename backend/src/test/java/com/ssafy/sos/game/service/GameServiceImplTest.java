@@ -186,4 +186,53 @@ class GameServiceImplTest {
         Assertions.assertThat(gameService.move(gameId, 1, 2)).isFalse();
 
     }
+
+    @Test
+    public void getInvestigateList() {
+        // given
+        game = board.getGameMap().get(gameId);
+        int nodeNumber = 273;
+
+        // when
+        int[] adjList = Arrays.stream(board.getGraph()[nodeNumber])
+                .filter(adjacentNode -> adjacentNode < 200)
+                .toArray();
+        int[] comp1 = new int[]{60, 76, 262, 274};
+        int[] comp2 = new int[]{60, 76};
+
+        // then
+        Assertions.assertThat(Arrays.equals(adjList, comp1)).isFalse();
+        Assertions.assertThat(Arrays.equals(adjList, comp2)).isTrue();
+
+    }
+
+    @Test
+    public void investigate() {
+        // given
+        game = board.getGameMap().get(gameId);
+
+        int nodeNumber = 76;
+        game.getPirateRoute().add(76);
+        game.getCurrentPosition()[1] = 273;
+
+        // when
+        boolean result = gameService.investigate(gameId, nodeNumber, 1);
+
+        // then
+        Assertions.assertThat(result).isTrue();
+    }
+
+    @Test
+    public void arrest() {
+        // given
+        game = board.getGameMap().get(gameId);
+        game.getCurrentPosition()[0] = 1;
+
+        // when
+        boolean result = gameService.arrest(gameId, 1);
+
+        // then
+        Assertions.assertThat(result).isTrue();
+    }
+
 }

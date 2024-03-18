@@ -20,6 +20,7 @@ public class Game {
     private List<Integer> marineThreeRoute; // 해군3 이동 경로
     private int turn; // 현재 턴
     private int round; // 현재 라운드
+    private Investigate investigate;
 
     public Game() {
         this.currentPosition = new int[] {0, 0, 0, 0};
@@ -28,7 +29,8 @@ public class Game {
         this.marineOneRoute = new ArrayList<>();
         this.marineTwoRoute = new ArrayList<>();
         this.marineThreeRoute = new ArrayList<>();
-        players = new HashMap<>();
+        this.players = new HashMap<>();
+        this.investigate = new Investigate();
     }
 
 }
