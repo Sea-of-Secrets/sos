@@ -1,11 +1,11 @@
 "use client";
 
-import * as shopApi from "~/apis/shop";
+import * as ShopApi from "~/pages/shops";
 
 export default function HomeClient() {
   const handler = async () => {
     try {
-      const res = await shopApi.getProductList();
+      const res = await ShopApi.getProductList();
       console.log(res);
     } catch (e) {
       console.log("getProductList fetch error");
