@@ -20,6 +20,9 @@ export default function Home() {
       <Link href="http://localhost:8080/oauth2/authorization/google">
         google login
       </Link>
+      <Link href="http://localhost:8080/nft">
+        nft 관련 링크
+      </Link>
     </main>
   );
 }
