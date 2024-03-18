@@ -20,6 +20,13 @@ public class GameServiceImpl implements GameService {
         return currentPosition[1] == node || currentPosition[2] == node || currentPosition[3] == node;
     }
 
+    public static String generateRandomCode() {
+        Random random = new Random();
+        char randomAlphabet = (char) ('A' + random.nextInt(26));
+        int randomNumber = random.nextInt(1000);
+        return String.format("%c%03d", randomAlphabet, randomNumber);
+    }
+
     // 보물섬 위치 랜덤 지정
     @Override
     public int[] setPirateTreasure(String gameId) {
@@ -254,23 +261,53 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public boolean investigate(String gameId, int nodeNumber, int role) {
+    public String makeRoom(String nickname) {
+        // 방 번호 랜덤으로 생성 후 중복 검사
+        String gameId = "";
+        int cnt = 0;
+        do {
+            gameId = generateRandomCode();
+            cnt += 1;
+            if (cnt == 26 * 1000) throw new RuntimeException();
+        } while (
+                board.getGameMap().containsKey(gameId)
+        );
+
+        board.getGameMap().put(gameId, new Game(gameId));
+        board.getGameMap().get(gameId).getPlayers().put(nickname, -1);
+
+        return gameId;
+    }
+
+    @Override
+    public boolean enterRoom(String gameId, String nickname) {
         Game game = board.getGameMap().get(gameId);
 
-        // 인접한 노드 중 해적 노드만 가져오기
-        int[] adjList = null;
-        if (role == 1 || role == 2 || role == 3) {
-            adjList = Arrays.stream(board.getGraph()[game.getCurrentPosition()[role]])
-                    .filter(adjacentNode -> adjacentNode < 200)
-                    .toArray();
+        if (game != null) {
+            game.getPlayers().put(nickname, -1);
+            return true;
         } else {
-            throw new RuntimeException();
+            return false;
         }
+    }
 
+    @Override
+    public boolean investigate(String gameId, int nodeNumber, int role) {
+        Game game = board.getGameMap().get(gameId);
         Investigate investigate = game.getInvestigate();
 
         HashMap<Integer, Boolean> nodes = investigate.getNodes();
         if (nodes == null) {
+            // 인접한 노드 중 해적 노드만 가져오기
+            int[] adjList = null;
+            if (role == 1 || role == 2 || role == 3) {
+                adjList = Arrays.stream(board.getGraph()[game.getCurrentPosition()[role]])
+                        .filter(adjacentNode -> adjacentNode < 200)
+                        .toArray();
+            } else {
+                throw new RuntimeException();
+            }
+
             nodes = new HashMap<>();
             for (int j : adjList) {
                 nodes.put(j, false);
@@ -290,4 +327,9 @@ public class GameServiceImpl implements GameService {
         }
     }
 
+    @Override
+    public boolean arrest(String gameId, int nodeNumber) {
+        Game game = board.getGameMap().get(gameId);
+        return game.getCurrentPosition()[0] == nodeNumber;
+    }
 }
