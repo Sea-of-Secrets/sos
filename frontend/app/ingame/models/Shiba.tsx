@@ -8,7 +8,7 @@ import { Mesh } from "three";
 import usePiece from "~/store/piece";
 
 interface EdgeProps extends Omit<PrimitiveProps, "object"> {
-  position: number[];
+  position: [number, number];
 }
 
 export default function Shiba({ position, ...props }: EdgeProps) {

@@ -1,6 +1,6 @@
 import { GraphNode } from "./models/Node.types";
 
-export const nodeArr = [
+export const nodeArr: [number, number][] = [
   [-703, -496],
   [-583, -436],
   [-320, -450],

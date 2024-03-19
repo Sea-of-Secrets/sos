@@ -25,7 +25,8 @@
     "react-dom": "^18",
     "sass": "^1.71.1",
     "three": "^0.162.0",
-    "zustand": "^4.5.2"
+    "zustand": "^4.5.2",
+    "leva": "^0.9.35"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^6.4.2",
@@ -42,7 +43,6 @@
     "eslint-config-prettier": "^9.1.0",
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
-    "leva": "^0.9.35",
     "postcss": "^8.4.36",
     "prettier": "^3.2.5",
     "prettier-plugin-tailwindcss": "^0.5.12",

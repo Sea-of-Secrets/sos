@@ -3,7 +3,7 @@
 import style from "./EventHandler.module.scss";
 
 import React, { useState, useRef, useEffect } from "react";
-import { OrbitControls, CameraControls } from "@react-three/drei";
+import { CameraControls } from "@react-three/drei";
 import { Canvas, useFrame } from "@react-three/fiber";
 import TWEEN from "@tweenjs/tween.js";
 
@@ -18,6 +18,7 @@ import Map from "./models/Map";
 import Node from "./models/Node";
 import Edge from "./models/Edge";
 import Piece from "./models/Shiba";
+import PieceStarlight from "./models/PieceStarlight";
 
 import * as DUMMY_DATA from "../ingame/dummy-data";
 import { gameSocket } from "~/sockets";
@@ -81,9 +82,7 @@ export default function IngameClient({ gameId }: { gameId: string }) {
       >
         <Tween />
         <CameraControls ref={cameraControlRef} />
-        <directionalLight position={[1, 1, 1]} />
-        <ambientLight intensity={2} />
-        {/* <OrbitControls target={[0, 1, 0]} /> */}
+        <directionalLight color="#FFFFFF" intensity={1} position={[5, 5, 5]} />
         <axesHelper scale={10} />
         <IngameThree
           nextMoveableNodes={nextMoveableNodes}
@@ -153,6 +152,8 @@ function IngameThree({ nextMoveableNodes, nextNodeEdge }: any) {
 
       {/* Pieces */}
       <Piece position={DUMMY_DATA.nodeArr[107]} />
+      {/* TODO: 말이 잘 안보일 수 있으니 모든 플레이어의 말에 빛이나는 솔로 */}
+      <PieceStarlight position={DUMMY_DATA.nodeArr[107]} />
       <Map />
     </>
   );
