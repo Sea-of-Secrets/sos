@@ -55,9 +55,7 @@ public class MessageController {
         ServerMessage serverMessage = null;
         String gameId = null;
         if (message.getMessage().equals("MAKE_ROOM")) {
-            // TODO: member에서 sender로 nickname 가져오기
-            String nickname = "nickname";
-            gameId = gameService.makeRoom(nickname);
+            gameId = gameService.makeRoom(sender);
 
             if (gameId != null) {
                 serverMessage = ServerMessage.builder()
@@ -67,6 +65,23 @@ public class MessageController {
             }
         }
 
+        if (message.getMessage().equals("ENTER_ROOM")) {
+            gameId = message.getGameId();
+            if (gameService.enterRoom(gameId, sender)) {
+                serverMessage = ServerMessage.builder()
+                        .message("ENTER_SUCCESS")
+                        .gameId(gameId)
+                        .game(board.getGameMap().get(gameId))
+                        .build();
+            } else {
+                serverMessage = ServerMessage.builder()
+                        .message("ENTER_FAILURE")
+                        .gameId(gameId)
+                        .build();
+            }
+        }
+
+        System.out.println(serverMessage);
         if (serverMessage != null) {
             sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
         } else {
