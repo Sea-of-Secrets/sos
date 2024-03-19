@@ -20,15 +20,17 @@
     "@tweenjs/tween.js": "^23.1.1",
     "axios": "^1.6.8",
     "clsx": "^2.1.0",
+    "leva": "^0.9.35",
     "next": "14.1.2",
     "react": "^18",
     "react-dom": "^18",
     "sass": "^1.71.1",
     "three": "^0.162.0",
-    "zustand": "^4.5.2",
-    "leva": "^0.9.35"
+    "zustand": "^4.5.2"
   },
   "devDependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.0",
     "@testing-library/jest-dom": "^6.4.2",
     "@testing-library/react": "^14.2.1",
     "@types/jest": "^29.5.12",

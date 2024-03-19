@@ -13,6 +13,7 @@ import useCamera from "~/store/camera";
 import Loading from "./components/Loading";
 import Round from "./components/Round";
 import Turn from "./components/Turn";
+import SystemPrompt from "./components/SystemPrompt";
 
 import Map from "./models/Map";
 import Node from "./models/Node";
@@ -22,6 +23,7 @@ import PieceStarlight from "./models/PieceStarlight";
 
 import * as DUMMY_DATA from "../ingame/dummy-data";
 import { gameSocket } from "~/sockets";
+import YongSangYoonTestController from "./components/YongSangYoonTestController";
 
 const { connect, send, subscribe, disconnect } = gameSocket;
 
@@ -72,6 +74,7 @@ export default function IngameClient({ gameId }: { gameId: string }) {
       {loading && <Loading />}
       <Round topLeft={[60, 1]} />
       <Turn topLeft={[360, 1]} currentTurn={1} />
+      <SystemPrompt />
       <Canvas
         camera={{
           position: [0, 800, 500],
@@ -95,6 +98,7 @@ export default function IngameClient({ gameId }: { gameId: string }) {
         newNodeEdge={newNodeEdge}
         setNextNodeEdge={setNextNodeEdge}
       />
+      <YongSangYoonTestController />
     </>
   );
 }
