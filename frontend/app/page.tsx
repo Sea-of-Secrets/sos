@@ -12,15 +12,24 @@ export default function Home() {
       <Link className="button" href="/room">
         대기방으로
       </Link>
-      <Link href="http://localhost:8080/oauth2/authorization/naver">
+      <a
+        className="button"
+        href="http://localhost:8080/oauth2/authorization/naver"
+      >
         naver login
-      </Link>
-      <Link href="http://localhost:8080/oauth2/authorization/kakao">
+      </a>
+      <a
+        className="button"
+        href="http://localhost:8080/oauth2/authorization/kakao"
+      >
         kakao login
-      </Link>
-      <Link href="http://localhost:8080/oauth2/authorization/google">
+      </a>
+      <a
+        className="button"
+        href="http://localhost:8080/oauth2/authorization/google"
+      >
         google login
-      </Link>
+      </a>
       <HomeClient />
     </main>
   );
