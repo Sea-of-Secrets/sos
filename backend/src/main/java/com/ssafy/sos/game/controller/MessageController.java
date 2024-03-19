@@ -56,7 +56,7 @@ public class MessageController {
 
         if (message.getMessage().equals("ENTER_ROOM")) {
             gameId = message.getGameId();
-            if (gameService.enterRoom(gameId, sender)) {
+            if (board.getRoomMap().get(gameId).getInRoomPlayers().containsKey(sender)) {
                 serverMessage = ServerMessage.builder()
                         .message("ENTER_SUCCESS")
                         .gameId(gameId)

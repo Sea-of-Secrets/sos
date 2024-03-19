@@ -286,15 +286,14 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public boolean enterRoom(String gameId, String nickname) {
-        Game game = board.getGameMap().get(gameId);
+    public Room enterRoom(String gameId, String nickname) {
+        Room room = board.getRoomMap().get(gameId);
 
-        if (game != null) {
-            game.getPlayers().put(nickname, -1);
-            return true;
-        } else {
-            return false;
+        // 방이 다 차있지 않으면
+        if (room.getInRoomPlayers().size() < 4) {
+            room.getInRoomPlayers().put(nickname, false);
         }
+        return room;
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.ssafy.sos.game.domain;
 import lombok.Data;
 
 @Data
-public class MakeRoomRequest {
+public class RoomRequest {
     private String nickname;
+    private String gameId;
 }
