@@ -1,5 +1,6 @@
 import Link from "next/link";
 import style from "./page.module.scss";
+import HomeClient from "./HomeClient";
 
 export default function Home() {
   return (
@@ -20,6 +21,7 @@ export default function Home() {
       <Link href="http://localhost:8080/oauth2/authorization/google">
         google login
       </Link>
+      <HomeClient />
     </main>
   );
 }

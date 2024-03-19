@@ -1,7 +1,5 @@
 FROM openjdk:17-alpine
 
-ARG JAR_FILE=build/libs/*.jar
+ADD ./build/libs/*.jar app.jar
 
-COPY ${JAR_FILE} back-end.jar
-
-ENTRYPOINT ["java", "-jar", "/back-end.jar"]
+ENTRYPOINT ["java", "-jar", "/app.jar"]

@@ -20,6 +20,9 @@ import Edge from "./models/Edge";
 import Piece from "./models/Shiba";
 
 import * as DUMMY_DATA from "../ingame/dummy-data";
+import { gameSocket } from "~/sockets";
+
+const { connect, send, subscribe, disconnect } = gameSocket;
 
 // TODO: Canvas만 로딩됐다고 끝이 아니라 안에 모델, 텍스쳐도 다 로딩이 되어야함.
 // 나중에 이 로딩을 상태관리로 만들자.
@@ -55,6 +58,14 @@ export default function IngameClient({ gameId }: { gameId: string }) {
     setCamera(cameraControlRef.current);
   }, [cameraControlRef.current]);
 
+  useEffect(() => {
+    connect;
+
+    return () => {
+      disconnect;
+    };
+  }, []);
+
   return (
     <>
       {loading && <Loading />}
@@ -72,7 +83,7 @@ export default function IngameClient({ gameId }: { gameId: string }) {
         <CameraControls ref={cameraControlRef} />
         <directionalLight position={[1, 1, 1]} />
         <ambientLight intensity={2} />
-        <OrbitControls target={[0, 1, 0]} />
+        {/* <OrbitControls target={[0, 1, 0]} /> */}
         <axesHelper scale={10} />
         <IngameThree
           nextMoveableNodes={nextMoveableNodes}
