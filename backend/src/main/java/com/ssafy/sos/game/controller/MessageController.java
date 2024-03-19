@@ -187,6 +187,39 @@ public class MessageController {
         }
     }
 
+    @MessageMapping("/increase")
+    public void turnRoundIncrease(ClientMessage message) {
+        System.out.println(message);
+        String gameId = message.getGameId();
+        Game game = board.getGameMap().get(gameId);
+
+        ServerMessage serverMessage = null;
+        if (message.getMessage().equals("INCREASE_TURN")) {
+            game.increaseTurn();
+            serverMessage = ServerMessage.builder()
+                    .gameId(gameId)
+                    .message("INCREASE_TURN")
+                    .game(game)
+                    .build();
+        }
+
+        if (message.getMessage().equals("INCREASE_ROUND")) {
+            game.increaseRound();
+            serverMessage = ServerMessage.builder()
+                    .gameId(gameId)
+                    .message("INCREASE_ROUND")
+                    .game(game)
+                    .build();
+        }
+
+        System.out.println(serverMessage);
+        if (serverMessage != null) {
+            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+        } else {
+            throw new RuntimeException();
+        }
+    }
+
     //서버 타이머  제공
     @Scheduled(fixedRate = 1000)
     public void sendServerTime() throws Exception {

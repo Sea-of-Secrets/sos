@@ -305,6 +305,7 @@ public class GameServiceImpl implements GameService {
         room.getInRoomPlayers().add(nickname);
         room.setGameMode(gameMode);
 
+        System.out.println("Room Number: " + gameId);
         return room;
     }
 
@@ -360,4 +361,5 @@ public class GameServiceImpl implements GameService {
         Game game = board.getGameMap().get(gameId);
         return game.getCurrentPosition()[0] == nodeNumber;
     }
+
 }

@@ -36,4 +36,12 @@ public class Game {
         this.investigate = new Investigate();
     }
 
+    public void increaseTurn() {
+        this.turn++;
+    }
+
+    public void increaseRound() {
+        this.round++;
+    }
+
 }
