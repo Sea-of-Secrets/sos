@@ -15,7 +15,6 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
@@ -48,26 +47,16 @@ public class MessageController {
     }
 
     @MessageMapping("/room")
-    public void makeRoom(ClientMessage message) throws Exception {
+    public void makeRoom(ClientMessage message) {
         System.out.println(message);
         String sender = message.getSender();
 
         ServerMessage serverMessage = null;
         String gameId = null;
-        if (message.getMessage().equals("MAKE_ROOM")) {
-            gameId = gameService.makeRoom(sender);
-
-            if (gameId != null) {
-                serverMessage = ServerMessage.builder()
-                        .message("MAKE_ROOM")
-                        .gameId(gameId)
-                        .build();
-            }
-        }
 
         if (message.getMessage().equals("ENTER_ROOM")) {
             gameId = message.getGameId();
-            if (gameService.enterRoom(gameId, sender)) {
+            if (board.getRoomMap().get(gameId).getInRoomPlayers().containsKey(sender)) {
                 serverMessage = ServerMessage.builder()
                         .message("ENTER_SUCCESS")
                         .gameId(gameId)
@@ -91,7 +80,7 @@ public class MessageController {
     }
 
     @MessageMapping("/init")
-    public void init(ClientInitMessage message) throws Exception {
+    public void init(ClientInitMessage message) {
 
         System.out.println(message);
         String gameId = message.getGameId();
