@@ -1,5 +1,8 @@
 package com.ssafy.sos.member.domain;
 
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
@@ -7,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
+@Getter @Setter
 public class CustomOAuth2User implements OAuth2User {
     private final UserDTO memberDto;
 

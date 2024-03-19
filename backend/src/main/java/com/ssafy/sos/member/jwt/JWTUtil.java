@@ -1,8 +1,6 @@
 package com.ssafy.sos.member.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -53,7 +51,16 @@ public class JWTUtil {
                 .compact();
     }
 
-//    public String getCategory(String token) {
-//        return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("category", String.class);
-//    }
+    public String getCategory(String token) {
+        try {
+            Jws<Claims> jws = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+
+            return jws.getBody().get("category", String.class);
+        } catch (JwtException e) {
+           return null;
+        }
+    }
 }

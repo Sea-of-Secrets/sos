@@ -2,6 +2,7 @@ package com.ssafy.sos.member;
 
 import com.ssafy.sos.member.domain.CustomOAuth2User;
 import com.ssafy.sos.member.jwt.JWTUtil;
+import io.jsonwebtoken.Jwts;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,8 +40,14 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         GrantedAuthority auth = iterator.next();
         String role = auth.getAuthority();
 
+        //토큰생성
+        //access 10분
+        //refresh 24시간
         String access = jwtUtil.createJwt("access", username, role, 600000L);
         String refresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
+
+        System.out.println("access = " + access);
+        System.out.println("refresh = " + refresh);
 
         response.setHeader("access", access);
         response.addCookie(createCookie("refresh", refresh));
@@ -53,7 +60,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(24*60*60);
         //cookie.setSecure(true);
-//        cookie.setPath("/");
+        cookie.setPath("/");
         cookie.setHttpOnly(true);
 
         return cookie;
