@@ -20,6 +20,13 @@ public class GameServiceImpl implements GameService {
         return currentPosition[1] == node || currentPosition[2] == node || currentPosition[3] == node;
     }
 
+    public static String generateRandomCode() {
+        Random random = new Random();
+        char randomAlphabet = (char) ('A' + random.nextInt(26));
+        int randomNumber = random.nextInt(1000);
+        return String.format("%c%03d", randomAlphabet, randomNumber);
+    }
+
     // 보물섬 위치 랜덤 지정
     @Override
     public int[] setPirateTreasure(String gameId) {
@@ -251,6 +258,37 @@ public class GameServiceImpl implements GameService {
         }
 
         return true;
+    }
+
+    @Override
+    public String makeRoom(String nickname) {
+        // 방 번호 랜덤으로 생성 후 중복 검사
+        String gameId = "";
+        int cnt = 0;
+        do {
+            gameId = generateRandomCode();
+            cnt += 1;
+            if (cnt == 26 * 1000) throw new RuntimeException();
+        } while (
+                board.getGameMap().containsKey(gameId)
+        );
+
+        board.getGameMap().put(gameId, new Game(gameId));
+        board.getGameMap().get(gameId).getPlayers().put(nickname, -1);
+
+        return gameId;
+    }
+
+    @Override
+    public boolean enterRoom(String gameId, String nickname) {
+        Game game = board.getGameMap().get(gameId);
+
+        if (game != null) {
+            game.getPlayers().put(nickname, -1);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     @Override

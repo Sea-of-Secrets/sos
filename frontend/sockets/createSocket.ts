@@ -1,4 +1,4 @@
-import { Client } from "@stomp/stompjs";
+import { Client, StompSubscription, messageCallbackType } from "@stomp/stompjs";
 
 // TODO: env 처리해야한다.
 const SERVER_END_POINT = "ws://localhost:8080";
@@ -50,7 +50,7 @@ export const createSocket = () => {
     });
   };
 
-  const subscribe = (destination: string, cb: () => void) => {
+  const subscribe = (destination: string, cb: messageCallbackType) => {
     if (!stomp) {
       throw new Error("socket이 연결되어있지 않아요");
     }

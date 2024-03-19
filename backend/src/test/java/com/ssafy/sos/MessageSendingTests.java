@@ -32,7 +32,7 @@ public class MessageSendingTests {
 
     @BeforeEach
     public void initGameMap() {
-        board.getGameMap().put(gameId, new Game());
+        board.getGameMap().put(gameId, new Game(gameId));
     }
 
     @Test

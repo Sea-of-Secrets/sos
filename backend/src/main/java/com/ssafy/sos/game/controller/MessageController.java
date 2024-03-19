@@ -47,6 +47,49 @@ public class MessageController {
         sendingOperations.convertAndSend("/sub", message);
     }
 
+    @MessageMapping("/room")
+    public void makeRoom(ClientMessage message) throws Exception {
+        System.out.println(message);
+        String sender = message.getSender();
+
+        ServerMessage serverMessage = null;
+        String gameId = null;
+        if (message.getMessage().equals("MAKE_ROOM")) {
+            gameId = gameService.makeRoom(sender);
+
+            if (gameId != null) {
+                serverMessage = ServerMessage.builder()
+                        .message("MAKE_ROOM")
+                        .gameId(gameId)
+                        .build();
+            }
+        }
+
+        if (message.getMessage().equals("ENTER_ROOM")) {
+            gameId = message.getGameId();
+            if (gameService.enterRoom(gameId, sender)) {
+                serverMessage = ServerMessage.builder()
+                        .message("ENTER_SUCCESS")
+                        .gameId(gameId)
+                        .game(board.getGameMap().get(gameId))
+                        .build();
+            } else {
+                serverMessage = ServerMessage.builder()
+                        .message("ENTER_FAILURE")
+                        .gameId(gameId)
+                        .build();
+            }
+        }
+
+        System.out.println(serverMessage);
+        if (serverMessage != null) {
+            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+        } else {
+            throw new RuntimeException();
+        }
+
+    }
+
     @MessageMapping("/init")
     public void init(ClientInitMessage message) throws Exception {
 

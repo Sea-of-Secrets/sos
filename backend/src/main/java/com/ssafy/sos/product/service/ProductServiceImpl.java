@@ -1,5 +1,6 @@
 package com.ssafy.sos.product.service;
 
+import com.ssafy.sos.product.domain.Product;
 import com.ssafy.sos.product.domain.ProductDTO;
 import com.ssafy.sos.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -16,5 +17,10 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     public List<ProductDTO> getProductList() {
         return productRepository.findAllProducts();
+    }
+
+    @Override
+    public Product registerProduct(Product product) {
+        return productRepository.save(product);
     }
 }
