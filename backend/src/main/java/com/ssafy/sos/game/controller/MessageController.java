@@ -117,7 +117,7 @@ public class MessageController {
             }
         }
     }
-
+    
     @MessageMapping("/init")
     public void init(ClientInitMessage message) {
 
