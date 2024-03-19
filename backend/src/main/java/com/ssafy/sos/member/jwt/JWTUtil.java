@@ -63,4 +63,16 @@ public class JWTUtil {
            return null;
         }
     }
+//
+//    public RefreshToken save(String username, String refresh) {
+//        //redis에 저장
+//        UserEntity userEntity = userRepository.findByUsername(username);
+//        RefreshToken refreshToken = new RefreshToken();
+//        refreshToken.setUserId(userEntity.getId());
+//        refreshToken.setRole(userEntity.getRole());
+//        refreshToken.setToken(refresh);
+//        refreshToken.setTtl(86400000L);
+//
+//        return refreshTokenRepository.save(refreshToken);
+//    }
 }

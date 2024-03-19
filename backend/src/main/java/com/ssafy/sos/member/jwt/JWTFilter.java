@@ -2,15 +2,15 @@ package com.ssafy.sos.member.jwt;
 
 import com.ssafy.sos.member.domain.CustomOAuth2User;
 import com.ssafy.sos.member.domain.UserDTO;
-import com.ssafy.sos.member.domain.UserEntity;
+import com.ssafy.sos.member.repository.BlackTokenRepository;
+import com.ssafy.sos.member.service.JWTService;
 import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.checkerframework.checker.units.qual.C;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,14 +19,12 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+@RequiredArgsConstructor
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
+    private final JWTService jwtService;
 
-    public JWTFilter(JWTUtil jwtUtil) {
-
-        this.jwtUtil = jwtUtil;
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, IOException {
@@ -76,16 +74,13 @@ public class JWTFilter extends OncePerRequestFilter {
             if (cookies == null) {
                 System.out.println("access은 이상하고, refresh는 없음. 로그인 해야함");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.sendRedirect("http://localhost:3000");
+//                response.sendRedirect("http://localhost:3000");
 
                 return;
             }
 
             for (Cookie cookie : cookies) {
-
-                System.out.println(cookie.getName());
                 if (cookie.getName().equals("refresh")) {
-
                     refresh = cookie.getValue();
                 }
             }
@@ -96,12 +91,30 @@ public class JWTFilter extends OncePerRequestFilter {
                 PrintWriter writer = response.getWriter();
                 writer.print("do login");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.sendRedirect("http://localhost:3000");
+//                response.sendRedirect("http://localhost:3000");
 
                 System.out.println("access은 이상하고, refresh는 없음. 로그인 해야함");
 
                 //조건이 해당되면 메소드 종료 (필수)
                 return;
+            }
+
+            BlackToken blackToken1 = jwtService.blackFindByToken(refresh);
+            System.out.println("blackToken1 = " + blackToken1);
+            if (blackToken1 != null) {
+                //블랙토큰인지 확인
+                if (blackToken1.isBlacked()) {
+                    //이미 사용한 토큰
+                    PrintWriter writer = response.getWriter();
+                    writer.print("do login");
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                response.sendRedirect("http://localhost:3000");
+
+                    System.out.println("이미 사용한 refresh. 다시 로그인해야함.");
+
+                    //조건이 해당되면 메소드 종료 (필수)
+                    return;
+                }
             }
 
             //토큰 소멸 시간 검증
@@ -110,7 +123,7 @@ public class JWTFilter extends OncePerRequestFilter {
                 PrintWriter writer = response.getWriter();
                 writer.print("do login");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                response.sendRedirect("http://localhost:3000");
+//                response.sendRedirect("http://localhost:3000");
 
                 System.out.println("refresh만료. 로그인 해야함");
 
@@ -118,7 +131,38 @@ public class JWTFilter extends OncePerRequestFilter {
                 return;
             }
 
-            System.out.println("여기냐?");
+            RefreshToken byToken = jwtService.findByToken(refresh);
+            if (byToken == null) {
+                //refresh 불일치
+                PrintWriter writer = response.getWriter();
+                writer.print("do login");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                response.sendRedirect("http://localhost:3000");
+                return;
+            }
+
+            System.out.println("findByToken.getToken() = " + byToken.getToken());
+
+            if (!byToken.getToken().equals(refresh)) {
+                System.out.println("refresh 토큰 불일치");
+                //refresh 불일치
+                PrintWriter writer = response.getWriter();
+                writer.print("refresh 토큰 불일치");
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//                response.sendRedirect("http://localhost:3000");
+                return;
+            }
+
+            /*
+            ******************************************
+             ******************************************
+             * ******************************************
+             * ******************************************
+             * ******************************************
+             * ******************************************
+             * ******************************************
+             * ******************************************
+             */
             //재발급 로직
             String username = jwtUtil.getUsername(refresh);
             String role = jwtUtil.getRole(refresh);
@@ -145,6 +189,14 @@ public class JWTFilter extends OncePerRequestFilter {
 
             Authentication authToken = new UsernamePasswordAuthenticationToken(userDto, null, userDto.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authToken);
+
+            jwtService.save(username, newRefresh);
+
+            //블랙 리스트 토큰 지정
+            BlackToken blackToken = new BlackToken();
+            blackToken.setToken(refresh);
+            blackToken.setBlacked(true);
+            jwtService.blackTokenSave(blackToken);
 
             filterChain.doFilter(request, response);
         }

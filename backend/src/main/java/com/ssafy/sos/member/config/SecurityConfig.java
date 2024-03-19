@@ -4,7 +4,9 @@ import com.ssafy.sos.member.CustomSuccessHandler;
 import com.ssafy.sos.member.jwt.JWTFilter;
 import com.ssafy.sos.member.jwt.JWTUtil;
 import com.ssafy.sos.member.service.CustomOAuth2UserService;
+import com.ssafy.sos.member.service.JWTService;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,18 +23,13 @@ import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
     private final JWTUtil jwtUtil;
-
-    public SecurityConfig(CustomOAuth2UserService customOAuth2UserService, CustomSuccessHandler customSuccessHandler, JWTUtil jwtUtil) {
-
-        this.customOAuth2UserService = customOAuth2UserService;
-        this.customSuccessHandler = customSuccessHandler;
-        this.jwtUtil = jwtUtil;
-    }
+    private final JWTService jwtService;
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
@@ -58,7 +55,7 @@ public class SecurityConfig {
 //        //JWTFilter 추가
         //임시로 없앰
         http
-                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JWTFilter(jwtUtil, jwtService), UsernamePasswordAuthenticationFilter.class);
 
 
         //oauth2

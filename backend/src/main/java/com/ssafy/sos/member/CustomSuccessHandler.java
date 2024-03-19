@@ -2,11 +2,15 @@ package com.ssafy.sos.member;
 
 import com.ssafy.sos.member.domain.CustomOAuth2User;
 import com.ssafy.sos.member.jwt.JWTUtil;
+import com.ssafy.sos.member.repository.RefreshTokenRepository;
+import com.ssafy.sos.member.repository.UserRepository;
+import com.ssafy.sos.member.service.JWTService;
 import io.jsonwebtoken.Jwts;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
@@ -19,14 +23,11 @@ import java.util.Collection;
 import java.util.Iterator;
 
 @Component
+@RequiredArgsConstructor
 public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JWTUtil jwtUtil;
-
-    @Autowired
-    public CustomSuccessHandler(JWTUtil jwtUtil) {
-        this.jwtUtil = jwtUtil;
-    }
+    private final JWTService jwtService;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException, IOException {
@@ -53,6 +54,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         response.addCookie(createCookie("refresh", refresh));
         response.setStatus(HttpStatus.OK.value());
         response.sendRedirect("http://localhost:3000/");
+
+        jwtService.save(username, refresh);
     }
 
     private Cookie createCookie(String key, String value) {
