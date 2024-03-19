@@ -274,13 +274,10 @@ public class GameServiceImpl implements GameService {
                 board.getGameMap().containsKey(gameId)
         );
 
-//        board.getGameMap().put(gameId, new Game(gameId));
-//        board.getGameMap().get(gameId).getPlayers().put(nickname, -1);
-
         board.getRoomMap().put(gameId, new Room(gameId));
         Room room = board.getRoomMap().get(gameId);
         room.setHost(nickname);
-        room.getInRoomPlayers().put(nickname, false);
+        room.getInRoomPlayers().add(nickname);
 
         return room;
     }
@@ -291,7 +288,7 @@ public class GameServiceImpl implements GameService {
 
         // 방이 다 차있지 않으면
         if (room.getInRoomPlayers().size() < 4) {
-            room.getInRoomPlayers().put(nickname, false);
+            room.getInRoomPlayers().add(nickname);
         }
         return room;
     }

@@ -2,6 +2,7 @@ package com.ssafy.sos.game.controller;
 
 import com.ssafy.sos.game.domain.Board;
 import com.ssafy.sos.game.domain.Game;
+import com.ssafy.sos.game.domain.Room;
 import com.ssafy.sos.game.message.client.ClientMessage;
 import com.ssafy.sos.game.message.client.ClientInitMessage;
 import com.ssafy.sos.game.message.client.ClientMoveMessage;
@@ -56,7 +57,8 @@ public class MessageController {
 
         if (message.getMessage().equals("ENTER_ROOM")) {
             gameId = message.getGameId();
-            if (board.getRoomMap().get(gameId).getInRoomPlayers().containsKey(sender)) {
+
+            if (board.getRoomMap().get(gameId).getInRoomPlayers().contains(sender)) {
                 serverMessage = ServerMessage.builder()
                         .message("ENTER_SUCCESS")
                         .gameId(gameId)
@@ -77,6 +79,15 @@ public class MessageController {
             throw new RuntimeException();
         }
 
+        // 정원이 다 찼을 경우 시작버튼 활성화 broadcast
+        Room room = board.getRoomMap().get(gameId);
+        if (room.getInRoomPlayers().size() == 4) {
+            serverMessage = ServerMessage.builder()
+                    .message("PREPARE_GAME_START")
+                    .build();
+
+            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+        }
     }
 
     @MessageMapping("/init")
