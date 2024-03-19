@@ -20,7 +20,8 @@ public class RoomController {
 
     @PostMapping("/make")
     public ResponseEntity<Room> makeRoom(@RequestBody RoomRequest roomRequest) {
-        Room room = gameService.makeRoom(roomRequest.getNickname());
+        Room room = gameService.makeRoom(roomRequest.getNickname(), roomRequest.getGameMode());
+        System.out.println(room.getGameMode());
         return ResponseEntity.ok(room);
     }
 

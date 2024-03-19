@@ -28,6 +28,31 @@ public class GameServiceImpl implements GameService {
         return String.format("%c%03d", randomAlphabet, randomNumber);
     }
 
+    @Override
+    public void gameStart(String gameId) {
+        game = new Game(gameId);
+        board.getGameMap().put(gameId, game);
+        // 보물상자 위치 랜덤 지정
+        setPirateTreasure(gameId);
+
+        // 사용자별 역할 지정
+        List<Integer> random = Arrays.asList(0, 1, 2, 3);
+        Collections.shuffle(random);
+
+        Room room = board.getRoomMap().get(gameId);
+        List<String> roomPlayers = room.getInRoomPlayers();
+
+        if (room.getGameMode().equals("ONE_VS_ONE")) {
+            for (int i = 0; i < 2; i++) {
+                game.getPlayers().put(roomPlayers.get(i), random.get(i));
+            }
+        } else if (room.getGameMode().equals("ONE_VS_THREE")) {
+            for (int i = 0; i < 4; i++) {
+                game.getPlayers().put(roomPlayers.get(i), random.get(i));
+            }
+        }
+    }
+
     // 보물섬 위치 랜덤 지정
     @Override
     public int[] setPirateTreasure(String gameId) {
@@ -262,7 +287,7 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public Room makeRoom(String nickname) {
+    public Room makeRoom(String nickname, String gameMode) {
         // 방 번호 랜덤으로 생성 후 중복 검사
         String gameId;
         int cnt = 0;
@@ -278,6 +303,7 @@ public class GameServiceImpl implements GameService {
         Room room = board.getRoomMap().get(gameId);
         room.setHost(nickname);
         room.getInRoomPlayers().add(nickname);
+        room.setGameMode(gameMode);
 
         return room;
     }

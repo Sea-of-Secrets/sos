@@ -48,15 +48,15 @@ public class MessageController {
     }
 
     @MessageMapping("/room")
-    public void makeRoom(ClientMessage message) {
+    public void enterRoom(ClientMessage message) {
         System.out.println(message);
         String sender = message.getSender();
 
         ServerMessage serverMessage = null;
-        String gameId = null;
+        String gameId = message.getGameId();
+        Room room = board.getRoomMap().get(gameId);
 
         if (message.getMessage().equals("ENTER_ROOM")) {
-            gameId = message.getGameId();
 
             if (board.getRoomMap().get(gameId).getInRoomPlayers().contains(sender)) {
                 serverMessage = ServerMessage.builder()
@@ -70,23 +70,51 @@ public class MessageController {
                         .gameId(gameId)
                         .build();
             }
+
+            // 서버 메시지 출력
+            System.out.println(serverMessage);
+            if (serverMessage != null) {
+                sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            }
+
+            // 정원이 다 찼을 경우 시작버튼 활성화 broadcast
+            if (room.getInRoomPlayers().size() == 4) {
+                serverMessage = ServerMessage.builder()
+                        .message("PREPARE_GAME_START")
+                        .build();
+
+                sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            }
         }
 
         System.out.println(serverMessage);
         if (serverMessage != null) {
             sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
-        } else {
-            throw new RuntimeException();
         }
 
-        // 정원이 다 찼을 경우 시작버튼 활성화 broadcast
-        Room room = board.getRoomMap().get(gameId);
-        if (room.getInRoomPlayers().size() == 4) {
-            serverMessage = ServerMessage.builder()
-                    .message("PREPARE_GAME_START")
-                    .build();
+        // 렌더 완료 청취 - 4명 모두 완료시 게임 시작 안내
+        if (message.getMessage().equals("RENDERED_COMPLETE")) {
+            room.increaseIsRendered();
 
+            // 처음으로 렌더를 완료한 사용자가 등장한다면
+            if (room.getIsRendered() == 1) {
+                gameService.gameStart(gameId);
+            }
+            // 게임 정보 전송
+            Game game = board.getGameMap().get(gameId);
+            serverMessage = ServerMessage.builder()
+                    .message("RENDER_COMPLETE_ACCEPTED")
+                    .gameId(gameId)
+                    .game(game)
+                    .build();
             sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+
+            if (room.getIsRendered() == 4) {
+                serverMessage = ServerMessage.builder()
+                        .message("ALL_RENDERED_COMPLETED")
+                        .build();
+                sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            }
         }
     }
 
