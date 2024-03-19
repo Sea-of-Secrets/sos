@@ -279,6 +279,7 @@ public class GameServiceImpl implements GameService {
         room.setHost(nickname);
         room.getInRoomPlayers().add(nickname);
 
+        System.out.println("Room Number: " + gameId);
         return room;
     }
 
@@ -334,4 +335,5 @@ public class GameServiceImpl implements GameService {
         Game game = board.getGameMap().get(gameId);
         return game.getCurrentPosition()[0] == nodeNumber;
     }
+
 }
