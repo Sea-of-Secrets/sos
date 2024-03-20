@@ -88,6 +88,14 @@ public class MessageController {
             }
         }
 
+        // 게임 시작 버튼 클릭
+        if (message.getMessage().equals("GAME_START")) {
+            serverMessage = ServerMessage.builder()
+                    .message("GAME_START")
+                    .build();
+            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+        }
+
         // 렌더 완료 청취 - 4명 모두 완료시 게임 시작 안내
         if (message.getMessage().equals("RENDERED_COMPLETE")) {
             room.increaseIsRendered();
