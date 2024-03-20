@@ -3,11 +3,16 @@ package com.ssafy.sos.member.jwt;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
+import java.util.StringTokenizer;
 
 @Component
 public class JWTUtil {
@@ -62,5 +67,23 @@ public class JWTUtil {
         } catch (JwtException e) {
            return null;
         }
+    }
+
+    public long getExp(String token) throws JSONException {
+        StringTokenizer st = new StringTokenizer(token, ".");
+        String header = st.nextToken();
+        String payload = st.nextToken();
+        String signature = st.nextToken();
+
+        Base64.Decoder decoder = Base64.getDecoder();
+        byte[] decode = decoder.decode(payload);
+        // String으로 변환
+        String payloadString = new String(decode);
+
+        // JSON 파싱
+        JSONObject payloadJson = new JSONObject(payloadString);
+
+        // exp 값 추출
+        return payloadJson.getLong("exp");
     }
 }
