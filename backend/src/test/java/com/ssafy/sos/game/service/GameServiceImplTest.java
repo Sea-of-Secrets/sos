@@ -2,6 +2,7 @@ package com.ssafy.sos.game.service;
 
 import com.ssafy.sos.game.domain.Board;
 import com.ssafy.sos.game.domain.Game;
+import com.ssafy.sos.game.domain.Room;
 import org.assertj.core.api.Assertions;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -207,16 +208,16 @@ class GameServiceImplTest {
             }
         }
 
-        assertThrows(RuntimeException.class, () -> gameService.makeRoom("nickname"));
+        assertThrows(RuntimeException.class, () -> gameService.makeRoom("nickname", "ONE_VS_ONE"));
     }
 
     @Test
     public void enterRoom() {
         // 이미 생성되어 있는 방에만 입장할 수 있음
-        String gameId = gameService.makeRoom("Player1");
-        boolean result = gameService.enterRoom(gameId, "Player2");
+        Room room = gameService.makeRoom("Player1", "ONE_VS_ONE");
+        Room result = gameService.enterRoom(room.getGameId(), "Player2");
 
-        Assertions.assertThat(result).isTrue();
+        Assertions.assertThat(result.getInRoomPlayers().contains("Player2")).isTrue();
     }
 
     @Test
