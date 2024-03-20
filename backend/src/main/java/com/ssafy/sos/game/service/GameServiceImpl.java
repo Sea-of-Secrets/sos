@@ -72,7 +72,10 @@ public class GameServiceImpl implements GameService {
         }
 
         game = board.getGameMap().get(gameId);
-        game.setTreasures(treasures);
+        HashMap<Integer, Boolean> treauresMap = game.getTreasures();
+        for (int i=0; i<4; i++) {
+            treauresMap.put(treasures[i], false);
+        }
         return treasures;
     }
 
@@ -88,9 +91,11 @@ public class GameServiceImpl implements GameService {
     @Override
     public int initPirateRandomStart(String gameId) {
         game = board.getGameMap().get(gameId);
-        int[] treasures = game.getTreasures();
-        Random rand = new Random();
-        int nextNode = treasures[rand.nextInt(4)];
+        Set<Integer> treasures = game.getTreasures().keySet();
+
+        int randomIndex = new Random().nextInt(treasures.size());
+        int nextNode = treasures.stream().skip(randomIndex).findFirst().orElse(0);
+
         // getCurrentPosition 배열의 해적 위치[0]
         game.getCurrentPosition()[0] = nextNode;
         return nextNode;
@@ -329,13 +334,9 @@ public class GameServiceImpl implements GameService {
         if (nodes == null) {
             // 인접한 노드 중 해적 노드만 가져오기
             int[] adjList;
-            if (role == 1 || role == 2 || role == 3) {
-                adjList = Arrays.stream(board.getGraph()[game.getCurrentPosition()[role]])
-                        .filter(adjacentNode -> adjacentNode < 200)
-                        .toArray();
-            } else {
-                throw new RuntimeException();
-            }
+            adjList = Arrays.stream(board.getGraph()[game.getCurrentPosition()[role]])
+                    .filter(adjacentNode -> adjacentNode < 200)
+                    .toArray();
 
             nodes = new HashMap<>();
             for (int j : adjList) {
@@ -349,6 +350,7 @@ public class GameServiceImpl implements GameService {
         // 해적이 지나간 경로에 조사하려는 노드 번호가 포함되었을 경우 true 반환
         if (game.getPirateRoute().contains(nodeNumber)) {
             investigate.setSuccess(true);
+            game.getInvestigateSuccess().add(nodeNumber);
             return true;
         } else {
             investigate.setSuccess(false);
