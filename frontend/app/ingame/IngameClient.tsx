@@ -19,7 +19,7 @@ import Map from "./models/Map";
 import Node from "./models/Node";
 import Edge from "./models/Edge";
 import Piece from "./models/Shiba";
-import PieceStarlight from "./models/PieceStarlight";
+import PieceEffect from "./models/PieceEffect";
 
 import * as DUMMY_DATA from "../ingame/dummy-data";
 import { gameSocket } from "~/sockets";
@@ -156,8 +156,10 @@ function IngameThree({ nextMoveableNodes, nextNodeEdge }: any) {
 
       {/* Pieces */}
       <Piece position={DUMMY_DATA.nodeArr[107]} />
-      {/* TODO: 말이 잘 안보일 수 있으니 모든 플레이어의 말에 빛이나는 솔로 */}
-      <PieceStarlight position={DUMMY_DATA.nodeArr[107]} />
+      <PieceEffect
+        type="FOOTHOLD"
+        position={[DUMMY_DATA.nodeArr[107][0], DUMMY_DATA.nodeArr[107][1], 10]}
+      />
       <Map />
     </>
   );
