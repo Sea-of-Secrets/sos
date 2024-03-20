@@ -63,6 +63,7 @@ public class MessageController {
                         .message("ENTER_SUCCESS")
                         .gameId(gameId)
                         .game(board.getGameMap().get(gameId))
+                        .room(board.getRoomMap().get(gameId))
                         .build();
             } else {
                 serverMessage = ServerMessage.builder()
@@ -85,11 +86,6 @@ public class MessageController {
 
                 sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
             }
-        }
-
-        System.out.println(serverMessage);
-        if (serverMessage != null) {
-            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
         }
 
         // 렌더 완료 청취 - 4명 모두 완료시 게임 시작 안내
