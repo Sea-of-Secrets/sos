@@ -19,6 +19,7 @@ public class Board {
     private int[] marineStartList;
 
     private HashMap<String, Game> gameMap;
+    private HashMap<String, Room> roomMap;
 
     public Board() {
         this.graph = new int[][] {
@@ -475,5 +476,6 @@ public class Board {
         };
 
         this.gameMap = new HashMap<>();
+        this.roomMap = new HashMap<>();
     }
 }

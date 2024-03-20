@@ -2,6 +2,7 @@ package com.ssafy.sos.game.controller;
 
 import com.ssafy.sos.game.domain.Board;
 import com.ssafy.sos.game.domain.Game;
+import com.ssafy.sos.game.domain.Room;
 import com.ssafy.sos.game.message.client.ClientMessage;
 import com.ssafy.sos.game.message.client.ClientInitMessage;
 import com.ssafy.sos.game.message.client.ClientMoveMessage;
@@ -15,7 +16,6 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
@@ -48,30 +48,22 @@ public class MessageController {
     }
 
     @MessageMapping("/room")
-    public void makeRoom(ClientMessage message) throws Exception {
+    public void enterRoom(ClientMessage message) {
         System.out.println(message);
         String sender = message.getSender();
 
         ServerMessage serverMessage = null;
-        String gameId = null;
-        if (message.getMessage().equals("MAKE_ROOM")) {
-            gameId = gameService.makeRoom(sender);
-
-            if (gameId != null) {
-                serverMessage = ServerMessage.builder()
-                        .message("MAKE_ROOM")
-                        .gameId(gameId)
-                        .build();
-            }
-        }
+        String gameId = message.getGameId();
+        Room room = board.getRoomMap().get(gameId);
 
         if (message.getMessage().equals("ENTER_ROOM")) {
-            gameId = message.getGameId();
-            if (gameService.enterRoom(gameId, sender)) {
+
+            if (board.getRoomMap().get(gameId).getInRoomPlayers().contains(sender)) {
                 serverMessage = ServerMessage.builder()
                         .message("ENTER_SUCCESS")
                         .gameId(gameId)
                         .game(board.getGameMap().get(gameId))
+                        .room(board.getRoomMap().get(gameId))
                         .build();
             } else {
                 serverMessage = ServerMessage.builder()
@@ -79,19 +71,59 @@ public class MessageController {
                         .gameId(gameId)
                         .build();
             }
+
+            // 서버 메시지 출력
+            System.out.println(serverMessage);
+            if (serverMessage != null) {
+                sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            }
+
+            // 정원이 다 찼을 경우 시작버튼 활성화 broadcast
+            if (room.getInRoomPlayers().size() == 4) {
+                serverMessage = ServerMessage.builder()
+                        .message("PREPARE_GAME_START")
+                        .build();
+
+                sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            }
         }
 
-        System.out.println(serverMessage);
-        if (serverMessage != null) {
+        // 게임 시작 버튼 클릭
+        if (message.getMessage().equals("GAME_START")) {
+            serverMessage = ServerMessage.builder()
+                    .message("GAME_START")
+                    .build();
             sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
-        } else {
-            throw new RuntimeException();
         }
 
-    }
+        // 렌더 완료 청취 - 4명 모두 완료시 게임 시작 안내
+        if (message.getMessage().equals("RENDERED_COMPLETE")) {
+            room.increaseIsRendered();
 
+            // 처음으로 렌더를 완료한 사용자가 등장한다면
+            if (room.getIsRendered() == 1) {
+                gameService.gameStart(gameId);
+            }
+            // 게임 정보 전송
+            Game game = board.getGameMap().get(gameId);
+            serverMessage = ServerMessage.builder()
+                    .message("RENDER_COMPLETE_ACCEPTED")
+                    .gameId(gameId)
+                    .game(game)
+                    .build();
+            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+
+            if (room.getIsRendered() == 4) {
+                serverMessage = ServerMessage.builder()
+                        .message("ALL_RENDERED_COMPLETED")
+                        .build();
+                sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            }
+        }
+    }
+    
     @MessageMapping("/init")
-    public void init(ClientInitMessage message) throws Exception {
+    public void init(ClientInitMessage message) {
 
         System.out.println(message);
         String gameId = message.getGameId();
@@ -152,6 +184,39 @@ public class MessageController {
                     .build();
         }
 
+        if (serverMessage != null) {
+            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+        } else {
+            throw new RuntimeException();
+        }
+    }
+
+    @MessageMapping("/increase")
+    public void turnRoundIncrease(ClientMessage message) {
+        System.out.println(message);
+        String gameId = message.getGameId();
+        Game game = board.getGameMap().get(gameId);
+
+        ServerMessage serverMessage = null;
+        if (message.getMessage().equals("INCREASE_TURN")) {
+            game.increaseTurn();
+            serverMessage = ServerMessage.builder()
+                    .gameId(gameId)
+                    .message("INCREASE_TURN")
+                    .game(game)
+                    .build();
+        }
+
+        if (message.getMessage().equals("INCREASE_ROUND")) {
+            game.increaseRound();
+            serverMessage = ServerMessage.builder()
+                    .gameId(gameId)
+                    .message("INCREASE_ROUND")
+                    .game(game)
+                    .build();
+        }
+
+        System.out.println(serverMessage);
         if (serverMessage != null) {
             sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
         } else {
