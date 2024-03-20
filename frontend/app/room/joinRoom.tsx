@@ -1,38 +1,45 @@
-import React, { Fragment, useRef, useState } from "react";
+import React, { Fragment, useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
+import useNickname from "~/store/nickname";
+import { enterRoom } from "~/pages/rooms";
 
 interface CreateRoomProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isGuest: boolean;
 }
 
-export default function CreateRoom({ setOpen }: CreateRoomProps) {
+export default function CreateRoom({ setOpen, isGuest }: CreateRoomProps) {
   const router = useRouter();
   const cancelButtonRef = useRef(null);
-  const [roomCode, setRoomCode] = useState("");
+  const { nickname, setNickname } = useNickname();
+  const [gameId, setGameId] = useState("");
 
-  const handleConfirm = () => {
-    router.push(`/room/${roomCode}`);
+  const handleConfirm = async () => {
+    try {
+      const { data } = await enterRoom({ nickname, gameId });
+      console.log(data);
+
+      if (data === "ROOM_NOT_EXIST") {
+        alert("유효하지 않은 방 코드입니다.");
+      } else if (data === "ALREADY_FULLED") {
+        alert("정원이 초과된 방입니다.");
+      } else {
+        router.push(`/room/${gameId}`);
+        // window.location.href = `/room/${gameId}`;
+        // window.location.replace(`/room/${data.gameId}`);
+      }
+    } catch (e) {
+      alert("입장 실패");
+    }
   };
 
-  // TODO : 해당 방이 존재하고 입장 가능한 지 여부를 반환하는 api
-  // const handleConfirm = async () => {
-  //   if (roomCode.trim() === "") {
-  //     const response = await fetch(
-  //       `${process.env.NEXT_PUBLIC_BASE_URL}/games`,
-  //       {
-  //         method: "GET",
-  //         headers: {
-  //           "Content-Type": "application/json",
-  //         },
-  //       },
-  //     );
-  //     if (response.ok) {
-  //           router.push(`/room/${roomCode}`);
-  //         }
-  //     }
-  //   }
-  // };
+  useEffect(() => {
+    // 게스트인 경우 닉네임 초기화
+    if (isGuest) {
+      setNickname("");
+    }
+  }, []);
 
   return (
     <Transition.Root show={true} as={Fragment}>
@@ -74,13 +81,32 @@ export default function CreateRoom({ setOpen }: CreateRoomProps) {
                     >
                       입장하기
                     </Dialog.Title>
-                    <div className="mt-5">
+                    {isGuest && (
+                      <div className="flex items-center pb-3 gap-5 mt-5">
+                        <span className="text-md font-medium leading-6 text-gray-900 flex-none">
+                          닉네임 :
+                        </span>
+                        <input
+                          type="text"
+                          name="name"
+                          id="name"
+                          value={nickname}
+                          onChange={e => setNickname(e.target.value)}
+                          className="text-center block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          placeholder="닉네임을 입력하세요."
+                        />
+                      </div>
+                    )}
+                    <div className="flex items-center pb-3 gap-4 mt-3">
+                      <span className="text-md font-medium leading-6 text-gray-900 flex-none">
+                        방 코드 :
+                      </span>
                       <input
                         type="text"
                         name="roomCode"
                         id="roomCode"
-                        value={roomCode}
-                        onChange={e => setRoomCode(e.target.value)}
+                        value={gameId}
+                        onChange={e => setGameId(e.target.value)}
                         className="text-center block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                         placeholder="방 코드를 입력해주세요"
                       />

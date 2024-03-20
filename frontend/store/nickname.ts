@@ -1,13 +1,21 @@
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 
 interface NicknameState {
   nickname: string;
-  setNickname: (v: string) => void;
+  setNickname: (value: string) => void;
 }
 
-const useNickname = create<NicknameState>(set => ({
-  nickname: "",
-  setNickname: value => set({ nickname: value }),
-}));
+const useNickname = create<NicknameState>()(
+  persist(
+    set => ({
+      nickname: "",
+      setNickname: (value: string) => set({ nickname: value }),
+    }),
+    {
+      name: "nickname",
+    },
+  ),
+);
 
 export default useNickname;

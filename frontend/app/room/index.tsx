@@ -19,7 +19,7 @@ export default function Room() {
 
   useEffect(() => {
     // 게스트 여부 확인 api 요청
-  });
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-between p-5 gap-10">

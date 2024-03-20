@@ -1,6 +1,7 @@
-import React, { Fragment, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
+import { makeRoom } from "~/pages/rooms";
 import useNickname from "~/store/nickname";
 
 interface CreateRoomProps {
@@ -10,39 +11,37 @@ interface CreateRoomProps {
 
 export default function CreateRoom({ setOpen, isGuest }: CreateRoomProps) {
   const router = useRouter();
-  const { nickname, setNickname } = useNickname();
   const cancelButtonRef = useRef(null);
-  const [inputNicknameInput, setInputNickname] = useState("");
-  const [roomLimit, setRoomLimit] = useState("2인");
+  const { nickname, setNickname } = useNickname();
+  const [gameMode, setGameMode] = useState("ONE_VS_ONE");
   const notificationMethods = [
-    { id: "2인", title: "2인 (1:1)" },
-    { id: "4인", title: "4인 (1:3)" },
+    { id: "ONE_VS_ONE", title: "2인 (1:1)" },
+    { id: "ONE_VS_THREE", title: "4인 (1:3)" },
   ];
 
   const handleOptionChange = (event: {
     target: { value: React.SetStateAction<string> };
   }) => {
-    setRoomLimit(event.target.value);
+    setGameMode(event.target.value);
   };
 
   const handleConfirm = async () => {
-    if (isGuest) {
-      setNickname(inputNicknameInput);
-    }
-
-    const response = await fetch(`http://localhost:8080/room/make`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ nickname: nickname }),
-    });
-
-    if (response.ok) {
-      console.log(response);
-      // router.push(`/${response.data}`);
+    try {
+      const { data } = await makeRoom({ nickname, gameMode });
+      // window.location.href = `/room/${data.gameId}`;
+      // window.location.replace(`/room/${data.gameId}`);
+      router.push(`/room/${data.gameId}`);
+    } catch (e) {
+      alert("방 만들기 실패");
     }
   };
+
+  useEffect(() => {
+    // 게스트인 경우 닉네임 초기화
+    if (isGuest) {
+      setNickname("");
+    }
+  }, []);
 
   return (
     <Transition.Root show={true} as={Fragment}>
@@ -98,7 +97,9 @@ export default function CreateRoom({ setOpen, isGuest }: CreateRoomProps) {
                               id={notificationMethod.id}
                               name="notification-method"
                               type="radio"
-                              defaultChecked={notificationMethod.id === "2인"}
+                              defaultChecked={
+                                notificationMethod.id === "ONE_VS_ONE"
+                              }
                               value={notificationMethod.id}
                               onChange={handleOptionChange}
                               className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-600"
@@ -122,9 +123,9 @@ export default function CreateRoom({ setOpen, isGuest }: CreateRoomProps) {
                           type="text"
                           name="name"
                           id="name"
-                          value={inputNicknameInput}
-                          onChange={e => setInputNickname(e.target.value)}
-                          className="w-full text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+                          value={nickname}
+                          onChange={e => setNickname(e.target.value)}
+                          className="text-center block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                           placeholder="닉네임을 입력하세요."
                         />
                       </div>
