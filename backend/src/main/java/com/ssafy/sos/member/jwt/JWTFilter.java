@@ -11,6 +11,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,6 +21,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 @RequiredArgsConstructor
+@Slf4j
 public class JWTFilter extends OncePerRequestFilter {
 
     private final JWTUtil jwtUtil;
@@ -31,6 +33,7 @@ public class JWTFilter extends OncePerRequestFilter {
         String accessToken = request.getHeader("access");
 
         if (accessToken == null) {
+            log.debug("access token is null. Guest.");
             filterChain.doFilter(request, response);
             return;
         }
@@ -43,11 +46,11 @@ public class JWTFilter extends OncePerRequestFilter {
 
             //이상한 토큰일 경우
             if (!category.equals("access")) {
-
                 PrintWriter writer = response.getWriter();
                 writer.print("invalid access token");
-
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+                log.debug("invalid access token");
                 return;
             }
 
@@ -72,7 +75,7 @@ public class JWTFilter extends OncePerRequestFilter {
             String refresh = null;
             Cookie[] cookies = request.getCookies();
             if (cookies == null) {
-                System.out.println("access은 이상하고, refresh는 없음. 로그인 해야함");
+                log.debug("access is invalid. Cookies is null. Do login");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 //                response.sendRedirect("http://localhost:3000");
 
@@ -93,7 +96,7 @@ public class JWTFilter extends OncePerRequestFilter {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 //                response.sendRedirect("http://localhost:3000");
 
-                System.out.println("access은 이상하고, refresh는 없음. 로그인 해야함");
+                log.debug("access is invalid. refresh is null. Do login");
 
                 //조건이 해당되면 메소드 종료 (필수)
                 return;
@@ -110,7 +113,7 @@ public class JWTFilter extends OncePerRequestFilter {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 //                response.sendRedirect("http://localhost:3000");
 
-                    System.out.println("이미 사용한 refresh. 다시 로그인해야함.");
+                    log.debug("use blacked refresh token. Do login");
 
                     //조건이 해당되면 메소드 종료 (필수)
                     return;
@@ -125,7 +128,7 @@ public class JWTFilter extends OncePerRequestFilter {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
 //                response.sendRedirect("http://localhost:3000");
 
-                System.out.println("refresh만료. 로그인 해야함");
+                log.debug("refresh is expired. Do login");
 
                 //조건이 해당되면 메소드 종료 (필수)
                 return;
@@ -137,14 +140,14 @@ public class JWTFilter extends OncePerRequestFilter {
                 PrintWriter writer = response.getWriter();
                 writer.print("do login");
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+
+
 //                response.sendRedirect("http://localhost:3000");
                 return;
             }
 
-            System.out.println("findByToken.getToken() = " + byToken.getToken());
-
             if (!byToken.getToken().equals(refresh)) {
-                System.out.println("refresh 토큰 불일치");
+                log.debug("refresh token isn't equals.");
                 //refresh 불일치
                 PrintWriter writer = response.getWriter();
                 writer.print("refresh 토큰 불일치");
@@ -179,7 +182,7 @@ public class JWTFilter extends OncePerRequestFilter {
             refreshCookie.setPath("/");
             refreshCookie.setHttpOnly(true);
 
-            System.out.println("newRefresh = " + newRefresh);
+            log.debug("newRefresh = " + newRefresh);
             response.addCookie(refreshCookie);
 
             UserDTO userDTO = new UserDTO();
@@ -197,7 +200,7 @@ public class JWTFilter extends OncePerRequestFilter {
             blackToken.setToken(refresh);
             blackToken.setBlacked(true);
             jwtService.blackTokenSave(blackToken);
-
+            log.debug("black token saved.");
             filterChain.doFilter(request, response);
         }
     }

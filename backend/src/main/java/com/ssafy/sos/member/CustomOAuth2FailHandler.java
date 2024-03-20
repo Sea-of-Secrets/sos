@@ -18,8 +18,8 @@ import java.io.IOException;
 public class CustomOAuth2FailHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, IOException {
-        System.out.println("로그인 에러남");
+        log.debug("로그인 에러남");
 
-        response.getWriter().println("뭐냐이거 씨발 대체?");
+        response.getWriter().println("??????");
     }
 }
