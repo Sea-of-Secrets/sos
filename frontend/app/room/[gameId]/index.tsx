@@ -48,7 +48,7 @@ export default function Room() {
         setPlayers(data.room.inRoomPlayers);
 
         // 풀방 아님
-        setIsFull(true);
+        setIsFull(false);
 
         // 방장 여부 확인
         if (data.room.host == nickname) {
