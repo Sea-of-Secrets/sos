@@ -1,5 +1,6 @@
 package com.ssafy.sos.game.domain;
 
+import com.ssafy.sos.game.util.GameStatus;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ public class Game {
     private int turn; // 현재 턴
     private int round; // 현재 라운드
     private Investigate investigate;
+    private GameStatus gameStatus;
 
     public Game(String gameId) {
         this.gameId = gameId;
@@ -34,6 +36,7 @@ public class Game {
         this.round = 1;
         this.players = new HashMap<>();
         this.investigate = new Investigate();
+        this.gameStatus = GameStatus.BEFORE_START;
     }
 
     public void increaseTurn() {
