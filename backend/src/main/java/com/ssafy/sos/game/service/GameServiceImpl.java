@@ -3,6 +3,7 @@ package com.ssafy.sos.game.service;
 import com.ssafy.sos.game.domain.Board;
 import com.ssafy.sos.game.domain.Game;
 import com.ssafy.sos.game.domain.Investigate;
+import com.ssafy.sos.game.domain.Room;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.*;
@@ -261,9 +262,9 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public String makeRoom(String nickname) {
+    public Room makeRoom(String nickname) {
         // 방 번호 랜덤으로 생성 후 중복 검사
-        String gameId = "";
+        String gameId;
         int cnt = 0;
         do {
             gameId = generateRandomCode();
@@ -273,22 +274,24 @@ public class GameServiceImpl implements GameService {
                 board.getGameMap().containsKey(gameId)
         );
 
-        board.getGameMap().put(gameId, new Game(gameId));
-        board.getGameMap().get(gameId).getPlayers().put(nickname, -1);
+        board.getRoomMap().put(gameId, new Room(gameId));
+        Room room = board.getRoomMap().get(gameId);
+        room.setHost(nickname);
+        room.getInRoomPlayers().add(nickname);
 
-        return gameId;
+        System.out.println("Room Number: " + gameId);
+        return room;
     }
 
     @Override
-    public boolean enterRoom(String gameId, String nickname) {
-        Game game = board.getGameMap().get(gameId);
+    public Room enterRoom(String gameId, String nickname) {
+        Room room = board.getRoomMap().get(gameId);
 
-        if (game != null) {
-            game.getPlayers().put(nickname, -1);
-            return true;
-        } else {
-            return false;
+        // 방이 다 차있지 않으면
+        if (room.getInRoomPlayers().size() < 4) {
+            room.getInRoomPlayers().add(nickname);
         }
+        return room;
     }
 
     @Override
@@ -299,7 +302,7 @@ public class GameServiceImpl implements GameService {
         HashMap<Integer, Boolean> nodes = investigate.getNodes();
         if (nodes == null) {
             // 인접한 노드 중 해적 노드만 가져오기
-            int[] adjList = null;
+            int[] adjList;
             if (role == 1 || role == 2 || role == 3) {
                 adjList = Arrays.stream(board.getGraph()[game.getCurrentPosition()[role]])
                         .filter(adjacentNode -> adjacentNode < 200)
@@ -332,4 +335,5 @@ public class GameServiceImpl implements GameService {
         Game game = board.getGameMap().get(gameId);
         return game.getCurrentPosition()[0] == nodeNumber;
     }
+
 }

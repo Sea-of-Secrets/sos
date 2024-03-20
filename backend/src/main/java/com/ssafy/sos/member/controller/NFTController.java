@@ -10,6 +10,12 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/nft")
 public class NFTController {
 
+    @GetMapping
+    @ResponseBody
+    public ResponseEntity<?> nft() {
+        return ResponseEntity.status(HttpStatus.OK).body("nft 관련 페이지 입니다. 권한이 있으시네요~");
+    }
+
     @GetMapping("/qrcode")
     public String qrcode(Model model) {
 

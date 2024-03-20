@@ -1,16 +1,18 @@
 import React, { Fragment, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
+import useNickname from "~/store/nickname";
 
 interface CreateRoomProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   isGuest: boolean;
 }
 
-export default function CreateRoom({ setOpen }: CreateRoomProps) {
+export default function CreateRoom({ setOpen, isGuest }: CreateRoomProps) {
   const router = useRouter();
+  const { nickname, setNickname } = useNickname();
   const cancelButtonRef = useRef(null);
-  const [nickname, setNickname] = useState("");
+  const [inputNicknameInput, setInputNickname] = useState("");
   const [roomLimit, setRoomLimit] = useState("2인");
   const notificationMethods = [
     { id: "2인", title: "2인 (1:1)" },
@@ -23,23 +25,24 @@ export default function CreateRoom({ setOpen }: CreateRoomProps) {
     setRoomLimit(event.target.value);
   };
 
-  const handleConfirm = () => {
-    alert(nickname);
-  };
+  const handleConfirm = async () => {
+    if (isGuest) {
+      setNickname(inputNicknameInput);
+    }
 
-  // const handleConfirm = async () => {
-  //   const response = await fetch(`http://localhost:8080/games`, {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify({ roomLimit: roomLimit }),
-  //   });
-  //   if (response.ok) {
-  //     console.log(response);
-  //     // router.push(`/${response.data}`);
-  //   }
-  // };
+    const response = await fetch(`http://localhost:8080/room/make`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ nickname: nickname }),
+    });
+
+    if (response.ok) {
+      console.log(response);
+      // router.push(`/${response.data}`);
+    }
+  };
 
   return (
     <Transition.Root show={true} as={Fragment}>
@@ -110,20 +113,22 @@ export default function CreateRoom({ setOpen }: CreateRoomProps) {
                         ))}
                       </div>
                     </fieldset>
-                    <div className="flex items-center mt-3 pb-3 gap-5">
-                      <span className="text-md font-medium leading-6 text-gray-900 flex-none">
-                        닉네임 :
-                      </span>
-                      <input
-                        type="text"
-                        name="name"
-                        id="name"
-                        value={nickname}
-                        onChange={e => setNickname(e.target.value)}
-                        className="w-full text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
-                        placeholder="닉네임을 입력하세요."
-                      />
-                    </div>
+                    {isGuest && (
+                      <div className="flex items-center mt-3 pb-3 gap-5">
+                        <span className="text-md font-medium leading-6 text-gray-900 flex-none">
+                          닉네임 :
+                        </span>
+                        <input
+                          type="text"
+                          name="name"
+                          id="name"
+                          value={inputNicknameInput}
+                          onChange={e => setInputNickname(e.target.value)}
+                          className="w-full text-center rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600"
+                          placeholder="닉네임을 입력하세요."
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
                 <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">

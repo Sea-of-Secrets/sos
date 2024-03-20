@@ -22,17 +22,17 @@
 <script>
     var loginButton = document.getElementById('kakao');
     loginButton.addEventListener('click', function () {
-        window.location.href = `http://localhost:8080/members/kakao`;
+        window.location.href = `http://localhost:8080/oauth2/authorization/kakao`;
     })
 
     var loginButton = document.getElementById('naver');
     loginButton.addEventListener('click', function () {
-        window.location.href = `http://localhost:8080/members/naver`;
+        window.location.href = `http://localhost:8080/oauth2/authorization/naver`;
     })
 
     var loginButton = document.getElementById('google');
     loginButton.addEventListener('click', function () {
-        window.location.href = `http://localhost:8080/members/google`;
+        window.location.href = `http://localhost:8080/oauth2/authorization/google`;
     })
 </script>
 <!-- Include STOMP.js library -->

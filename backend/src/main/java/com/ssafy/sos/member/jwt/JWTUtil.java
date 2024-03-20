@@ -1,8 +1,6 @@
 package com.ssafy.sos.member.jwt;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,9 +36,10 @@ public class JWTUtil {
         return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token).getBody().getExpiration().before(new Date());
     }
 
-    public String createJwt(String username, String role, Long expiredMs) {
+    public String createJwt(String category, String username, String role, Long expiredMs) {
 
         Claims claims = Jwts.claims();
+        claims.put("category", category);
         claims.put("username", username);
         claims.put("role", role);
 
@@ -50,5 +49,18 @@ public class JWTUtil {
                 .setExpiration(new Date(System.currentTimeMillis() + expiredMs))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
+    }
+
+    public String getCategory(String token) {
+        try {
+            Jws<Claims> jws = Jwts.parserBuilder()
+                    .setSigningKey(key)
+                    .build()
+                    .parseClaimsJws(token);
+
+            return jws.getBody().get("category", String.class);
+        } catch (JwtException e) {
+           return null;
+        }
     }
 }

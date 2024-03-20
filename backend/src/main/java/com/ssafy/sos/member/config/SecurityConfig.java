@@ -57,8 +57,8 @@ public class SecurityConfig {
 
 //        //JWTFilter 추가
         //임시로 없앰
-//        http
-//                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
+        http
+                .addFilterBefore(new JWTFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
 
         //oauth2
@@ -70,16 +70,11 @@ public class SecurityConfig {
                 );
 
         //경로별 인가 작업
-//        http
-//                .authorizeHttpRequests((auth) -> auth
-//                        .requestMatchers("/**").permitAll()
-//                        .anyRequest().authenticated());
-
-        http.authorizeHttpRequests((auth) -> auth.anyRequest().permitAll());
-
-//        http
-//                .authorizeHttpRequests((auth) -> auth
-//                        .requestMatchers("/*").permitAll());
+        http
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/nft").hasAnyAuthority("ADMIN", "ROLE_USER")
+                        .requestMatchers("/**").permitAll()
+                        .anyRequest().authenticated());
 
         //세션 설정 : STATELESS
         http
