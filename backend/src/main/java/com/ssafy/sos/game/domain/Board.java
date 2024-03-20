@@ -1,9 +1,10 @@
 package com.ssafy.sos.game.domain;
 
+import com.ssafy.sos.game.util.GameStatus;
 import lombok.Data;
 import org.springframework.stereotype.Component;
-
 import java.util.HashMap;
+import java.util.List;
 
 @Data
 @Component
@@ -18,6 +19,7 @@ public class Board {
 
     private int[] marineStartList;
 
+    private HashMap<String, List<String>> sessionMap;
     private HashMap<String, Game> gameMap;
     private HashMap<String, Room> roomMap;
 
@@ -475,7 +477,17 @@ public class Board {
                 93, 94, 97, 106, 109, 200
         };
 
-        this.gameMap = new HashMap<>();
+        this.sessionMap = new HashMap<>();
         this.roomMap = new HashMap<>();
+        this.gameMap = new HashMap<>();
+
+        // TEST
+        this.roomMap.put("A111", new Room("A111"));
+        this.roomMap.get("A111").getInRoomPlayers().add("A");
+        this.roomMap.get("A111").getInRoomPlayers().add("B");
+        this.roomMap.get("A111").getInRoomPlayers().add("C");
+        this.roomMap.get("A111").getInRoomPlayers().add("D");
+        this.gameMap.put("A111", new Game("A111"));
+        this.gameMap.get("A111").setGameStatus(GameStatus.BEFORE_START);
     }
 }
