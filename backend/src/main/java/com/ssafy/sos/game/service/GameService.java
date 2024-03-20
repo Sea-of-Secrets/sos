@@ -6,6 +6,7 @@ import java.util.Deque;
 import java.util.HashMap;
 
 public interface GameService {
+    void gameStart(String gameId);
     int[] setPirateTreasure(String gameId);
     int initPirateStart(String gameId, int selectedNode);
     int initPirateRandomStart(String gameId);
@@ -14,7 +15,7 @@ public interface GameService {
     int[] initMarineStartRandom(String gameId, int MarineNumber);
     HashMap<Integer, Deque<Integer>> findMarineAvailableNode(String gameId, int nodeNumber);
     boolean move(String gameId, int nodeNumber, int role);
-    Room makeRoom(String nickname);
+    Room makeRoom(String nickname, String gameMode);
     Room enterRoom(String gameId, String nickname);
     boolean investigate(String gameId, int nodeNumber, int role);
     boolean arrest(String gameId, int nodeNumber);

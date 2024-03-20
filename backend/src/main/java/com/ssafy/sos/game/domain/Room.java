@@ -17,4 +17,8 @@ public class Room {
         this.gameId = gameId;
         this.inRoomPlayers = new ArrayList<>();
     }
+
+    public void increaseIsRendered() {
+        this.isRendered += 1;
+    }
 }

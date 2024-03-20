@@ -20,7 +20,8 @@ public class RoomController {
 
     @PostMapping("/make")
     public ResponseEntity<Room> makeRoom(@RequestBody RoomRequest roomRequest) {
-        Room room = gameService.makeRoom(roomRequest.getNickname());
+        Room room = gameService.makeRoom(roomRequest.getNickname(), roomRequest.getGameMode());
+        System.out.println(room.getGameMode());
         return ResponseEntity.ok(room);
     }
 
@@ -30,12 +31,12 @@ public class RoomController {
         String roomCode = roomRequest.getGameId();
         // 존재하지 않는 입장코드라면
         if (!board.getRoomMap().containsKey(roomCode)) {
-            return ResponseEntity.ok("ROOM NOT EXIST");
+            return ResponseEntity.ok("ROOM_NOT_EXIST");
         }
 
         // room 이 이미 다 찬 방이라면 return
         if (board.getRoomMap().get(roomCode).getInRoomPlayers().size() == 4) {
-            return ResponseEntity.ok("Already Fulled");
+            return ResponseEntity.ok("ALREADY_FULLED");
         }
 
         Room room = gameService.enterRoom(roomCode, nickname);

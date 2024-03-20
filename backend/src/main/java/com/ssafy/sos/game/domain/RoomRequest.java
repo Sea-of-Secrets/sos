@@ -6,4 +6,5 @@ import lombok.Data;
 public class RoomRequest {
     private String nickname;
     private String gameId;
+    private String gameMode;
 }
