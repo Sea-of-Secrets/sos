@@ -13,11 +13,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
+import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import java.util.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -30,11 +32,61 @@ public class MessageController {
 
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectEvent event) {
+        String sessionId = Objects.requireNonNull(
+                event.getMessage().getHeaders().get("simpSessionId"),
+                "message: session ID is null")
+                .toString();
 
+        List<String> list = Arrays.asList( "A111", "zuhee");
+
+        board.getSessionMap().put(sessionId, list);
     }
 
     @EventListener
     public void handleDisconnectEvent(SessionDisconnectEvent event) {
+        System.out.println(event.getMessage());
+        // TODO: 소켓 끊기면 session ID를 통해 브로드캐스팅
+        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
+        String sessionId = accessor.getSessionId();
+        List<String> sessionMemberGame= board.getSessionMap().getOrDefault(sessionId, null);
+
+        System.out.println(sessionMemberGame);
+        if (sessionMemberGame == null) return;
+
+        String gameId = sessionMemberGame.get(0);
+        String nickname = sessionMemberGame.get(1);
+
+        Room room = board.getRoomMap().getOrDefault(gameId, null);
+
+        if (room != null) {
+            // 대기실에서 소켓 끊기면 방 퇴장
+            room.getInRoomPlayers().remove(nickname);
+            ServerMessage serverMessage = ServerMessage.builder()
+                    .message("PLAYER_LEAVED")
+                    .gameId(gameId)
+                    .room(room)
+                    .build();
+            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+        }
+
+        Game game = board.getGameMap().get(gameId);
+
+        if (game == null) { return; }
+
+        switch (game.getGameStatus()) {
+            // 렌더링 중에 퇴장한 경우
+            case BEFORE_START -> {
+
+            }
+            // 게임 중에 나가진 경우
+            case IN_GAME -> {
+
+            }
+            // 게임이 끝나서 소켓을 끊은 경우
+            case GAME_FINISHED -> {
+
+            }
+        }
 
     }
 
@@ -88,6 +140,14 @@ public class MessageController {
             }
         }
 
+        // 게임 시작 버튼 클릭
+        if (message.getMessage().equals("GAME_START")) {
+            serverMessage = ServerMessage.builder()
+                    .message("GAME_START")
+                    .build();
+            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+        }
+
         // 렌더 완료 청취 - 4명 모두 완료시 게임 시작 안내
         if (message.getMessage().equals("RENDERED_COMPLETE")) {
             room.increaseIsRendered();
@@ -111,6 +171,10 @@ public class MessageController {
                         .build();
                 sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
             }
+        }
+
+        if (message.getMessage().equals("EXIT_ROOM")) {
+            // TODO: sender 닉네임을 방에서 찾아서 제거 해주고 메시지 보내기
         }
     }
     
