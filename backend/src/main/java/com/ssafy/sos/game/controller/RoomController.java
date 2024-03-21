@@ -43,6 +43,7 @@ public class RoomController {
         if (board.getRoomMap().get(roomCode).getInRoomPlayers().contains(nickname)) {
             return ResponseEntity.ok("DUPLICATED_NICKNAME");
         }
+
         Room room = gameService.enterRoom(roomCode, nickname);
         return ResponseEntity.ok(room);
     }

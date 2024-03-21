@@ -488,6 +488,7 @@ public class Board {
         this.roomMap.get("A111").getInRoomPlayers().add("B");
         this.roomMap.get("A111").getInRoomPlayers().add("C");
         this.roomMap.get("A111").getInRoomPlayers().add("D");
+        this.roomMap.get("A111").setHost("A");
         this.gameMap.put("A111", new Game("A111"));
         this.gameMap.get("A111").getPlayers().put("A", 0);
         this.gameMap.get("A111").getPlayers().put("B", 1);
