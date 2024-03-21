@@ -15,15 +15,14 @@ import Round from "./components/Round";
 import Turn from "./components/Turn";
 import SystemPrompt from "./components/SystemPrompt";
 
+import Graph from "./models/Graph";
 import Map from "./models/Map";
-import Node from "./models/Node";
-import Edge from "./models/Edge";
 import Piece from "./models/Shiba";
-import PieceEffect from "./models/PieceEffect";
+import PieceEffect from "./models/Piece/PieceEffect";
 
-import * as DUMMY_DATA from "../ingame/dummy-data";
 import { gameSocket } from "~/sockets";
 import YongSangYoonTestController from "./components/YongSangYoonTestController";
+import { INGAME_GRAPH } from "~/_lib/data";
 
 const { connect, send, subscribe, disconnect } = gameSocket;
 
@@ -105,61 +104,16 @@ export default function IngameClient({ gameId }: { gameId: string }) {
 
 function IngameThree({ nextMoveableNodes, nextNodeEdge }: any) {
   // 여기서 좀 빵빵해질듯...? 소켓 코드랑...
-  const renderedEdges = new Set();
-
   return (
     <>
-      {/* Nodes */}
-      {DUMMY_DATA.nodeList.map(node => {
-        if (
-          (node.nodeId >= 1 && node.nodeId <= 189) ||
-          (node.nodeId >= 200 && node.nodeId <= 373)
-        ) {
-          return (
-            <Node
-              key={node.nodeId}
-              node={node}
-              isNextMoveableNode={
-                nextMoveableNodes?.includes(node.nodeId) ? true : false
-              }
-            />
-          );
-        }
-      })}
-
-      {/* Edges */}
-      {DUMMY_DATA.edgeList.slice(199).map((edges, index) => {
-        return edges.map(edge => {
-          // 중복 간선 방지
-          const edgeKey = `${index + 200}-${edge}`;
-          const reEdgeKey = `${edge}-${index + 200}`;
-          if (renderedEdges.has(edgeKey) || renderedEdges.has(reEdgeKey)) {
-            return null;
-          }
-          renderedEdges.add(edgeKey);
-          return (
-            <Edge
-              key={edgeKey}
-              position={[
-                DUMMY_DATA.nodeArr[edge],
-                DUMMY_DATA.nodeArr[index + 200],
-              ]}
-              isNextNodeEdge={nextNodeEdge.some(
-                ([start, end]: number[]) =>
-                  (start === index + 200 && end === edge) ||
-                  (start === edge && end === index + 200),
-              )}
-            />
-          );
-        });
-      })}
-
-      {/* Pieces */}
-      <Piece position={DUMMY_DATA.nodeArr[107]} />
-      <PieceEffect
-        type="FOOTHOLD"
-        position={[DUMMY_DATA.nodeArr[107][0], DUMMY_DATA.nodeArr[107][1], 10]}
+      <Graph />
+      <Piece
+        position={[
+          INGAME_GRAPH["107"].position[0],
+          INGAME_GRAPH["107"].position[1],
+        ]}
       />
+      <PieceEffect type="FOOTHOLD" position={INGAME_GRAPH["107"].position} />
       <Map />
     </>
   );
@@ -193,7 +147,10 @@ function EventHandler({
   // 말 포커싱
   const handleFocusPiece = () => {
     if (!isFocused) {
-      pieceCamera(DUMMY_DATA.nodeArr[107]);
+      pieceCamera([
+        INGAME_GRAPH["107"].position[0],
+        INGAME_GRAPH["107"].position[1],
+      ]);
       setIsFocused(true);
     } else {
       mapCamera();
@@ -204,7 +161,11 @@ function EventHandler({
   // 말 이동
   const handleMovePiece = () => {
     setIsMoved(!isMoved);
-    movePirate(isMoved ? DUMMY_DATA.nodeArr[107] : [-30, 100]);
+    movePirate(
+      isMoved
+        ? [INGAME_GRAPH["107"].position[0], INGAME_GRAPH["107"].position[1]]
+        : [-30, 100],
+    );
   };
 
   return (

@@ -1,10 +1,11 @@
 import * as THREE from "three";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useFrame, ThreeElements, ThreeEvent } from "@react-three/fiber";
+import { useFrame, ThreeEvent } from "@react-three/fiber";
 
-const PIECE_SIZE = 0.03;
+import { PieceProps } from "./types";
+import { PIECE_SIZE } from "./constants";
 
-export default function Piece(props: ThreeElements["mesh"]) {
+export default function Piece({ position, ...props }: PieceProps) {
   const meshRef = useRef<THREE.Mesh>(null!);
   const [hovered, setHover] = useState(false);
   const [active, setActive] = useState(false);
@@ -30,6 +31,10 @@ export default function Piece(props: ThreeElements["mesh"]) {
       document.querySelector("canvas")!.style.cursor = "default";
     }
   }, [hovered]);
+
+  if (!position) {
+    return null;
+  }
 
   return (
     <mesh

@@ -1,16 +1,11 @@
 import { useEffect, useRef } from "react";
-import { PrimitiveProps, useLoader } from "@react-three/fiber";
+import { useLoader } from "@react-three/fiber";
 import { useAnimations } from "@react-three/drei";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+
 import { PieceEffectPath } from "~/assetPath";
-
-type PieceEffectType = "FOOTHOLD";
-
-interface PieceEffectProps extends Omit<PrimitiveProps, "object" | "position"> {
-  type: PieceEffectType;
-  position: [number, number, number]; // x, y, z
-}
+import { PieceEffectProps, PieceEffectType } from "./types";
 
 export default function PieceEffect({
   type,
