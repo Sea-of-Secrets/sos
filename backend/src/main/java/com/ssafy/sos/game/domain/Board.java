@@ -509,20 +509,20 @@ public class Board {
 
         this.gameMap.put(gameId, new Game(gameId));
 
-//        switch (gameMode) {
-//            case ONE_VS_ONE -> {
-//                this.gameMap.get(gameId).getPlayers().put(0, "A");
-//                this.gameMap.get(gameId).getPlayers().put(1, "B");
-//                this.gameMap.get(gameId).getPlayers().put(2, "B");
-//                this.gameMap.get(gameId).getPlayers().put(3, "B");
-//            }
-//            case ONE_VS_THREE -> {
-//                this.gameMap.get(gameId).getPlayers().put(0, "A");
-//                this.gameMap.get(gameId).getPlayers().put(1, "B");
-//                this.gameMap.get(gameId).getPlayers().put(2, "C");
-//                this.gameMap.get(gameId).getPlayers().put(3, "D");
-//            }
-//        }
+        switch (gameMode) {
+            case ONE_VS_ONE -> {
+                this.gameMap.get(gameId).getPlayers().put(0, "A");
+                this.gameMap.get(gameId).getPlayers().put(1, "B");
+                this.gameMap.get(gameId).getPlayers().put(2, "B");
+                this.gameMap.get(gameId).getPlayers().put(3, "B");
+            }
+            case ONE_VS_THREE -> {
+                this.gameMap.get(gameId).getPlayers().put(0, "A");
+                this.gameMap.get(gameId).getPlayers().put(1, "B");
+                this.gameMap.get(gameId).getPlayers().put(2, "C");
+                this.gameMap.get(gameId).getPlayers().put(3, "D");
+            }
+        }
 
         this.gameMap.get(gameId).setGameStatus(GameStatus.BEFORE_START);
     }

@@ -1,12 +1,12 @@
 package com.ssafy.sos.game.service;
 
-import com.ssafy.sos.game.domain.Board;
-import com.ssafy.sos.game.domain.Game;
-import com.ssafy.sos.game.domain.Investigate;
-import com.ssafy.sos.game.domain.Room;
+import com.ssafy.sos.game.domain.*;
+import com.ssafy.sos.game.repository.GameMemberRepository;
 import com.ssafy.sos.game.util.GameMode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
@@ -15,6 +15,7 @@ public class GameServiceImpl implements GameService {
 
     private final Board board;
     private Game game;
+    private final GameMemberRepository gameMemberRepository;
 
     private boolean isMarineStanding(String gameId, int node) {
         game = board.getGameMap().get(gameId);
@@ -88,9 +89,9 @@ public class GameServiceImpl implements GameService {
         }
 
         game = board.getGameMap().get(gameId);
-        HashMap<Integer, Boolean> treauresMap = game.getTreasures();
+        HashMap<Integer, Boolean> treasuresMap = game.getTreasures();
         for (int i=0; i<4; i++) {
-            treauresMap.put(treasures[i], false);
+            treasuresMap.put(treasures[i], false);
         }
         return treasures;
     }
@@ -378,6 +379,47 @@ public class GameServiceImpl implements GameService {
     public boolean arrest(String gameId, int nodeNumber) {
         Game game = board.getGameMap().get(gameId);
         return game.getCurrentPosition()[0] == nodeNumber;
+    }
+
+    @Override
+    public void gameOver(String gameId, boolean gameResult) {
+        Game game = board.getGameMap().get(gameId);
+
+        // mongodb에 gameRecord 저장
+        for (int i = 0; i < game.getGameMode().playerLimit(); i++) {
+
+            // TODO: 게임 시작 시간, 게임 종료 시간 저장 필요
+            // TODO: 회원인 플레이어들만 기록 저장 필요
+            GameRecord gameRecord = GameRecord.builder()
+                    .thieve(game.getPlayers().get(0))
+                    .navy(new String[]{
+                            game.getPlayers().get(1),
+                            game.getPlayers().get(2),
+                            game.getPlayers().get(3)})
+                    .nodes(game.getPirateRoute())
+                    .victory((gameResult && i == 0) || (!gameResult && i != 0))
+                    .startTime(LocalDateTime.now())
+                    .endTime(LocalDateTime.now())
+                    .point(100)
+                    .build();
+
+            String username = game.getPlayers().get(i); // 예시로 "A" 사용
+            System.out.println(username);
+            GameMember gameMember = gameMemberRepository.findByUsername(username)
+                    .orElseGet(() -> {
+                        GameMember newMember = GameMember.builder()
+                                .username(username)
+                                .gameRecords(new ArrayList<>())
+                                .build();
+                        gameMemberRepository.save(newMember);
+                        return newMember;
+                    });
+
+            gameMember.getGameRecords().add(gameRecord);
+            gameMemberRepository.save(gameMember);
+        }
+
+        board.getGameMap().remove(gameId);
     }
 
 }

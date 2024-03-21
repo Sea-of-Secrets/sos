@@ -20,7 +20,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -83,7 +82,11 @@ public class MessageController {
             }
             // 게임이 끝나서 소켓을 끊은 경우
             case GAME_FINISHED -> {
-
+                // 게임 종료는 꼭 한명만 시켜야 됨 -> 안 그러면 게임 삭제 요청 4번 감
+                if (game.getPlayers().get(0).equals(nickname)) {
+                    System.out.println("--FINISH");
+                    gameService.gameOver(gameId, true);
+                }
             }
         }
 
@@ -92,6 +95,18 @@ public class MessageController {
     @MessageMapping("/game")
     public void game(ClientMessage message) throws Exception {
         System.out.println(message);
+        String sender = message.getSender();
+        String gameId = message.getGameId();
+        Game game = board.getGameMap().get(gameId);
+
+        if (message.getMessage().equals("FINISH")) {
+            // 게임 종료는 꼭 한명만 시켜야 됨 -> 안 그러면 게임 삭제 요청 4번 감
+            if (game.getPlayers().get(0).equals(sender)) {
+                gameService.gameOver(gameId, true);
+                System.out.println("FINISH");
+            }
+            System.out.println("FINISH");
+        }
 
         //브로드캐스팅 코드
         //추가로 채널링 해줘야함
@@ -135,7 +150,7 @@ public class MessageController {
             }
 
             // 정원이 다 찼을 경우 시작버튼 활성화 broadcast
-            if (room.getInRoomPlayers().size() == 4) {
+            if (room.getInRoomPlayers().size() == room.getGameMode().playerLimit()) {
                 serverMessage = ServerMessage.builder()
                         .message("PREPARE_GAME_START")
                         .build();
@@ -170,7 +185,7 @@ public class MessageController {
             System.out.println(serverMessage);
             sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
 
-            if (room.getIsRendered() == 4) {
+            if (room.getIsRendered() == game.getGameMode().playerLimit()) {
                 serverMessage = ServerMessage.builder()
                         .message("ALL_RENDERED_COMPLETED")
                         .build();
