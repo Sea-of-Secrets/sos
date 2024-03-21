@@ -173,12 +173,24 @@ public class MessageController {
                         .message("ALL_RENDERED_COMPLETED")
                         .build();
                 sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+
+                // 게임 시작하면 방 폭파
+                board.getRoomMap().remove(gameId);
             }
         }
 
         if (message.getMessage().equals("LEAVE_ROOM")) {
             board.getSessionMap().get(sessionId).clear();
-            board.getRoomMap().get(gameId).getInRoomPlayers().remove(sender);
+            // 방에 혼자 남아있었으면 방 폭파
+            if (room.getInRoomPlayers().size() == 1) {
+                board.getRoomMap().remove(gameId);
+            } else {
+                // 다음 들어온 사람에게 방장 넘김
+                if (room.getHost().equals(sender)) {
+                    room.setHost(room.getInRoomPlayers().get(1));
+                }
+                room.getInRoomPlayers().remove(sender);
+            }
 
             serverMessage = ServerMessage.builder()
                     .gameId(gameId)

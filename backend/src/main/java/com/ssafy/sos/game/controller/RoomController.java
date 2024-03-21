@@ -39,6 +39,11 @@ public class RoomController {
             return ResponseEntity.ok("ALREADY_FULLED");
         }
 
+        // 방 안에 중복된 닉네임이 있으면 return
+        if (board.getRoomMap().get(roomCode).getInRoomPlayers().contains(nickname)) {
+            return ResponseEntity.ok("DUPLICATED_NICKNAME");
+        }
+
         Room room = gameService.enterRoom(roomCode, nickname);
         return ResponseEntity.ok(room);
     }
