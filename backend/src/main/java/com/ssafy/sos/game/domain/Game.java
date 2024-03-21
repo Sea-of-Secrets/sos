@@ -13,7 +13,7 @@ public class Game {
     private String gameId;
     // 0: 해적, 1: 해군1, 2: 해군2, 3: 해군3
     private int[] currentPosition; // players의 현재 위치
-    private HashMap<String, Integer> players; // players의 닉네임 : 역할
+    private HashMap<Integer, String> players; // 역할 : players의 닉네임
     private HashMap<Integer, Boolean> treasures; // 해적이 가야할 보물 위치
     private List<Integer> pirateRoute; // 해적 이동 경로
     private List<Integer> marineOneRoute; // 해군1 이동 경로
