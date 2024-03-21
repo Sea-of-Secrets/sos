@@ -12,7 +12,7 @@ import Turn from "./components/Turn";
 import SystemPrompt from "./components/SystemPrompt";
 
 import { gameSocket } from "~/sockets";
-import YongSangYoonTestController from "./components/YongSangYoonTestController";
+import YongSangYoonTestController from "./test-components/YongSangYoonTestController";
 
 const { connect, send, subscribe, disconnect } = gameSocket;
 
