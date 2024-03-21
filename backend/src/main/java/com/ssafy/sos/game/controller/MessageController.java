@@ -8,6 +8,8 @@ import com.ssafy.sos.game.message.client.ClientInitMessage;
 import com.ssafy.sos.game.message.client.ClientMoveMessage;
 import com.ssafy.sos.game.message.server.ServerMessage;
 import com.ssafy.sos.game.service.GameService;
+import com.ssafy.sos.game.service.GameTimerService;
+import com.ssafy.sos.game.service.TimerTimeoutEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -20,7 +22,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -30,6 +31,7 @@ public class MessageController {
     private final SimpMessageSendingOperations sendingOperations;
     private final Board board;
     private final GameService gameService;
+    private final GameTimerService gameTimerService;
 
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectEvent event) {
@@ -200,7 +202,28 @@ public class MessageController {
             sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
         }
     }
-    
+
+    @MessageMapping("/test")
+    public void test(ClientMessage message) {
+        String gameId = message.getGameId();
+        if (message.getMessage().equals("TIMER_START")) {
+            gameTimerService.startFifteenSecondsTimer(gameId, "test: 해군 이동하시오");
+        }
+
+        if (message.getMessage().equals("TIMER_STOP")) {
+            gameTimerService.cancelTimer(gameId);
+        }
+    }
+
+    @EventListener
+    public void handleTimerTimeout(TimerTimeoutEvent event) {
+        String gameId = event.getGameId();
+        String message = event.getMessage();
+        System.out.println(message);
+        // 15초 내로 응답이 오지 않았음을 클라이언트에 알림
+        sendingOperations.convertAndSend("/sub/" + gameId, message);
+    }
+
     @MessageMapping("/init")
     public void init(ClientInitMessage message) {
 
