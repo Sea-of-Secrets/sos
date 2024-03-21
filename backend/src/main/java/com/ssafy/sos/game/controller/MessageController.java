@@ -173,6 +173,9 @@ public class MessageController {
                         .message("ALL_RENDERED_COMPLETED")
                         .build();
                 sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+
+                // 게임 시작하면 방 폭파
+                board.getRoomMap().remove(gameId);
             }
         }
 
