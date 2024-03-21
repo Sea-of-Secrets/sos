@@ -12,7 +12,7 @@ import org.springframework.messaging.support.ChannelInterceptor;
 public class StompHandler implements ChannelInterceptor {
     @Override
     public Message<?> preSend(Message<?> message, MessageChannel channel) {
-        System.out.println("StompHandler.preSend");
+//        System.out.println("StompHandler.preSend");
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
         String sessionId = accessor.getSessionId();
 

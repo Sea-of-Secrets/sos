@@ -3,6 +3,8 @@ package com.ssafy.sos.game.service;
 import com.ssafy.sos.game.domain.Board;
 import com.ssafy.sos.game.domain.Game;
 import com.ssafy.sos.game.domain.Investigate;
+import com.ssafy.sos.game.domain.Room;
+import com.ssafy.sos.game.util.GameMode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.*;
@@ -27,6 +29,46 @@ public class GameServiceImpl implements GameService {
         return String.format("%c%03d", randomAlphabet, randomNumber);
     }
 
+    @Override
+    public void gameStart(String gameId) {
+        game = new Game(gameId);
+        board.getGameMap().put(gameId, game);
+        // 보물상자 위치 랜덤 지정
+        setPirateTreasure(gameId);
+
+        // 사용자별 역할 지정
+        List<Integer> random = Arrays.asList(0, 1, 2, 3);
+        Collections.shuffle(random);
+
+        Room room = board.getRoomMap().get(gameId);
+        List<String> roomPlayers = room.getInRoomPlayers();
+
+        // 게임 모드에 맞게 역할 배정
+        switch (room.getGameMode()) {
+            case ONE_VS_ONE -> {
+                if (random.get(0) == 0) {
+                    game.getPlayers().put(0, roomPlayers.get(0));
+                    for (int i = 1; i < 4; i++) {
+                        game.getPlayers().put(i, roomPlayers.get(1));
+                    }
+                } else {
+                    game.getPlayers().put(0, roomPlayers.get(1));
+                    for (int i = 1; i < 4; i++) {
+                        game.getPlayers().put(i, roomPlayers.get(0));
+                    }
+                }
+            }
+            case ONE_VS_THREE -> {
+                for (int i = 0; i < 4; i++) {
+                    game.getPlayers().put(random.get(i), roomPlayers.get(i));
+                }
+            }
+        }
+
+        // 게임 시작하면 방 폭파
+        board.getRoomMap().remove(gameId);
+    }
+
     // 보물섬 위치 랜덤 지정
     @Override
     public int[] setPirateTreasure(String gameId) {
@@ -46,7 +88,10 @@ public class GameServiceImpl implements GameService {
         }
 
         game = board.getGameMap().get(gameId);
-        game.setTreasures(treasures);
+        HashMap<Integer, Boolean> treauresMap = game.getTreasures();
+        for (int i=0; i<4; i++) {
+            treauresMap.put(treasures[i], false);
+        }
         return treasures;
     }
 
@@ -62,9 +107,11 @@ public class GameServiceImpl implements GameService {
     @Override
     public int initPirateRandomStart(String gameId) {
         game = board.getGameMap().get(gameId);
-        int[] treasures = game.getTreasures();
-        Random rand = new Random();
-        int nextNode = treasures[rand.nextInt(4)];
+        Set<Integer> treasures = game.getTreasures().keySet();
+
+        int randomIndex = new Random().nextInt(treasures.size());
+        int nextNode = treasures.stream().skip(randomIndex).findFirst().orElse(0);
+
         // getCurrentPosition 배열의 해적 위치[0]
         game.getCurrentPosition()[0] = nextNode;
         return nextNode;
@@ -261,9 +308,9 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public String makeRoom(String nickname) {
+    public Room makeRoom(String nickname, GameMode gameMode) {
         // 방 번호 랜덤으로 생성 후 중복 검사
-        String gameId = "";
+        String gameId;
         int cnt = 0;
         do {
             gameId = generateRandomCode();
@@ -273,22 +320,25 @@ public class GameServiceImpl implements GameService {
                 board.getGameMap().containsKey(gameId)
         );
 
-        board.getGameMap().put(gameId, new Game(gameId));
-        board.getGameMap().get(gameId).getPlayers().put(nickname, -1);
+        board.getRoomMap().put(gameId, new Room(gameId));
+        Room room = board.getRoomMap().get(gameId);
+        room.setHost(nickname);
+        room.getInRoomPlayers().add(nickname);
+        room.setGameMode(gameMode);
 
-        return gameId;
+        System.out.println("Room Number: " + gameId);
+        return room;
     }
 
     @Override
-    public boolean enterRoom(String gameId, String nickname) {
-        Game game = board.getGameMap().get(gameId);
+    public Room enterRoom(String gameId, String nickname) {
+        Room room = board.getRoomMap().get(gameId);
 
-        if (game != null) {
-            game.getPlayers().put(nickname, -1);
-            return true;
-        } else {
-            return false;
+        // 방이 다 차있지 않으면
+        if (room.getInRoomPlayers().size() < 4) {
+            room.getInRoomPlayers().add(nickname);
         }
+        return room;
     }
 
     @Override
@@ -299,14 +349,10 @@ public class GameServiceImpl implements GameService {
         HashMap<Integer, Boolean> nodes = investigate.getNodes();
         if (nodes == null) {
             // 인접한 노드 중 해적 노드만 가져오기
-            int[] adjList = null;
-            if (role == 1 || role == 2 || role == 3) {
-                adjList = Arrays.stream(board.getGraph()[game.getCurrentPosition()[role]])
-                        .filter(adjacentNode -> adjacentNode < 200)
-                        .toArray();
-            } else {
-                throw new RuntimeException();
-            }
+            int[] adjList;
+            adjList = Arrays.stream(board.getGraph()[game.getCurrentPosition()[role]])
+                    .filter(adjacentNode -> adjacentNode < 200)
+                    .toArray();
 
             nodes = new HashMap<>();
             for (int j : adjList) {
@@ -320,6 +366,7 @@ public class GameServiceImpl implements GameService {
         // 해적이 지나간 경로에 조사하려는 노드 번호가 포함되었을 경우 true 반환
         if (game.getPirateRoute().contains(nodeNumber)) {
             investigate.setSuccess(true);
+            game.getInvestigateSuccess().add(nodeNumber);
             return true;
         } else {
             investigate.setSuccess(false);
@@ -332,4 +379,5 @@ public class GameServiceImpl implements GameService {
         Game game = board.getGameMap().get(gameId);
         return game.getCurrentPosition()[0] == nodeNumber;
     }
+
 }

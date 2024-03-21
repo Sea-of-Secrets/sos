@@ -1,9 +1,11 @@
 package com.ssafy.sos.game.domain;
 
+import com.ssafy.sos.game.util.GameMode;
+import com.ssafy.sos.game.util.GameStatus;
 import lombok.Data;
 import org.springframework.stereotype.Component;
-
 import java.util.HashMap;
+import java.util.List;
 
 @Data
 @Component
@@ -18,7 +20,10 @@ public class Board {
 
     private int[] marineStartList;
 
+    // sessionId : { nickname, gameId }
+    private HashMap<String, List<String>> sessionMap;
     private HashMap<String, Game> gameMap;
+    private HashMap<String, Room> roomMap;
 
     public Board() {
         this.graph = new int[][] {
@@ -474,6 +479,51 @@ public class Board {
                 93, 94, 97, 106, 109, 200
         };
 
+        this.sessionMap = new HashMap<>();
+        this.roomMap = new HashMap<>();
         this.gameMap = new HashMap<>();
+
+        // TEST
+        test("A111", GameMode.ONE_VS_ONE);
+        test("A222", GameMode.ONE_VS_THREE);
+    }
+
+    private void test(String gameId, GameMode gameMode) {
+        this.roomMap.put(gameId, new Room(gameId));
+        switch (gameMode) {
+            case ONE_VS_ONE -> {
+                this.roomMap.get(gameId).getInRoomPlayers().add("A");
+                this.roomMap.get(gameId).getInRoomPlayers().add("B");
+                this.roomMap.get(gameId).setHost("A");
+                this.roomMap.get(gameId).setGameMode(GameMode.ONE_VS_ONE);
+            }
+            case ONE_VS_THREE -> {
+                this.roomMap.get(gameId).getInRoomPlayers().add("A");
+                this.roomMap.get(gameId).getInRoomPlayers().add("B");
+                this.roomMap.get(gameId).getInRoomPlayers().add("C");
+                this.roomMap.get(gameId).getInRoomPlayers().add("D");
+                this.roomMap.get(gameId).setHost("A");
+                this.roomMap.get(gameId).setGameMode(GameMode.ONE_VS_THREE);
+            }
+        }
+
+        this.gameMap.put(gameId, new Game(gameId));
+
+//        switch (gameMode) {
+//            case ONE_VS_ONE -> {
+//                this.gameMap.get(gameId).getPlayers().put(0, "A");
+//                this.gameMap.get(gameId).getPlayers().put(1, "B");
+//                this.gameMap.get(gameId).getPlayers().put(2, "B");
+//                this.gameMap.get(gameId).getPlayers().put(3, "B");
+//            }
+//            case ONE_VS_THREE -> {
+//                this.gameMap.get(gameId).getPlayers().put(0, "A");
+//                this.gameMap.get(gameId).getPlayers().put(1, "B");
+//                this.gameMap.get(gameId).getPlayers().put(2, "C");
+//                this.gameMap.get(gameId).getPlayers().put(3, "D");
+//            }
+//        }
+
+        this.gameMap.get(gameId).setGameStatus(GameStatus.BEFORE_START);
     }
 }
