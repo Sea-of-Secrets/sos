@@ -69,7 +69,7 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/nft").hasAnyAuthority("ADMIN", "ROLE_USER")
+//                        .requestMatchers("/nft").hasAnyAuthority("ADMIN", "ROLE_USER")
                         .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated());
 
