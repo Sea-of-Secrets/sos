@@ -103,7 +103,7 @@ public class MessageController {
         String sender = message.getSender();
         String sessionId = accessor.getSessionId();
 
-        ServerMessage serverMessage = null;
+        ServerMessage serverMessage;
         String gameId = message.getGameId();
         Room room = board.getRoomMap().get(gameId);
 
@@ -176,8 +176,17 @@ public class MessageController {
             }
         }
 
-        if (message.getMessage().equals("EXIT_ROOM")) {
-            // TODO: sender 닉네임을 방에서 찾아서 제거 해주고 메시지 보내기
+        if (message.getMessage().equals("LEAVE_ROOM")) {
+            board.getSessionMap().get(sessionId).clear();
+            board.getRoomMap().get(gameId).getInRoomPlayers().remove(sender);
+
+            serverMessage = ServerMessage.builder()
+                    .gameId(gameId)
+                    .room(room)
+                    .message("PLAYER_LEAVED")
+                    .build();
+
+            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
         }
     }
     
