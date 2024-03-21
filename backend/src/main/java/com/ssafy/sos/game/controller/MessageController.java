@@ -20,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -37,9 +38,7 @@ public class MessageController {
                 "message: session ID is null")
                 .toString();
 
-        List<String> list = Arrays.asList( "A111", "zuhee");
-
-        board.getSessionMap().put(sessionId, list);
+        board.getSessionMap().put(sessionId, new ArrayList<>());
     }
 
     @EventListener
@@ -100,17 +99,22 @@ public class MessageController {
     }
 
     @MessageMapping("/room")
-    public void enterRoom(ClientMessage message) {
+    public void enterRoom(ClientMessage message, StompHeaderAccessor accessor) {
         System.out.println(message);
         String sender = message.getSender();
+        String sessionId = accessor.getSessionId();
 
-        ServerMessage serverMessage = null;
+        ServerMessage serverMessage;
         String gameId = message.getGameId();
         Room room = board.getRoomMap().get(gameId);
 
         if (message.getMessage().equals("ENTER_ROOM")) {
 
             if (board.getRoomMap().get(gameId).getInRoomPlayers().contains(sender)) {
+                board.getSessionMap().get(sessionId).add(sender);
+                board.getSessionMap().get(sessionId).add(gameId);
+                System.out.println("Session Info : " + board.getSessionMap().get(sessionId));
+
                 serverMessage = ServerMessage.builder()
                         .message("ENTER_SUCCESS")
                         .gameId(gameId)
@@ -163,6 +167,7 @@ public class MessageController {
                     .gameId(gameId)
                     .game(game)
                     .build();
+            System.out.println(serverMessage);
             sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
 
             if (room.getIsRendered() == 4) {
@@ -173,8 +178,26 @@ public class MessageController {
             }
         }
 
-        if (message.getMessage().equals("EXIT_ROOM")) {
-            // TODO: sender 닉네임을 방에서 찾아서 제거 해주고 메시지 보내기
+        if (message.getMessage().equals("LEAVE_ROOM")) {
+            board.getSessionMap().get(sessionId).clear();
+            // 방에 혼자 남아있었으면 방 폭파
+            if (room.getInRoomPlayers().size() == 1) {
+                board.getRoomMap().remove(gameId);
+            } else {
+                // 다음 들어온 사람에게 방장 넘김
+                if (room.getHost().equals(sender)) {
+                    room.setHost(room.getInRoomPlayers().get(1));
+                }
+                room.getInRoomPlayers().remove(sender);
+            }
+
+            serverMessage = ServerMessage.builder()
+                    .gameId(gameId)
+                    .room(room)
+                    .message("PLAYER_LEAVED")
+                    .build();
+
+            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
         }
     }
     
@@ -189,6 +212,7 @@ public class MessageController {
         ServerMessage serverMessage = null;
         // 해적 시작 지점 지정
         if (message.getMessage().equals("INIT_PIRATE_START")) {
+            // TODO: 제한 시간 지나면 시작 위치 랜덤 지정 해주기
             gameService.initPirateStart(gameId, message.getNode());
             serverMessage = ServerMessage.builder()
                     .gameId(gameId)
@@ -199,7 +223,9 @@ public class MessageController {
 
         // 해군 시작 지점 지정
         if (message.getMessage().equals("INIT_MARINE_START")) {
-            gameService.initMarineStart(gameId, game.getPlayers().get(sender), message.getNode());
+            // TODO: 역할은 턴에 맞게 자동으로 지정 해주기
+            int role = 1;
+            gameService.initMarineStart(gameId, role, message.getNode());
             serverMessage = ServerMessage.builder()
                     .gameId(gameId)
                     .message("INIT_MARINE_START")
@@ -209,8 +235,6 @@ public class MessageController {
 
         if (serverMessage != null) {
             sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
-        } else {
-            throw new RuntimeException();
         }
     }
 
@@ -224,6 +248,7 @@ public class MessageController {
         ServerMessage serverMessage = null;
         if (message.getMessage().equals("MOVE_PIRATE")) {
             // TODO: 해적 이동 알고리즘 추가
+            gameService.move(gameId, message.getNode(), 0);
             serverMessage = ServerMessage.builder()
                     .gameId(gameId)
                     .message("MOVE_PIRATE")
@@ -242,8 +267,6 @@ public class MessageController {
 
         if (serverMessage != null) {
             sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
-        } else {
-            throw new RuntimeException();
         }
     }
 
@@ -255,6 +278,7 @@ public class MessageController {
 
         ServerMessage serverMessage = null;
         if (message.getMessage().equals("INCREASE_TURN")) {
+            // TODO: 해군3의 action이 끝났을 때 턴 증가하는 것으로 변경
             game.increaseTurn();
             serverMessage = ServerMessage.builder()
                     .gameId(gameId)
@@ -263,6 +287,7 @@ public class MessageController {
                     .build();
         }
 
+        // TODO: 해적이 보물을 찾았거나 15턴이 끝났을 경우로 변경
         if (message.getMessage().equals("INCREASE_ROUND")) {
             game.increaseRound();
             serverMessage = ServerMessage.builder()
@@ -275,8 +300,40 @@ public class MessageController {
         System.out.println(serverMessage);
         if (serverMessage != null) {
             sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
-        } else {
-            throw new RuntimeException();
+        }
+    }
+
+    @MessageMapping("/action")
+    public void marineAction(ClientInitMessage message) {
+        System.out.println(message);
+        String gameId = message.getGameId();
+        String sender = message.getSender();
+        Game game = board.getGameMap().get(gameId);
+
+        ServerMessage serverMessage;
+        String resultMessage = null;
+        if (message.getMessage().equals("INVESTIGATE")) {
+            // TODO: 역할은 턴에 맞게 지정해주기
+            int role = 1;
+            resultMessage = gameService.investigate(gameId,
+                    message.getNode(),
+                    role)
+                    ? "SUCCESS_INVESTIGATION" : "FAIL_INVESTIGATION";
+        }
+
+        if (message.getMessage().equals("ARREST")) {
+            resultMessage = gameService.arrest(gameId, message.getNode())
+                    ? "SUCCESS_ARREST" : "FAIL_ARREST";
+        }
+
+        if (resultMessage != null) {
+            serverMessage = ServerMessage.builder()
+                    .gameId(gameId)
+                    .game(game)
+                    .message(resultMessage)
+                    .build();
+
+            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
         }
     }
 

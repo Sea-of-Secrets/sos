@@ -34,12 +34,24 @@ public class RoomController {
             return ResponseEntity.ok("ROOM_NOT_EXIST");
         }
 
+        Room room = board.getRoomMap().get(roomCode);
         // room 이 이미 다 찬 방이라면 return
-        if (board.getRoomMap().get(roomCode).getInRoomPlayers().size() == 4) {
+        int playerLimit = 0;
+        switch(room.getGameMode()) {
+            case ONE_VS_ONE -> { playerLimit = 2; }
+            case ONE_VS_THREE -> { playerLimit = 4; }
+        }
+
+        if (playerLimit > 0 && room.getInRoomPlayers().size() == playerLimit) {
             return ResponseEntity.ok("ALREADY_FULLED");
         }
 
-        Room room = gameService.enterRoom(roomCode, nickname);
+        // 방 안에 중복된 닉네임이 있으면 return
+        if (room.getInRoomPlayers().contains(nickname)) {
+            return ResponseEntity.ok("DUPLICATED_NICKNAME");
+        }
+
+        room = gameService.enterRoom(roomCode, nickname);
         return ResponseEntity.ok(room);
     }
 }
