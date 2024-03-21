@@ -4,6 +4,7 @@ import com.ssafy.sos.game.domain.Board;
 import com.ssafy.sos.game.domain.Game;
 import com.ssafy.sos.game.domain.Investigate;
 import com.ssafy.sos.game.domain.Room;
+import com.ssafy.sos.game.util.GameMode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.util.*;
@@ -42,15 +43,30 @@ public class GameServiceImpl implements GameService {
         Room room = board.getRoomMap().get(gameId);
         List<String> roomPlayers = room.getInRoomPlayers();
 
-        if (room.getGameMode().equals("ONE_VS_ONE")) {
-            for (int i = 0; i < 2; i++) {
-                game.getPlayers().put(roomPlayers.get(i), random.get(i));
+        // 게임 모드에 맞게 역할 배정
+        switch (room.getGameMode()) {
+            case ONE_VS_ONE -> {
+                if (random.get(0) == 0) {
+                    game.getPlayers().put(0, roomPlayers.get(0));
+                    for (int i = 1; i < 4; i++) {
+                        game.getPlayers().put(i, roomPlayers.get(1));
+                    }
+                } else {
+                    game.getPlayers().put(0, roomPlayers.get(1));
+                    for (int i = 1; i < 4; i++) {
+                        game.getPlayers().put(i, roomPlayers.get(0));
+                    }
+                }
             }
-        } else if (room.getGameMode().equals("ONE_VS_THREE")) {
-            for (int i = 0; i < 4; i++) {
-                game.getPlayers().put(roomPlayers.get(i), random.get(i));
+            case ONE_VS_THREE -> {
+                for (int i = 0; i < 4; i++) {
+                    game.getPlayers().put(random.get(i), roomPlayers.get(i));
+                }
             }
         }
+
+        // 게임 시작하면 방 폭파
+        board.getRoomMap().remove(gameId);
     }
 
     // 보물섬 위치 랜덤 지정
@@ -292,7 +308,7 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public Room makeRoom(String nickname, String gameMode) {
+    public Room makeRoom(String nickname, GameMode gameMode) {
         // 방 번호 랜덤으로 생성 후 중복 검사
         String gameId;
         int cnt = 0;

@@ -20,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Controller
 @RequiredArgsConstructor
@@ -166,6 +167,7 @@ public class MessageController {
                     .gameId(gameId)
                     .game(game)
                     .build();
+            System.out.println(serverMessage);
             sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
 
             if (room.getIsRendered() == 4) {
@@ -173,9 +175,6 @@ public class MessageController {
                         .message("ALL_RENDERED_COMPLETED")
                         .build();
                 sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
-
-                // 게임 시작하면 방 폭파
-                board.getRoomMap().remove(gameId);
             }
         }
 
@@ -224,7 +223,9 @@ public class MessageController {
 
         // 해군 시작 지점 지정
         if (message.getMessage().equals("INIT_MARINE_START")) {
-            gameService.initMarineStart(gameId, game.getPlayers().get(sender), message.getNode());
+            // TODO: 역할은 턴에 맞게 자동으로 지정 해주기
+            int role = 1;
+            gameService.initMarineStart(gameId, role, message.getNode());
             serverMessage = ServerMessage.builder()
                     .gameId(gameId)
                     .message("INIT_MARINE_START")
@@ -247,7 +248,7 @@ public class MessageController {
         ServerMessage serverMessage = null;
         if (message.getMessage().equals("MOVE_PIRATE")) {
             // TODO: 해적 이동 알고리즘 추가
-            gameService.move(gameId, message.getNode(), game.getPlayers().get(sender));
+            gameService.move(gameId, message.getNode(), 0);
             serverMessage = ServerMessage.builder()
                     .gameId(gameId)
                     .message("MOVE_PIRATE")
@@ -312,9 +313,11 @@ public class MessageController {
         ServerMessage serverMessage;
         String resultMessage = null;
         if (message.getMessage().equals("INVESTIGATE")) {
+            // TODO: 역할은 턴에 맞게 지정해주기
+            int role = 1;
             resultMessage = gameService.investigate(gameId,
                     message.getNode(),
-                    game.getPlayers().get(sender))
+                    role)
                     ? "SUCCESS_INVESTIGATION" : "FAIL_INVESTIGATION";
         }
 

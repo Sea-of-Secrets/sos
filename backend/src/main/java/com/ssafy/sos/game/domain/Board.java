@@ -1,5 +1,6 @@
 package com.ssafy.sos.game.domain;
 
+import com.ssafy.sos.game.util.GameMode;
 import com.ssafy.sos.game.util.GameStatus;
 import lombok.Data;
 import org.springframework.stereotype.Component;
@@ -483,17 +484,46 @@ public class Board {
         this.gameMap = new HashMap<>();
 
         // TEST
-        this.roomMap.put("A111", new Room("A111"));
-        this.roomMap.get("A111").getInRoomPlayers().add("A");
-        this.roomMap.get("A111").getInRoomPlayers().add("B");
-        this.roomMap.get("A111").getInRoomPlayers().add("C");
-        this.roomMap.get("A111").getInRoomPlayers().add("D");
-        this.roomMap.get("A111").setHost("A");
-        this.gameMap.put("A111", new Game("A111"));
-        this.gameMap.get("A111").getPlayers().put("A", 0);
-        this.gameMap.get("A111").getPlayers().put("B", 1);
-        this.gameMap.get("A111").getPlayers().put("C", 2);
-        this.gameMap.get("A111").getPlayers().put("D", 3);
-        this.gameMap.get("A111").setGameStatus(GameStatus.BEFORE_START);
+        test("A111", GameMode.ONE_VS_ONE);
+        test("A222", GameMode.ONE_VS_THREE);
+    }
+
+    private void test(String gameId, GameMode gameMode) {
+        this.roomMap.put(gameId, new Room(gameId));
+        switch (gameMode) {
+            case ONE_VS_ONE -> {
+                this.roomMap.get(gameId).getInRoomPlayers().add("A");
+                this.roomMap.get(gameId).getInRoomPlayers().add("B");
+                this.roomMap.get(gameId).setHost("A");
+                this.roomMap.get(gameId).setGameMode(GameMode.ONE_VS_ONE);
+            }
+            case ONE_VS_THREE -> {
+                this.roomMap.get(gameId).getInRoomPlayers().add("A");
+                this.roomMap.get(gameId).getInRoomPlayers().add("B");
+                this.roomMap.get(gameId).getInRoomPlayers().add("C");
+                this.roomMap.get(gameId).getInRoomPlayers().add("D");
+                this.roomMap.get(gameId).setHost("A");
+                this.roomMap.get(gameId).setGameMode(GameMode.ONE_VS_THREE);
+            }
+        }
+
+        this.gameMap.put(gameId, new Game(gameId));
+
+//        switch (gameMode) {
+//            case ONE_VS_ONE -> {
+//                this.gameMap.get(gameId).getPlayers().put(0, "A");
+//                this.gameMap.get(gameId).getPlayers().put(1, "B");
+//                this.gameMap.get(gameId).getPlayers().put(2, "B");
+//                this.gameMap.get(gameId).getPlayers().put(3, "B");
+//            }
+//            case ONE_VS_THREE -> {
+//                this.gameMap.get(gameId).getPlayers().put(0, "A");
+//                this.gameMap.get(gameId).getPlayers().put(1, "B");
+//                this.gameMap.get(gameId).getPlayers().put(2, "C");
+//                this.gameMap.get(gameId).getPlayers().put(3, "D");
+//            }
+//        }
+
+        this.gameMap.get(gameId).setGameStatus(GameStatus.BEFORE_START);
     }
 }
