@@ -1,6 +1,6 @@
 import styles from "./SystemPrompt.module.scss";
 import clsx from "clsx";
-import { useSystemPrompt } from "~/store/useSystemPrompt";
+import { useSystemPrompt } from "~/app/ingame/hooks/useSystemPrompt";
 
 // TODO: FooterMessage에는 리액트 컴포넌트가 들어와야할 것 같은...?
 export default function SystemPrompt() {

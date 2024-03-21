@@ -1,7 +1,7 @@
 import { useRef } from "react";
 import styled from "@emotion/styled";
 
-import { useSystemPrompt } from "~/store/useSystemPrompt";
+import { useSystemPrompt } from "~/app/ingame/hooks/useSystemPrompt";
 
 export default function YongSangYoonTestController() {
   const systemPromptHeaderInputRef = useRef<HTMLInputElement>(null);
