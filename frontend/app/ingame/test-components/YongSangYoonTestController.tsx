@@ -2,9 +2,8 @@ import { useRef } from "react";
 import styled from "@emotion/styled";
 
 import { useSystemPrompt } from "~/app/ingame/stores/useSystemPrompt";
-import { isNumber } from "~/_lib/utils";
-import { INGAME_GRAPH } from "~/_lib/data/data";
 import { useCamera } from "~/app/ingame/stores/useCamera";
+import { getNode } from "~/_lib/data/data";
 
 export default function YongSangYoonTestController() {
   const cameraZoomInputRef = useRef<HTMLInputElement>(null);
@@ -41,18 +40,19 @@ export default function YongSangYoonTestController() {
   const handleZoomNode = () => {
     if (cameraZoomInputRef.current) {
       const nodeId = parseInt(cameraZoomInputRef.current.value, 10);
-      if (isNumber(nodeId) && nodeId in INGAME_GRAPH) {
-        const { x, y, z } = INGAME_GRAPH[nodeId]["position"];
+
+      try {
+        const { x, y, z } = getNode(nodeId).position;
         if (cameraRef) {
           cameraRef.current.setLookAt(x, 250, y + 200, x, 0, y, true);
           cameraRef.current.zoomTo(1.5, true);
         } else {
           window.alert("카메라가 없다...");
         }
-        return;
+      } catch (e) {
+        window.alert("올바른 노드 번호를 입력해라...");
+        cameraZoomInputRef.current.value = "";
       }
-      window.alert("올바른 노드 번호를 입력해라...");
-      cameraZoomInputRef.current.value = "";
     }
   };
 

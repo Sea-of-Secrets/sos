@@ -1,6 +1,6 @@
 import { IngameGraphNode } from "./types";
 
-export const INGAME_GRAPH: Record<string, IngameGraphNode> = {
+const ORIGIN_GRAPH: Record<string, IngameGraphNode> = {
   "0": {
     nodeId: 0,
     position: { x: -703, y: -496, z: 10 },
@@ -2960,7 +2960,7 @@ export const INGAME_GRAPH: Record<string, IngameGraphNode> = {
 };
 
 // 노드 배열, [nodeA, nodeA의 정보][] 형태
-export const NODE_ENTRY: [number, IngameGraphNode][] = [
+export const nodeEntries: [number, IngameGraphNode][] = [
   [
     1,
     {
@@ -6921,7 +6921,7 @@ export const NODE_ENTRY: [number, IngameGraphNode][] = [
 ];
 
 // 중복이 제거된 간선, [nodeA의 id, nodeA에 연결된 이웃 노드의 nodeId 배열][] 형태
-export const REMOVED_EDGE_ENTRY: [number, number[]][] = [
+export const duplicatedRemovedEdgeEntries: [number, number[]][] = [
   [1, [201, 202]],
   [2, [204, 205, 206]],
   [3, [207, 208, 220]],
@@ -7175,3 +7175,16 @@ export const REMOVED_EDGE_ENTRY: [number, number[]][] = [
   [369, [368]],
   [372, [373]],
 ];
+
+export const getNode = (nodeId: number) => {
+  // FIXME: release 할 때는 에러 터뜨리지 말기
+  if (!(String(nodeId) in ORIGIN_GRAPH)) {
+    throw new Error(
+      `버그 발생!!! : 서버에서 온 ${nodeId} 는 클라이언트에 존재하지 않음...`,
+    );
+  }
+
+  const node = ORIGIN_GRAPH[nodeId];
+  const position = ORIGIN_GRAPH[nodeId].position;
+  return Object.freeze({ ...node, position });
+};
