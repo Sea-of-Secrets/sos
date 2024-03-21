@@ -3,6 +3,7 @@ import { useRouter } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
 import { makeRoom } from "~/pages/rooms";
 import useNickname from "~/store/nickname";
+import useGameId from "~/store/gameId";
 
 interface CreateRoomProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -13,6 +14,7 @@ export default function CreateRoom({ setOpen, isGuest }: CreateRoomProps) {
   const router = useRouter();
   const cancelButtonRef = useRef(null);
   const { nickname, setNickname } = useNickname();
+  const { setGameId } = useGameId();
   const [gameMode, setGameMode] = useState("ONE_VS_ONE");
   const notificationMethods = [
     { id: "ONE_VS_ONE", title: "2인 (1:1)" },
@@ -28,8 +30,7 @@ export default function CreateRoom({ setOpen, isGuest }: CreateRoomProps) {
   const handleConfirm = async () => {
     try {
       const { data } = await makeRoom({ nickname, gameMode });
-      // window.location.href = `/room/${data.gameId}`;
-      // window.location.replace(`/room/${data.gameId}`);
+      setGameId(data.gameId);
       router.push(`/room/${data.gameId}`);
     } catch (e) {
       alert("방 만들기 실패");

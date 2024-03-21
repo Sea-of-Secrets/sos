@@ -1,10 +1,10 @@
 import { client } from "./http";
 
 type RoomData = {
-  gameId: String;
-  host: String;
+  gameId: string;
+  host: string;
   inRoomPlayers: string[];
-  gameMode: String;
+  gameMode: string;
   isRendered: number;
 };
 

@@ -18,7 +18,7 @@ export default function Room() {
   };
 
   useEffect(() => {
-    // 게스트 여부 확인 api 요청
+    // TODO 게스트 여부 확인 api 요청
   }, []);
 
   return (

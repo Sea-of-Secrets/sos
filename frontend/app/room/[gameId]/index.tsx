@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import useNickname from "~/store/nickname";
 import { gameSocket } from "~/sockets";
+import useNickname from "~/store/nickname";
 import Image from "next/image";
 
 const { connect, disconnect, subscribe, send } = gameSocket;
@@ -12,10 +12,18 @@ export default function Room() {
   const params = useParams() as { gameId: string };
   const router = useRouter();
   const { gameId } = params;
-  const { nickname } = useNickname(state => state);
+  const { nickname } = useNickname();
   const [isHost, setIsHost] = useState(false);
   const [isFull, setIsFull] = useState(false);
   const [players, setPlayers] = useState([]);
+
+  const gridColumns: { [key: number]: string } = {
+    0: "grid-cols-0",
+    1: "grid-cols-1",
+    2: "grid-cols-2",
+    3: "grid-cols-3 sm-grid-cols-2",
+    4: "grid-cols-4 sm-grid-cols-2",
+  };
 
   const copyToClipboard = async () => {
     try {
@@ -65,7 +73,8 @@ export default function Room() {
       // 시작 버튼 클릭
       if (data.message == "GAME_START") {
         // 인게임 이동
-        router.push("/ingame");
+        // router.push("/ingame");
+        window.location.href = "/ingame";
       }
     });
 
@@ -102,7 +111,7 @@ export default function Room() {
           </div>
           <ul
             role="list"
-            className={`mx-auto mt-20 grid grid-cols-${players.length / 2} md:grid-cols-${players.length} gap-x-8 gap-y-16`}
+            className={`mx-auto mt-20 grid ${gridColumns[players.length]} gap-x-8 gap-y-16`}
           >
             {players.map(player => (
               <li key={player} className="flex flex-col items-center">
@@ -127,7 +136,7 @@ export default function Room() {
                   !isFull ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50"
                 }`}
                 onClick={handleConfirm}
-                disabled={!isFull}
+                // disabled={!isFull}
               >
                 게임시작
               </button>

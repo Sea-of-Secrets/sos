@@ -1,8 +1,9 @@
 import React, { Fragment, useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
-import useNickname from "~/store/nickname";
 import { enterRoom } from "~/pages/rooms";
+import useNickname from "~/store/nickname";
+import useGameId from "~/store/gameId";
 
 interface CreateRoomProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
@@ -13,12 +14,11 @@ export default function CreateRoom({ setOpen, isGuest }: CreateRoomProps) {
   const router = useRouter();
   const cancelButtonRef = useRef(null);
   const { nickname, setNickname } = useNickname();
-  const [gameId, setGameId] = useState("");
+  const { gameId, setGameId } = useGameId();
 
   const handleConfirm = async () => {
     try {
       const { data } = await enterRoom({ nickname, gameId });
-      console.log(data);
 
       if (data === "ROOM_NOT_EXIST") {
         alert("유효하지 않은 방 코드입니다.");
@@ -26,8 +26,6 @@ export default function CreateRoom({ setOpen, isGuest }: CreateRoomProps) {
         alert("정원이 초과된 방입니다.");
       } else {
         router.push(`/room/${gameId}`);
-        // window.location.href = `/room/${gameId}`;
-        // window.location.replace(`/room/${data.gameId}`);
       }
     } catch (e) {
       alert("입장 실패");
@@ -35,6 +33,8 @@ export default function CreateRoom({ setOpen, isGuest }: CreateRoomProps) {
   };
 
   useEffect(() => {
+    // 게임 아이디 초기화
+    setGameId("");
     // 게스트인 경우 닉네임 초기화
     if (isGuest) {
       setNickname("");
