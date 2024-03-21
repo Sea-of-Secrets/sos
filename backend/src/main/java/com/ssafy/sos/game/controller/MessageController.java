@@ -37,9 +37,7 @@ public class MessageController {
                 "message: session ID is null")
                 .toString();
 
-        List<String> list = Arrays.asList( "A111", "zuhee");
-
-        board.getSessionMap().put(sessionId, list);
+        board.getSessionMap().put(sessionId, new ArrayList<>());
     }
 
     @EventListener
@@ -100,9 +98,10 @@ public class MessageController {
     }
 
     @MessageMapping("/room")
-    public void enterRoom(ClientMessage message) {
+    public void enterRoom(ClientMessage message, StompHeaderAccessor accessor) {
         System.out.println(message);
         String sender = message.getSender();
+        String sessionId = accessor.getSessionId();
 
         ServerMessage serverMessage = null;
         String gameId = message.getGameId();
@@ -111,6 +110,10 @@ public class MessageController {
         if (message.getMessage().equals("ENTER_ROOM")) {
 
             if (board.getRoomMap().get(gameId).getInRoomPlayers().contains(sender)) {
+                board.getSessionMap().get(sessionId).add(sender);
+                board.getSessionMap().get(sessionId).add(gameId);
+                System.out.println("Session Info : " + board.getSessionMap().get(sessionId));
+
                 serverMessage = ServerMessage.builder()
                         .message("ENTER_SUCCESS")
                         .gameId(gameId)
