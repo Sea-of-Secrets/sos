@@ -19,8 +19,6 @@ export default function PieceEffect({
   // 애니메이션도 가능하게...
   const animations = useAnimations(model.animations, model.scene);
 
-  console.log(animations);
-
   useEffect(() => {
     const action = animations.actions["Take 001"];
     action?.reset().fadeIn(0.5).play();
@@ -32,7 +30,7 @@ export default function PieceEffect({
   return (
     <mesh
       ref={meshRef}
-      position={[position[0], position[2], position[1]]}
+      position={[position.x, position.z, position.y]}
       scale={scale} // node size
       {...props}
     >

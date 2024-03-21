@@ -1,4 +1,5 @@
-import { MarineNode, PirateNode } from ".";
+import MarineNode from "./MarineNode";
+import PirateNode from "./PirateNode";
 import { BaseNodeProps } from "./types";
 
 export default function NodeRenderer({ node, ...props }: BaseNodeProps) {

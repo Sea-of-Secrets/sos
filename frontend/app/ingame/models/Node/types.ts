@@ -1,5 +1,5 @@
 import { PrimitiveProps } from "@react-three/fiber";
-import { IngameGraphNode } from "~/_lib/data";
+import { IngameGraphNode } from "~/_lib/data/types";
 
 export interface BaseNodeProps extends Omit<PrimitiveProps, "object"> {
   node: IngameGraphNode;

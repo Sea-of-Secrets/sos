@@ -17,12 +17,12 @@ import SystemPrompt from "./components/SystemPrompt";
 
 import Graph from "./models/Graph";
 import Map from "./models/Map";
-import Piece from "./models/Shiba";
+import Shiba from "./models/Piece/Shiba";
 import PieceEffect from "./models/Piece/PieceEffect";
 
 import { gameSocket } from "~/sockets";
 import YongSangYoonTestController from "./components/YongSangYoonTestController";
-import { INGAME_GRAPH } from "~/_lib/data";
+import { INGAME_GRAPH } from "~/_lib/data/data";
 
 const { connect, send, subscribe, disconnect } = gameSocket;
 
@@ -107,11 +107,12 @@ function IngameThree({ nextMoveableNodes, nextNodeEdge }: any) {
   return (
     <>
       <Graph />
-      <Piece
-        position={[
-          INGAME_GRAPH["107"].position[0],
-          INGAME_GRAPH["107"].position[1],
-        ]}
+      <Shiba
+        position={{
+          z: 26,
+          x: INGAME_GRAPH["107"].position.x,
+          y: INGAME_GRAPH["107"].position.y,
+        }}
       />
       <PieceEffect type="FOOTHOLD" position={INGAME_GRAPH["107"].position} />
       <Map />
@@ -148,8 +149,8 @@ function EventHandler({
   const handleFocusPiece = () => {
     if (!isFocused) {
       pieceCamera([
-        INGAME_GRAPH["107"].position[0],
-        INGAME_GRAPH["107"].position[1],
+        INGAME_GRAPH["107"].position.x,
+        INGAME_GRAPH["107"].position.y,
       ]);
       setIsFocused(true);
     } else {
@@ -163,7 +164,7 @@ function EventHandler({
     setIsMoved(!isMoved);
     movePirate(
       isMoved
-        ? [INGAME_GRAPH["107"].position[0], INGAME_GRAPH["107"].position[1]]
+        ? [INGAME_GRAPH["107"].position.x, INGAME_GRAPH["107"].position.y]
         : [-30, 100],
     );
   };

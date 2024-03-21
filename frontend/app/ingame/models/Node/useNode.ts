@@ -1,15 +1,13 @@
 import { ThreeEvent } from "@react-three/fiber";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
-
-import { IngameGraphNode } from "~/_lib/data";
+import { IngameGraphNode } from "~/_lib/data/types";
 
 export const useNode = ({ node }: { node: IngameGraphNode }) => {
-  const position: [number, number, number] = [
-    node.position[0],
-    node.position[2],
-    node.position[1],
-  ];
+  const position: [number, number, number] = useMemo(
+    () => [node.position.x, node.position.z, node.position.y],
+    [node],
+  );
   const meshRef = useRef<THREE.Mesh>(null);
   const [isHover, setIsHover] = useState(false);
 

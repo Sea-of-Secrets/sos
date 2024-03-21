@@ -44,6 +44,7 @@ export default function Piece({ position, ...props }: PieceProps) {
       onClick={handleClickPiece}
       onPointerOver={handlePointerOver}
       onPointerOut={handlePointerOut}
+      position={[position.x, position.y, position.z]}
     >
       <boxGeometry args={[PIECE_SIZE, PIECE_SIZE, PIECE_SIZE]} />
       <meshStandardMaterial
