@@ -19,6 +19,7 @@ public class Board {
 
     private int[] marineStartList;
 
+    // sessionId : { nickname, gameId }
     private HashMap<String, List<String>> sessionMap;
     private HashMap<String, Game> gameMap;
     private HashMap<String, Room> roomMap;
@@ -488,6 +489,10 @@ public class Board {
         this.roomMap.get("A111").getInRoomPlayers().add("C");
         this.roomMap.get("A111").getInRoomPlayers().add("D");
         this.gameMap.put("A111", new Game("A111"));
+        this.gameMap.get("A111").getPlayers().put("A", 0);
+        this.gameMap.get("A111").getPlayers().put("B", 1);
+        this.gameMap.get("A111").getPlayers().put("C", 2);
+        this.gameMap.get("A111").getPlayers().put("D", 3);
         this.gameMap.get("A111").setGameStatus(GameStatus.BEFORE_START);
     }
 }
