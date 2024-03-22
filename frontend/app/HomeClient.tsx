@@ -1,6 +1,6 @@
 "use client";
 
-import * as ShopApi from "~/pages/shops";
+import * as ShopApi from "~/app/api/shops";
 
 export default function HomeClient() {
   const handler = async () => {

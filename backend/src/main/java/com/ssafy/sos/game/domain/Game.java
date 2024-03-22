@@ -1,5 +1,6 @@
 package com.ssafy.sos.game.domain;
 
+import com.ssafy.sos.game.util.GameMode;
 import com.ssafy.sos.game.util.GameStatus;
 import lombok.Data;
 
@@ -24,6 +25,7 @@ public class Game {
     private Investigate investigate; // 조사 진행 상태 및 성공 여부
     private GameStatus gameStatus; // 현재 게임 진행 상태 (시작 전, 진행 중, 게임 종료)
     private List<Integer> investigateSuccess; // 해군이 조사 성공한 노드 리스트
+    private GameMode gameMode; // 1:1 모드, 1:3 모드
 
     public Game(String gameId) {
         this.gameId = gameId;
@@ -39,6 +41,7 @@ public class Game {
         this.investigate = new Investigate();
         this.gameStatus = GameStatus.BEFORE_START;
         this.investigateSuccess = new ArrayList<>();
+        this.gameMode = GameMode.ONE_VS_THREE;
     }
 
     public void increaseTurn() {

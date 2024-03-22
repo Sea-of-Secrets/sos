@@ -20,4 +20,5 @@ public interface GameService {
     Room enterRoom(String gameId, String nickname);
     boolean investigate(String gameId, int nodeNumber, int role);
     boolean arrest(String gameId, int nodeNumber);
+    void gameOver(String gameId, boolean gameResult);
 }
