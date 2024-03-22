@@ -26,6 +26,8 @@ public class Game {
     private GameStatus gameStatus; // 현재 게임 진행 상태 (시작 전, 진행 중, 게임 종료)
     private List<Integer> investigateSuccess; // 해군이 조사 성공한 노드 리스트
     private GameMode gameMode; // 1:1 모드, 1:3 모드
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 
     public Game(String gameId) {
         this.gameId = gameId;
