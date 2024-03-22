@@ -1,11 +1,13 @@
 package com.ssafy.sos.game.service;
 
 import com.ssafy.sos.game.domain.*;
+import com.ssafy.sos.game.domain.record.GameRecordMember;
+import com.ssafy.sos.game.domain.record.GameRecord;
 import com.ssafy.sos.game.repository.GameMemberRepository;
 import com.ssafy.sos.game.util.GameMode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -13,9 +15,10 @@ import java.util.*;
 @RequiredArgsConstructor
 public class GameServiceImpl implements GameService {
 
-    private final Board board;
-    private Game game;
     private final GameMemberRepository gameMemberRepository;
+    private final Board board;
+    private final Random rand = new SecureRandom();
+    private Game game;
 
     private boolean isMarineStanding(String gameId, int node) {
         game = board.getGameMap().get(gameId);
@@ -23,10 +26,9 @@ public class GameServiceImpl implements GameService {
         return currentPosition[1] == node || currentPosition[2] == node || currentPosition[3] == node;
     }
 
-    public static String generateRandomCode() {
-        Random random = new Random();
-        char randomAlphabet = (char) ('A' + random.nextInt(26));
-        int randomNumber = random.nextInt(1000);
+    private String generateRandomCode() {
+        char randomAlphabet = (char) ('A' + rand.nextInt(26));
+        int randomNumber = rand.nextInt(1000);
         return String.format("%c%03d", randomAlphabet, randomNumber);
     }
 
@@ -42,7 +44,7 @@ public class GameServiceImpl implements GameService {
         Collections.shuffle(random);
 
         Room room = board.getRoomMap().get(gameId);
-        List<String> roomPlayers = room.getInRoomPlayers();
+        List<Player> roomPlayers = room.getInRoomPlayers();
 
         // 게임 모드에 맞게 역할 배정
         switch (room.getGameMode()) {
@@ -68,13 +70,14 @@ public class GameServiceImpl implements GameService {
 
         // 게임 시작하면 방 폭파
         board.getRoomMap().remove(gameId);
+        // 시작 시간 세팅
+        game.setStartTime(LocalDateTime.now());
     }
 
     // 보물섬 위치 랜덤 지정
     @Override
     public int[] setPirateTreasure(String gameId) {
         int[] treasures = new int[4];
-        Random rand = new Random();
         int randomIndex;
 
         // 랜덤하게 선택할 배열 선택
@@ -110,7 +113,7 @@ public class GameServiceImpl implements GameService {
         game = board.getGameMap().get(gameId);
         Set<Integer> treasures = game.getTreasures().keySet();
 
-        int randomIndex = new Random().nextInt(treasures.size());
+        int randomIndex = rand.nextInt(treasures.size());
         int nextNode = treasures.stream().skip(randomIndex).findFirst().orElse(0);
 
         // getCurrentPosition 배열의 해적 위치[0]
@@ -309,7 +312,7 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public Room makeRoom(String nickname, GameMode gameMode) {
+    public Room makeRoom(Player player, GameMode gameMode) {
         // 방 번호 랜덤으로 생성 후 중복 검사
         String gameId;
         int cnt = 0;
@@ -323,8 +326,8 @@ public class GameServiceImpl implements GameService {
 
         board.getRoomMap().put(gameId, new Room(gameId));
         Room room = board.getRoomMap().get(gameId);
-        room.setHost(nickname);
-        room.getInRoomPlayers().add(nickname);
+        room.setHost(player);
+        room.getInRoomPlayers().add(player);
         room.setGameMode(gameMode);
 
         System.out.println("Room Number: " + gameId);
@@ -332,12 +335,12 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public Room enterRoom(String gameId, String nickname) {
+    public Room enterRoom(String gameId, Player player) {
         Room room = board.getRoomMap().get(gameId);
 
         // 방이 다 차있지 않으면
         if (room.getInRoomPlayers().size() < 4) {
-            room.getInRoomPlayers().add(nickname);
+            room.getInRoomPlayers().add(player);
         }
         return room;
     }
@@ -384,38 +387,40 @@ public class GameServiceImpl implements GameService {
     @Override
     public void gameOver(String gameId, boolean gameResult) {
         Game game = board.getGameMap().get(gameId);
+        game.setEndTime(LocalDateTime.now());
 
         // mongodb에 gameRecord 저장
         for (int i = 0; i < game.getGameMode().playerLimit(); i++) {
+            Player player = game.getPlayers().get(i);
+            // 해당 플레이어가 회원이면 기록 저장
+            if (player.getIsMember()) {
+                GameRecord gameRecord = GameRecord.builder()
+                        .thieve(game.getPlayers().get(0).getNickname())
+                        .navy(new String[]{
+                                game.getPlayers().get(1).getNickname(),
+                                game.getPlayers().get(2).getNickname(),
+                                game.getPlayers().get(3).getNickname()})
+                        .nodes(game.getPirateRoute())
+                        .victory((gameResult && i == 0) || (!gameResult && i != 0))
+                        .startTime(LocalDateTime.now())
+                        .endTime(LocalDateTime.now())
+                        .point(100)
+                        .build();
 
-            // TODO: 게임 시작 시간, 게임 종료 시간 저장 필요
-            // TODO: 회원인 플레이어들만 기록 저장 필요
-            GameRecord gameRecord = GameRecord.builder()
-                    .thieve(game.getPlayers().get(0))
-                    .navy(new String[]{
-                            game.getPlayers().get(1),
-                            game.getPlayers().get(2),
-                            game.getPlayers().get(3)})
-                    .nodes(game.getPirateRoute())
-                    .victory((gameResult && i == 0) || (!gameResult && i != 0))
-                    .startTime(LocalDateTime.now())
-                    .endTime(LocalDateTime.now())
-                    .point(100)
-                    .build();
+                String username = game.getPlayers().get(i).getNickname();
+                GameRecordMember gameRecordMember = gameMemberRepository.findByUsername(username)
+                        .orElseGet(() -> {
+                            GameRecordMember newMember = GameRecordMember.builder()
+                                    .username(username)
+                                    .gameRecords(new ArrayList<>())
+                                    .build();
+                            gameMemberRepository.save(newMember);
+                            return newMember;
+                        });
 
-            String username = game.getPlayers().get(i);
-            GameMember gameMember = gameMemberRepository.findByUsername(username)
-                    .orElseGet(() -> {
-                        GameMember newMember = GameMember.builder()
-                                .username(username)
-                                .gameRecords(new ArrayList<>())
-                                .build();
-                        gameMemberRepository.save(newMember);
-                        return newMember;
-                    });
-
-            gameMember.getGameRecords().add(gameRecord);
-            gameMemberRepository.save(gameMember);
+                gameRecordMember.getGameRecords().add(gameRecord);
+                gameMemberRepository.save(gameRecordMember);
+            }
         }
 
         board.getGameMap().remove(gameId);

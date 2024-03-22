@@ -1,4 +1,4 @@
-package com.ssafy.sos.game.domain;
+package com.ssafy.sos.game.domain.record;
 
 import jakarta.persistence.Id;
 import lombok.Builder;
