@@ -1,18 +1,20 @@
 import { useCallback, useEffect, useState } from "react";
 import { ThreeEvent } from "@react-three/fiber";
 
+import { useGLTF } from "../../hooks/useGLTF";
 import { PiecePathMap } from "~/assetPath";
 import { PieceProps } from "./types";
-import { useGLTF } from "../../hooks/useGLTF";
-
 import PieceEffect from "./PieceEffect";
 
 const Z_AXIS_AJ_VALUE = 20;
 
-export default function Piece({ position, pieceName, ...props }: PieceProps) {
-  const { meshRef, gltf } = useGLTF({
-    src: PiecePathMap[pieceName].src,
-  });
+export default function Piece({
+  position,
+  pieceName,
+  set,
+  ...props
+}: PieceProps) {
+  const { meshRef, gltf } = useGLTF(PiecePathMap[pieceName].src);
 
   const [hovered, setHover] = useState(false);
 
@@ -30,6 +32,15 @@ export default function Piece({ position, pieceName, ...props }: PieceProps) {
     setHover(false);
   }, []);
 
+  console.log(meshRef);
+
+  useEffect(() => {
+    if (set) {
+      console.log("여기 있잖아 ㅡㅡ");
+      set(meshRef.current);
+    }
+  }, [meshRef, set]);
+
   useEffect(() => {
     if (hovered) {
       document.querySelector("canvas")!.style.cursor = "pointer";
@@ -43,7 +54,11 @@ export default function Piece({ position, pieceName, ...props }: PieceProps) {
       <mesh
         {...props}
         ref={meshRef}
-        position={[position.x, position.z + Z_AXIS_AJ_VALUE, position.y]}
+        position={
+          position
+            ? [position.x, position.z + Z_AXIS_AJ_VALUE, position.y]
+            : [0, 0, 0]
+        }
         scale={15}
         onClick={handleClickPiece}
         onPointerOver={handlePointerOver}

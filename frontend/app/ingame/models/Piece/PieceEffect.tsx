@@ -16,9 +16,8 @@ export default function PieceEffect({
   position,
   ...props
 }: PieceEffectProps) {
-  const { meshRef, gltf } = useGLTF({
-    src: PieceEffectPathMap[effectName],
-  });
+  const { meshRef, gltf } = useGLTF(PieceEffectPathMap[effectName]);
+
   const animations = useAnimations(gltf.animations, gltf.scene);
 
   useEffect(() => {
