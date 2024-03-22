@@ -5,6 +5,7 @@ import { useSystemPrompt } from "~/app/ingame/stores/useSystemPrompt";
 import { useCamera } from "~/app/ingame/stores/useCamera";
 import { getNode } from "~/_lib/data/data";
 import { usePiratePiece } from "../stores/piece";
+import { usePirateGraph } from "../stores/graph";
 
 export default function YongSangYoonTestController() {
   const cameraZoomInputRef = useRef<HTMLInputElement>(null);
@@ -13,6 +14,7 @@ export default function YongSangYoonTestController() {
   const { setHeaderMessage, setFooterMessage } = useSystemPrompt();
   const { zoom, zoomFullScreen } = useCamera();
   const { movePiece } = usePiratePiece();
+  const { setMovableNodeIdList } = usePirateGraph();
 
   const handleClickSystemPromptHeader = () => {
     if (systemPromptHeaderInputRef.current) {
@@ -72,6 +74,26 @@ export default function YongSangYoonTestController() {
     }
   };
 
+  const handleShowNeighbors = () => {
+    if (cameraZoomInputRef.current) {
+      const nodeId = parseInt(cameraZoomInputRef.current.value, 10);
+      try {
+        const { neighborNodeIdList } = getNode(nodeId);
+
+        if (neighborNodeIdList.length === 0) {
+          window.alert("연결된 이웃노드가 없다...");
+          return;
+        }
+
+        // 마린노드의 이웃노드는 파이렛노드라서 반대로 색깔이 바뀌는데 서버에서는 제대로 올거니까 큰 의미없음.
+        setMovableNodeIdList(neighborNodeIdList);
+      } catch (e) {
+        window.alert("올바른 노드 번호를 입력해라...");
+        cameraZoomInputRef.current.value = "";
+      }
+    }
+  };
+
   return (
     <ContainerStyle>
       <Test>
@@ -103,9 +125,13 @@ export default function YongSangYoonTestController() {
           type="number"
           placeholder="노드 번호를 입력해볼래?"
         />
-        <div style={{ display: "flex" }}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
           <Button onClick={handleZoomNode}>노드 번호로 카메라 줌</Button>
           <Button onClick={handleMovePiece}>노드 번호로 이동</Button>
+          <Button onClick={handleShowNeighbors}>이웃 노드 ON</Button>
+          <Button onClick={() => setMovableNodeIdList([])}>
+            이웃 노드 OFF
+          </Button>
           <Button onClick={handleZoomFullScreen}>전체화면</Button>
         </div>
       </Test>

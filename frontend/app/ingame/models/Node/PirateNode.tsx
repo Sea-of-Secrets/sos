@@ -3,6 +3,7 @@ import { Cylinder, Edges, Text } from "@react-three/drei";
 import { NODE_SCALE } from "./constants";
 import { PirateNodeProps } from "./types";
 import { useNode } from "../../hooks/useNode";
+import { usePirateGraph } from "../../stores/graph";
 
 export default function PirateNode({ node, ...props }: PirateNodeProps) {
   const {
@@ -12,6 +13,8 @@ export default function PirateNode({ node, ...props }: PirateNodeProps) {
     handlePointerOut,
     handlePointerOver,
   } = useNode({ node });
+
+  const { movableNodeIdList } = usePirateGraph();
 
   return (
     <>
@@ -26,7 +29,9 @@ export default function PirateNode({ node, ...props }: PirateNodeProps) {
       >
         <Cylinder
           args={[4, 5, 2]}
-          material-color="orange" // "tomato / orange"
+          material-color={
+            movableNodeIdList.includes(node.nodeId) ? "#03fc39" : "orange"
+          }
         >
           <Edges color="black" />
         </Cylinder>
