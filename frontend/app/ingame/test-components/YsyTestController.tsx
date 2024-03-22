@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import { useSystemPrompt } from "~/app/ingame/stores/useSystemPrompt";
 import { useCamera } from "~/app/ingame/stores/useCamera";
 import { getNode } from "~/_lib/data/data";
-import { usePiratePiece } from "../stores/usePiratePiece";
+import { usePiratePiece } from "../stores/piece";
 
 export default function YongSangYoonTestController() {
   const cameraZoomInputRef = useRef<HTMLInputElement>(null);
@@ -61,7 +61,10 @@ export default function YongSangYoonTestController() {
       const nodeId = parseInt(cameraZoomInputRef.current.value, 10);
 
       try {
-        movePiece(getNode(nodeId).position);
+        movePiece({
+          position: getNode(nodeId).position,
+          moveAnimationStyle: "JUMP",
+        });
       } catch (e) {
         window.alert("올바른 노드 번호를 입력해라...");
         cameraZoomInputRef.current.value = "";

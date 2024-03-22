@@ -32,11 +32,8 @@ export default function Piece({
     setHover(false);
   }, []);
 
-  console.log(meshRef);
-
   useEffect(() => {
     if (set) {
-      console.log("여기 있잖아 ㅡㅡ");
       set(meshRef.current);
     }
   }, [meshRef, set]);
