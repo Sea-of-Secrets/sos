@@ -9,8 +9,8 @@ import java.util.List;
 @Data
 public class Room {
     private String gameId;
-    private String host;
-    private List<String> inRoomPlayers;
+    private Player host;
+    private List<Player> inRoomPlayers;
     private GameMode gameMode;
     private int isRendered = 0;
 

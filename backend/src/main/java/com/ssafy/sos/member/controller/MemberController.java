@@ -1,11 +1,16 @@
 package com.ssafy.sos.member.controller;
 
+import com.amazonaws.Response;
+import com.ssafy.sos.game.domain.record.GameRecord;
 import com.ssafy.sos.member.domain.UserEntity;
 import com.ssafy.sos.member.domain.UserNicknameRequest;
 import com.ssafy.sos.member.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -33,5 +38,10 @@ public class MemberController {
         // TODO: Auth 정보를 통해 변경하는 것으로 변경 필요
         userRepository.updateUsernameById(user.getId(), user.getUsername());
         return ResponseEntity.ok("OK");
+    }
+
+    @GetMapping("/records")
+    public ResponseEntity<List<GameRecord>> getGameRecords(@RequestParam String name) {
+        return ResponseEntity.ok(new ArrayList<>());
     }
 }

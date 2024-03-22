@@ -1,6 +1,8 @@
 package com.ssafy.sos.game.service;
 
 import com.ssafy.sos.game.domain.*;
+import com.ssafy.sos.game.domain.record.GameRecordMember;
+import com.ssafy.sos.game.domain.record.GameRecord;
 import com.ssafy.sos.game.repository.GameMemberRepository;
 import com.ssafy.sos.game.util.GameMode;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +44,7 @@ public class GameServiceImpl implements GameService {
         Collections.shuffle(random);
 
         Room room = board.getRoomMap().get(gameId);
-        List<String> roomPlayers = room.getInRoomPlayers();
+        List<Player> roomPlayers = room.getInRoomPlayers();
 
         // 게임 모드에 맞게 역할 배정
         switch (room.getGameMode()) {
@@ -309,7 +311,7 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public Room makeRoom(String nickname, GameMode gameMode) {
+    public Room makeRoom(Player player, GameMode gameMode) {
         // 방 번호 랜덤으로 생성 후 중복 검사
         String gameId;
         int cnt = 0;
@@ -323,8 +325,8 @@ public class GameServiceImpl implements GameService {
 
         board.getRoomMap().put(gameId, new Room(gameId));
         Room room = board.getRoomMap().get(gameId);
-        room.setHost(nickname);
-        room.getInRoomPlayers().add(nickname);
+        room.setHost(player);
+        room.getInRoomPlayers().add(player);
         room.setGameMode(gameMode);
 
         System.out.println("Room Number: " + gameId);
@@ -332,12 +334,12 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
-    public Room enterRoom(String gameId, String nickname) {
+    public Room enterRoom(String gameId, Player player) {
         Room room = board.getRoomMap().get(gameId);
 
         // 방이 다 차있지 않으면
         if (room.getInRoomPlayers().size() < 4) {
-            room.getInRoomPlayers().add(nickname);
+            room.getInRoomPlayers().add(player);
         }
         return room;
     }
@@ -391,11 +393,11 @@ public class GameServiceImpl implements GameService {
             // TODO: 게임 시작 시간, 게임 종료 시간 저장 필요
             // TODO: 회원인 플레이어들만 기록 저장 필요
             GameRecord gameRecord = GameRecord.builder()
-                    .thieve(game.getPlayers().get(0))
+                    .thieve(game.getPlayers().get(0).getNickname())
                     .navy(new String[]{
-                            game.getPlayers().get(1),
-                            game.getPlayers().get(2),
-                            game.getPlayers().get(3)})
+                            game.getPlayers().get(1).getNickname(),
+                            game.getPlayers().get(2).getNickname(),
+                            game.getPlayers().get(3).getNickname()})
                     .nodes(game.getPirateRoute())
                     .victory((gameResult && i == 0) || (!gameResult && i != 0))
                     .startTime(LocalDateTime.now())
@@ -403,10 +405,10 @@ public class GameServiceImpl implements GameService {
                     .point(100)
                     .build();
 
-            String username = game.getPlayers().get(i);
-            GameMember gameMember = gameMemberRepository.findByUsername(username)
+            String username = game.getPlayers().get(i).getNickname();
+            GameRecordMember gameRecordMember = gameMemberRepository.findByUsername(username)
                     .orElseGet(() -> {
-                        GameMember newMember = GameMember.builder()
+                        GameRecordMember newMember = GameRecordMember.builder()
                                 .username(username)
                                 .gameRecords(new ArrayList<>())
                                 .build();
@@ -414,8 +416,8 @@ public class GameServiceImpl implements GameService {
                         return newMember;
                     });
 
-            gameMember.getGameRecords().add(gameRecord);
-            gameMemberRepository.save(gameMember);
+            gameRecordMember.getGameRecords().add(gameRecord);
+            gameMemberRepository.save(gameRecordMember);
         }
 
         board.getGameMap().remove(gameId);

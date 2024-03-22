@@ -1,4 +1,4 @@
-package com.ssafy.sos.game.domain;
+package com.ssafy.sos.game.domain.record;
 
 import jakarta.persistence.Id;
 import lombok.*;
@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @Builder
-public class GameMember {
+public class GameRecordMember {
     @Id
     private String id;
     private String username;
