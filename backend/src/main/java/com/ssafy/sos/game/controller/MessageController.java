@@ -88,7 +88,6 @@ public class MessageController {
 
             }
         }
-
     }
 
     @MessageMapping("/game")
@@ -147,9 +146,9 @@ public class MessageController {
         }
 
         // 게임 시작 버튼 클릭
-        if (message.getMessage().equals("GAME_START")) {
+        if (message.getMessage().equals("START_BUTTON_CLICKED")) {
             serverMessage = ServerMessage.builder()
-                    .message("GAME_START")
+                    .message("START_BUTTON_CLICKED")
                     .build();
             sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
         }
@@ -203,6 +202,7 @@ public class MessageController {
         }
     }
 
+    // TODO: 타이머 테스트하는 부분 - 이후에 반드시 지울 것
     @MessageMapping("/test")
     public void test(ClientMessage message) {
         String gameId = message.getGameId();
@@ -215,11 +215,14 @@ public class MessageController {
         }
     }
 
+    // 타이머가 끝났을때 이벤트를 수신받는 부분
     @EventListener
-    public void handleTimerTimeout(TimerTimeoutEvent event) {
+    public void listenTimeout(TimerTimeoutEvent event) {
         String gameId = event.getGameId();
         String message = event.getMessage();
+        int type = event.getTimerType();
         System.out.println(message);
+        System.out.println(type);
         // 15초 내로 응답이 오지 않았음을 클라이언트에 알림
         sendingOperations.convertAndSend("/sub/" + gameId, message);
     }
