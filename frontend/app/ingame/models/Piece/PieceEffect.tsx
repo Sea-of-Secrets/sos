@@ -6,7 +6,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 import { PieceEffectPathMap } from "~/assetPath";
 import { PieceEffectProps } from "./types";
-import { useGLTF } from "../useGLTF";
+import { useGLTF } from "../../hooks/useGLTF";
 
 const DEFAULT_SCALE = 15;
 

@@ -3,10 +3,11 @@ import { ThreeEvent } from "@react-three/fiber";
 
 export const usePiece = () => {
   const [hovered, setHover] = useState(false);
-  const [active, setActive] = useState(false);
 
   const handleClickPiece = useCallback((e: ThreeEvent<MouseEvent>) => {
-    setActive(prev => !prev);
+    console.log("******** Piece Click ********");
+    console.log("이벤트", e);
+    console.log("****************************");
   }, []);
 
   const handlePointerOver = useCallback(() => {
@@ -27,7 +28,6 @@ export const usePiece = () => {
 
   return {
     hovered,
-    active,
     handleClickPiece,
     handlePointerOut,
     handlePointerOver,

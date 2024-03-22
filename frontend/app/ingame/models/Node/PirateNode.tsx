@@ -2,7 +2,7 @@ import { Cylinder, Edges, Text } from "@react-three/drei";
 
 import { NODE_SCALE } from "./constants";
 import { PirateNodeProps } from "./types";
-import { useNode } from "./useNode";
+import { useNode } from "../../hooks/useNode";
 
 export default function PirateNode({ node, ...props }: PirateNodeProps) {
   const {

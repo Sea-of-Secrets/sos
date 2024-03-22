@@ -1,6 +1,7 @@
 import { ThreeEvent } from "@react-three/fiber";
-import { useCallback, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
+
 import { IngameGraphNode } from "~/_lib/data/types";
 
 export const useNode = ({ node }: { node: IngameGraphNode }) => {
@@ -13,7 +14,10 @@ export const useNode = ({ node }: { node: IngameGraphNode }) => {
 
   const handleClickPiece = useCallback(
     (e: ThreeEvent<MouseEvent>) => {
-      console.log(node);
+      console.log("******** Node Click ********");
+      console.log("노드 정보", node);
+      console.log("이벤트", e);
+      console.log("****************************");
     },
     [node],
   );
@@ -25,6 +29,14 @@ export const useNode = ({ node }: { node: IngameGraphNode }) => {
   const handlePointerOut = useCallback(() => {
     setIsHover(false);
   }, []);
+
+  useEffect(() => {
+    if (isHover) {
+      document.querySelector("canvas")!.style.cursor = "pointer";
+    } else {
+      document.querySelector("canvas")!.style.cursor = "default";
+    }
+  }, [isHover]);
 
   return {
     position,

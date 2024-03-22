@@ -1,7 +1,7 @@
 import { PieceProps } from "./types";
-import { useGLTF } from "../useGLTF";
+import { useGLTF } from "../../hooks/useGLTF";
 import { PiecePathMap } from "~/assetPath";
-import { usePiece } from "./usePiece";
+import { usePiece } from "../../hooks/usePiece";
 import PieceEffect from "./PieceEffect";
 
 const Z_AXIS_AJ_VALUE = 20;
