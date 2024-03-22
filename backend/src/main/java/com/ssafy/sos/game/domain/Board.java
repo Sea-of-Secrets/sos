@@ -488,6 +488,7 @@ public class Board {
         test("A222", GameMode.ONE_VS_THREE);
     }
 
+    // TEST
     private void test(String gameId, GameMode gameMode) {
         this.roomMap.put(gameId, new Room(gameId));
         switch (gameMode) {

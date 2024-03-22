@@ -403,8 +403,7 @@ public class GameServiceImpl implements GameService {
                     .point(100)
                     .build();
 
-            String username = game.getPlayers().get(i); // 예시로 "A" 사용
-            System.out.println(username);
+            String username = game.getPlayers().get(i);
             GameMember gameMember = gameMemberRepository.findByUsername(username)
                     .orElseGet(() -> {
                         GameMember newMember = GameMember.builder()

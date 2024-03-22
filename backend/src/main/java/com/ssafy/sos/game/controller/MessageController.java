@@ -103,9 +103,7 @@ public class MessageController {
             // 게임 종료는 꼭 한명만 시켜야 됨 -> 안 그러면 게임 삭제 요청 4번 감
             if (game.getPlayers().get(0).equals(sender)) {
                 gameService.gameOver(gameId, true);
-                System.out.println("FINISH");
             }
-            System.out.println("FINISH");
         }
 
         //브로드캐스팅 코드
