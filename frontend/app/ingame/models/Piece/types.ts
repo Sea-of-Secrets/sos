@@ -13,3 +13,9 @@ export interface PieceEffectProps
   type: PieceEffectType;
   position: NodePosition;
 }
+
+export interface TreasureProps {
+  url: string;
+  isOpen: boolean;
+  nodeId: number;
+}

@@ -38,17 +38,18 @@ export default function Room() {
     // 게임 시작 버튼 클릭
     send("/pub/room", {
       message: "GAME_START",
+      // message: "START_BUTTON_CLICKED"
       sender: nickname,
       gameId,
     });
   };
 
   const onConnect = () => {
-    console.log("소켓 연결 성공. 룸아이디 닉네임 : ", gameId, nickname);
+    console.log("대기실 소켓 연결 성공");
     // 해당 룸코드를 구독
     subscribe(`/sub/${gameId}`, message => {
       const data = JSON.parse(message.body);
-      console.log(data);
+      console.log("소켓 메세지", data);
 
       // 플레이어 입장 OR 퇴장
       if (data.message == "ENTER_SUCCESS" || data.message == "PLAYER_LEAVED") {

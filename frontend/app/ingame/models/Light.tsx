@@ -1,4 +1,4 @@
-const defaultIntensity = 1;
+const defaultIntensity = 3;
 const defaultPosition: [number, number, number] = [5, 5, 5];
 
 export default function Light() {

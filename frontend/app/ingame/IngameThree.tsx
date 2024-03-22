@@ -5,6 +5,7 @@ import Graph from "./models/Graph";
 import Map from "./models/Map";
 import Shiba from "./models/Piece/Shiba";
 import PieceEffect from "./models/Piece/PieceEffect";
+import Treasure from "./models/Piece/TreasureGroup";
 
 import { getNode } from "~/_lib/data/data";
 
@@ -17,6 +18,7 @@ export default function IngameThree({ nextMoveableNodes, nextNodeEdge }: any) {
       <Tween />
       <Camera />
       <Graph />
+      <Treasure />
       <Shiba
         position={{
           z: getNode(TEST_NODE_ID).position.z + Z_HEIGHT_TERM,
