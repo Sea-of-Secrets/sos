@@ -12,6 +12,7 @@ interface CameraState {
   initialize: (cameraRef: MutableRefObject<CameraControls>) => void;
   zoom: (position: NodePosition) => void;
   zoomFullScreen: () => void;
+  startAnimation: () => void;
 }
 
 export const useCamera = create<CameraState>(set => ({
@@ -49,4 +50,5 @@ export const useCamera = create<CameraState>(set => ({
       return { ...state };
     });
   },
+  startAnimation: () => {},
 }));

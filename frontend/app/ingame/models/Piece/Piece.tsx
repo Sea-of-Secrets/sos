@@ -1,57 +1,32 @@
-import * as THREE from "three";
-import React, { useCallback, useEffect, useRef, useState } from "react";
-import { useFrame, ThreeEvent } from "@react-three/fiber";
-
 import { PieceProps } from "./types";
-import { PIECE_SIZE } from "./constants";
+import { useGLTF } from "../useGLTF";
+import { PiecePathMap } from "~/assetPath";
+import { usePiece } from "./usePiece";
+import PieceEffect from "./PieceEffect";
 
-export default function Piece({ position, ...props }: PieceProps) {
-  const meshRef = useRef<THREE.Mesh>(null!);
-  const [hovered, setHover] = useState(false);
-  const [active, setActive] = useState(false);
+const Z_AXIS_AJ_VALUE = 20;
 
-  const handleClickPiece = useCallback((e: ThreeEvent<MouseEvent>) => {
-    setActive(prev => !prev);
-  }, []);
+export default function Piece({ position, pieceName, ...props }: PieceProps) {
+  const { meshRef, gltf } = useGLTF({
+    src: PiecePathMap[pieceName].src,
+  });
 
-  const handlePointerOver = useCallback(() => {
-    setHover(true);
-  }, []);
-
-  const handlePointerOut = useCallback(() => {
-    setHover(false);
-  }, []);
-
-  useFrame((state, delta) => (meshRef.current.rotation.x += delta));
-
-  useEffect(() => {
-    if (hovered) {
-      document.querySelector("canvas")!.style.cursor = "pointer";
-    } else {
-      document.querySelector("canvas")!.style.cursor = "default";
-    }
-  }, [hovered]);
-
-  if (!position) {
-    return null;
-  }
+  const { handleClickPiece, handlePointerOut, handlePointerOver } = usePiece();
 
   return (
-    <mesh
-      {...props}
-      ref={meshRef}
-      scale={active ? 1.5 : 1}
-      onClick={handleClickPiece}
-      onPointerOver={handlePointerOver}
-      onPointerOut={handlePointerOut}
-      position={[position.x, position.y, position.z]}
-    >
-      <boxGeometry args={[PIECE_SIZE, PIECE_SIZE, PIECE_SIZE]} />
-      <meshStandardMaterial
-        metalness={0}
-        roughness={1}
-        color={hovered ? "tomato" : "orange"}
-      />
-    </mesh>
+    <>
+      <mesh
+        {...props}
+        ref={meshRef}
+        position={[position.x, position.z + Z_AXIS_AJ_VALUE, position.y]}
+        scale={15}
+        onClick={handleClickPiece}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
+      >
+        <primitive object={gltf.scene} />
+      </mesh>
+      <PieceEffect effectName="FOOTHOLD_LIGHT_BEAM" position={position} />
+    </>
   );
 }
