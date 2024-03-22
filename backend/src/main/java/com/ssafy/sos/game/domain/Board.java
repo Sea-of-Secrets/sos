@@ -1,8 +1,11 @@
 package com.ssafy.sos.game.domain;
 
+import com.ssafy.sos.game.util.GameMode;
 import com.ssafy.sos.game.util.GameStatus;
 import lombok.Data;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -483,17 +486,66 @@ public class Board {
         this.gameMap = new HashMap<>();
 
         // TEST
-        this.roomMap.put("A111", new Room("A111"));
-        this.roomMap.get("A111").getInRoomPlayers().add("A");
-        this.roomMap.get("A111").getInRoomPlayers().add("B");
-        this.roomMap.get("A111").getInRoomPlayers().add("C");
-        this.roomMap.get("A111").getInRoomPlayers().add("D");
-        this.roomMap.get("A111").setHost("A");
-        this.gameMap.put("A111", new Game("A111"));
-        this.gameMap.get("A111").getPlayers().put("A", 0);
-        this.gameMap.get("A111").getPlayers().put("B", 1);
-        this.gameMap.get("A111").getPlayers().put("C", 2);
-        this.gameMap.get("A111").getPlayers().put("D", 3);
-        this.gameMap.get("A111").setGameStatus(GameStatus.BEFORE_START);
+        test("A111", GameMode.ONE_VS_ONE);
+        test("A222", GameMode.ONE_VS_THREE);
+    }
+
+    // TEST
+    private void test(String gameId, GameMode gameMode) {
+        List<Player> players = new ArrayList<>();
+        Player player1 = Player.builder()
+                .nickname("zuhee")
+                .isMember(true)
+                .build();
+        Player player2 = Player.builder()
+                .nickname("sangyoon")
+                .isMember(true)
+                .build();
+        Player player3 = Player.builder()
+                .nickname("joopy")
+                .isMember(true)
+                .build();
+        Player player4 = Player.builder()
+                .nickname("seungjun")
+                .isMember(true)
+                .build();
+        players.add(player1);
+        players.add(player2);
+        players.add(player3);
+        players.add(player4);
+
+        this.roomMap.put(gameId, new Room(gameId));
+        switch (gameMode) {
+            case ONE_VS_ONE -> {
+                this.roomMap.get(gameId).getInRoomPlayers().add(player1);
+                this.roomMap.get(gameId).getInRoomPlayers().add(player2);
+                this.roomMap.get(gameId).setHost(player1);
+                this.roomMap.get(gameId).setGameMode(GameMode.ONE_VS_ONE);
+            }
+            case ONE_VS_THREE -> {
+                this.roomMap.get(gameId).getInRoomPlayers().add(player1);
+                this.roomMap.get(gameId).getInRoomPlayers().add(player2);
+                this.roomMap.get(gameId).getInRoomPlayers().add(player3);
+                this.roomMap.get(gameId).getInRoomPlayers().add(player4);
+                this.roomMap.get(gameId).setHost(player1);
+                this.roomMap.get(gameId).setGameMode(GameMode.ONE_VS_THREE);
+            }
+        }
+
+        this.gameMap.put(gameId, new Game(gameId));
+        this.gameMap.get(gameId).getPlayers().put(0, player1);
+        this.gameMap.get(gameId).getPlayers().put(1, player2);
+        switch (gameMode) {
+            case ONE_VS_ONE -> {
+                this.gameMap.get(gameId).getPlayers().put(2, player2);
+                this.gameMap.get(gameId).getPlayers().put(3, player2);
+            }
+            case ONE_VS_THREE -> {
+                this.gameMap.get(gameId).getPlayers().put(2, player3);
+                this.gameMap.get(gameId).getPlayers().put(3, player4);
+            }
+        }
+
+        this.gameMap.get(gameId).setGameStatus(GameStatus.BEFORE_START);
     }
 }

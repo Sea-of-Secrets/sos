@@ -1,4 +1,4 @@
-import { client } from "./http";
+import { client } from "../../_lib/http";
 
 type Product = {};
 

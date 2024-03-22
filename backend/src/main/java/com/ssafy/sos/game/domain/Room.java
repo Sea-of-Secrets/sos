@@ -1,5 +1,6 @@
 package com.ssafy.sos.game.domain;
 
+import com.ssafy.sos.game.util.GameMode;
 import lombok.Data;
 
 import java.util.ArrayList;
@@ -8,9 +9,9 @@ import java.util.List;
 @Data
 public class Room {
     private String gameId;
-    private String host;
-    private List<String> inRoomPlayers; // key: nickname / value: 렌더 완료 여부
-    private String gameMode;
+    private Player host;
+    private List<Player> inRoomPlayers;
+    private GameMode gameMode;
     private int isRendered = 0;
 
     public Room(String gameId) {

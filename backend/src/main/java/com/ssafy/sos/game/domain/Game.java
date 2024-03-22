@@ -1,5 +1,6 @@
 package com.ssafy.sos.game.domain;
 
+import com.ssafy.sos.game.util.GameMode;
 import com.ssafy.sos.game.util.GameStatus;
 import lombok.Data;
 
@@ -13,7 +14,7 @@ public class Game {
     private String gameId;
     // 0: 해적, 1: 해군1, 2: 해군2, 3: 해군3
     private int[] currentPosition; // players의 현재 위치
-    private HashMap<String, Integer> players; // players의 닉네임 : 역할
+    private HashMap<Integer, Player> players; // 역할 : player 객체 정보
     private HashMap<Integer, Boolean> treasures; // 해적이 가야할 보물 위치
     private List<Integer> pirateRoute; // 해적 이동 경로
     private List<Integer> marineOneRoute; // 해군1 이동 경로
@@ -24,6 +25,9 @@ public class Game {
     private Investigate investigate; // 조사 진행 상태 및 성공 여부
     private GameStatus gameStatus; // 현재 게임 진행 상태 (시작 전, 진행 중, 게임 종료)
     private List<Integer> investigateSuccess; // 해군이 조사 성공한 노드 리스트
+    private GameMode gameMode; // 1:1 모드, 1:3 모드
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
 
     public Game(String gameId) {
         this.gameId = gameId;
@@ -39,6 +43,7 @@ public class Game {
         this.investigate = new Investigate();
         this.gameStatus = GameStatus.BEFORE_START;
         this.investigateSuccess = new ArrayList<>();
+        this.gameMode = GameMode.ONE_VS_THREE;
     }
 
     public void increaseTurn() {
