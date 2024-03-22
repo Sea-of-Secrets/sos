@@ -40,73 +40,73 @@ export default function IngameClient() {
   const [round, setRound] = useState(1);
 
   // 게임 시작 타이머 알림
-  const gameStart = () => {
-    alert(`직업 : ${type}`);
-  };
+  // const gameStart = () => {
+  //   alert(`직업 : ${type}`);
+  // };
 
-  const onConnect = () => {
-    console.log("인게임 소켓 연결 완료");
-    const gameIdFromLocalStorage = localStorage.getItem("gameId");
-    if (gameIdFromLocalStorage) {
-      const localGameId = JSON.parse(gameIdFromLocalStorage).state.gameId;
+  // const onConnect = () => {
+  //   console.log("인게임 소켓 연결 완료");
+  //   const gameIdFromLocalStorage = localStorage.getItem("gameId");
+  //   if (gameIdFromLocalStorage) {
+  //     const localGameId = JSON.parse(gameIdFromLocalStorage).state.gameId;
 
-      // 해당 룸코드를 구독
-      subscribe(`/sub/${localGameId}`, message => {
-        const data = JSON.parse(message.body);
-        if (data) {
-          setSocketData(data);
-        }
-      });
-    }
-  };
+  //     // 해당 룸코드를 구독
+  //     subscribe(`/sub/${localGameId}`, message => {
+  //       const data = JSON.parse(message.body);
+  //       if (data) {
+  //         setSocketData(data);
+  //       }
+  //     });
+  //   }
+  // };
 
-  useEffect(() => {
-    connect(onConnect);
-    return () => {
-      disconnect();
-    };
-  }, []);
+  // useEffect(() => {
+  //   connect(onConnect);
+  //   return () => {
+  //     disconnect();
+  //   };
+  // }, []);
 
-  useEffect(() => {
-    if (socketData) {
-      console.log("socketData message : ", socketData.message);
-      if (socketData.message === "RENDER_COMPLETE_ACCEPTED") {
-        // 직업 세팅
-        const players = socketData.game.players;
-        const number = Object.keys(players).find(
-          key => players[key] === nickname,
-        );
+  // useEffect(() => {
+  //   if (socketData) {
+  //     console.log("socketData message : ", socketData.message);
+  //     if (socketData.message === "RENDER_COMPLETE_ACCEPTED") {
+  //       // 직업 세팅
+  //       const players = socketData.game.players;
+  //       const number = Object.keys(players).find(
+  //         key => players[key] === nickname,
+  //       );
 
-        if (number === "0") {
-          setType("pirate");
-          setTreasures(socketData.game.treasures);
-          // localStorage.setItem("type", "pirate");
-          // localStorage.setItem(
-          //   "treasures",
-          //   JSON.stringify(socketData.game.treasures),
-          // );
-        } else if (number === "1") {
-          setType("marineOne");
-          // localStorage.setItem("type", "marineOne");
-        } else if (number === "2") {
-          setType("marineTwo");
-          // localStorage.setItem("type", "marineTwo");
-        } else if (number === "3") {
-          setType("marineThree");
-          // localStorage.setItem("type", "marineThree");
-        }
-      }
+  //       if (number === "0") {
+  //         setType("pirate");
+  //         setTreasures(socketData.game.treasures);
+  //         // localStorage.setItem("type", "pirate");
+  //         // localStorage.setItem(
+  //         //   "treasures",
+  //         //   JSON.stringify(socketData.game.treasures),
+  //         // );
+  //       } else if (number === "1") {
+  //         setType("marineOne");
+  //         // localStorage.setItem("type", "marineOne");
+  //       } else if (number === "2") {
+  //         setType("marineTwo");
+  //         // localStorage.setItem("type", "marineTwo");
+  //       } else if (number === "3") {
+  //         setType("marineThree");
+  //         // localStorage.setItem("type", "marineThree");
+  //       }
+  //     }
 
-      // 게임 시작
-      if (socketData.message === "ALL_RENDERED_COMPLETED") {
-        gameStart();
-      }
+  //     // 게임 시작
+  //     if (socketData.message === "ALL_RENDERED_COMPLETED") {
+  //       gameStart();
+  //     }
 
-      if (socketData.message === "ORDER 뭐시기 해적턴입니다!!!") {
-        ("해적 시작위치 고르는 액션 함수");
-      }
-    }
-  }, [socketData]);
+  //     if (socketData.message === "ORDER 뭐시기 해적턴입니다!!!") {
+  //       ("해적 시작위치 고르는 액션 함수");
+  //     }
+  //   }
+  // }, [socketData]);
 
   return (
     <>
@@ -122,11 +122,11 @@ export default function IngameClient() {
         }}
         onCreated={() => {
           setLoading(false);
-          send("/pub/room", {
-            message: "RENDERED_COMPLETE",
-            sender: nickname,
-            gameId,
-          });
+          // send("/pub/room", {
+          //   message: "RENDERED_COMPLETE",
+          //   sender: nickname,
+          //   gameId,
+          // });
         }}
       >
         <IngameThree
