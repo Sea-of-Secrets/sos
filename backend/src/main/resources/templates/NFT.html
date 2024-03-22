@@ -5,10 +5,19 @@
     <title>Title</title>
 </head>
 <body>
-<h2>Upload your file with title and item description</h2>
+<h2>NFT 관련 정보 업로드</h2>
 <form action="/nft/upload" method="post" enctype="multipart/form-data">
     <label for="file">Select a file:</label><br>
     <input type="file" id="file" name="file"><br><br>
+    <label for="title">Title:</label><br>
+    <input type="text" id="title" name="title"><br><br>
+    <label for="description">Item Description:</label><br>
+    <textarea id="description" name="description" rows="4" cols="50"></textarea><br><br>
+    <input type="submit" value="Submit">
+</form>
+
+<h2>NFT 발행</h2>
+<form action="/nft/mint" method="post" enctype="multipart/form-data">
     <label for="title">Title:</label><br>
     <input type="text" id="title" name="title"><br><br>
     <label for="description">Item Description:</label><br>

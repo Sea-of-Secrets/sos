@@ -1,4 +1,4 @@
-package com.ssafy.sos.nft.controller.domain;
+package com.ssafy.sos.nft.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
