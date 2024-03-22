@@ -2,6 +2,7 @@ package com.ssafy.sos.game.controller;
 
 import com.ssafy.sos.game.domain.Board;
 import com.ssafy.sos.game.domain.Game;
+import com.ssafy.sos.game.domain.Player;
 import com.ssafy.sos.game.domain.Room;
 import com.ssafy.sos.game.message.client.ClientMessage;
 import com.ssafy.sos.game.message.client.ClientInitMessage;
@@ -58,7 +59,7 @@ public class MessageController {
 
         if (room != null) {
             // 대기실에서 소켓 끊기면 방 퇴장
-            room.getInRoomPlayers().remove(nickname);
+            room.getInRoomPlayers().removeIf(player -> player.getNickname().equals(nickname));
             ServerMessage serverMessage = ServerMessage.builder()
                     .message("PLAYER_LEAVED")
                     .gameId(gameId)
@@ -101,7 +102,7 @@ public class MessageController {
 
         if (message.getMessage().equals("FINISH")) {
             // 게임 종료는 꼭 한명만 시켜야 됨 -> 안 그러면 게임 삭제 요청 4번 감
-            if (game.getPlayers().get(0).equals(sender)) {
+            if (game.getPlayers().get(0).getNickname().equals(sender)) {
                 gameService.gameOver(gameId, true);
             }
         }
@@ -117,34 +118,35 @@ public class MessageController {
         String sender = message.getSender();
         String sessionId = accessor.getSessionId();
 
-        ServerMessage serverMessage;
+        ServerMessage serverMessage = null;
         String gameId = message.getGameId();
         Room room = board.getRoomMap().get(gameId);
+        List<String> sessionInfo = board.getSessionMap().get(sessionId);
 
         if (message.getMessage().equals("ENTER_ROOM")) {
+            for (Player player : room.getInRoomPlayers()) {
+                if (player.getNickname().equals(sender)) {
+                    sessionInfo.add(sender);
+                    sessionInfo.add(gameId);
 
-            if (board.getRoomMap().get(gameId).getInRoomPlayers().contains(sender)) {
-                board.getSessionMap().get(sessionId).add(sender);
-                board.getSessionMap().get(sessionId).add(gameId);
-                System.out.println("Session Info : " + board.getSessionMap().get(sessionId));
+                    System.out.println("Session Info : " + sessionInfo);
 
-                serverMessage = ServerMessage.builder()
-                        .message("ENTER_SUCCESS")
-                        .gameId(gameId)
-                        .game(board.getGameMap().get(gameId))
-                        .room(board.getRoomMap().get(gameId))
-                        .build();
-            } else {
+                    serverMessage = ServerMessage.builder()
+                            .message("ENTER_SUCCESS")
+                            .gameId(gameId)
+                            .game(board.getGameMap().get(gameId))
+                            .room(board.getRoomMap().get(gameId))
+                            .build();
+                    break;
+                }
+            }
+
+            // 서버 메시지 출력
+            if (serverMessage == null) {
                 serverMessage = ServerMessage.builder()
                         .message("ENTER_FAILURE")
                         .gameId(gameId)
                         .build();
-            }
-
-            // 서버 메시지 출력
-            System.out.println(serverMessage);
-            if (serverMessage != null) {
-                sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
             }
 
             // 정원이 다 찼을 경우 시작버튼 활성화 broadcast
@@ -152,9 +154,9 @@ public class MessageController {
                 serverMessage = ServerMessage.builder()
                         .message("PREPARE_GAME_START")
                         .build();
-
-                sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
             }
+
+            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
         }
 
         // 게임 시작 버튼 클릭
@@ -198,10 +200,10 @@ public class MessageController {
                 board.getRoomMap().remove(gameId);
             } else {
                 // 다음 들어온 사람에게 방장 넘김
-                if (room.getHost().equals(sender)) {
+                if (room.getHost().getNickname().equals(sender)) {
                     room.setHost(room.getInRoomPlayers().get(1));
                 }
-                room.getInRoomPlayers().remove(sender);
+                room.getInRoomPlayers().removeIf(player -> player.getNickname().equals(sender));
             }
 
             serverMessage = ServerMessage.builder()
@@ -219,7 +221,6 @@ public class MessageController {
 
         System.out.println(message);
         String gameId = message.getGameId();
-        String sender = message.getSender();
         Game game = board.getGameMap().get(gameId);
 
         ServerMessage serverMessage = null;
@@ -255,7 +256,6 @@ public class MessageController {
     public void move(ClientMoveMessage message) {
         System.out.println(message);
         String gameId = message.getGameId();
-        String sender = message.getSender();
         Game game = board.getGameMap().get(gameId);
 
         ServerMessage serverMessage = null;
@@ -320,7 +320,6 @@ public class MessageController {
     public void marineAction(ClientInitMessage message) {
         System.out.println(message);
         String gameId = message.getGameId();
-        String sender = message.getSender();
         Game game = board.getGameMap().get(gameId);
 
         ServerMessage serverMessage;

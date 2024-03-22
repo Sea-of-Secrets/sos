@@ -2,7 +2,9 @@ package com.ssafy.sos.game.service;
 
 import com.ssafy.sos.game.domain.Board;
 import com.ssafy.sos.game.domain.Game;
+import com.ssafy.sos.game.domain.Player;
 import com.ssafy.sos.game.domain.Room;
+import com.ssafy.sos.game.util.GameMode;
 import org.assertj.core.api.Assertions;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -28,10 +30,32 @@ class GameServiceImplTest {
 
     // 테스트용 gameId
     String gameId = "A710";
+    List<Player> players;
 
     @BeforeEach
     public void initGameMap() {
         board.getGameMap().put(gameId, new Game(gameId));
+        players = new ArrayList<>();
+        Player player1 = Player.builder()
+                .nickname("zuhee")
+                .isMember(true)
+                .build();
+        Player player2 = Player.builder()
+                .nickname("sangyoon")
+                .isMember(true)
+                .build();
+        Player player3 = Player.builder()
+                .nickname("jaehyung")
+                .isMember(true)
+                .build();
+        Player player4 = Player.builder()
+                .nickname("seungjun")
+                .isMember(true)
+                .build();
+        players.add(player1);
+        players.add(player2);
+        players.add(player3);
+        players.add(player4);
     }
 
     @Test
@@ -51,11 +75,8 @@ class GameServiceImplTest {
         //given
         int result = gameService.initPirateStart(gameId, gameService.initPirateRandomStart(gameId));
         // when
-        List<Integer> pirateList = new ArrayList<>();
         game = board.getGameMap().get(gameId);
-        for (int element : game.getTreasures()) {
-            pirateList.add(element);
-        }
+        List<Integer> pirateList = new ArrayList<>(game.getTreasures().keySet());
         // then
         Assertions.assertThat(pirateList.contains(result))
                 .isTrue();
@@ -208,16 +229,18 @@ class GameServiceImplTest {
             }
         }
 
-        assertThrows(RuntimeException.class, () -> gameService.makeRoom("nickname", "ONE_VS_ONE"));
+        assertThrows(RuntimeException.class, () -> gameService.makeRoom(players.get(0), GameMode.ONE_VS_THREE));
     }
 
     @Test
     public void enterRoom() {
         // 이미 생성되어 있는 방에만 입장할 수 있음
-        Room room = gameService.makeRoom("Player1", "ONE_VS_ONE");
-        Room result = gameService.enterRoom(room.getGameId(), "Player2");
+        Room room = gameService.makeRoom(players.get(0), GameMode.ONE_VS_THREE);
+        Room result = gameService.enterRoom(room.getGameId(), players.get(1));
 
-        Assertions.assertThat(result.getInRoomPlayers().contains("Player2")).isTrue();
+        Assertions.assertThat(result.getInRoomPlayers())
+                .extracting(Player::getNickname)
+                .contains("Player2");
     }
 
     @Test
