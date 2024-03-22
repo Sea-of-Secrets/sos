@@ -91,7 +91,7 @@ public class MessageController {
             // 게임이 끝나서 소켓을 끊은 경우
             case GAME_FINISHED -> {
                 // 게임 종료는 꼭 한명만 시켜야 됨 -> 안 그러면 게임 삭제 요청 4번 감
-                if (game.getPlayers().get(0).equals(nickname)) {
+                if (game.getPlayers().get(0).getNickname().equals(nickname)) {
                     System.out.println("--FINISH");
                     gameService.gameOver(gameId, true);
                 }
@@ -109,9 +109,12 @@ public class MessageController {
         String gameId = message.getGameId();
         Room room = board.getRoomMap().get(gameId);
         List<String> sessionInfo = board.getSessionMap().get(sessionId);
+        // 존재하지 않는 방이라면
+        if (room == null) return;
 
         // 방 입장 (클 -> 서)
         if (message.getMessage().equals("ENTER_ROOM")) {
+
             for (Player player : room.getInRoomPlayers()) {
                 if (player.getNickname().equals(sender)) {
                     sessionInfo.add(sender);
@@ -122,7 +125,6 @@ public class MessageController {
                     serverMessage = ServerMessage.builder()
                             .message("ENTER_SUCCESS")
                             .gameId(gameId)
-                            .game(board.getGameMap().get(gameId))
                             .room(board.getRoomMap().get(gameId))
                             .build();
                     break;
@@ -137,18 +139,27 @@ public class MessageController {
                         .build();
             }
 
+            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+
             // 정원이 다 찼을 경우 시작버튼 활성화 broadcast
             if (room.getInRoomPlayers().size() == room.getGameMode().playerLimit()) {
                 serverMessage = ServerMessage.builder()
                         .message("PREPARE_GAME_START")
                         .build();
+                sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
             }
-
-            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
         }
 
         // 게임 시작 버튼 클릭시 (클 -> 서)
         if (message.getMessage().equals("START_BUTTON_CLICKED")) {
+            if (!room.getHost().getNickname().equals(sender)) {
+                serverMessage = ServerMessage.builder()
+                        .message("ONLY_HOST_CAN_START")
+                        .build();
+                sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+                return;
+            }
+
             // 게임 시작 버튼 클릭되었음을 모두에게 알림 (서 -> 클)
             serverMessage = ServerMessage.builder()
                     .message("START_BUTTON_CLICKED")
@@ -255,7 +266,7 @@ public class MessageController {
 
         // 2초 타이머 경과 (해적 시작위치 지정 -> 해군1 시작위치 지정)
         if (message.equals("READY_INIT_MARINE_ONE_START") && type == 2) {
-
+            System.out.println("다음다음");
         }
     }
 
@@ -263,13 +274,17 @@ public class MessageController {
     @MessageMapping("/init")
     public void init(ClientInitMessage message) {
         String gameId = message.getGameId();
+        String sender = message.getSender();
         Game game = board.getGameMap().get(gameId);
         ServerMessage serverMessage = null;
 
         // 게임 시작 (클 -> 서)
         if (message.getMessage().equals("START_GAME")) {
             // sender 가 player 0번째와 똑같을때
-            if (!game.getPlayers().get(0).equals(sender)) return;
+            if (!game.getPlayers().get(0).getNickname().equals(sender)) return;
+
+            // 게임 시작하면 방 폭파
+            board.getRoomMap().remove(gameId);
 
             // 해적 시적 시작위치 지정 (서 -> 클)
             serverMessage = ServerMessage.builder()
