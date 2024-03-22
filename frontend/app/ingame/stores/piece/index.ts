@@ -1,3 +1,3 @@
-import { usePiece } from "./usePiece";
+import { createUsePiece } from "./usePiece";
 
-export const usePiratePiece = usePiece;
+export const usePiratePiece = createUsePiece();

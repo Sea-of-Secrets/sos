@@ -16,6 +16,8 @@ export default function Piece({
 }: PieceProps) {
   const { meshRef, gltf } = useGLTF(PiecePathMap[pieceName].src);
 
+  // TODO: 이동중이면 이펙트를 없애고 이동완료되면 다시 소환
+
   const [hovered, setHover] = useState(false);
 
   const handleClickPiece = useCallback((e: ThreeEvent<MouseEvent>) => {
