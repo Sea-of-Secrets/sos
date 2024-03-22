@@ -1,7 +1,10 @@
+import { useCallback, useEffect, useState } from "react";
+import { ThreeEvent } from "@react-three/fiber";
+
+import { PiecePathMap } from "~/assetPath";
 import { PieceProps } from "./types";
 import { useGLTF } from "../../hooks/useGLTF";
-import { PiecePathMap } from "~/assetPath";
-import { usePiece } from "../../hooks/usePiece";
+
 import PieceEffect from "./PieceEffect";
 
 const Z_AXIS_AJ_VALUE = 20;
@@ -11,7 +14,29 @@ export default function Piece({ position, pieceName, ...props }: PieceProps) {
     src: PiecePathMap[pieceName].src,
   });
 
-  const { handleClickPiece, handlePointerOut, handlePointerOver } = usePiece();
+  const [hovered, setHover] = useState(false);
+
+  const handleClickPiece = useCallback((e: ThreeEvent<MouseEvent>) => {
+    console.log("******** Piece Click ********");
+    console.log("이벤트", e);
+    console.log("****************************");
+  }, []);
+
+  const handlePointerOver = useCallback(() => {
+    setHover(true);
+  }, []);
+
+  const handlePointerOut = useCallback(() => {
+    setHover(false);
+  }, []);
+
+  useEffect(() => {
+    if (hovered) {
+      document.querySelector("canvas")!.style.cursor = "pointer";
+    } else {
+      document.querySelector("canvas")!.style.cursor = "default";
+    }
+  }, [hovered]);
 
   return (
     <>
