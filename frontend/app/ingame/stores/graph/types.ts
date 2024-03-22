@@ -1,4 +1,6 @@
 export interface GraphState {
   movableNodeIdList: number[];
-  setMovableNodeIdList: (nextNodeList: number[]) => void;
+  setMovableNodeIdList: (nextNodeIdList: number[]) => void;
+  movableEdgeIdList: string[];
+  setMovableEdgeIdList: (nextEdgeIdList: string[]) => void;
 }

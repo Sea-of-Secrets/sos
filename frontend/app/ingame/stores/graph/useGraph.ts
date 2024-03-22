@@ -4,9 +4,15 @@ import { GraphState } from "./types";
 export const createUseGraph = () =>
   create<GraphState>(set => ({
     movableNodeIdList: [],
-    setMovableNodeIdList: nextNodeList => {
+    setMovableNodeIdList: nextNodeIdList => {
       set(state => {
-        return { ...state, movableNodeIdList: nextNodeList };
+        return { ...state, movableNodeIdList: nextNodeIdList };
+      });
+    },
+    movableEdgeIdList: [],
+    setMovableEdgeIdList: nextEdgeIdList => {
+      set(state => {
+        return { ...state, movableEdgeIdList: nextEdgeIdList };
       });
     },
   }));
