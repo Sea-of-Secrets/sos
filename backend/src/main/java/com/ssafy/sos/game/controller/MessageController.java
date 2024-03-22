@@ -4,15 +4,18 @@ import com.ssafy.sos.game.domain.Board;
 import com.ssafy.sos.game.domain.Game;
 import com.ssafy.sos.game.domain.Player;
 import com.ssafy.sos.game.domain.Room;
+import com.ssafy.sos.game.event.MatchingEvent;
 import com.ssafy.sos.game.message.client.ClientMessage;
 import com.ssafy.sos.game.message.client.ClientInitMessage;
 import com.ssafy.sos.game.message.client.ClientMoveMessage;
 import com.ssafy.sos.game.message.server.ServerMessage;
 import com.ssafy.sos.game.service.GameService;
 import com.ssafy.sos.game.service.GameTimerService;
+import com.ssafy.sos.game.service.MatchingService;
 import com.ssafy.sos.game.service.TimerTimeoutEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.Server;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -33,6 +36,7 @@ public class MessageController {
     private final Board board;
     private final GameService gameService;
     private final GameTimerService gameTimerService;
+    private final MatchingService matchingService;
 
     // 응답이 왔는지 여부를 판단할 flag
     private boolean lockRespond;
@@ -100,6 +104,12 @@ public class MessageController {
 
     }
 
+    @MessageMapping("/matching")
+    public void matching(ClientMessage message) {
+        String sender = message.getSender();
+
+    }
+
     @MessageMapping("/room")
     public void manageRoom(ClientMessage message, StompHeaderAccessor accessor) {
         String sender = message.getSender();
@@ -114,6 +124,7 @@ public class MessageController {
 
         // 방 입장 (클 -> 서)
         if (message.getMessage().equals("ENTER_ROOM")) {
+            room.getInRoomPlayers().removeIf(player -> player.getNickname().equals(sender));
 
             for (Player player : room.getInRoomPlayers()) {
                 if (player.getNickname().equals(sender)) {
@@ -428,6 +439,11 @@ public class MessageController {
         }
     }
 
+    @EventListener
+    public void listenMatching(MatchingEvent event) {
+        // TODO: 매칭된 플레이어들에게 메시지 전송
+        ServerMessage serverMessage = ServerMessage.builder().build();
+    }
     //서버 타이머  제공
     @Scheduled(fixedRate = 1000)
     public void sendServerTime() throws Exception {

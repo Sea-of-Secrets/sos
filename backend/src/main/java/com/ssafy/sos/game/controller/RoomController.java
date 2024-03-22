@@ -5,6 +5,7 @@ import com.ssafy.sos.game.domain.Player;
 import com.ssafy.sos.game.domain.RoomRequest;
 import com.ssafy.sos.game.domain.Room;
 import com.ssafy.sos.game.service.GameService;
+import com.ssafy.sos.game.service.MatchingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -20,6 +21,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RoomController {
     private final GameService gameService;
+    private final MatchingService matchingService;
     private final Board board;
 
     @PostMapping("/make")
@@ -75,5 +77,26 @@ public class RoomController {
 
         room = gameService.enterRoom(roomCode, newPlayer);
         return ResponseEntity.ok(room);
+    }
+
+    @PostMapping("/matching")
+    public ResponseEntity<?> tryMatching(@RequestBody RoomRequest roomRequest,
+                                         @RequestHeader(value = "Authorization") Optional<String> accessToken) {
+        // TODO: 유효한 Token인지 검증 필요
+        Boolean isMember = accessToken.isPresent();
+        Player player = Player.builder()
+                .nickname(roomRequest.getNickname())
+                .isMember(isMember)
+                .build();
+
+        // 방 만들고 매칭큐에 넣어 줌
+        if (matchingService.getQueueSize() == 0) {
+            matchingService.enqueue(player);
+//            return ResponseEntity.ok(room);
+        } else { // 큐에 사람이 있으면
+            matchingService.matchPlayers();
+        }
+
+        return ResponseEntity.ok("OK");
     }
 }
