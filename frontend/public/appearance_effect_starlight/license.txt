@@ -1,0 +1,11 @@
+Model Information:
+* title:	Appearance Effect Starlight
+* source:	https://sketchfab.com/3d-models/appearance-effect-starlight-28972bbeb1974d9cb9e5c45406c31f2a
+* author:	Yuki (https://sketchfab.com/SHLER)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Appearance Effect Starlight" (https://sketchfab.com/3d-models/appearance-effect-starlight-28972bbeb1974d9cb9e5c45406c31f2a) by Yuki (https://sketchfab.com/SHLER) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
