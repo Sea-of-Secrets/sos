@@ -12,7 +12,7 @@ export default function EjjTestController({
   setNextNodeEdge,
 }: any) {
   const { movePirate } = usePiece();
-  const { pieceCamera, mapCamera } = useCamera();
+  const { zoom, zoomFullScreen } = useCamera();
   const [isNextMoveableNodes, setIsNextMoveableNodes] = useState(true);
   const [isNewNodeEdge, setIsNewNodeEdge] = useState(true);
   const [isFocused, setIsFocused] = useState(false);
@@ -33,10 +33,10 @@ export default function EjjTestController({
   // 말 포커싱
   const handleFocusPiece = () => {
     if (!isFocused) {
-      pieceCamera([getNode(107).position.x, getNode(107).position.y]);
+      zoom(getNode(107).position);
       setIsFocused(true);
     } else {
-      mapCamera();
+      zoomFullScreen();
       setIsFocused(false);
     }
   };

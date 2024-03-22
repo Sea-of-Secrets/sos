@@ -10,7 +10,7 @@ export default function YongSangYoonTestController() {
   const systemPromptHeaderInputRef = useRef<HTMLInputElement>(null);
   const systemPromptFooterInputRef = useRef<HTMLInputElement>(null);
   const { setHeaderMessage, setFooterMessage } = useSystemPrompt();
-  const { cameraRef } = useCamera();
+  const { zoom, zoomFullScreen } = useCamera();
 
   const handleClickSystemPromptHeader = () => {
     if (systemPromptHeaderInputRef.current) {
@@ -42,13 +42,7 @@ export default function YongSangYoonTestController() {
       const nodeId = parseInt(cameraZoomInputRef.current.value, 10);
 
       try {
-        const { x, y, z } = getNode(nodeId).position;
-        if (cameraRef) {
-          cameraRef.current.setLookAt(x, 250, y + 200, x, 0, y, true);
-          cameraRef.current.zoomTo(1.5, true);
-        } else {
-          window.alert("카메라가 없다...");
-        }
+        zoom(getNode(nodeId).position);
       } catch (e) {
         window.alert("올바른 노드 번호를 입력해라...");
         cameraZoomInputRef.current.value = "";
@@ -57,12 +51,7 @@ export default function YongSangYoonTestController() {
   };
 
   const handleZoomFullScreen = () => {
-    if (cameraRef) {
-      cameraRef.current.setLookAt(0, 700, 600, 0, 0, 100, true);
-      cameraRef.current.zoomTo(1, true);
-    } else {
-      window.alert("카메라가 없다...");
-    }
+    zoomFullScreen();
   };
 
   return (
