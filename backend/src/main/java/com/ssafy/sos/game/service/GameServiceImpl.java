@@ -67,9 +67,6 @@ public class GameServiceImpl implements GameService {
                 }
             }
         }
-
-        // 게임 시작하면 방 폭파
-        board.getRoomMap().remove(gameId);
         // 시작 시간 세팅
         game.setStartTime(LocalDateTime.now());
     }

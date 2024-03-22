@@ -502,7 +502,7 @@ public class Board {
                 .isMember(true)
                 .build();
         Player player3 = Player.builder()
-                .nickname("jaehyung")
+                .nickname("joopy")
                 .isMember(true)
                 .build();
         Player player4 = Player.builder()
