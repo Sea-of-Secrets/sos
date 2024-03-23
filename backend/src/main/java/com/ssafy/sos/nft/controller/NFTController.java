@@ -64,43 +64,24 @@ public class NFTController {
             return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(false);
         }
     }
-//        String fileData = Base64.getEncoder().encodeToString(file.getBytes());
-//        // 파일 처리 코드
-//        if (!file.isEmpty()) {
-//
-//            // 여기에 파일을 저장하거나 처리하는 코드를 작성합니다.
-//            String fileName = file.getOriginalFilename();
-//            // 예를 들어, 파일 저장 로직을 추가할 수 있습니다.
-//        }
-//
-//        NFTDTO nft = new NFTDTO(fileData, title, description);
-//
-//        RestTemplate restTemplate = new RestTemplate();
-//        // HTTP 요청 헤더 설정
-//        HttpHeaders headers = new HttpHeaders();
-//        headers.setContentType(MediaType.APPLICATION_JSON);
-//
-//        // HTTP 요청 본문에 객체 추가
-//        HttpEntity<NFTDTO> requestEntity = new HttpEntity<>(nft, headers);
-//        System.out.println(requestEntity);
-//        // REST 템플릿을 사용하여 POST 요청 전송
-//        restTemplate.postForObject("http://localhost:4000/nft", requestEntity, Void.class);
-
 
     //TEST URL
     @PostMapping("/mint")
     @ResponseBody
-    public String mintNFT(@AuthenticationPrincipal UserEntity user, @RequestParam("title") String title,
+    public ResponseEntity<?> mintNFT(Authentication authentication, @RequestParam("title") String title,
                           @RequestParam("description") String description) {
-        String username = user.getUsername();
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("로그인 해야함. 여길 어떻게 왔지?");
+        }
 
+        CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
 
         try {
-            nftService.mintingNFT(title, description);
-            return "Success";
+            nftService.mintingNFT(user, title, description);
+            return ResponseEntity.status(HttpStatus.OK).body("success");
         } catch(IOException e) {
             e.printStackTrace();
-            return "Fail";
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("success");
         }
     }
 

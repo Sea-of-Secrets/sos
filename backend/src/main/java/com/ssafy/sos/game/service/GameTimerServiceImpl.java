@@ -1,5 +1,6 @@
 package com.ssafy.sos.game.service;
 
+import com.ssafy.sos.game.util.TimerTimeoutEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
@@ -17,17 +18,13 @@ public class GameTimerServiceImpl implements GameTimerService {
     private ScheduledFuture<?> future;
 
     @Override
-    public void startFifteenSecondsTimer(String gameId, String message) {
-        future = scheduler.schedule(() -> {
-            eventPublisher.publishEvent(new TimerTimeoutEvent(this, gameId, message, 15));
-        }, 15, TimeUnit.SECONDS);
+    public void startResponseWaitingTimer(String gameId, String message) {
+        future = scheduler.schedule(() -> eventPublisher.publishEvent(new TimerTimeoutEvent(this, gameId, message)), 15, TimeUnit.SECONDS);
     }
 
     @Override
-    public void startTwoSecondsTimer(String gameId, String message) {
-        future = scheduler.schedule(() -> {
-            eventPublisher.publishEvent(new TimerTimeoutEvent(this, gameId, message, 2));
-        }, 2, TimeUnit.SECONDS);
+    public void startRenderWaitingTimer(String gameId, String message) {
+        future = scheduler.schedule(() -> eventPublisher.publishEvent(new TimerTimeoutEvent(this, gameId, message)), 3, TimeUnit.SECONDS);
     }
 
     @Override

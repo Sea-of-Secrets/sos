@@ -1,4 +1,4 @@
-package com.ssafy.sos.game.service;
+package com.ssafy.sos.game.util;
 
 import lombok.*;
 import org.springframework.context.ApplicationEvent;
@@ -8,12 +8,10 @@ import org.springframework.context.ApplicationEvent;
 public class TimerTimeoutEvent extends ApplicationEvent {
     private String gameId;
     private String message;
-    private int timerType;
 
-    public TimerTimeoutEvent(Object source, String gameId, String message, int timerType) {
+    public TimerTimeoutEvent(Object source, String gameId, String message) {
         super(source);
         this.gameId = gameId;
         this.message = message;
-        this.timerType = timerType;
     }
 }
