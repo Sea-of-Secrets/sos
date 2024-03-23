@@ -304,6 +304,84 @@ public class MessageController {
             // 15초 타이머 시작
             gameTimerService.startFifteenSecondsTimer(gameId, "INIT_MARINE_TWO_START_TIME_OUT");
         }
+
+        // 해군 2 시작위치 지정 응답 제한시간 초과
+        if (message.equals("INIT_MARINE_TWO_START_TIME_OUT") && type == 15) {
+            // 응답 잠그기
+            lockRespond = true;
+            // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
+            serverMessage = ServerMessage.builder()
+                    .gameId(gameId)
+                    .message("INIT_MARINE_TWO_START_TIME_OUT")
+                    .game(game)
+                    .build();
+            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            // 시작위치 랜덤 지정
+            gameService.initMarineStartRandom(gameId, 2);
+            // 해적 시작위치 지정완료 브로드캐스트 (서 -> 클)
+            serverMessage = ServerMessage.builder()
+                    .gameId(gameId)
+                    .message("ACTION_INIT_MARINE_TWO_START")
+                    .game(game)
+                    .build();
+            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            // 2초 타이머 시작
+            gameTimerService.startTwoSecondsTimer(gameId, "READY_INIT_MARINE_THREE_START");
+        }
+
+        // 2초 타이머 경과 (해군 2 시작위치 지정 -> 해군 3 시작위치 지정)
+        if (message.equals("READY_INIT_MARINE_THREE_START") && type == 2) {
+            // 해군1 시작위치 지정 (서 -> 클)
+            serverMessage = ServerMessage.builder()
+                    .gameId(gameId)
+                    .message("ORDER_INIT_MARINE_THREE_START")
+                    .game(game)
+                    .build();
+            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            // 응답 허용
+            lockRespond = false;
+            // 15초 타이머 시작
+            gameTimerService.startFifteenSecondsTimer(gameId, "INIT_MARINE_THREE_START_TIME_OUT");
+        }
+
+        // 해군 3 시작위치 지정 응답 제한시간 초과
+        if (message.equals("INIT_MARINE_THREE_START_TIME_OUT") && type == 15) {
+            // 응답 잠그기
+            lockRespond = true;
+            // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
+            serverMessage = ServerMessage.builder()
+                    .gameId(gameId)
+                    .message("INIT_MARINE_THREE_START_TIME_OUT")
+                    .game(game)
+                    .build();
+            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            // 시작위치 랜덤 지정
+            gameService.initMarineStartRandom(gameId, 3);
+            // 해적 시작위치 지정완료 브로드캐스트 (서 -> 클)
+            serverMessage = ServerMessage.builder()
+                    .gameId(gameId)
+                    .message("ACTION_INIT_MARINE_THREE_START")
+                    .game(game)
+                    .build();
+            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            // 2초 타이머 시작
+            gameTimerService.startTwoSecondsTimer(gameId, "READY_MOVE_PIRATE");
+        }
+
+        // 2초 타이머 경과 (해군 3 시작위치 지정 -> 해적 이동)
+        if (message.equals("READY_MOVE_PIRATE") && type == 2) {
+            // 해군1 시작위치 지정 (서 -> 클)
+            serverMessage = ServerMessage.builder()
+                    .gameId(gameId)
+                    .message("ORDER_MOVE_PIRATE")
+                    .game(game)
+                    .build();
+            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            // 응답 허용
+            lockRespond = false;
+            // 15초 타이머 시작
+            gameTimerService.startFifteenSecondsTimer(gameId, "MOVE_PIRATE_TIME_OUT");
+        }
     }
 
     // 게임 시작시 (게임 시작 ~ 해군3 시작위치 지정)
@@ -380,7 +458,65 @@ public class MessageController {
             gameTimerService.startTwoSecondsTimer(gameId, "READY_INIT_MARINE_TWO_START");
         }
 
+        // 해군 2 시작 지점 지정완료 (클 -> 서)
+        if (message.getMessage().equals("INIT_MARINE_TWO_START") && !lockRespond) {
+            // 제한시간 내로 선택을 한 것이므로 타이머 취소
+            gameTimerService.cancelTimer(gameId);
+            // 입력받은 노드 저장
+            int[] currentPosition = gameService.initMarineStart(gameId, 2, message.getNode());
+            // 이미 선택된 노드면 선택 불가
+            if (currentPosition == null) {
+                serverMessage = ServerMessage.builder()
+                        .gameId(gameId)
+                        .message("ALREADY_SELECTED_NODE")
+                        .game(game)
+                        .build();
+                sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+                // 응답 허용
+                lockRespond = false;
+                // 다시 15초 타이머 시작
+                gameTimerService.startFifteenSecondsTimer(gameId, "INIT_MARINE_TWO_START_TIME_OUT");
+                return;
+            }
+            // 올바르게 선택했다면 해적 시작위치 지정완료 브로드캐스트 (서 -> 클)
+            serverMessage = ServerMessage.builder()
+                    .gameId(gameId)
+                    .message("ACTION_INIT_MARINE_TWO_START")
+                    .game(game)
+                    .build();
+            // 2초 타이머 시작
+            gameTimerService.startTwoSecondsTimer(gameId, "READY_INIT_MARINE_THREE_START");
+        }
 
+        // 해군 3 시작 지점 지정완료 (클 -> 서)
+        if (message.getMessage().equals("INIT_MARINE_THREE_START") && !lockRespond) {
+            // 제한시간 내로 선택을 한 것이므로 타이머 취소
+            gameTimerService.cancelTimer(gameId);
+            // 입력받은 노드 저장
+            int[] currentPosition = gameService.initMarineStart(gameId, 3, message.getNode());
+            // 이미 선택된 노드면 선택 불가
+            if (currentPosition == null) {
+                serverMessage = ServerMessage.builder()
+                        .gameId(gameId)
+                        .message("ALREADY_SELECTED_NODE")
+                        .game(game)
+                        .build();
+                sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+                // 응답 허용
+                lockRespond = false;
+                // 다시 15초 타이머 시작
+                gameTimerService.startFifteenSecondsTimer(gameId, "INIT_MARINE_THREE_START_TIME_OUT");
+                return;
+            }
+            // 올바르게 선택했다면 해적 시작위치 지정완료 브로드캐스트 (서 -> 클)
+            serverMessage = ServerMessage.builder()
+                    .gameId(gameId)
+                    .message("ACTION_INIT_MARINE_THREE_START")
+                    .game(game)
+                    .build();
+            // 2초 타이머 시작
+            gameTimerService.startTwoSecondsTimer(gameId, "READY_MOVE_PIRATE");
+        }
         if (serverMessage != null) {
             sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
         }
