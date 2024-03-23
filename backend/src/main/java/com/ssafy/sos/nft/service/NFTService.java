@@ -69,13 +69,22 @@ public class NFTService {
             fileRepository.save(fileEntity);
             return fileEntity.getId();
         } catch(Exception e) {
-            throw new Exception(e.getMessage());
+            e.printStackTrace();
+            return -1;
         }
     }
 
-    public void mintingNFT(String title, String description) throws IOException {
+    public void mintingNFT(CustomOAuth2User user, String title, String description) throws IOException {
+        UserEntity userEntity = userRepository.findByUsername(user.getMemberDto().getUsername());
+        System.out.println(userEntity);
+        if (userEntity.getWalletAddress() == null) {
+            System.out.println("지갑 없음");
+            return;
+        }
+
         FileEntity fileEntity = fileRepository.findByTitle(title);
         if (fileEntity == null) {
+            System.out.println("파일 없음");
             return;
         }
 
@@ -84,8 +93,12 @@ public class NFTService {
         byte[] fileContent = FileUtils.readFileToByteArray(file);
         String fileData = Base64.getEncoder().encodeToString(fileContent);
 
+        if (userEntity.getWalletAddress() == null) {
+            return;
+        }
+
         //NFT 생성
-        NFTDTO nft = new NFTDTO(fileData, title, description);
+        NFTDTO nft = new NFTDTO(userEntity.getWalletAddress(), fileData, title, description);
 
         RestTemplate restTemplate = new RestTemplate();
         // HTTP 요청 헤더 설정
