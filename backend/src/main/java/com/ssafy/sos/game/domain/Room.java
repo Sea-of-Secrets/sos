@@ -13,6 +13,7 @@ public class Room {
     private List<Player> inRoomPlayers;
     private GameMode gameMode;
     private int isRendered = 0;
+    private int isAccepted = 0;
 
     public Room(String gameId) {
         this.gameId = gameId;
@@ -21,5 +22,8 @@ public class Room {
 
     public void increaseIsRendered() {
         this.isRendered += 1;
+    }
+    public void increaseIsAccepted() {
+        this.isAccepted += 1;
     }
 }

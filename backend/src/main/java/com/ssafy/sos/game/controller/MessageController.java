@@ -4,15 +4,18 @@ import com.ssafy.sos.game.domain.Board;
 import com.ssafy.sos.game.domain.Game;
 import com.ssafy.sos.game.domain.Player;
 import com.ssafy.sos.game.domain.Room;
+import com.ssafy.sos.game.event.MatchingEvent;
 import com.ssafy.sos.game.message.client.ClientMessage;
 import com.ssafy.sos.game.message.client.ClientInitMessage;
 import com.ssafy.sos.game.message.client.ClientMoveMessage;
 import com.ssafy.sos.game.message.server.ServerMessage;
 import com.ssafy.sos.game.service.GameService;
 import com.ssafy.sos.game.service.GameTimerService;
+import com.ssafy.sos.game.service.MatchingService;
 import com.ssafy.sos.game.util.TimerTimeoutEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.catalina.Server;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -33,6 +36,7 @@ public class MessageController {
     private final Board board;
     private final GameService gameService;
     private final GameTimerService gameTimerService;
+    private final MatchingService matchingService;
 
     // 응답이 왔는지 여부를 판단할 flag
     private boolean lockRespond;
@@ -100,6 +104,52 @@ public class MessageController {
 
     }
 
+    @MessageMapping("/matching")
+    public void matching(ClientMessage message) {
+        String sender = message.getSender();
+        String gameId = message.getGameId();
+        Room room = board.getRoomMap().get(gameId);
+        ServerMessage serverMessage;
+
+        if (message.getMessage().equals("MATCHING_ACCEPTED")) {
+            room.increaseIsAccepted();
+
+            if (room.getIsAccepted() == 2) {
+                serverMessage = ServerMessage.builder()
+                        .gameId(gameId)
+                        .room(room)
+                        .message("ALL_ACCEPTED")
+                        .build();
+
+                sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            }
+        }
+
+        if (message.getMessage().equals("MATCHING_REJECTED")) {
+            // 거절 발생 시 나머지 플레이어는 자동으로 큐에 넣어 주고
+            // 만들어진 방은 폭파
+            Player acceptPlayer = null;
+            for (int i=0; i<room.getGameMode().playerLimit(); i++) {
+                Player player = room.getInRoomPlayers().get(i);
+                if (!player.getNickname().equals(sender)) {
+                    acceptPlayer = player;
+                    System.out.println(acceptPlayer.getNickname());
+
+                    matchingService.enqueue(acceptPlayer);
+                    serverMessage = ServerMessage.builder()
+                            .gameId(gameId)
+                            .message("NEED_RE_MATCHING")
+                            .build();
+
+                    sendingOperations.convertAndSend("/sub/" + acceptPlayer.getNickname(), serverMessage);
+                    break;
+                }
+            }
+
+            board.getRoomMap().remove(gameId);
+        }
+    }
+
     @MessageMapping("/room")
     public void manageRoom(ClientMessage message, StompHeaderAccessor accessor) {
         String sender = message.getSender();
@@ -114,6 +164,7 @@ public class MessageController {
 
         // 방 입장 (클 -> 서)
         if (message.getMessage().equals("ENTER_ROOM")) {
+            room.getInRoomPlayers().removeIf(player -> player.getNickname().equals(sender));
 
             for (Player player : room.getInRoomPlayers()) {
                 if (player.getNickname().equals(sender)) {
@@ -618,8 +669,30 @@ public class MessageController {
         }
     }
 
+    @EventListener
+    public void listenMatching(MatchingEvent event) {
+        String gameId = event.getGameId();
+        Room room = board.getRoomMap().get(gameId);
+
+        // TODO: 매칭된 플레이어들에게 메시지 전송
+        ServerMessage serverMessage = ServerMessage.builder()
+                .gameId(gameId)
+                .room(room)
+                .message("MATCHING_SUCCESS")
+                .build();
+
+        // 게임에 속한 플레이어들에게 메시지 전송
+        for (int i=0; i<room.getGameMode().playerLimit(); i++) {
+            String nickname = room.getInRoomPlayers().get(i).getNickname();
+            sendingOperations.convertAndSend("/sub/"+ nickname, serverMessage);
+        }
+
+        // 프론트는 MATCHING_SUCCESS를 받으면 수락-거절을 띄우고 다시 요청을 서버한테 보낸다.
+    }
+
     //서버 타이머  제공
     @Scheduled(fixedRate = 1000)
     public void sendServerTime() throws Exception {
+
     }
 }
