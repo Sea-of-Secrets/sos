@@ -107,7 +107,47 @@ public class MessageController {
     @MessageMapping("/matching")
     public void matching(ClientMessage message) {
         String sender = message.getSender();
+        String gameId = message.getGameId();
+        Room room = board.getRoomMap().get(gameId);
+        ServerMessage serverMessage;
 
+        if (message.getMessage().equals("MATCHING_ACCEPTED")) {
+            room.increaseIsAccepted();
+
+            if (room.getIsAccepted() == 2) {
+                serverMessage = ServerMessage.builder()
+                        .gameId(gameId)
+                        .room(room)
+                        .message("ALL_ACCEPTED")
+                        .build();
+
+                sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            }
+        }
+
+        if (message.getMessage().equals("MATCHING_REJECTED")) {
+            // 거절 발생 시 나머지 플레이어는 자동으로 큐에 넣어 주고
+            // 만들어진 방은 폭파
+            Player acceptPlayer = null;
+            for (int i=0; i<room.getGameMode().playerLimit(); i++) {
+                Player player = room.getInRoomPlayers().get(i);
+                if (!player.getNickname().equals(sender)) {
+                    acceptPlayer = player;
+                    System.out.println(acceptPlayer.getNickname());
+
+                    matchingService.enqueue(acceptPlayer);
+                    serverMessage = ServerMessage.builder()
+                            .gameId(gameId)
+                            .message("NEED_RE_MATCHING")
+                            .build();
+
+                    sendingOperations.convertAndSend("/sub/" + acceptPlayer.getNickname(), serverMessage);
+                    break;
+                }
+            }
+
+            board.getRoomMap().remove(gameId);
+        }
     }
 
     @MessageMapping("/room")
@@ -441,11 +481,28 @@ public class MessageController {
 
     @EventListener
     public void listenMatching(MatchingEvent event) {
+        String gameId = event.getGameId();
+        Room room = board.getRoomMap().get(gameId);
+
         // TODO: 매칭된 플레이어들에게 메시지 전송
-        ServerMessage serverMessage = ServerMessage.builder().build();
+        ServerMessage serverMessage = ServerMessage.builder()
+                .gameId(gameId)
+                .room(room)
+                .message("MATCHING_SUCCESS")
+                .build();
+
+        // 게임에 속한 플레이어들에게 메시지 전송
+        for (int i=0; i<room.getGameMode().playerLimit(); i++) {
+            String nickname = room.getInRoomPlayers().get(i).getNickname();
+            sendingOperations.convertAndSend("/sub/"+ nickname, serverMessage);
+        }
+
+        // 프론트는 MATCHING_SUCCESS를 받으면 수락-거절을 띄우고 다시 요청을 서버한테 보낸다.
     }
+
     //서버 타이머  제공
     @Scheduled(fixedRate = 1000)
     public void sendServerTime() throws Exception {
+
     }
 }

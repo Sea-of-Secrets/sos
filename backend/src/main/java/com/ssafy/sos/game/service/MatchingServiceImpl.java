@@ -6,6 +6,7 @@ import com.ssafy.sos.game.event.MatchingEvent;
 import com.ssafy.sos.game.util.GameMode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -19,17 +20,18 @@ import java.util.concurrent.TimeUnit;
 public class MatchingServiceImpl implements MatchingService {
     private final Queue<Player> matchingQueue = new LinkedList<>();
     private final GameService gameService;
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final ApplicationEventPublisher eventPublisher;
-    private ScheduledFuture<?> future;
 
     public int getQueueSize() {
         return matchingQueue.size();
     }
 
+    // matchingQueue를 동시에 접근 못하게 함
     @Override
-    public void enqueue(Player player) {
+    public synchronized void enqueue(Player player) {
         matchingQueue.add(player);
+        System.out.println(matchingQueue);
+        // TODO: 비동기 처리
         if (matchingQueue.size() >= 2) {
             matchPlayers();
         }

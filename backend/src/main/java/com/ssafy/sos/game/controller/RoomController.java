@@ -89,14 +89,7 @@ public class RoomController {
                 .isMember(isMember)
                 .build();
 
-        // 방 만들고 매칭큐에 넣어 줌
-        if (matchingService.getQueueSize() == 0) {
-            matchingService.enqueue(player);
-//            return ResponseEntity.ok(room);
-        } else { // 큐에 사람이 있으면
-            matchingService.matchPlayers();
-        }
-
+        matchingService.enqueue(player);
         return ResponseEntity.ok("OK");
     }
 }
