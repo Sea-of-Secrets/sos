@@ -12,10 +12,9 @@ import com.ssafy.sos.game.message.server.ServerMessage;
 import com.ssafy.sos.game.service.GameService;
 import com.ssafy.sos.game.service.GameTimerService;
 import com.ssafy.sos.game.service.MatchingService;
-import com.ssafy.sos.game.util.TimerTimeoutEvent;
+import com.ssafy.sos.game.event.TimerTimeoutEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.catalina.Server;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
@@ -128,7 +127,7 @@ public class MessageController {
         if (message.getMessage().equals("MATCHING_REJECTED")) {
             // 거절 발생 시 나머지 플레이어는 자동으로 큐에 넣어 주고
             // 만들어진 방은 폭파
-            Player acceptPlayer = null;
+            Player acceptPlayer;
             for (int i=0; i<room.getGameMode().playerLimit(); i++) {
                 Player player = room.getInRoomPlayers().get(i);
                 if (!player.getNickname().equals(sender)) {
@@ -164,8 +163,6 @@ public class MessageController {
 
         // 방 입장 (클 -> 서)
         if (message.getMessage().equals("ENTER_ROOM")) {
-            room.getInRoomPlayers().removeIf(player -> player.getNickname().equals(sender));
-
             for (Player player : room.getInRoomPlayers()) {
                 if (player.getNickname().equals(sender)) {
                     sessionInfo.add(sender);
@@ -269,34 +266,34 @@ public class MessageController {
         }
     }
 
+    // 게임과 함께 메시지를 보내는 메서드
+    private void sendMessageWithGame(String gameId, Game game, String message) {
+        ServerMessage serverMessage;
+        serverMessage = ServerMessage.builder()
+                .gameId(gameId)
+                .message(message)
+                .game(game)
+                .build();
+        sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+    }
+
     // 타이머가 끝남을 감지
     @EventListener
     public void listenTimeout(TimerTimeoutEvent event) {
         String gameId = event.getGameId();
         String message = event.getMessage();
         Game game = board.getGameMap().get(gameId);
-        ServerMessage serverMessage;
 
         // 해적 시작위치 지정 응답 제한시간 초과
         if (message.equals("INIT_PIRATE_START_TIME_OUT")) {
             // 응답 잠그기
             lockRespond = true;
             // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
-            serverMessage = ServerMessage.builder()
-                    .gameId(gameId)
-                    .message("INIT_PIRATE_START_TIME_OUT")
-                    .game(game)
-                    .build();
-            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            sendMessageWithGame(gameId, game, "INIT_PIRATE_START_TIME_OUT");
             // 시작위치 랜덤 지정
             gameService.initPirateRandomStart(gameId);
             // 해적 시작위치 지정완료 브로드캐스트 (서 -> 클)
-            serverMessage = ServerMessage.builder()
-                    .gameId(gameId)
-                    .message("ACTION_INIT_PIRATE_START")
-                    .game(game)
-                    .build();
-            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            sendMessageWithGame(gameId, game, "ACTION_INIT_PIRATE_START");
             // 2초 타이머 시작
             gameTimerService.startRenderWaitingTimer(gameId, "READY_INIT_MARINE_ONE_START");
         }
@@ -304,12 +301,7 @@ public class MessageController {
         // 2초 타이머 경과 (해적 시작위치 지정 -> 해군1 시작위치 지정)
         if (message.equals("READY_INIT_MARINE_ONE_START")) {
             // 해군1 시작위치 지정 (서 -> 클)
-            serverMessage = ServerMessage.builder()
-                    .gameId(gameId)
-                    .message("ORDER_INIT_MARINE_ONE_START")
-                    .game(game)
-                    .build();
-            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            sendMessageWithGame(gameId, game, "ORDER_INIT_MARINE_ONE_START");
             // 응답 허용
             lockRespond = false;
             // 15초 타이머 시작
@@ -321,21 +313,11 @@ public class MessageController {
             // 응답 잠그기
             lockRespond = true;
             // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
-            serverMessage = ServerMessage.builder()
-                    .gameId(gameId)
-                    .message("INIT_MARINE_ONE_START_TIME_OUT")
-                    .game(game)
-                    .build();
-            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            sendMessageWithGame(gameId, game, "INIT_MARINE_ONE_START_TIME_OUT");
             // 시작위치 랜덤 지정
             gameService.initMarineStartRandom(gameId, 1);
             // 해적 시작위치 지정완료 브로드캐스트 (서 -> 클)
-            serverMessage = ServerMessage.builder()
-                    .gameId(gameId)
-                    .message("ACTION_INIT_MARINE_ONE_START")
-                    .game(game)
-                    .build();
-            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            sendMessageWithGame(gameId, game, "ACTION_INIT_MARINE_ONE_START");
             // 2초 타이머 시작
             gameTimerService.startRenderWaitingTimer(gameId, "READY_INIT_MARINE_TWO_START");
         }
@@ -343,12 +325,7 @@ public class MessageController {
         // 2초 타이머 경과 (해군 1 시작위치 지정 -> 해군 2 시작위치 지정)
         if (message.equals("READY_INIT_MARINE_TWO_START")) {
             // 해군1 시작위치 지정 (서 -> 클)
-            serverMessage = ServerMessage.builder()
-                    .gameId(gameId)
-                    .message("ORDER_INIT_MARINE_TWO_START")
-                    .game(game)
-                    .build();
-            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            sendMessageWithGame(gameId, game, "ORDER_INIT_MARINE_TWO_START");
             // 응답 허용
             lockRespond = false;
             // 15초 타이머 시작
@@ -360,21 +337,11 @@ public class MessageController {
             // 응답 잠그기
             lockRespond = true;
             // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
-            serverMessage = ServerMessage.builder()
-                    .gameId(gameId)
-                    .message("INIT_MARINE_TWO_START_TIME_OUT")
-                    .game(game)
-                    .build();
-            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            sendMessageWithGame(gameId, game, "INIT_MARINE_TWO_START_TIME_OUT");
             // 시작위치 랜덤 지정
             gameService.initMarineStartRandom(gameId, 2);
             // 해적 시작위치 지정완료 브로드캐스트 (서 -> 클)
-            serverMessage = ServerMessage.builder()
-                    .gameId(gameId)
-                    .message("ACTION_INIT_MARINE_TWO_START")
-                    .game(game)
-                    .build();
-            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            sendMessageWithGame(gameId, game, "ACTION_INIT_MARINE_TWO_START");
             // 2초 타이머 시작
             gameTimerService.startRenderWaitingTimer(gameId, "READY_INIT_MARINE_THREE_START");
         }
@@ -382,12 +349,7 @@ public class MessageController {
         // 2초 타이머 경과 (해군 2 시작위치 지정 -> 해군 3 시작위치 지정)
         if (message.equals("READY_INIT_MARINE_THREE_START")) {
             // 해군1 시작위치 지정 (서 -> 클)
-            serverMessage = ServerMessage.builder()
-                    .gameId(gameId)
-                    .message("ORDER_INIT_MARINE_THREE_START")
-                    .game(game)
-                    .build();
-            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            sendMessageWithGame(gameId, game, "ORDER_INIT_MARINE_THREE_START");
             // 응답 허용
             lockRespond = false;
             // 15초 타이머 시작
@@ -399,21 +361,11 @@ public class MessageController {
             // 응답 잠그기
             lockRespond = true;
             // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
-            serverMessage = ServerMessage.builder()
-                    .gameId(gameId)
-                    .message("INIT_MARINE_THREE_START_TIME_OUT")
-                    .game(game)
-                    .build();
-            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            sendMessageWithGame(gameId, game, "INIT_MARINE_THREE_START_TIME_OUT");
             // 시작위치 랜덤 지정
             gameService.initMarineStartRandom(gameId, 3);
-            // 해적 시작위치 지정완료 브로드캐스트 (서 -> 클)
-            serverMessage = ServerMessage.builder()
-                    .gameId(gameId)
-                    .message("ACTION_INIT_MARINE_THREE_START")
-                    .game(game)
-                    .build();
-            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            // 해군 3 시작위치 지정완료 브로드캐스트 (서 -> 클)
+            sendMessageWithGame(gameId, game, "ACTION_INIT_MARINE_THREE_START");
             // 2초 타이머 시작
             gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_PIRATE");
         }
@@ -421,12 +373,7 @@ public class MessageController {
         // 2초 타이머 경과 (해군 3 시작위치 지정 -> 해적 이동)
         if (message.equals("READY_MOVE_PIRATE")) {
             // 해군1 시작위치 지정 (서 -> 클)
-            serverMessage = ServerMessage.builder()
-                    .gameId(gameId)
-                    .message("ORDER_MOVE_PIRATE")
-                    .game(game)
-                    .build();
-            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            sendMessageWithGame(gameId, game, "ORDER_MOVE_PIRATE");
             // 응답 허용
             lockRespond = false;
             // 15초 타이머 시작
@@ -440,7 +387,6 @@ public class MessageController {
         String gameId = message.getGameId();
         String sender = message.getSender();
         Game game = board.getGameMap().get(gameId);
-        ServerMessage serverMessage = null;
 
         // 게임 시작 (클 -> 서)
         if (message.getMessage().equals("START_GAME")) {
@@ -451,11 +397,7 @@ public class MessageController {
             board.getRoomMap().remove(gameId);
 
             // 해적 시작위치 지정 (서 -> 클)
-            serverMessage = ServerMessage.builder()
-                    .gameId(gameId)
-                    .message("ORDER_INIT_PIRATE_START")
-                    .game(game)
-                    .build();
+            sendMessageWithGame(gameId, game, "ORDER_INIT_PIRATE_START");
             // 응답 허용
             lockRespond = false;
             // 15초 타이머 시작
@@ -469,11 +411,7 @@ public class MessageController {
             // 입력받은 노드 저장
             gameService.initPirateStart(gameId, message.getNode());
             // 해적 시작위치 지정완료 브로드캐스트 (서 -> 클)
-            serverMessage = ServerMessage.builder()
-                    .gameId(gameId)
-                    .message("ACTION_INIT_PIRATE_START")
-                    .game(game)
-                    .build();
+            sendMessageWithGame(gameId, game, "ACTION_INIT_PIRATE_START");
             // 2초 타이머 시작
             gameTimerService.startRenderWaitingTimer(gameId, "READY_INIT_MARINE_ONE_START");
         }
@@ -486,12 +424,7 @@ public class MessageController {
             int[] currentPosition = gameService.initMarineStart(gameId, 1, message.getNode());
             // 이미 선택된 노드면 선택 불가
             if (currentPosition == null) {
-                serverMessage = ServerMessage.builder()
-                        .gameId(gameId)
-                        .message("ALREADY_SELECTED_NODE")
-                        .game(game)
-                        .build();
-                sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+                sendMessageWithGame(gameId, game, "ALREADY_SELECTED_NODE");
                 // 응답 허용
                 lockRespond = false;
                 // 다시 15초 타이머 시작
@@ -499,11 +432,7 @@ public class MessageController {
                 return;
             }
             // 올바르게 선택했다면 해적 시작위치 지정완료 브로드캐스트 (서 -> 클)
-            serverMessage = ServerMessage.builder()
-                    .gameId(gameId)
-                    .message("ACTION_INIT_MARINE_ONE_START")
-                    .game(game)
-                    .build();
+            sendMessageWithGame(gameId, game, "ACTION_INIT_MARINE_ONE_START");
             // 2초 타이머 시작
             gameTimerService.startRenderWaitingTimer(gameId, "READY_INIT_MARINE_TWO_START");
         }
@@ -516,12 +445,7 @@ public class MessageController {
             int[] currentPosition = gameService.initMarineStart(gameId, 2, message.getNode());
             // 이미 선택된 노드면 선택 불가
             if (currentPosition == null) {
-                serverMessage = ServerMessage.builder()
-                        .gameId(gameId)
-                        .message("ALREADY_SELECTED_NODE")
-                        .game(game)
-                        .build();
-                sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+                sendMessageWithGame(gameId, game, "ALREADY_SELECTED_NODE");
                 // 응답 허용
                 lockRespond = false;
                 // 다시 15초 타이머 시작
@@ -529,11 +453,7 @@ public class MessageController {
                 return;
             }
             // 올바르게 선택했다면 해적 시작위치 지정완료 브로드캐스트 (서 -> 클)
-            serverMessage = ServerMessage.builder()
-                    .gameId(gameId)
-                    .message("ACTION_INIT_MARINE_TWO_START")
-                    .game(game)
-                    .build();
+            sendMessageWithGame(gameId, game, "ACTION_INIT_MARINE_TWO_START");
             // 2초 타이머 시작
             gameTimerService.startRenderWaitingTimer(gameId, "READY_INIT_MARINE_THREE_START");
         }
@@ -546,12 +466,7 @@ public class MessageController {
             int[] currentPosition = gameService.initMarineStart(gameId, 3, message.getNode());
             // 이미 선택된 노드면 선택 불가
             if (currentPosition == null) {
-                serverMessage = ServerMessage.builder()
-                        .gameId(gameId)
-                        .message("ALREADY_SELECTED_NODE")
-                        .game(game)
-                        .build();
-                sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+                sendMessageWithGame(gameId, game, "ALREADY_SELECTED_NODE");
                 // 응답 허용
                 lockRespond = false;
                 // 다시 15초 타이머 시작
@@ -559,18 +474,14 @@ public class MessageController {
                 return;
             }
             // 올바르게 선택했다면 해적 시작위치 지정완료 브로드캐스트 (서 -> 클)
-            serverMessage = ServerMessage.builder()
-                    .gameId(gameId)
-                    .message("ACTION_INIT_MARINE_THREE_START")
-                    .game(game)
-                    .build();
+            sendMessageWithGame(gameId, game, "ACTION_INIT_MARINE_THREE_START");
             // 2초 타이머 시작
             gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_PIRATE");
         }
-        if (serverMessage != null) {
-            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
-        }
     }
+
+//    @MessageMapping("/pirate")
+//    public void pirate()
 
     @MessageMapping("/move")
     public void move(ClientMoveMessage message) {

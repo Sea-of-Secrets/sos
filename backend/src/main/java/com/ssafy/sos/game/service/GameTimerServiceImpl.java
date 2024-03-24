@@ -1,6 +1,6 @@
 package com.ssafy.sos.game.service;
 
-import com.ssafy.sos.game.util.TimerTimeoutEvent;
+import com.ssafy.sos.game.event.TimerTimeoutEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;

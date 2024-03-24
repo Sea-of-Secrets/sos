@@ -1,4 +1,4 @@
-package com.ssafy.sos.game.util;
+package com.ssafy.sos.game.event;
 
 import lombok.*;
 import org.springframework.context.ApplicationEvent;
