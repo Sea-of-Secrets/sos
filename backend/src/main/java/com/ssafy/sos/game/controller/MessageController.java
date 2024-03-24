@@ -480,8 +480,28 @@ public class MessageController {
         }
     }
 
-//    @MessageMapping("/pirate")
-//    public void pirate()
+    // 해적 이동
+    @MessageMapping("/pirate")
+    public void pirate(ClientMoveMessage message) {
+        String gameId = message.getGameId();
+        String sender = message.getSender();
+        Game game = board.getGameMap().get(gameId);
+
+        // 해적 시작 지점 지정완료 (클 -> 서)
+        if (message.getMessage().equals("INIT_PIRATE_START") && !lockRespond) {
+            // 제한시간 내로 선택을 한 것이므로 타이머 취소
+            gameTimerService.cancelTimer(gameId);
+            // 입력받은 노드 저장
+            gameService.initPirateStart(gameId, message.getNode());
+            // 해적 시작위치 지정완료 브로드캐스트 (서 -> 클)
+            sendMessageWithGame(gameId, game, "ACTION_INIT_PIRATE_START");
+            // 2초 타이머 시작
+            gameTimerService.startRenderWaitingTimer(gameId, "READY_INIT_MARINE_ONE_START");
+        }
+
+
+
+    }
 
     @MessageMapping("/move")
     public void move(ClientMoveMessage message) {
