@@ -26,8 +26,11 @@ export default function IngameThree() {
 
   return (
     <>
-      <Tween />
+      <axesHelper scale={10} />
+      <Light />
       <Camera />
+      <Tween />
+      <Map />
       <Graph />
       {piratePosition && (
         <Piece
@@ -37,9 +40,6 @@ export default function IngameThree() {
           set={setPiratePiece}
         />
       )}
-      <Map />
-      <Light />
-      <axesHelper scale={10} />
     </>
   );
 }
