@@ -14,7 +14,10 @@ interface GameDataState {
   setMarineOneRoute: (newRoute: number[]) => void;
   setMarineTwoRoute: (newRoute: number[]) => void;
   setMarineThreeRoute: (newRoute: number[]) => void;
-  setCurrentPosition: (newPosition: number[]) => void;
+  setPirateCurrentPosition: (newPosition: number) => void;
+  setMarineOneCurrentPosition: (newPosition: number) => void;
+  setMarineTwoCurrentPosition: (newPosition: number) => void;
+  setMarineThreeCurrentPosition: (newPosition: number) => void;
 }
 
 export const useGameData = create<GameDataState>(set => ({
@@ -24,7 +27,7 @@ export const useGameData = create<GameDataState>(set => ({
   marineOneRoute: [],
   marineTwoRoute: [],
   marineThreeRoute: [],
-  currentPosition: [],
+  currentPosition: [0, 0, 0, 0],
   setType: newType => {
     set(state => {
       return { ...state, type: newType };
@@ -55,9 +58,32 @@ export const useGameData = create<GameDataState>(set => ({
       return { ...state, marineThreeRoute: newRoute };
     });
   },
-  setCurrentPosition: newPosition => {
+  setPirateCurrentPosition: newPosition => {
     set(state => {
-      return { ...state, currentPosition: newPosition };
+      const newCurrentPosition = [...state.currentPosition];
+      newCurrentPosition[0] = newPosition;
+      return { ...state, currentPosition: newCurrentPosition };
+    });
+  },
+  setMarineOneCurrentPosition: newPosition => {
+    set(state => {
+      const newCurrentPosition = [...state.currentPosition];
+      newCurrentPosition[1] = newPosition;
+      return { ...state, currentPosition: newCurrentPosition };
+    });
+  },
+  setMarineTwoCurrentPosition: newPosition => {
+    set(state => {
+      const newCurrentPosition = [...state.currentPosition];
+      newCurrentPosition[2] = newPosition;
+      return { ...state, currentPosition: newCurrentPosition };
+    });
+  },
+  setMarineThreeCurrentPosition: newPosition => {
+    set(state => {
+      const newCurrentPosition = [...state.currentPosition];
+      newCurrentPosition[3] = newPosition;
+      return { ...state, currentPosition: newCurrentPosition };
     });
   },
 }));
