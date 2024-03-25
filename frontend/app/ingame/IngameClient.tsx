@@ -293,12 +293,32 @@ export default function IngameClient() {
         `[해군3] ${socketMessage.game.players[3]["nickname"]} 님의 시작 위치가 결정되었습니다`,
       );
     }
-
     // 푸터, 시간초과 초기화
     setTimeOut(false);
     removeFooterMessage();
     // 해당 노드 줌 인
     zoom(getNode(currentPosition[2]).position);
+
+    // TODO : 보물 열리는 애니메이션
+    setTimeout(() => {
+      setHeaderMessage("해적의 출발지가 공개됩니다");
+      zoom(getNode(currentPosition[0]).position);
+    }, 3000);
+  };
+
+  // 해적의 이동 명령
+  const orderMovePirate = () => {
+    if (type === "pirate") {
+      setHeaderMessage("이동할 위치를 결정하세요");
+      zoom(getNode(currentPosition[0]).position);
+      // TODO : pirateAvailableNode변수를 이동 가능 노드로 넘겨주기
+      // ...이동 가능 노드는 {} 상태에서는 비활성화, 데이터가 있으면 푸터에 노드번호가 뜨며 호버 할 때 경로 표시
+    } else {
+      zoomFullScreen();
+      setHeaderMessage(
+        `[해적] ${socketMessage.game.players[0]["nickname"]} 님이 이동중입니다`,
+      );
+    }
   };
 
   useEffect(() => {
@@ -327,6 +347,16 @@ export default function IngameClient() {
         startAnimation();
       }
 
+      // 공용 시간초과
+      if (
+        socketMessage.message === "INIT_PIRATE_START_TIME_OUT" ||
+        socketMessage.message === "INIT_MARINE_ONE_START_TIME_OUT" ||
+        socketMessage.message === "INIT_MARINE_TWO_START_TIME_OUT" ||
+        socketMessage.message === "INIT_MARINE_THREE_START_TIME_OUT"
+      ) {
+        setTimeOut(true);
+      }
+
       // 해적의 시작위치 지정 명령
       if (socketMessage.message === "ORDER_INIT_PIRATE_START") {
         orderInitPirateStart();
@@ -335,11 +365,6 @@ export default function IngameClient() {
       // 해적의 시작위치 지정 완료
       if (socketMessage.message === "ACTION_INIT_PIRATE_START") {
         actionInitPirateStart();
-      }
-
-      // 해적의 시작위치 지정 시간초과
-      if (socketMessage.message === "INIT_PIRATE_START_TIME_OUT") {
-        setTimeOut(true);
       }
 
       // 해군 1의 시작위치 지정 명령
@@ -352,11 +377,6 @@ export default function IngameClient() {
         actionInitMarineOneStart();
       }
 
-      // 해군 1의 시작위치 지정 시간초과
-      if (socketMessage.message === "INIT_MARINE_ONE_START_TIME_OUT") {
-        setTimeOut(true);
-      }
-
       // 해군 2의 시작위치 지정 명령
       if (socketMessage.message === "ORDER_INIT_MARINE_TWO_START") {
         orderInitMarineTwoStart();
@@ -365,11 +385,6 @@ export default function IngameClient() {
       // 해군 2의 시작위치 지정 완료
       if (socketMessage.message === "ACTION_INIT_MARINE_TWO_START") {
         actionInitMarineTwoStart();
-      }
-
-      // 해군 2의 시작위치 지정 시간초과
-      if (socketMessage.message === "INIT_MARINE_TWO_START_TIME_OUT") {
-        setTimeOut(true);
       }
 
       // 해군 3의 시작위치 지정 명령
@@ -382,9 +397,13 @@ export default function IngameClient() {
         actionInitMarineThreeStart();
       }
 
-      // 해군 3의 시작위치 지정 시간초과
-      if (socketMessage.message === "INIT_MARINE_THREE_START_TIME_OUT") {
-        setTimeOut(true);
+      // 해적의 이동 명령
+      if (socketMessage.message === "ORDER_MOVE_PIRATE") {
+        orderMovePirate();
+      }
+
+      // 해적의 이동 완료
+      if (socketMessage.message === "ACTION_MOVE_PIRATE") {
       }
     }
   }, [socketMessage]);
@@ -440,7 +459,7 @@ export default function IngameClient() {
       >
         <IngameThree />
       </Canvas>
-      <YsyTestController />
+      {/* <YsyTestController /> */}
     </>
   );
 }

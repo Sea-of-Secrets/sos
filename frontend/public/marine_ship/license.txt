@@ -1,0 +1,11 @@
+Model Information:
+* title:	Houshou Marine Pirate Ship
+* source:	https://sketchfab.com/3d-models/houshou-marine-pirate-ship-5b379e2ceb16439fb2f7ee53057eb2b5
+* author:	BobbieVR (https://sketchfab.com/BobbieVR)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Houshou Marine Pirate Ship" (https://sketchfab.com/3d-models/houshou-marine-pirate-ship-5b379e2ceb16439fb2f7ee53057eb2b5) by BobbieVR (https://sketchfab.com/BobbieVR) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
