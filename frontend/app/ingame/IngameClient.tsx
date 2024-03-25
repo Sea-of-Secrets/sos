@@ -19,7 +19,7 @@ import useGameId from "~/store/gameId";
 import YsyTestController from "./test-components/YsyTestController";
 import { useCamera } from "./stores/useCamera";
 import { useNode } from "./hooks/useNode";
-import { getNode } from "~/_lib/data/data";
+import { getNode, marineStartList } from "~/_lib/data/data";
 
 const { connect, send, subscribe, disconnect } = gameSocket;
 
@@ -53,7 +53,10 @@ export default function IngameClient() {
     setMarineOneRoute,
     setMarineTwoRoute,
     setMarineThreeRoute,
-    setCurrentPosition,
+    setPirateCurrentPosition,
+    setMarineOneCurrentPosition,
+    setMarineTwoCurrentPosition,
+    setMarineThreeCurrentPosition,
   } = useGameData();
 
   const [turn, setTurn] = useState(1);
@@ -84,7 +87,7 @@ export default function IngameClient() {
             const randomIndex = Math.floor(Math.random() * keys.length);
             const randomKey = parseInt(keys[randomIndex]);
             // 포지션 변경 여기서 해줘야 에러 안남
-            setCurrentPosition([randomKey, 0, 0, 0]);
+            setPirateCurrentPosition(randomKey);
 
             send("/pub/init", {
               message: "INIT_PIRATE_START",
@@ -98,7 +101,9 @@ export default function IngameClient() {
         </div>,
       );
     } else {
-      setHeaderMessage("해적이 시작 위치를 결정중입니다");
+      setHeaderMessage(
+        `[해적] ${socketMessage.game.players[0]["nickname"]} 님이 시작 위치를 결정중입니다`,
+      );
     }
   };
 
@@ -125,6 +130,38 @@ export default function IngameClient() {
   // 해적의 시작위치 지정 시간초과
   const initPirateStartTimeOut = () => {
     setTimeOut(true);
+  };
+
+  // 해군 1의 시작위치 지정 명령
+  const orderInitMarineOneStart = () => {
+    if (type === "marineOne") {
+      setHeaderMessage("시작 위치를 결정하세요");
+      // TODO : 푸터에 6가지 선택지 나오고 마우스 호버 시, 카메라 이동
+      setFooterMessage(
+        <>
+          {marineStartList.map(nodeId => (
+            <div
+              key={nodeId}
+              onClick={() => {
+                setMarineOneCurrentPosition(nodeId);
+                send("/pub/init", {
+                  message: "INIT_MARINE_ONE_START",
+                  sender: nickname,
+                  gameId,
+                  node: nodeId,
+                });
+              }}
+            >
+              {nodeId}번
+            </div>
+          ))}
+        </>,
+      );
+    } else {
+      setHeaderMessage(
+        `[해군1] ${socketMessage.game.players[1]["nickname"]} 님이 시작 위치를 결정중입니다`,
+      );
+    }
   };
 
   useEffect(() => {
@@ -166,6 +203,16 @@ export default function IngameClient() {
       // 해적의 시작위치 지정 시간초과
       if (socketMessage.message === "INIT_PIRATE_START_TIME_OUT") {
         initPirateStartTimeOut();
+      }
+
+      // 해군 1의 시작위치 지정 명령
+      if (socketMessage.message === "ORDER_INIT_MARINE_ONE_START") {
+        orderInitMarineOneStart();
+      }
+
+      // 해군 1의 시작위치 지정 완료
+      if (socketMessage.message === "ORDER_INIT_MARINE_ONE_START") {
+        orderInitMarineOneStart();
       }
     }
   }, [socketMessage]);
