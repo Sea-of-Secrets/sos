@@ -4,6 +4,7 @@ import com.ssafy.sos.game.domain.Board;
 import com.ssafy.sos.game.domain.Game;
 import com.ssafy.sos.game.domain.Player;
 import com.ssafy.sos.game.domain.Room;
+import com.ssafy.sos.game.domain.Chat;
 import com.ssafy.sos.game.event.MatchingEvent;
 import com.ssafy.sos.game.message.client.ClientMessage;
 import com.ssafy.sos.game.message.client.ClientInitMessage;
@@ -17,6 +18,7 @@ import com.ssafy.sos.game.event.TimerTimeoutEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
@@ -63,8 +65,8 @@ public class MessageController {
         System.out.println(sessionMemberGame);
         if (sessionMemberGame == null) return;
 
-        String gameId = sessionMemberGame.get(0);
-        String nickname = sessionMemberGame.get(1);
+        String nickname = sessionMemberGame.get(0);
+        String gameId = sessionMemberGame.get(1);
 
         Room room = board.getRoomMap().getOrDefault(gameId, null);
 
@@ -229,13 +231,14 @@ public class MessageController {
             serverMessage = ServerMessage.builder()
                     .message("RENDER_COMPLETE_ACCEPTED")
                     .gameId(gameId)
+                    .room(room)
                     .game(game)
                     .build();
             System.out.println(serverMessage);
             sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
 
             // 방에 있는 모두의 렌더가 완료되면 알림 (서 -> 클)
-            if (room.getIsRendered() == game.getGameMode().playerLimit()) {
+            if (room.getIsRendered() == room.getGameMode().playerLimit()) {
                 serverMessage = ServerMessage.builder()
                         .message("ALL_RENDERED_COMPLETED")
                         .build();
@@ -654,6 +657,22 @@ public class MessageController {
         }
 
         // 프론트는 MATCHING_SUCCESS를 받으면 수락-거절을 띄우고 다시 요청을 서버한테 보낸다.
+    }
+
+    @MessageMapping("/{gameId}")
+    public void chat(@DestinationVariable String gameId, ClientMessage message) {
+
+        Game game = board.getGameMap().get(gameId);
+        int role = game.getPlayerRoleByNickname(message.getSender());
+
+        Chat chat = Chat.builder()
+                .gameId(gameId)
+                .sender(message.getSender())
+                .role(role)
+                .message(message.getMessage())
+                .build();
+
+        sendingOperations.convertAndSend("/sub/"+ gameId, chat);
     }
 
     //서버 타이머  제공

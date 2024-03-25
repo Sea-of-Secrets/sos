@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Data
 public class Game {
@@ -54,4 +55,12 @@ public class Game {
         this.round++;
     }
 
+    public Integer getPlayerRoleByNickname(String nickname) {
+        for (Map.Entry<Integer, Player> entry : players.entrySet()) {
+            if (entry.getValue().getNickname().equals(nickname)) {
+                return entry.getKey();
+            }
+        }
+        return null; // 해당 닉네임을 가진 Player가 없는 경우
+    }
 }

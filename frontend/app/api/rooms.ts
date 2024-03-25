@@ -20,6 +20,7 @@ export const makeRoom = async ({
     gameMode,
     type: "make",
   });
+
   return res;
 };
 

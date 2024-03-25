@@ -1,12 +1,18 @@
 import { create } from "zustand";
 import { CameraControls } from "@react-three/drei";
 import { MutableRefObject } from "react";
+import { NodePosition } from "~/_lib/data/types";
+
+export const DEFAULT_POSITION: [number, number, number] = [0, 800, 500];
+export const DEFAULT_FAR = 10000;
+export const DEFAULT_FOV = 50;
 
 interface CameraState {
   cameraRef: MutableRefObject<CameraControls> | null;
   initialize: (cameraRef: MutableRefObject<CameraControls>) => void;
-  pieceCamera: (position: number[]) => void;
-  mapCamera: () => void;
+  zoom: (position: NodePosition) => void;
+  zoomFullScreen: () => void;
+  gameStartAnimation: () => void;
 }
 
 export const useCamera = create<CameraState>(set => ({
@@ -19,30 +25,42 @@ export const useCamera = create<CameraState>(set => ({
       return { ...state, cameraRef };
     });
   },
-  pieceCamera: position => {
+  zoom: position => {
     set(state => {
+      const { x, y, z } = position;
       if (state.cameraRef) {
-        state.cameraRef.current.setLookAt(
-          position[0],
-          250,
-          position[1] + 200,
-          position[0],
-          0,
-          position[1],
-          true,
-        );
+        state.cameraRef.current.setLookAt(x, 250, y + 200, x, 0, y, true);
         state.cameraRef.current.zoomTo(1.5, true);
+      } else {
+        console.error(`Camera not initialized...`);
+        window.alert("카메라가 없다...");
       }
-      return state;
+      return { ...state };
     });
   },
-  mapCamera: () => {
+  zoomFullScreen: () => {
     set(state => {
       if (state.cameraRef) {
-        state.cameraRef.current.setLookAt(0, 700, 600, 0, 0, 100, true);
+        state.cameraRef.current.setLookAt(...DEFAULT_POSITION, 0, 0, 100, true);
         state.cameraRef.current.zoomTo(1, true);
+      } else {
+        console.error(`Camera not initialized...`);
+        window.alert("카메라가 없다...");
       }
-      return state;
+      return { ...state };
+    });
+  },
+  gameStartAnimation: () => {
+    // TODO: 일단 시작 애니메이션 변화
+    set(state => {
+      if (state.cameraRef) {
+        state.cameraRef.current.setLookAt(...DEFAULT_POSITION, 0, 0, 100, true);
+        state.cameraRef.current.zoomTo(1, true);
+      } else {
+        console.error(`Camera not initialized...`);
+        window.alert("카메라가 없다...");
+      }
+      return { ...state };
     });
   },
 }));

@@ -11,42 +11,168 @@ import SystemPrompt from "./components/SystemPrompt";
 
 import { gameSocket } from "~/sockets";
 import { useGameLoading } from "./stores/useGameLoading";
+import { useGameData } from "./stores/useGameData";
+import { useSystemPrompt } from "./stores/useSystemPrompt";
 import useNickname from "~/store/nickname";
 import useGameId from "~/store/gameId";
 
-import EjjTestController from "./test-components/EjjTestController";
 import YsyTestController from "./test-components/YsyTestController";
+import { useCamera } from "./stores/useCamera";
+import { useNode } from "./hooks/useNode";
+import { getNode } from "~/_lib/data/data";
 
 const { connect, send, subscribe, disconnect } = gameSocket;
 
 export default function IngameClient() {
   const { loading, setLoading } = useGameLoading();
   const { nickname } = useNickname();
-  const { gameId, setGameId } = useGameId();
+  const { gameId } = useGameId();
+  const { zoom, zoomFullScreen, gameStartAnimation } = useCamera();
 
-  // const [nowNode, setNowNode] = useState();
-  // const [nowNodePosition, setNowNodePosition] = useState([]);
-  // const [nextMoveableNodes, setNextMoveableNodes] = useState([]);
-  // const [nextNodeEdge, setNextNodeEdge] = useState([]);
+  const [socketMessage, setSocketMessage] = useState<any>();
+  const [timeOut, setTimeOut] = useState(false);
 
-  const [socketData, setSocketData] = useState<any>();
-  const [type, setType] = useState("미정");
-  const [treasures, setTreasures] = useState([]);
-  const [pirateRoute, setPirateRoute] = useState([]);
-  const [marineOneRoute, setMarineOneRoute] = useState([]);
-  const [marineTwoRoute, setMarineTwoRoute] = useState([]);
-  const [marineThreeRoute, setMarineThreeRoute] = useState([]);
+  const {
+    setHeaderMessage,
+    removeHeaderMessage,
+    setFooterMessage,
+    removeFooterMessage,
+  } = useSystemPrompt();
+
+  const {
+    type,
+    treasures,
+    pirateRoute,
+    marineOneRoute,
+    marineTwoRoute,
+    marineThreeRoute,
+    currentPosition,
+    setType,
+    setTreasures,
+    setPirateRoute,
+    setMarineOneRoute,
+    setMarineTwoRoute,
+    setMarineThreeRoute,
+    setCurrentPosition,
+  } = useGameData();
+
   const [turn, setTurn] = useState(1);
   const [round, setRound] = useState(1);
 
-  // 게임 시작 타이머 알림
-  const gameStart = () => {
-    alert(`직업 : ${type}`);
+  // 게임 시작
+  const startAnimation = () => {
+    // TODO : 애니메이션 실행
+    gameStartAnimation();
+
+    // 애니메이션 끝났다고 알림
+    send("/pub/init", {
+      message: "START_GAME",
+      sender: nickname,
+      gameId,
+    });
   };
 
+  // 해적의 시작위치 지정 명령
+  const orderInitPirateStart = () => {
+    if (type === "pirate") {
+      setHeaderMessage("시작 위치를 결정하세요");
+      // TODO : 푸터에 4가지 선택지 나오고 마우스 호버 시, 카메라 이동
+      setFooterMessage(
+        <div
+          onClick={() => {
+            const keys = Object.keys(treasures);
+            const randomIndex = Math.floor(Math.random() * keys.length);
+            const randomKey = parseInt(keys[randomIndex]);
+            // 포지션 변경 여기서 해줘야 에러 안남
+            setCurrentPosition([randomKey, 0, 0, 0]);
+
+            send("/pub/init", {
+              message: "INIT_PIRATE_START",
+              sender: nickname,
+              gameId,
+              node: randomKey, // TODO : 클릭한 노드로 변경
+            });
+          }}
+        >
+          클릭해주세요
+        </div>,
+      );
+    } else {
+      setHeaderMessage("해적이 시작 위치를 결정중입니다");
+    }
+  };
+
+  // 해적의 시작위치 지정 완료
+  const actionInitPirateStart = () => {
+    if (type === "pirate") {
+      // 시간 초과 여부에 따라 메시지 출력
+      setHeaderMessage(
+        timeOut
+          ? "시간초과! 시작 위치가 랜덤으로 결정되었습니다"
+          : "시작 위치가 결정되었습니다",
+      );
+      // 푸터, 시간초과 초기화
+      setTimeOut(false);
+      removeFooterMessage();
+      // 해당 노드 줌 인
+      zoom(getNode(currentPosition[0]).position);
+      // TODO : 피스 등장 이펙트, 출발지 보물 상자 열리는 이펙트
+    } else {
+      setHeaderMessage("해적의 시작 위치가 결정되었습니다");
+    }
+  };
+
+  // 해적의 시작위치 지정 시간초과
+  const initPirateStartTimeOut = () => {
+    setTimeOut(true);
+  };
+
+  useEffect(() => {
+    if (socketMessage) {
+      console.log("소켓 메세지", socketMessage);
+      if (socketMessage.message === "RENDER_COMPLETE_ACCEPTED") {
+        // 직업 세팅
+        const players = socketMessage.game.players;
+        const number = Object.keys(players).find(
+          key => players[key]["nickname"] === nickname,
+        );
+        if (number === "0") {
+          setType("pirate");
+          setTreasures(socketMessage.game.treasures);
+        } else if (number === "1") {
+          setType("marineOne");
+        } else if (number === "2") {
+          setType("marineTwo");
+        } else if (number === "3") {
+          setType("marineThree");
+        }
+      }
+
+      // 게임 시작
+      if (socketMessage.message === "ALL_RENDERED_COMPLETED") {
+        startAnimation();
+      }
+
+      // 해적의 시작위치 지정 명령
+      if (socketMessage.message === "ORDER_INIT_PIRATE_START") {
+        orderInitPirateStart();
+      }
+
+      // 해적의 시작위치 지정 완료
+      if (socketMessage.message === "ACTION_INIT_PIRATE_START") {
+        actionInitPirateStart();
+      }
+
+      // 해적의 시작위치 지정 시간초과
+      if (socketMessage.message === "INIT_PIRATE_START_TIME_OUT") {
+        initPirateStartTimeOut();
+      }
+    }
+  }, [socketMessage]);
+
   const onConnect = () => {
-    console.log("인게임 소켓 연결 완료");
     const gameIdFromLocalStorage = localStorage.getItem("gameId");
+    console.log("인게임 소켓 연결 완료");
     if (gameIdFromLocalStorage) {
       const localGameId = JSON.parse(gameIdFromLocalStorage).state.gameId;
 
@@ -54,11 +180,21 @@ export default function IngameClient() {
       subscribe(`/sub/${localGameId}`, message => {
         const data = JSON.parse(message.body);
         if (data) {
-          setSocketData(data);
+          setSocketMessage(data);
         }
       });
     }
   };
+
+  useEffect(() => {
+    if (!loading) {
+      send("/pub/room", {
+        message: "RENDERED_COMPLETE",
+        sender: nickname,
+        gameId,
+      });
+    }
+  }, [loading, gameId, nickname]);
 
   useEffect(() => {
     connect(onConnect);
@@ -67,79 +203,24 @@ export default function IngameClient() {
     };
   }, []);
 
-  useEffect(() => {
-    if (socketData) {
-      console.log("socketData message : ", socketData.message);
-      if (socketData.message === "RENDER_COMPLETE_ACCEPTED") {
-        // 직업 세팅
-        const players = socketData.game.players;
-        const number = Object.keys(players).find(
-          key => players[key] === nickname,
-        );
-
-        if (number === "0") {
-          setType("pirate");
-          setTreasures(socketData.game.treasures);
-          // localStorage.setItem("type", "pirate");
-          // localStorage.setItem(
-          //   "treasures",
-          //   JSON.stringify(socketData.game.treasures),
-          // );
-        } else if (number === "1") {
-          setType("marineOne");
-          // localStorage.setItem("type", "marineOne");
-        } else if (number === "2") {
-          setType("marineTwo");
-          // localStorage.setItem("type", "marineTwo");
-        } else if (number === "3") {
-          setType("marineThree");
-          // localStorage.setItem("type", "marineThree");
-        }
-      }
-
-      // 게임 시작
-      if (socketData.message === "ALL_RENDERED_COMPLETED") {
-        gameStart();
-      }
-
-      if (socketData.message === "ORDER 뭐시기 해적턴입니다!!!") {
-        ("해적 시작위치 고르는 액션 함수");
-      }
-    }
-  }, [socketData]);
-
   return (
     <>
       {loading && <Loading />}
       <Round topLeft={[60, 1]} />
-      <Turn topLeft={[360, 1]} currentTurn={1} />
+      <Turn topLeft={[360, 1]} currentTurn={turn} />
       <SystemPrompt />
       <Canvas
         camera={{
-          position: [0, 800, 500],
+          position: [0, 200, 300],
           far: 10000,
           fov: 50,
         }}
         onCreated={() => {
           setLoading(false);
-          send("/pub/room", {
-            message: "RENDERED_COMPLETE",
-            sender: nickname,
-            gameId,
-          });
         }}
       >
-        <IngameThree
-        // nextMoveableNodes={nextMoveableNodes}
-        // nextNodeEdge={nextNodeEdge}
-        />
+        <IngameThree />
       </Canvas>
-      {/* <EjjTestController
-        newMoveableNodes={newMoveableNodes}
-        setNextMoveableNodes={setNextMoveableNodes}
-        newNodeEdge={newNodeEdge}
-        setNextNodeEdge={setNextNodeEdge}
-      /> */}
       <YsyTestController />
     </>
   );

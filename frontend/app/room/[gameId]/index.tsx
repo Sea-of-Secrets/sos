@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { gameSocket } from "~/sockets";
 import useNickname from "~/store/nickname";
 import Image from "next/image";
@@ -10,7 +10,6 @@ const { connect, disconnect, subscribe, send } = gameSocket;
 
 export default function Room() {
   const params = useParams() as { gameId: string };
-  const router = useRouter();
   const { gameId } = params;
   const { nickname } = useNickname();
   const [isHost, setIsHost] = useState(false);
@@ -37,18 +36,19 @@ export default function Room() {
   const handleConfirm = () => {
     // 게임 시작 버튼 클릭
     send("/pub/room", {
-      message: "GAME_START",
+      message: "START_BUTTON_CLICKED",
       sender: nickname,
       gameId,
     });
   };
 
   const onConnect = () => {
-    console.log("소켓 연결 성공. 룸아이디 닉네임 : ", gameId, nickname);
+    console.log("대기실 소켓 연결 성공");
+
     // 해당 룸코드를 구독
     subscribe(`/sub/${gameId}`, message => {
       const data = JSON.parse(message.body);
-      console.log(data);
+      console.log("소켓 메세지", data);
 
       // 플레이어 입장 OR 퇴장
       if (data.message == "ENTER_SUCCESS" || data.message == "PLAYER_LEAVED") {
@@ -59,7 +59,7 @@ export default function Room() {
         setIsFull(false);
 
         // 방장 여부 확인
-        if (data.room.host == nickname) {
+        if (data.room.host.nickname == nickname) {
           setIsHost(true);
         }
       }
@@ -71,10 +71,15 @@ export default function Room() {
       }
 
       // 시작 버튼 클릭
-      if (data.message == "GAME_START") {
+      if (data.message == "START_BUTTON_CLICKED") {
         // 인게임 이동
-        // router.push("/ingame");
         window.location.href = "/ingame";
+      }
+
+      // 방장이 아닌데 게임 시작한 경우
+      if (data.message == "ONLY_HOST_CAN_START") {
+        // 인게임 이동
+        alert("게임시작은 방장만 가능합니다.");
       }
     });
 
@@ -114,7 +119,10 @@ export default function Room() {
             className={`mx-auto mt-20 grid ${gridColumns[players.length]} gap-x-8 gap-y-16`}
           >
             {players.map(player => (
-              <li key={player} className="flex flex-col items-center">
+              <li
+                key={player["nickname"]}
+                className="flex flex-col items-center"
+              >
                 <Image
                   src="/pxfuel.jpg"
                   width={100}
@@ -123,7 +131,7 @@ export default function Room() {
                   className="mx-auto h-48 w-48 rounded-full"
                 />
                 <h3 className="mt-6 text-lg text-center font-semibold leading-8 tracking-tight text-gray-900">
-                  {player}
+                  {player["nickname"]}
                 </h3>
               </li>
             ))}
@@ -136,7 +144,7 @@ export default function Room() {
                   !isFull ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50"
                 }`}
                 onClick={handleConfirm}
-                // disabled={!isFull}
+                disabled={!isFull}
               >
                 게임시작
               </button>
