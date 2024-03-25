@@ -9,6 +9,7 @@ import com.ssafy.sos.game.event.MatchingEvent;
 import com.ssafy.sos.game.message.client.ClientMessage;
 import com.ssafy.sos.game.message.client.ClientInitMessage;
 import com.ssafy.sos.game.message.client.ClientMoveMessage;
+import com.ssafy.sos.game.message.server.ServerMarineMessage;
 import com.ssafy.sos.game.message.server.ServerMessage;
 import com.ssafy.sos.game.message.server.ServerPirateMessage;
 import com.ssafy.sos.game.service.GameService;
@@ -57,12 +58,10 @@ public class MessageController {
     // 소켓 연결 해제시 실행
     @EventListener
     public void handleDisconnectEvent(SessionDisconnectEvent event) {
-        System.out.println(event.getMessage());
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         String sessionId = accessor.getSessionId();
         List<String> sessionMemberGame= board.getSessionMap().getOrDefault(sessionId, null);
 
-        System.out.println(sessionMemberGame);
         if (sessionMemberGame == null) return;
 
         String nickname = sessionMemberGame.get(0);
@@ -98,7 +97,6 @@ public class MessageController {
             case GAME_FINISHED -> {
                 // 게임 종료는 꼭 한명만 시켜야 됨 -> 안 그러면 게임 삭제 요청 4번 감
                 if (game.getPlayers().get(0).getNickname().equals(nickname)) {
-                    System.out.println("--FINISH");
                     gameService.gameOver(gameId, true);
                 }
             }
@@ -135,7 +133,6 @@ public class MessageController {
                 Player player = room.getInRoomPlayers().get(i);
                 if (!player.getNickname().equals(sender)) {
                     acceptPlayer = player;
-                    System.out.println(acceptPlayer.getNickname());
 
                     matchingService.enqueue(acceptPlayer);
                     serverMessage = ServerMessage.builder()
@@ -170,8 +167,6 @@ public class MessageController {
                 if (player.getNickname().equals(sender)) {
                     sessionInfo.add(sender);
                     sessionInfo.add(gameId);
-
-                    System.out.println("Session Info : " + sessionInfo);
 
                     serverMessage = ServerMessage.builder()
                             .message("ENTER_SUCCESS")
@@ -234,13 +229,13 @@ public class MessageController {
                     .room(room)
                     .game(game)
                     .build();
-            System.out.println(serverMessage);
             sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
 
             // 방에 있는 모두의 렌더가 완료되면 알림 (서 -> 클)
             if (room.getIsRendered() == room.getGameMode().playerLimit()) {
                 serverMessage = ServerMessage.builder()
                         .message("ALL_RENDERED_COMPLETED")
+                        .room(room)
                         .build();
                 sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
             }
@@ -291,6 +286,18 @@ public class MessageController {
                 .game(game)
                 .build();
         sendingOperations.convertAndSend("/sub/" + gameId, serverPirateMessage);
+    }
+
+    // 해군 이동시 필요한 정보(이동가능한 노드 조회)와 함께 메시지를 보내는 메서드
+    private void sendMessageWithMarineAvailableNode(String gameId, Game game, String message, HashMap<Integer, Deque<Integer>> marineAvailableNode) {
+        ServerMarineMessage serverMarineMessage;
+        serverMarineMessage = ServerMarineMessage.builder()
+                .gameId(gameId)
+                .message(message)
+                .marineAvailableNode(marineAvailableNode)
+                .game(game)
+                .build();
+        sendingOperations.convertAndSend("/sub/" + gameId, serverMarineMessage);
     }
 
     // 타이머가 끝남을 감지
@@ -404,32 +411,29 @@ public class MessageController {
             lockRespond = true;
             // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
             sendMessageWithGame(gameId, game, "MOVE_PIRATE_TIME_OUT");
-            // TODO: 해적 랜덤 위치 이동 구현해야 함
-            // 시작위치 랜덤 지정
-            gameService.initMarineStartRandom(gameId, 3);
-            // 해군 3 시작위치 지정완료 브로드캐스트 (서 -> 클)
-            sendMessageWithGame(gameId, game, "ACTION_INIT_MARINE_THREE_START");
+            // 해적 랜덤 위치 이동
+            HashMap<Integer, Deque<Integer>> pirateAvailableNode = gameService.findPirateAvailableNode(gameId, game.getCurrentPosition()[0]);
+            List<Integer> availableNodes = new ArrayList<>(pirateAvailableNode.keySet());
+            Collections.shuffle(availableNodes);
+            Integer nextNode = availableNodes.get(0);
+            // 입력받은 노드 저장
+            gameService.move(gameId, nextNode, 0);
+            // 해적 시작위치 지정완료 브로드캐스트 (서 -> 클)
+            sendMessageWithPirateAvailableNode(gameId, game,"ACTION_MOVE_PIRATE", pirateAvailableNode);
             // 2초 타이머 시작
-            gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_PIRATE");
+            gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_MARINE_ONE");
         }
 
-        // 2초 타이머 경과 (해군 3 시작위치 지정 -> 해적 이동)
-        if (message.equals("READY_MOVE_PIRATE")) {
-            // 해적 이동가능 위치 계산
-            HashMap<Integer, Deque<Integer>> pirateAvailableNode = gameService.findPirateAvailableNode(gameId, game.getCurrentPosition()[0]);
+        // 2초 타이머 경과 (해적 이동 -> 해군 1 이동)
+        if (message.equals("READY_MOVE_MARINE_ONE")) {
+            // 해군 이동가능 위치 계산
+            HashMap<Integer, Deque<Integer>> marineAvailableNode = gameService.findMarineAvailableNode(gameId, game.getCurrentPosition()[1]);
             // 해적 이동 (서 -> 클)
-            ServerPirateMessage serverPirateMessage;
-            serverPirateMessage = ServerPirateMessage.builder()
-                    .gameId(gameId)
-                    .message("ORDER_MOVE_PIRATE")
-                    .pirateAvailableNode(pirateAvailableNode)
-                    .game(game)
-                    .build();
-            sendingOperations.convertAndSend("/sub/" + gameId, serverPirateMessage);
+            sendMessageWithMarineAvailableNode(gameId, game, "ORDER_MOVE_MARINE_ONE", marineAvailableNode);
             // 응답 허용
             lockRespond = false;
             // 15초 타이머 시작
-            gameTimerService.startResponseWaitingTimer(gameId, "MOVE_PIRATE_TIME_OUT");
+            gameTimerService.startResponseWaitingTimer(gameId, "MOVE_MARINE_ONE_TIME_OUT");
         }
     }
 
@@ -476,7 +480,7 @@ public class MessageController {
             int[] currentPosition = gameService.initMarineStart(gameId, 1, message.getNode());
             // 이미 선택된 노드면 선택 불가
             if (currentPosition == null) {
-                sendMessageWithGame(gameId, game, "ALREADY_SELECTED_NODE");
+                sendMessageWithGame(gameId, game, "MARINE_ONE_ALREADY_SELECTED_NODE");
                 // 응답 허용
                 lockRespond = false;
                 // 다시 15초 타이머 시작
@@ -497,7 +501,7 @@ public class MessageController {
             int[] currentPosition = gameService.initMarineStart(gameId, 2, message.getNode());
             // 이미 선택된 노드면 선택 불가
             if (currentPosition == null) {
-                sendMessageWithGame(gameId, game, "ALREADY_SELECTED_NODE");
+                sendMessageWithGame(gameId, game, "MARINE_TWO_ALREADY_SELECTED_NODE");
                 // 응답 허용
                 lockRespond = false;
                 // 다시 15초 타이머 시작
@@ -518,7 +522,7 @@ public class MessageController {
             int[] currentPosition = gameService.initMarineStart(gameId, 3, message.getNode());
             // 이미 선택된 노드면 선택 불가
             if (currentPosition == null) {
-                sendMessageWithGame(gameId, game, "ALREADY_SELECTED_NODE");
+                sendMessageWithGame(gameId, game, "MARINE_THREE_ALREADY_SELECTED_NODE");
                 // 응답 허용
                 lockRespond = false;
                 // 다시 15초 타이머 시작
@@ -542,18 +546,33 @@ public class MessageController {
         if (message.getMessage().equals("MOVE_PIRATE") && !lockRespond) {
             // 제한시간 내로 선택을 한 것이므로 타이머 취소
             gameTimerService.cancelTimer(gameId);
+            // 해적 이동 경로 재예상
+            HashMap<Integer, Deque<Integer>> pirateAvailableNode = gameService.findPirateAvailableNode(gameId, game.getCurrentPosition()[0]);
             // 입력받은 노드 저장
             gameService.move(gameId, message.getNode(), 0);
             // 해적 시작위치 지정완료 브로드캐스트 (서 -> 클)
-            sendMessageWithGame(gameId, game, "ACTION_MOVE_PIRATE");
+            sendMessageWithPirateAvailableNode(gameId, game,"ACTION_MOVE_PIRATE", pirateAvailableNode);
             // 2초 타이머 시작
             gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_MARINE_ONE");
         }
     }
 
+    // 해군 이동, 조사, 체포
+    @MessageMapping("/marine")
+    public void marine(ClientMoveMessage message) {
+        String gameId = message.getGameId();
+        Game game = board.getGameMap().get(gameId);
+
+
+    }
+
+
+
+
+
+
     @MessageMapping("/move")
     public void move(ClientMoveMessage message) {
-        System.out.println(message);
         String gameId = message.getGameId();
         Game game = board.getGameMap().get(gameId);
 
@@ -574,7 +593,6 @@ public class MessageController {
 
     @MessageMapping("/increase")
     public void turnRoundIncrease(ClientMessage message) {
-        System.out.println(message);
         String gameId = message.getGameId();
         Game game = board.getGameMap().get(gameId);
 
@@ -599,7 +617,6 @@ public class MessageController {
                     .build();
         }
 
-        System.out.println(serverMessage);
         if (serverMessage != null) {
             sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
         }
@@ -607,7 +624,6 @@ public class MessageController {
 
     @MessageMapping("/action")
     public void marineAction(ClientInitMessage message) {
-        System.out.println(message);
         String gameId = message.getGameId();
         Game game = board.getGameMap().get(gameId);
 
