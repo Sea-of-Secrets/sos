@@ -49,6 +49,7 @@ public class MessageController {
                 "message: session ID is null")
                 .toString();
 
+        System.out.println("Add Session ID : "+sessionId);
         board.getSessionMap().put(sessionId, new ArrayList<>());
     }
 
@@ -63,8 +64,8 @@ public class MessageController {
         System.out.println(sessionMemberGame);
         if (sessionMemberGame == null) return;
 
-        String gameId = sessionMemberGame.get(0);
-        String nickname = sessionMemberGame.get(1);
+        String nickname = sessionMemberGame.get(0);
+        String gameId = sessionMemberGame.get(1);
 
         Room room = board.getRoomMap().getOrDefault(gameId, null);
 
@@ -164,7 +165,7 @@ public class MessageController {
 
         // 방 입장 (클 -> 서)
         if (message.getMessage().equals("ENTER_ROOM")) {
-            room.getInRoomPlayers().removeIf(player -> player.getNickname().equals(sender));
+//            room.getInRoomPlayers().removeIf(printlnayer -> player.getNickname().equals(sender));
 
             for (Player player : room.getInRoomPlayers()) {
                 if (player.getNickname().equals(sender)) {
@@ -231,17 +232,21 @@ public class MessageController {
             serverMessage = ServerMessage.builder()
                     .message("RENDER_COMPLETE_ACCEPTED")
                     .gameId(gameId)
+                    .room(room)
                     .game(game)
                     .build();
             System.out.println(serverMessage);
             sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
 
             // 방에 있는 모두의 렌더가 완료되면 알림 (서 -> 클)
-            if (room.getIsRendered() == game.getGameMode().playerLimit()) {
+            if (room.getIsRendered() == room.getGameMode().playerLimit()) {
                 serverMessage = ServerMessage.builder()
                         .message("ALL_RENDERED_COMPLETED")
                         .build();
                 sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+            } else {
+                System.out.println(room.getIsRendered());
+                System.out.println();
             }
         }
 
