@@ -35,6 +35,7 @@ public class GameServiceImpl implements GameService {
     @Override
     public void gameStart(String gameId) {
         game = new Game(gameId);
+
         board.getGameMap().put(gameId, game);
         // 보물상자 위치 랜덤 지정
         setPirateTreasure(gameId);
@@ -45,6 +46,7 @@ public class GameServiceImpl implements GameService {
 
         Room room = board.getRoomMap().get(gameId);
         List<Player> roomPlayers = room.getInRoomPlayers();
+        game.setGameMode(room.getGameMode());
 
         // 게임 모드에 맞게 역할 배정
         switch (room.getGameMode()) {
