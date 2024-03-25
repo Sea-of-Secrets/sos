@@ -4,6 +4,7 @@ import com.ssafy.sos.member.domain.TodayVisited;
 import com.ssafy.sos.member.repository.TodayVisitedRepository;
 import com.ssafy.sos.member.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -28,5 +29,11 @@ public class MemberService {
             todayVisitedRepository.save(todayVisited);
             return false;
         }
+    }
+
+    @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
+    public void cleanTodayVisited() {
+        System.out.println("redis clean!");
+        todayVisitedRepository.deleteAll();
     }
 }
