@@ -6,9 +6,7 @@ import com.ssafy.sos.member.OAuth2Response.NaverResponse;
 import com.ssafy.sos.member.OAuth2Response.OAuth2Response;
 import com.ssafy.sos.member.domain.*;
 import com.ssafy.sos.member.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -68,7 +66,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
             userEntity = userRepository.findByUsername(username);
             // 오늘 출석하지 않았으면 골드 지급
-            if (!memberService.checkAttendance(userEntity.getId())) {
+            if (memberService.checkAttendance(userEntity.getId())) {
                 userRepository.addGoldById(userEntity.getId());
             }
 
@@ -86,7 +84,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
             userRepository.save(existData);
 
-            if (!memberService.checkAttendance(existData.getId())) {
+            if (memberService.checkAttendance(existData.getId())) {
                 userRepository.addGoldById(existData.getId());
             }
 
