@@ -337,6 +337,7 @@ public class GameServiceImpl implements GameService {
     public Room enterRoom(String gameId, Player player) {
         Room room = board.getRoomMap().get(gameId);
 
+        // TOOD: 게임 모드에 따라서 변경
         // 방이 다 차있지 않으면
         if (room.getInRoomPlayers().size() < 4) {
             room.getInRoomPlayers().add(player);

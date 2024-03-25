@@ -25,4 +25,6 @@ public class UserEntity {
 
     private String role;
     private String walletAddress;
+
+    private int gold;
 }
