@@ -1,9 +1,6 @@
 package com.ssafy.sos.game.controller;
 
-import com.ssafy.sos.game.domain.Board;
-import com.ssafy.sos.game.domain.Game;
-import com.ssafy.sos.game.domain.Player;
-import com.ssafy.sos.game.domain.Room;
+import com.ssafy.sos.game.domain.*;
 import com.ssafy.sos.game.event.MatchingEvent;
 import com.ssafy.sos.game.message.client.ClientMessage;
 import com.ssafy.sos.game.message.client.ClientInitMessage;
@@ -17,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.Server;
 import org.springframework.context.event.EventListener;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
@@ -693,6 +691,22 @@ public class MessageController {
         }
 
         // 프론트는 MATCHING_SUCCESS를 받으면 수락-거절을 띄우고 다시 요청을 서버한테 보낸다.
+    }
+
+    @MessageMapping("/{gameId}")
+    public void chat(@DestinationVariable String gameId, ClientMessage message) {
+
+        Game game = board.getGameMap().get(gameId);
+        int role = game.getPlayerRoleByNickname(message.getSender());
+
+        Chat chat = Chat.builder()
+                .gameId(gameId)
+                .sender(message.getSender())
+                .role(role)
+                .message(message.getMessage())
+                .build();
+
+        sendingOperations.convertAndSend("/sub/"+ gameId, chat);
     }
 
     //서버 타이머  제공
