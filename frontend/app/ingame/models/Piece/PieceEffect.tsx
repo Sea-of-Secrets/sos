@@ -1,8 +1,5 @@
-import { useEffect, useRef } from "react";
-import { useLoader } from "@react-three/fiber";
+import { useEffect } from "react";
 import { useAnimations } from "@react-three/drei";
-import * as THREE from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 import { PieceEffectPathMap } from "~/assetPath";
 import { PieceEffectProps } from "./types";

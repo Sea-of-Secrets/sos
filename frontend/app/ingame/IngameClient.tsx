@@ -18,7 +18,6 @@ import useGameId from "~/store/gameId";
 
 import YsyTestController from "./test-components/YsyTestController";
 import { useCamera } from "./stores/useCamera";
-import { useNode } from "./hooks/useNode";
 import { getNode, marineStartList } from "~/_lib/data/data";
 
 const { connect, send, subscribe, disconnect } = gameSocket;
@@ -299,10 +298,10 @@ export default function IngameClient() {
     // 해당 노드 줌 인
     zoom(getNode(currentPosition[2]).position);
 
-    // TODO : 보물 열리는 애니메이션
     setTimeout(() => {
       setHeaderMessage("해적의 출발지가 공개됩니다");
       zoom(getNode(currentPosition[0]).position);
+      // TODO : 3초간 보물 열리는 애니메이션
     }, 3000);
   };
 
@@ -319,6 +318,15 @@ export default function IngameClient() {
         `[해적] ${socketMessage.game.players[0]["nickname"]} 님이 이동중입니다`,
       );
     }
+  };
+
+  // 해적 이동 완료
+  const actionMovePirate = () => {
+    // 이동 가능 노드 비우기
+
+    // 푸터, 시간초과 초기화
+    setTimeOut(false);
+    removeFooterMessage();
   };
 
   useEffect(() => {
@@ -352,7 +360,8 @@ export default function IngameClient() {
         socketMessage.message === "INIT_PIRATE_START_TIME_OUT" ||
         socketMessage.message === "INIT_MARINE_ONE_START_TIME_OUT" ||
         socketMessage.message === "INIT_MARINE_TWO_START_TIME_OUT" ||
-        socketMessage.message === "INIT_MARINE_THREE_START_TIME_OUT"
+        socketMessage.message === "INIT_MARINE_THREE_START_TIME_OUT" ||
+        socketMessage.message === "MOVE_PIRATE_TIME_OUT"
       ) {
         setTimeOut(true);
       }
@@ -404,6 +413,7 @@ export default function IngameClient() {
 
       // 해적의 이동 완료
       if (socketMessage.message === "ACTION_MOVE_PIRATE") {
+        actionMovePirate();
       }
     }
   }, [socketMessage]);
