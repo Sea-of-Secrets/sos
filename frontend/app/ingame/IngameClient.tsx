@@ -11,14 +11,13 @@ import SystemPrompt from "./components/SystemPrompt";
 
 import { gameSocket } from "~/sockets";
 import { useGameLoading } from "./stores/useGameLoading";
-import { useCamera } from "./stores/useCamera";
 import { useGameData } from "./stores/useGameData";
 import { useSystemPrompt } from "./stores/useSystemPrompt";
 import useNickname from "~/store/nickname";
 import useGameId from "~/store/gameId";
 
-import EjjTestController from "./test-components/EjjTestController";
 import YsyTestController from "./test-components/YsyTestController";
+import { useCamera } from "./stores/useCamera";
 
 const { connect, send, subscribe, disconnect } = gameSocket;
 
@@ -26,7 +25,8 @@ export default function IngameClient() {
   const { loading, setLoading } = useGameLoading();
   const { nickname } = useNickname();
   const { gameId } = useGameId();
-  const { mapCamera } = useCamera();
+  const { gameStartAnimation } = useCamera();
+
   const [socketMessage, setSocketMessage] = useState<any>();
 
   const {
@@ -59,7 +59,7 @@ export default function IngameClient() {
   // 게임 시작
   const startAnimation = () => {
     // 애니메이션 실행
-    mapCamera();
+    gameStartAnimation();
     // 애니메이션 끝났다고 알림
     send("/pub/room", {
       message: "START_GAME",

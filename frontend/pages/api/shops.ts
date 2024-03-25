@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { http } from "../http";
+import { http } from "../../_lib/http";
 
 type ResponseData = {
   message: string;

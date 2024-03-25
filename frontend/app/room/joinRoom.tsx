@@ -1,7 +1,7 @@
 import React, { Fragment, useRef, useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
-import { enterRoom } from "~/pages/rooms";
+import { enterRoom } from "~/app/api/rooms";
 import useNickname from "~/store/nickname";
 import useGameId from "~/store/gameId";
 
