@@ -30,8 +30,6 @@ export default function CreateRoom({ setOpen, isGuest }: CreateRoomProps) {
   const handleConfirm = async () => {
     try {
       const { data } = await makeRoom({ nickname, gameMode });
-      console.log(data, nickname, gameMode);
-
       setGameId(data.gameId);
       router.push(`/room/${data.gameId}`);
     } catch (e) {

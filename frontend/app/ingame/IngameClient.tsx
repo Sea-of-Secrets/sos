@@ -18,6 +18,8 @@ import useGameId from "~/store/gameId";
 
 import YsyTestController from "./test-components/YsyTestController";
 import { useCamera } from "./stores/useCamera";
+import { useNode } from "./hooks/useNode";
+import { getNode } from "~/_lib/data/data";
 
 const { connect, send, subscribe, disconnect } = gameSocket;
 
@@ -25,32 +27,33 @@ export default function IngameClient() {
   const { loading, setLoading } = useGameLoading();
   const { nickname } = useNickname();
   const { gameId } = useGameId();
-  const { gameStartAnimation } = useCamera();
+  const { zoom, zoomFullScreen, gameStartAnimation } = useCamera();
 
   const [socketMessage, setSocketMessage] = useState<any>();
+  const [timeOut, setTimeOut] = useState(false);
 
   const {
-    headerMessage,
     setHeaderMessage,
     removeHeaderMessage,
-    footerMessage,
     setFooterMessage,
     removeFooterMessage,
   } = useSystemPrompt();
 
   const {
     type,
-    setType,
     treasures,
-    setTreasures,
     pirateRoute,
-    setPirateRoute,
     marineOneRoute,
-    setMarineOneRoute,
     marineTwoRoute,
-    setMarineTwoRoute,
     marineThreeRoute,
+    currentPosition,
+    setType,
+    setTreasures,
+    setPirateRoute,
+    setMarineOneRoute,
+    setMarineTwoRoute,
     setMarineThreeRoute,
+    setCurrentPosition,
   } = useGameData();
 
   const [turn, setTurn] = useState(1);
@@ -58,20 +61,70 @@ export default function IngameClient() {
 
   // 게임 시작
   const startAnimation = () => {
-    // 애니메이션 실행
+    // TODO : 애니메이션 실행
     gameStartAnimation();
+
     // 애니메이션 끝났다고 알림
-    send("/pub/room", {
+    send("/pub/init", {
       message: "START_GAME",
       sender: nickname,
       gameId,
     });
   };
 
-  // 해적 시작 지점 지정
-  const initPirateStart = () => {
-    setHeaderMessage("당신의 출발지를 결정해라");
-    setFooterMessage(<div></div>);
+  // 해적의 시작위치 지정 명령
+  const orderInitPirateStart = () => {
+    if (type === "pirate") {
+      setHeaderMessage("시작 위치를 결정하세요");
+      // TODO : 푸터에 4가지 선택지 나오고 마우스 호버 시, 카메라 이동
+      setFooterMessage(
+        <div
+          onClick={() => {
+            const keys = Object.keys(treasures);
+            const randomIndex = Math.floor(Math.random() * keys.length);
+            const randomKey = parseInt(keys[randomIndex]);
+            // 포지션 변경 여기서 해줘야 에러 안남
+            setCurrentPosition([randomKey, 0, 0, 0]);
+
+            send("/pub/init", {
+              message: "INIT_PIRATE_START",
+              sender: nickname,
+              gameId,
+              node: randomKey, // TODO : 클릭한 노드로 변경
+            });
+          }}
+        >
+          클릭해주세요
+        </div>,
+      );
+    } else {
+      setHeaderMessage("해적이 시작 위치를 결정중입니다");
+    }
+  };
+
+  // 해적의 시작위치 지정 완료
+  const actionInitPirateStart = () => {
+    if (type === "pirate") {
+      // 시간 초과 여부에 따라 메시지 출력
+      setHeaderMessage(
+        timeOut
+          ? "시간초과! 시작 위치가 랜덤으로 결정되었습니다"
+          : "시작 위치가 결정되었습니다",
+      );
+      // 푸터, 시간초과 초기화
+      setTimeOut(false);
+      removeFooterMessage();
+      // 해당 노드 줌 인
+      zoom(getNode(currentPosition[0]).position);
+      // TODO : 피스 등장 이펙트, 출발지 보물 상자 열리는 이펙트
+    } else {
+      setHeaderMessage("해적의 시작 위치가 결정되었습니다");
+    }
+  };
+
+  // 해적의 시작위치 지정 시간초과
+  const initPirateStartTimeOut = () => {
+    setTimeOut(true);
   };
 
   useEffect(() => {
@@ -83,7 +136,6 @@ export default function IngameClient() {
         const number = Object.keys(players).find(
           key => players[key]["nickname"] === nickname,
         );
-
         if (number === "0") {
           setType("pirate");
           setTreasures(socketMessage.game.treasures);
@@ -102,11 +154,18 @@ export default function IngameClient() {
       }
 
       // 해적의 시작위치 지정 명령
-      if (
-        socketMessage.message === "ORDER_INIT_PIRATE_START" &&
-        type === "pirate"
-      ) {
-        initPirateStart();
+      if (socketMessage.message === "ORDER_INIT_PIRATE_START") {
+        orderInitPirateStart();
+      }
+
+      // 해적의 시작위치 지정 완료
+      if (socketMessage.message === "ACTION_INIT_PIRATE_START") {
+        actionInitPirateStart();
+      }
+
+      // 해적의 시작위치 지정 시간초과
+      if (socketMessage.message === "INIT_PIRATE_START_TIME_OUT") {
+        initPirateStartTimeOut();
       }
     }
   }, [socketMessage]);
@@ -128,7 +187,7 @@ export default function IngameClient() {
   };
 
   useEffect(() => {
-    if (!loading && gameId && nickname) {
+    if (!loading) {
       send("/pub/room", {
         message: "RENDERED_COMPLETE",
         sender: nickname,

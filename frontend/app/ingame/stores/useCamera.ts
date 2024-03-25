@@ -51,7 +51,7 @@ export const useCamera = create<CameraState>(set => ({
     });
   },
   gameStartAnimation: () => {
-    // TODO: 일단 fullScreen
+    // TODO: 일단 시작 애니메이션 변화
     set(state => {
       if (state.cameraRef) {
         state.cameraRef.current.setLookAt(...DEFAULT_POSITION, 0, 0, 100, true);
