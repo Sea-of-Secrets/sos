@@ -6,7 +6,9 @@ import com.ssafy.sos.member.OAuth2Response.NaverResponse;
 import com.ssafy.sos.member.OAuth2Response.OAuth2Response;
 import com.ssafy.sos.member.domain.*;
 import com.ssafy.sos.member.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
@@ -17,10 +19,11 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
+    private final MemberService memberService;
 
-    public CustomOAuth2UserService(UserRepository userRepository) {
-
+    public CustomOAuth2UserService(UserRepository userRepository, MemberService memberService) {
         this.userRepository = userRepository;
+        this.memberService = memberService;
     }
 
     @Override
@@ -63,6 +66,9 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
             userRepository.save(userEntity);
 
+            userEntity = userRepository.findByUsername(username);
+            memberService.checkAttendance(userEntity.getId());
+
             UserDTO userDTO = new UserDTO();
             userDTO.setUsername(username);
             userDTO.setName(oAuth2Response.getName());
@@ -76,6 +82,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             existData.setName(oAuth2Response.getName());
 
             userRepository.save(existData);
+            memberService.checkAttendance(existData.getId());
 
             UserDTO userDTO = new UserDTO();
             userDTO.setUsername(existData.getUsername());
