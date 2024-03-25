@@ -81,7 +81,7 @@ export default function IngameClient() {
         // 직업 세팅
         const players = socketMessage.game.players;
         const number = Object.keys(players).find(
-          key => players[key] === nickname,
+          key => players[key]["nickname"] === nickname,
         );
 
         if (number === "0") {
