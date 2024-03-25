@@ -163,8 +163,6 @@ public class MessageController {
 
         // 방 입장 (클 -> 서)
         if (message.getMessage().equals("ENTER_ROOM")) {
-            room.getInRoomPlayers().removeIf(player -> player.getNickname().equals(sender));
-
             for (Player player : room.getInRoomPlayers()) {
                 if (player.getNickname().equals(sender)) {
                     sessionInfo.add(sender);
