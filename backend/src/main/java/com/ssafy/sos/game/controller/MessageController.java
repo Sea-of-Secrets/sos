@@ -9,6 +9,7 @@ import com.ssafy.sos.game.message.client.ClientMessage;
 import com.ssafy.sos.game.message.client.ClientInitMessage;
 import com.ssafy.sos.game.message.client.ClientMoveMessage;
 import com.ssafy.sos.game.message.server.ServerMessage;
+import com.ssafy.sos.game.message.server.ServerPirateMessage;
 import com.ssafy.sos.game.service.GameService;
 import com.ssafy.sos.game.service.GameTimerService;
 import com.ssafy.sos.game.service.MatchingService;
@@ -277,6 +278,18 @@ public class MessageController {
         sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
     }
 
+    // 해적 이동시 필요한 정보(이동가능한 노드 조회)와 함께 메시지를 보내는 메서드
+    private void sendMessageWithPirateAvailableNode(String gameId, Game game, String message, HashMap<Integer, Deque<Integer>> pirateAvailableNode) {
+        ServerPirateMessage serverPirateMessage;
+        serverPirateMessage = ServerPirateMessage.builder()
+                .gameId(gameId)
+                .message(message)
+                .pirateAvailableNode(pirateAvailableNode)
+                .game(game)
+                .build();
+        sendingOperations.convertAndSend("/sub/" + gameId, serverPirateMessage);
+    }
+
     // 타이머가 끝남을 감지
     @EventListener
     public void listenTimeout(TimerTimeoutEvent event) {
@@ -372,8 +385,44 @@ public class MessageController {
 
         // 2초 타이머 경과 (해군 3 시작위치 지정 -> 해적 이동)
         if (message.equals("READY_MOVE_PIRATE")) {
-            // 해군1 시작위치 지정 (서 -> 클)
-            sendMessageWithGame(gameId, game, "ORDER_MOVE_PIRATE");
+            // 해적 이동가능 위치 계산
+            HashMap<Integer, Deque<Integer>> pirateAvailableNode = gameService.findPirateAvailableNode(gameId, game.getCurrentPosition()[0]);
+            // 해적 이동 (서 -> 클)
+            sendMessageWithPirateAvailableNode(gameId, game, "ORDER_MOVE_PIRATE", pirateAvailableNode);
+            // 응답 허용
+            lockRespond = false;
+            // 15초 타이머 시작
+            gameTimerService.startResponseWaitingTimer(gameId, "MOVE_PIRATE_TIME_OUT");
+        }
+
+        // 해적 이동 응답 제한시간 초과
+        if (message.equals("MOVE_PIRATE_TIME_OUT")) {
+            // 응답 잠그기
+            lockRespond = true;
+            // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
+            sendMessageWithGame(gameId, game, "MOVE_PIRATE_TIME_OUT");
+            // TODO: 해적 랜덤 위치 이동 구현해야 함
+            // 시작위치 랜덤 지정
+            gameService.initMarineStartRandom(gameId, 3);
+            // 해군 3 시작위치 지정완료 브로드캐스트 (서 -> 클)
+            sendMessageWithGame(gameId, game, "ACTION_INIT_MARINE_THREE_START");
+            // 2초 타이머 시작
+            gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_PIRATE");
+        }
+
+        // 2초 타이머 경과 (해군 3 시작위치 지정 -> 해적 이동)
+        if (message.equals("READY_MOVE_PIRATE")) {
+            // 해적 이동가능 위치 계산
+            HashMap<Integer, Deque<Integer>> pirateAvailableNode = gameService.findPirateAvailableNode(gameId, game.getCurrentPosition()[0]);
+            // 해적 이동 (서 -> 클)
+            ServerPirateMessage serverPirateMessage;
+            serverPirateMessage = ServerPirateMessage.builder()
+                    .gameId(gameId)
+                    .message("ORDER_MOVE_PIRATE")
+                    .pirateAvailableNode(pirateAvailableNode)
+                    .game(game)
+                    .build();
+            sendingOperations.convertAndSend("/sub/" + gameId, serverPirateMessage);
             // 응답 허용
             lockRespond = false;
             // 15초 타이머 시작
@@ -484,23 +533,19 @@ public class MessageController {
     @MessageMapping("/pirate")
     public void pirate(ClientMoveMessage message) {
         String gameId = message.getGameId();
-        String sender = message.getSender();
         Game game = board.getGameMap().get(gameId);
 
-        // 해적 시작 지점 지정완료 (클 -> 서)
-        if (message.getMessage().equals("INIT_PIRATE_START") && !lockRespond) {
+        // 해적 이동 완료 (클 -> 서)
+        if (message.getMessage().equals("MOVE_PIRATE") && !lockRespond) {
             // 제한시간 내로 선택을 한 것이므로 타이머 취소
             gameTimerService.cancelTimer(gameId);
             // 입력받은 노드 저장
-            gameService.initPirateStart(gameId, message.getNode());
+            gameService.move(gameId, message.getNode(), 0);
             // 해적 시작위치 지정완료 브로드캐스트 (서 -> 클)
-            sendMessageWithGame(gameId, game, "ACTION_INIT_PIRATE_START");
+            sendMessageWithGame(gameId, game, "ACTION_MOVE_PIRATE");
             // 2초 타이머 시작
-            gameTimerService.startRenderWaitingTimer(gameId, "READY_INIT_MARINE_ONE_START");
+            gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_MARINE_ONE");
         }
-
-
-
     }
 
     @MessageMapping("/move")
@@ -510,16 +555,6 @@ public class MessageController {
         Game game = board.getGameMap().get(gameId);
 
         ServerMessage serverMessage = null;
-        if (message.getMessage().equals("MOVE_PIRATE")) {
-            // TODO: 해적 이동 알고리즘 추가
-            gameService.move(gameId, message.getNode(), 0);
-            serverMessage = ServerMessage.builder()
-                    .gameId(gameId)
-                    .message("MOVE_PIRATE")
-                    .game(game)
-                    .build();
-        }
-
         if (message.getMessage().equals("MOVE_MARINE")) {
             // TODO: 해군 이동 알고리즘 추가
             serverMessage = ServerMessage.builder()

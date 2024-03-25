@@ -32,7 +32,6 @@ public class GameTimerServiceImpl implements GameTimerService {
         if (future != null && !future.isDone()) {
             // 예약된 타이머 취소
             future.cancel(false);
-            System.out.println("타이머 중단됨");
         }
     }
 }
