@@ -116,20 +116,16 @@ export default function IngameClient() {
           ? "시간초과! 시작 위치가 랜덤으로 결정되었습니다"
           : "시작 위치가 결정되었습니다",
       );
-      // 푸터, 시간초과 초기화
-      setTimeOut(false);
-      removeFooterMessage();
       // 해당 노드 줌 인
       zoom(getNode(currentPosition[0]).position);
-      // TODO : 피스 등장 이펙트, 출발지 보물 상자 열리는 이펙트
+      // TODO : 피스 등장 이펙트
     } else {
       setHeaderMessage("해적의 시작 위치가 결정되었습니다");
     }
-  };
 
-  // 해적의 시작위치 지정 시간초과
-  const initPirateStartTimeOut = () => {
-    setTimeOut(true);
+    // 푸터, 시간초과 초기화
+    setTimeOut(false);
+    removeFooterMessage();
   };
 
   // 해군 1의 시작위치 지정 명령
@@ -137,9 +133,10 @@ export default function IngameClient() {
     if (type === "marineOne") {
       setHeaderMessage("시작 위치를 결정하세요");
       // TODO : 푸터에 6가지 선택지 나오고 마우스 호버 시, 카메라 이동
+      const marineOneStartList = marineStartList;
       setFooterMessage(
         <>
-          {marineStartList.map(nodeId => (
+          {marineOneStartList.map(nodeId => (
             <div
               key={nodeId}
               onClick={() => {
@@ -162,6 +159,146 @@ export default function IngameClient() {
         `[해군1] ${socketMessage.game.players[1]["nickname"]} 님이 시작 위치를 결정중입니다`,
       );
     }
+  };
+
+  // 해군 1의 시작위치 지정 완료
+  const actionInitMarineOneStart = () => {
+    if (type === "marineOne") {
+      // 시간 초과 여부에 따라 메시지 출력
+      setHeaderMessage(
+        timeOut
+          ? "시간초과! 시작 위치가 랜덤으로 결정되었습니다"
+          : "시작 위치가 결정되었습니다",
+      );
+      // TODO : 피스 등장 이펙트
+    } else {
+      setHeaderMessage(
+        `[해군1] ${socketMessage.game.players[1]["nickname"]} 님의 시작 위치가 결정되었습니다`,
+      );
+    }
+
+    // 푸터, 시간초과 초기화
+    setTimeOut(false);
+    removeFooterMessage();
+    // 해당 노드 줌 인
+    zoom(getNode(currentPosition[1]).position);
+  };
+
+  // 해군 2의 시작위치 지정 명령
+  const orderInitMarineTwoStart = () => {
+    if (type === "marineTwo") {
+      setHeaderMessage("시작 위치를 결정하세요");
+      // TODO : 푸터에 5가지 선택지 나오고 마우스 호버 시, 카메라 이동
+      const marineTwoStartList = marineStartList.filter(
+        nodeId => nodeId !== currentPosition[1],
+      );
+      setFooterMessage(
+        <>
+          {marineTwoStartList.map(nodeId => (
+            <div
+              key={nodeId}
+              onClick={() => {
+                setMarineTwoCurrentPosition(nodeId);
+                send("/pub/init", {
+                  message: "INIT_MARINE_TWO_START",
+                  sender: nickname,
+                  gameId,
+                  node: nodeId,
+                });
+              }}
+            >
+              {nodeId}번
+            </div>
+          ))}
+        </>,
+      );
+    } else {
+      setHeaderMessage(
+        `[해군2] ${socketMessage.game.players[2]["nickname"]} 님이 시작 위치를 결정중입니다`,
+      );
+    }
+  };
+
+  // 해군 2의 시작위치 지정 완료
+  const actionInitMarineTwoStart = () => {
+    if (type === "marineTwo") {
+      // 시간 초과 여부에 따라 메시지 출력
+      setHeaderMessage(
+        timeOut
+          ? "시간초과! 시작 위치가 랜덤으로 결정되었습니다"
+          : "시작 위치가 결정되었습니다",
+      );
+      // TODO : 피스 등장 이펙트
+    } else {
+      setHeaderMessage(
+        `[해군2] ${socketMessage.game.players[2]["nickname"]} 님의 시작 위치가 결정되었습니다`,
+      );
+    }
+
+    // 푸터, 시간초과 초기화
+    setTimeOut(false);
+    removeFooterMessage();
+    // 해당 노드 줌 인
+    zoom(getNode(currentPosition[2]).position);
+  };
+
+  // 해군 3의 시작위치 지정 명령
+  const orderInitMarineThreeStart = () => {
+    if (type === "marineThree") {
+      setHeaderMessage("시작 위치를 결정하세요");
+      // TODO : 푸터에 4가지 선택지 나오고 마우스 호버 시, 카메라 이동
+      const marineThreeStartList = marineStartList.filter(
+        nodeId =>
+          nodeId !== currentPosition[1] && nodeId !== currentPosition[2],
+      );
+      setFooterMessage(
+        <>
+          {marineThreeStartList.map(nodeId => (
+            <div
+              key={nodeId}
+              onClick={() => {
+                setMarineThreeCurrentPosition(nodeId);
+                send("/pub/init", {
+                  message: "INIT_MARINE_THREE_START",
+                  sender: nickname,
+                  gameId,
+                  node: nodeId,
+                });
+              }}
+            >
+              {nodeId}번
+            </div>
+          ))}
+        </>,
+      );
+    } else {
+      setHeaderMessage(
+        `[해군3] ${socketMessage.game.players[3]["nickname"]} 님이 시작 위치를 결정중입니다`,
+      );
+    }
+  };
+
+  // 해군 3의 시작위치 지정 완료
+  const actionInitMarineThreeStart = () => {
+    if (type === "marineThree") {
+      // 시간 초과 여부에 따라 메시지 출력
+      setHeaderMessage(
+        timeOut
+          ? "시간초과! 시작 위치가 랜덤으로 결정되었습니다"
+          : "시작 위치가 결정되었습니다",
+      );
+      // TODO : 피스 등장 이펙트
+    } else {
+      setHeaderMessage(
+        `[해군3] ${socketMessage.game.players[3]["nickname"]} 님의 시작 위치가 결정되었습니다`,
+      );
+    }
+
+    // 푸터, 시간초과 초기화
+    setTimeOut(false);
+    removeFooterMessage();
+    // 해당 노드 줌 인
+    zoom(getNode(currentPosition[2]).position);
   };
 
   useEffect(() => {
@@ -202,7 +339,7 @@ export default function IngameClient() {
 
       // 해적의 시작위치 지정 시간초과
       if (socketMessage.message === "INIT_PIRATE_START_TIME_OUT") {
-        initPirateStartTimeOut();
+        setTimeOut(true);
       }
 
       // 해군 1의 시작위치 지정 명령
@@ -211,8 +348,43 @@ export default function IngameClient() {
       }
 
       // 해군 1의 시작위치 지정 완료
-      if (socketMessage.message === "ORDER_INIT_MARINE_ONE_START") {
-        orderInitMarineOneStart();
+      if (socketMessage.message === "ACTION_INIT_MARINE_ONE_START") {
+        actionInitMarineOneStart();
+      }
+
+      // 해군 1의 시작위치 지정 시간초과
+      if (socketMessage.message === "INIT_MARINE_ONE_START_TIME_OUT") {
+        setTimeOut(true);
+      }
+
+      // 해군 2의 시작위치 지정 명령
+      if (socketMessage.message === "ORDER_INIT_MARINE_TWO_START") {
+        orderInitMarineTwoStart();
+      }
+
+      // 해군 2의 시작위치 지정 완료
+      if (socketMessage.message === "ACTION_INIT_MARINE_TWO_START") {
+        actionInitMarineTwoStart();
+      }
+
+      // 해군 2의 시작위치 지정 시간초과
+      if (socketMessage.message === "INIT_MARINE_TWO_START_TIME_OUT") {
+        setTimeOut(true);
+      }
+
+      // 해군 3의 시작위치 지정 명령
+      if (socketMessage.message === "ORDER_INIT_MARINE_THREE_START") {
+        orderInitMarineThreeStart();
+      }
+
+      // 해군 3의 시작위치 지정 완료
+      if (socketMessage.message === "ACTION_INIT_MARINE_THREE_START") {
+        actionInitMarineThreeStart();
+      }
+
+      // 해군 3의 시작위치 지정 시간초과
+      if (socketMessage.message === "INIT_MARINE_THREE_START_TIME_OUT") {
+        setTimeOut(true);
       }
     }
   }, [socketMessage]);
