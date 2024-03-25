@@ -3,30 +3,25 @@ import { useRef } from "react";
 import { PrimitiveProps } from "@react-three/fiber";
 import { Line } from "@react-three/drei";
 
-import { NodePosition } from "~/_lib/data/types";
+import { IngameGraphNode, NodePosition } from "~/_lib/data/types";
+import { useEdge } from "../../hooks/useEdge";
+import { usePirateGraph } from "../../stores/graph";
 
 interface EdgeProps extends Omit<PrimitiveProps, "object"> {
-  position: [NodePosition, NodePosition];
-  isNextNodeEdge?: boolean;
+  aNode: IngameGraphNode;
+  bNode: IngameGraphNode;
 }
 
-export default function Edge({
-  position,
-  isNextNodeEdge,
-  ...props
-}: EdgeProps) {
+export default function Edge({ aNode, bNode, ...props }: EdgeProps) {
   const mesh = useRef<THREE.Mesh>(null);
-
-  const [aPosition, bPosition] = position;
+  const { points, edgeId } = useEdge({ aNode, bNode });
+  const { movableEdgeIdList } = usePirateGraph();
 
   return (
     <mesh ref={mesh} {...props}>
       <Line
-        points={[
-          [aPosition.x, aPosition.z, aPosition.y],
-          [bPosition.x, bPosition.z, bPosition.y],
-        ]}
-        color="black" //{isNextNodeEdge ? "white" : "black"}
+        points={points}
+        color={movableEdgeIdList.includes(edgeId) ? "#03fc39" : "black"}
         lineWidth={3}
         dashed={true}
         dashSize={5}

@@ -8,7 +8,8 @@ export default function EdgeGroup() {
         neighbors.map(bNodeId => (
           <Edge
             key={`${aNodeId}-${bNodeId}`}
-            position={[getNode(aNodeId).position, getNode(bNodeId).position]}
+            aNode={getNode(aNodeId)}
+            bNode={getNode(bNodeId)}
           />
         )),
       )}

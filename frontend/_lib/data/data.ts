@@ -7185,6 +7185,28 @@ export const getNode = (nodeId: number) => {
   }
 
   const node = ORIGIN_GRAPH[nodeId];
-  const position = ORIGIN_GRAPH[nodeId].position;
+  const { position } = ORIGIN_GRAPH[nodeId];
   return Object.freeze({ ...node, position });
+};
+
+export const makeEdgeId = (aNode: IngameGraphNode, bNode: IngameGraphNode) => {
+  return [aNode.nodeId, bNode.nodeId]
+    .sort((a, b) => (a < b ? -1 : 1))
+    .join("#");
+};
+
+// TODO: 해적, 해군간선 통과해서 구해야함;;;
+export const getNearEdgeIdList = (nodeId: number) => {
+  // FIXME: release 할 때는 에러 터뜨리지 말기
+  if (!(String(nodeId) in ORIGIN_GRAPH)) {
+    throw new Error(
+      `버그 발생!!! : 서버에서 온 ${nodeId} 는 클라이언트에 존재하지 않음...`,
+    );
+  }
+
+  const node = ORIGIN_GRAPH[nodeId];
+  const { neighborNodeIdList } = ORIGIN_GRAPH[nodeId];
+  return neighborNodeIdList.map(aNodeId =>
+    makeEdgeId(ORIGIN_GRAPH[aNodeId], node),
+  );
 };

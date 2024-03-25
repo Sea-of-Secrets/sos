@@ -4,24 +4,26 @@ import { useAnimations } from "@react-three/drei";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
-import { PieceEffectPath } from "~/assetPath";
-import { PieceEffectProps, PieceEffectType } from "./types";
+import { PieceEffectPathMap } from "~/assetPath";
+import { PieceEffectProps } from "./types";
+import { useGLTF } from "../../hooks/useGLTF";
+
+const ACTION_NAME = "Take 001";
+const DEFAULT_SCALE = 15;
 
 export default function PieceEffect({
-  type,
+  effectName,
   position,
   ...props
 }: PieceEffectProps) {
-  const meshRef = useRef<THREE.Mesh>(null);
-  const model = useLoader(GLTFLoader, getGltfPath(type));
-  const scale = 15; // 이것도 커스텀 가능하게...
+  const { meshRef, gltf } = useGLTF(PieceEffectPathMap[effectName]);
 
-  // 애니메이션도 가능하게...
-  const animations = useAnimations(model.animations, model.scene);
+  const animations = useAnimations(gltf.animations, gltf.scene);
 
   useEffect(() => {
-    const action = animations.actions["Take 001"];
+    const action = animations.actions[ACTION_NAME];
     action?.reset().fadeIn(0.5).play();
+
     return () => {
       action?.fadeOut(0.5);
     };
@@ -31,19 +33,10 @@ export default function PieceEffect({
     <mesh
       ref={meshRef}
       position={[position.x, position.z, position.y]}
-      scale={scale} // node size
+      scale={DEFAULT_SCALE} // node size
       {...props}
     >
-      <primitive object={model.scene} />
+      <primitive object={gltf.scene} />
     </mesh>
   );
 }
-
-const getGltfPath = (pieceEffectType: PieceEffectType) => {
-  if (pieceEffectType === "FOOTHOLD") {
-    return PieceEffectPath["FOOTHOLD_LIGHT_BEAM"];
-  }
-
-  // default...
-  return PieceEffectPath["FOOTHOLD_LIGHT_BEAM"];
-};

@@ -7,19 +7,28 @@ import { TreasureProps } from "./types";
 export default function TreasureRenderer({
   isOpen,
   nodeId,
-  url,
   ...props
 }: TreasureProps) {
   const position = getNode(nodeId).position;
   if (isOpen === false) {
     return (
-      <CloseTreasure position={position} url={url} nodeId={nodeId} {...props} />
+      <CloseTreasure
+        pieceName="TREASURE"
+        position={position}
+        nodeId={nodeId}
+        {...props}
+      />
     );
   }
 
   if (isOpen === true) {
     return (
-      <OpenTreasure position={position} url={url} nodeId={nodeId} {...props} />
+      <OpenTreasure
+        pieceName="TREASURE"
+        position={position}
+        nodeId={nodeId}
+        {...props}
+      />
     );
   }
 

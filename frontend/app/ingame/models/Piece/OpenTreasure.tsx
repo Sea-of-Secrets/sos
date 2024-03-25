@@ -1,14 +1,16 @@
 import { useEffect } from "react";
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { PieceProps } from "./types";
+import { PiecePathMap } from "~/assetPath";
 
 export default function TreasureRenderer({
   position,
-  url,
   nodeId,
   ...props
-}: PieceProps & { url: string }) {
-  const { scene: originalScene, animations } = useGLTF(url);
+}: PieceProps) {
+  const { scene: originalScene, animations } = useGLTF(
+    PiecePathMap["TREASURE"].src,
+  );
   const clonedScene = originalScene.clone();
 
   const { actions } = useAnimations(animations, clonedScene);
