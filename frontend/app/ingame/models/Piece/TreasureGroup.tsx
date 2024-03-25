@@ -3,7 +3,6 @@ import TreasureRenderer from "./TreasureRenderer";
 
 export default function TreasureGroup() {
   const { treasures } = useGameData();
-  const url = "/treasure_chest/scene.gltf";
 
   return (
     <>
@@ -12,7 +11,6 @@ export default function TreasureGroup() {
           key={nodeId}
           isOpen={hasTreasure}
           nodeId={parseInt(nodeId)}
-          url={url}
         />
       ))}
     </>

@@ -7,8 +7,7 @@ import Graph from "./models/Graph";
 import Map from "./models/Map";
 
 import Piece from "./models/Piece/Piece";
-import PieceEffect from "./models/Piece/PieceEffect";
-import Treasure from "./models/Piece/TreasureGroup";
+import TreasureGroup from "./models/Piece/TreasureGroup";
 
 import { usePiratePiece } from "./stores/piece";
 import { getNode } from "~/_lib/data/data";
@@ -43,6 +42,7 @@ export default function IngameThree() {
           set={setPiratePiece}
         />
       )}
+      <TreasureGroup />
     </>
   );
 }

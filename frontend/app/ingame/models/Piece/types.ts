@@ -18,7 +18,6 @@ export interface PieceEffectProps
 }
 
 export interface TreasureProps {
-  url: string;
   isOpen: boolean;
   nodeId: number;
 }
