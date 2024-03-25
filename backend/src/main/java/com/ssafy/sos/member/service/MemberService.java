@@ -12,10 +12,13 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class MemberService {
     private final TodayVisitedRepository todayVisitedRepository;
+    private final UserRepository userRepository;
 
     public boolean checkAttendance(Long memberId) {
-        if (todayVisitedRepository.findById(memberId).isPresent()) {
-            return false;
+        // 이미 오늘 방문했으면
+        if (todayVisitedRepository.existsById("TodayVisited:" + memberId)) {
+            return true;
+            // 오늘 방문한 적이 없으면
         } else {
             TodayVisited todayVisited = TodayVisited.builder()
                     .id(memberId)
@@ -23,7 +26,7 @@ public class MemberService {
                     .build();
 
             todayVisitedRepository.save(todayVisited);
-            return true;
+            return false;
         }
     }
 }

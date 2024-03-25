@@ -19,4 +19,10 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Transactional
     @Query("UPDATE UserEntity u SET u.username = :newUsername WHERE u.id = :id")
     void updateUsernameById(Long id, String newUsername);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE UserEntity u SET u.gold = u.gold + 100 WHERE u.id = :id")
+    void addGoldById(Long id);
+
 }

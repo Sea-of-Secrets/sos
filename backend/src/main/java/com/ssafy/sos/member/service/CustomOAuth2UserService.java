@@ -67,7 +67,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userRepository.save(userEntity);
 
             userEntity = userRepository.findByUsername(username);
-            memberService.checkAttendance(userEntity.getId());
+            // 오늘 출석하지 않았으면 골드 지급
+            if (!memberService.checkAttendance(userEntity.getId())) {
+                userRepository.addGoldById(userEntity.getId());
+            }
 
             UserDTO userDTO = new UserDTO();
             userDTO.setUsername(username);
@@ -82,7 +85,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             existData.setName(oAuth2Response.getName());
 
             userRepository.save(existData);
-            memberService.checkAttendance(existData.getId());
+
+            if (!memberService.checkAttendance(existData.getId())) {
+                userRepository.addGoldById(existData.getId());
+            }
 
             UserDTO userDTO = new UserDTO();
             userDTO.setUsername(existData.getUsername());
