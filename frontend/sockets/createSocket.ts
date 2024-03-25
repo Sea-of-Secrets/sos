@@ -70,7 +70,7 @@ export const createSocket = () => {
     send,
     subscribe,
     disconnect,
-  };
+  } as const;
 };
 
 /*
