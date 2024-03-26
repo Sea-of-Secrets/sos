@@ -7203,7 +7203,7 @@ export const duplicatedRemovedEdgeEntries: [number, number[]][] = [
 // };
 
 // 해군 시작 가능 위치
-export const marineStartList: number[] = [93, 94, 97, 106, 109, 200];
+export const marineStartList: number[] = [293, 294, 297, 306, 309, 200];
 
 export const getNode = (nodeId: number) => {
   // FIXME: release 할 때는 에러 터뜨리지 말기

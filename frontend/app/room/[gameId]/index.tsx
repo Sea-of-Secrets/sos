@@ -44,12 +44,9 @@ export default function Room() {
   };
 
   useEffect(() => {
-    console.log("대기실 입장");
-
     // 해당 룸코드를 구독
     subscribe(`/sub/${gameId}`, message => {
       const data = JSON.parse(message.body);
-      console.log("소켓 메세지", data);
 
       // 플레이어 입장 OR 퇴장
       if (data.message == "ENTER_SUCCESS" || data.message == "PLAYER_LEAVED") {
