@@ -69,16 +69,16 @@ public class MessageController {
 
         Room room = board.getRoomMap().getOrDefault(gameId, null);
 
-        if (room != null) {
-            // 대기실에서 소켓 끊기면 방 퇴장
-            room.getInRoomPlayers().removeIf(player -> player.getNickname().equals(nickname));
-            ServerMessage serverMessage = ServerMessage.builder()
-                    .message("PLAYER_LEAVED")
-                    .gameId(gameId)
-                    .room(room)
-                    .build();
-            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
-        }
+//        if (room != null) {
+//            // 대기실에서 소켓 끊기면 방 퇴장
+////            room.getInRoomPlayers().removeIf(player -> player.getNickname().equals(nickname));
+////            ServerMessage serverMessage = ServerMessage.builder()
+////                    .message("PLAYER_LEAVED")
+////                    .gameId(gameId)
+////                    .room(room)
+////                    .build();
+////            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+//        }
 
         Game game = board.getGameMap().getOrDefault(gameId, null);
 
