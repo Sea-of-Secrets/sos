@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -74,7 +75,7 @@ public class NFTService {
         }
     }
 
-    public void mintingNFT(CustomOAuth2User user, String title, String description) throws IOException {
+    public void mintingNFT(CustomOAuth2User user, String fileId) throws Exception {
         UserEntity userEntity = userRepository.findByUsername(user.getMemberDto().getUsername());
         System.out.println(userEntity);
         if (userEntity.getWalletAddress() == null) {
@@ -82,7 +83,8 @@ public class NFTService {
             return;
         }
 
-        FileEntity fileEntity = fileRepository.findByTitle(title);
+        Optional<FileEntity> opt = fileRepository.findById(Long.valueOf(fileId));
+        FileEntity fileEntity = opt.get();
         if (fileEntity == null) {
             System.out.println("파일 없음");
             return;
@@ -98,7 +100,7 @@ public class NFTService {
         }
 
         //NFT 생성
-        NFTDTO nft = new NFTDTO(userEntity.getWalletAddress(), fileData, title, description);
+        NFTDTO nft = new NFTDTO(userEntity.getWalletAddress(), fileData, fileEntity.getTitle(), fileEntity.getDescription());
 
         RestTemplate restTemplate = new RestTemplate();
         // HTTP 요청 헤더 설정
@@ -109,7 +111,11 @@ public class NFTService {
         HttpEntity<NFTDTO> requestEntity = new HttpEntity<>(nft, headers);
         System.out.println(requestEntity);
         // REST 템플릿을 사용하여 POST 요청 전송
-        restTemplate.postForObject("http://localhost:4000/nft", requestEntity, Void.class);
+        try {
+            restTemplate.postForObject("http://localhost:4000/nft", requestEntity, Void.class);
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
     }
 
     @Transactional
