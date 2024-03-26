@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { gameSocket } from "~/sockets";
 import useNickname from "~/store/nickname";
 import Image from "next/image";
@@ -10,6 +10,7 @@ const { connect, disconnect, subscribe, send } = gameSocket;
 
 export default function Room() {
   const params = useParams() as { gameId: string };
+  const router = useRouter();
   const { gameId } = params;
   const { nickname } = useNickname();
   const [isHost, setIsHost] = useState(false);
@@ -42,8 +43,8 @@ export default function Room() {
     });
   };
 
-  const onConnect = () => {
-    console.log("대기실 소켓 연결 성공");
+  useEffect(() => {
+    console.log("대기실 입장");
 
     // 해당 룸코드를 구독
     subscribe(`/sub/${gameId}`, message => {
@@ -73,7 +74,8 @@ export default function Room() {
       // 시작 버튼 클릭
       if (data.message == "START_BUTTON_CLICKED") {
         // 인게임 이동
-        window.location.href = "/ingame";
+        router.push(`/room/${gameId}/ingame`);
+        // window.location.href = "/ingame";
       }
 
       // 방장이 아닌데 게임 시작한 경우
@@ -89,13 +91,6 @@ export default function Room() {
       sender: nickname,
       gameId,
     });
-  };
-
-  useEffect(() => {
-    connect(onConnect);
-    return () => {
-      disconnect();
-    };
   }, []);
 
   return (
