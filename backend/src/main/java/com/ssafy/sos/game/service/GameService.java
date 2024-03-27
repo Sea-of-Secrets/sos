@@ -21,6 +21,7 @@ public interface GameService {
     Room enterRoom(String gameId, Player player);
     void findMarineInvestigableNode(String gameId, int role);
     boolean investigate(String gameId, int nodeNumber, int role);
+    int[] findMarineArrestableNode(String gameId, int role);
     boolean arrest(String gameId, int nodeNumber);
     void gameOver(String gameId, boolean gameResult);
 }

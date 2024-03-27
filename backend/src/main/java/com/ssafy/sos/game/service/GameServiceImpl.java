@@ -391,6 +391,17 @@ public class GameServiceImpl implements GameService {
     }
 
     @Override
+    public int[] findMarineArrestableNode(String gameId, int role) {
+        // 인접한 노드 중 해적 노드만 가져오기
+        int[] adjList;
+        adjList = Arrays.stream(board.getGraph()[game.getCurrentPosition()[role]])
+                .filter(adjacentNode -> adjacentNode < 200)
+                .toArray();
+
+        return adjList;
+    }
+
+    @Override
     public boolean arrest(String gameId, int nodeNumber) {
         Game game = board.getGameMap().get(gameId);
         return game.getCurrentPosition()[0] == nodeNumber;
