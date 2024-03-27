@@ -2,9 +2,11 @@ package com.ssafy.sos.nft.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 @Data
+@NoArgsConstructor
 public class NFTDTO {
     private String walletAddress;
     private String file;
