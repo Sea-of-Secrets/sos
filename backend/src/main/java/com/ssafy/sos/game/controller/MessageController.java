@@ -464,9 +464,11 @@ public class MessageController {
             gameTimerService.startRenderWaitingTimer(gameId, "READY_INVESTIGATE_MARINE_ONE");
         }
 
-        // 2초 타이머 경과 (해군 2 시작위치 지정 -> 해군 3 시작위치 지정)
-        if (message.equals("READY_INIT_MARINE_THREE_START")) {
-            // 해군 3 시작위치 지정 (서 -> 클)
+        // 조사 선택시
+        // 2초 타이머 경과 (해군 1 행동 선택 -> 해군 1 조사)
+        if (message.equals("READY_INVESTIGATE_MARINE_ONE")) {
+            // 해군 1 조사 명령 (서 -> 클)
+            // TODO: 조사 가능한 노드 함께 보내줘야함
             sendMessageWithGame(gameId, game, "ORDER_INIT_MARINE_THREE_START");
             // 응답 허용
             lockRespond = false;
