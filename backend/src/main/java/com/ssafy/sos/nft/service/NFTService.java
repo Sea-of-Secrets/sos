@@ -1,8 +1,8 @@
 package com.ssafy.sos.nft.service;
 
-import com.ssafy.sos.member.domain.CustomOAuth2User;
-import com.ssafy.sos.member.domain.UserEntity;
-import com.ssafy.sos.member.repository.UserRepository;
+import com.ssafy.sos.user.domain.CustomOAuth2User;
+import com.ssafy.sos.user.domain.UserEntity;
+import com.ssafy.sos.user.repository.UserRepository;
 import com.ssafy.sos.nft.domain.FileEntity;
 import com.ssafy.sos.nft.domain.NFTDTO;
 import com.ssafy.sos.nft.domain.NFTResponse;
@@ -11,7 +11,6 @@ import com.ssafy.sos.nft.repository.FileRepository;
 import com.ssafy.sos.nft.repository.WalletRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.checkerframework.checker.units.qual.N;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -79,7 +78,7 @@ public class NFTService {
     }
 
     public void mintingNFT(CustomOAuth2User user, String fileId) throws Exception {
-        UserEntity userEntity = userRepository.findByUsername(user.getMemberDto().getUsername());
+        UserEntity userEntity = userRepository.findByUsername(user.getUserDto().getUsername());
         System.out.println(userEntity);
         if (userEntity.getWalletAddress() == null) {
             System.out.println("지갑 없음");
@@ -124,7 +123,7 @@ public class NFTService {
     @Transactional
     public Wallet makeWallet(CustomOAuth2User user) {
         //user 찾기
-        UserEntity userEntity = userRepository.findByUsername(user.getMemberDto().getUsername());
+        UserEntity userEntity = userRepository.findByUsername(user.getUserDto().getUsername());
         if (userEntity.getWalletAddress() != null) {
             return null;
         }
@@ -153,7 +152,7 @@ public class NFTService {
 
     public NFTResponse[] getOwnNFTs(CustomOAuth2User user) throws Exception {
         //user 찾기
-        UserEntity userEntity = userRepository.findByUsername(user.getMemberDto().getUsername());
+        UserEntity userEntity = userRepository.findByUsername(user.getUserDto().getUsername());
         if (userEntity.getWalletAddress() == null) {
             return null;
         }
