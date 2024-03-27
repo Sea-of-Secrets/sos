@@ -18,8 +18,9 @@ import useGameId from "~/store/gameId";
 
 import { useCamera } from "./stores/useCamera";
 import { getNode, marineStartList } from "~/_lib/data/data";
+import { useSocketMessage } from "./stores/useSocketMessage";
 
-const { send, subscribe } = gameSocket;
+const { send } = gameSocket;
 
 export default function IngameClient() {
   const { loading, setLoading } = useGameLoading();
@@ -27,7 +28,7 @@ export default function IngameClient() {
   const { gameId } = useGameId();
   const { zoom, zoomFullScreen, gameStartAnimation } = useCamera();
 
-  const [socketMessage, setSocketMessage] = useState<any>();
+  const { socketMessage } = useSocketMessage();
   const [timeOut, setTimeOut] = useState(false);
 
   const {
@@ -305,9 +306,7 @@ export default function IngameClient() {
     if (type.includes("pirate")) {
       setHeaderMessage("이동할 위치를 결정하세요");
       zoom(getNode(socketMessage.game.currentPosition[0]).position);
-      console.log(socketMessage.pirateAvailableNode);
-
-      // TODO : pirateAvailableNode변수를 이동 가능 노드로 넘겨주기
+      // TODO : availableNode변수를 이동 가능 노드로 넘겨주기
       // 이동 가능 노드는 푸터와 헤더메시지처럼 빈 상태에서는 비활성화
       // 데이터가 있으면 푸터에 노드번호가 뜨며 호버 할 때 경로 표시
       // 클릭 시 메세지 보내고 이동 가능 노드 비우기
@@ -319,21 +318,23 @@ export default function IngameClient() {
       // }
       setFooterMessage(
         <>
-          {/* {socketMessage.pirateAvailableNode.map((nodeId: any) => (
-            <button
-              key={nodeId}
-              onClick={() => {
-                send("/pub/pirate", {
-                  message: "INIT_MARINE_THREE_START",
-                  sender: nickname,
-                  gameId,
-                  node: nodeId,
-                });
-              }}
-            >
-              <p>{nodeId}번 </p>
-            </button>
-          ))} */}
+          {Object.entries(socketMessage.availableNode).map(
+            ([nodeId, nodeList]) => (
+              <button
+                key={nodeId}
+                onClick={() => {
+                  send("/pub/pirate", {
+                    message: "MOVE_PIRATE",
+                    sender: nickname,
+                    gameId,
+                    node: nodeId,
+                  });
+                }}
+              >
+                <p>{nodeId}번 </p>
+              </button>
+            ),
+          )}
         </>,
       );
     } else {
@@ -343,9 +344,88 @@ export default function IngameClient() {
     }
   };
 
-  // 해적 이동 완료
+  // 해적의 이동 완료
   const actionMovePirate = () => {
-    // 이동 가능 노드 비우기
+    if (type.includes("pirate")) {
+      setHeaderMessage(
+        timeOut
+          ? "시간초과! 이동 위치가 랜덤으로 결정되었습니다"
+          : "이동 위치가 결정되었습니다",
+      );
+      // TODO : 이동 가능 노드 비우기
+      // TODO : 이동 애니메이션 구현
+
+      // 경로 : socketMessage.pirateAvailableNode[socketMessage.game.currentPosition[0]]
+    } else {
+      setHeaderMessage(
+        `[해적] ${socketMessage.game.players[0]["nickname"]} 님의 이동이 완료되었습니다`,
+      );
+    }
+
+    // 푸터, 시간초과 초기화
+    setTimeOut(false);
+    removeFooterMessage();
+  };
+
+  // 해군 1의 이동 명령
+  const orderMoveMarineOne = () => {
+    zoom(getNode(socketMessage.game.currentPosition[1]).position);
+    if (type.includes("marineOne")) {
+      setHeaderMessage("이동할 위치를 결정하세요");
+      // TODO : availableNode변수를 이동 가능 노드로 넘겨주기
+      // 이동 가능 노드는 푸터와 헤더메시지처럼 빈 상태에서는 비활성화
+      // 데이터가 있으면 푸터에 노드번호가 뜨며 호버 할 때 경로 표시
+      // 클릭 시 메세지 보내고 이동 가능 노드 비우기
+      // send("/pub/marine", {
+      //   message: "MOVE_MARINE_ONE",
+      //   sender: nickname,
+      //   gameId,
+      //   node: "클릭한 노드 넘버",
+      // }
+      setFooterMessage(
+        <>
+          {Object.entries(socketMessage.availableNode).map(
+            ([nodeId, nodeList]) => (
+              <button
+                key={nodeId}
+                onClick={() => {
+                  send("/pub/pirate", {
+                    message: "MOVE_MARINE_ONE",
+                    sender: nickname,
+                    gameId,
+                    node: nodeId,
+                  });
+                }}
+              >
+                <p>{nodeId}번 </p>
+              </button>
+            ),
+          )}
+        </>,
+      );
+    } else {
+      setHeaderMessage(
+        `[해군1] ${socketMessage.game.players[1]["nickname"]} 님이 이동중입니다`,
+      );
+    }
+  };
+
+  // 해군 1의 이동 완료
+  const actionMoveMarineOne = () => {
+    if (type.includes("marineOne")) {
+      setHeaderMessage(
+        timeOut
+          ? "시간초과! 이동 위치가 랜덤으로 결정되었습니다"
+          : "이동 위치가 결정되었습니다",
+      );
+      // TODO : 이동 가능 노드 비우기
+    } else {
+      setHeaderMessage(
+        `[해군1] ${socketMessage.game.players[0]["nickname"]} 님의 이동이 완료되었습니다`,
+      );
+      // TODO : 이동 애니메이션 구현 (모든 유저에게 보여주기)
+      // 경로 : socketMessage.pirateAvailableNode[socketMessage.game.currentPosition[0]]
+    }
 
     // 푸터, 시간초과 초기화
     setTimeOut(false);
@@ -353,98 +433,106 @@ export default function IngameClient() {
   };
 
   useEffect(() => {
-    if (socketMessage) {
-      console.log("소켓 메세지", socketMessage);
-      if (socketMessage.message === "RENDER_COMPLETE_ACCEPTED") {
-        // 직업 세팅
-        const players = socketMessage.game.players;
-        const number = Object.keys(players).filter(
-          key => players[key]["nickname"] === nickname,
-        );
-        console.log("직업 세팅", number);
+    if (socketMessage.message === "RENDER_COMPLETE_ACCEPTED") {
+      // 직업 세팅
+      const players = socketMessage.game.players;
+      const number = Object.keys(players).filter(
+        key => players[key]["nickname"] === nickname,
+      );
 
-        setTreasures(socketMessage.game.treasures);
-        if (number.includes("0")) {
-          setType("pirate");
-        }
-        if (number.includes("1")) {
-          setType("marineOne");
-        }
-        if (number.includes("2")) {
-          setType("marineTwo");
-        }
-        if (number.includes("3")) {
-          setType("marineThree");
-        }
+      setTreasures(socketMessage.game.treasures);
+      if (number.includes("0")) {
+        setType("pirate");
       }
+      if (number.includes("1")) {
+        setType("marineOne");
+      }
+      if (number.includes("2")) {
+        setType("marineTwo");
+      }
+      if (number.includes("3")) {
+        setType("marineThree");
+      }
+    }
 
-      // 게임 시작
-      if (socketMessage.message === "ALL_RENDERED_COMPLETED") {
-        startAnimation();
-        console.log("당신의 직업 : ", type);
-      }
+    // 게임 시작
+    if (socketMessage.message === "ALL_RENDERED_COMPLETED") {
+      startAnimation();
+    }
 
-      // 공용 시간초과
-      if (
-        socketMessage.message === "INIT_PIRATE_START_TIME_OUT" ||
-        socketMessage.message === "INIT_MARINE_ONE_START_TIME_OUT" ||
-        socketMessage.message === "INIT_MARINE_TWO_START_TIME_OUT" ||
-        socketMessage.message === "INIT_MARINE_THREE_START_TIME_OUT" ||
-        socketMessage.message === "MOVE_PIRATE_TIME_OUT"
-      ) {
-        setTimeOut(true);
-      }
+    // 공용 시간초과
+    if (
+      socketMessage.message === "INIT_PIRATE_START_TIME_OUT" ||
+      socketMessage.message === "INIT_MARINE_ONE_START_TIME_OUT" ||
+      socketMessage.message === "INIT_MARINE_TWO_START_TIME_OUT" ||
+      socketMessage.message === "INIT_MARINE_THREE_START_TIME_OUT" ||
+      socketMessage.message === "MOVE_PIRATE_TIME_OUT" ||
+      socketMessage.message === "SELECT_WORK_MARINE_ONE_TIME_OUT" ||
+      socketMessage.message === "SELECT_WORK_MARINE_TWO_TIME_OUT" ||
+      socketMessage.message === "SELECT_WORK_MARINE_THREE_TIME_OUT"
+    ) {
+      setTimeOut(true);
+    }
 
-      // 해적의 시작위치 지정 명령
-      if (socketMessage.message === "ORDER_INIT_PIRATE_START") {
-        orderInitPirateStart();
-      }
+    // 해적의 시작위치 지정 명령
+    if (socketMessage.message === "ORDER_INIT_PIRATE_START") {
+      orderInitPirateStart();
+    }
 
-      // 해적의 시작위치 지정 완료
-      if (socketMessage.message === "ACTION_INIT_PIRATE_START") {
-        actionInitPirateStart();
-      }
+    // 해적의 시작위치 지정 완료
+    if (socketMessage.message === "ACTION_INIT_PIRATE_START") {
+      actionInitPirateStart();
+    }
 
-      // 해군 1의 시작위치 지정 명령
-      if (socketMessage.message === "ORDER_INIT_MARINE_ONE_START") {
-        orderInitMarineOneStart();
-      }
+    // 해군 1의 시작위치 지정 명령
+    if (socketMessage.message === "ORDER_INIT_MARINE_ONE_START") {
+      orderInitMarineOneStart();
+    }
 
-      // 해군 1의 시작위치 지정 완료
-      if (socketMessage.message === "ACTION_INIT_MARINE_ONE_START") {
-        actionInitMarineOneStart();
-      }
+    // 해군 1의 시작위치 지정 완료
+    if (socketMessage.message === "ACTION_INIT_MARINE_ONE_START") {
+      actionInitMarineOneStart();
+    }
 
-      // 해군 2의 시작위치 지정 명령
-      if (socketMessage.message === "ORDER_INIT_MARINE_TWO_START") {
-        orderInitMarineTwoStart();
-      }
+    // 해군 2의 시작위치 지정 명령
+    if (socketMessage.message === "ORDER_INIT_MARINE_TWO_START") {
+      orderInitMarineTwoStart();
+    }
 
-      // 해군 2의 시작위치 지정 완료
-      if (socketMessage.message === "ACTION_INIT_MARINE_TWO_START") {
-        actionInitMarineTwoStart();
-      }
+    // 해군 2의 시작위치 지정 완료
+    if (socketMessage.message === "ACTION_INIT_MARINE_TWO_START") {
+      actionInitMarineTwoStart();
+    }
 
-      // 해군 3의 시작위치 지정 명령
-      if (socketMessage.message === "ORDER_INIT_MARINE_THREE_START") {
-        orderInitMarineThreeStart();
-      }
+    // 해군 3의 시작위치 지정 명령
+    if (socketMessage.message === "ORDER_INIT_MARINE_THREE_START") {
+      orderInitMarineThreeStart();
+    }
 
-      // 해군 3의 시작위치 지정 완료
-      if (socketMessage.message === "ACTION_INIT_MARINE_THREE_START") {
-        actionInitMarineThreeStart();
-        setTreasures(socketMessage.game.treasures);
-      }
+    // 해군 3의 시작위치 지정 완료
+    if (socketMessage.message === "ACTION_INIT_MARINE_THREE_START") {
+      actionInitMarineThreeStart();
+      setTreasures(socketMessage.game.treasures);
+    }
 
-      // 해적의 이동 명령
-      if (socketMessage.message === "ORDER_MOVE_PIRATE") {
-        orderMovePirate();
-      }
+    // 해적의 이동 명령
+    if (socketMessage.message === "ORDER_MOVE_PIRATE") {
+      orderMovePirate();
+    }
 
-      // 해적의 이동 완료
-      if (socketMessage.message === "ACTION_MOVE_PIRATE") {
-        actionMovePirate();
-      }
+    // 해적의 이동 완료
+    if (socketMessage.message === "ACTION_MOVE_PIRATE") {
+      actionMovePirate();
+    }
+
+    // 해군 1의 이동 명령
+    if (socketMessage.message === "ORDER_MOVE_MARINE_ONE") {
+      orderMoveMarineOne();
+    }
+
+    // 해군 1의 이동 완료
+    if (socketMessage.message === "ACTION_MOVE_MARINE_ONE") {
+      actionMoveMarineOne();
     }
   }, [socketMessage]);
 
@@ -457,21 +545,6 @@ export default function IngameClient() {
       });
     }
   }, [loading, gameId, nickname]);
-
-  useEffect(() => {
-    const gameIdFromLocalStorage = localStorage.getItem("gameId");
-    if (gameIdFromLocalStorage) {
-      const localGameId = JSON.parse(gameIdFromLocalStorage).state.gameId;
-
-      // 해당 룸코드를 구독
-      subscribe(`/sub/${localGameId}`, message => {
-        const data = JSON.parse(message.body);
-        if (data) {
-          setSocketMessage(data);
-        }
-      });
-    }
-  }, []);
 
   return (
     <>

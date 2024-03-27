@@ -5,8 +5,9 @@ import { useParams, useRouter } from "next/navigation";
 import { gameSocket } from "~/sockets";
 import useNickname from "~/store/nickname";
 import Image from "next/image";
+import { useSocketMessage } from "./ingame/stores/useSocketMessage";
 
-const { subscribe, send } = gameSocket;
+const { send } = gameSocket;
 
 export default function Room() {
   const params = useParams() as { gameId: string };
@@ -16,6 +17,7 @@ export default function Room() {
   const [isHost, setIsHost] = useState(false);
   const [isFull, setIsFull] = useState(false);
   const [players, setPlayers] = useState([]);
+  const { socketMessage } = useSocketMessage();
 
   const gridColumns: { [key: number]: string } = {
     0: "grid-cols-0",
@@ -44,52 +46,44 @@ export default function Room() {
   };
 
   useEffect(() => {
-    // 해당 룸코드를 구독
-    subscribe(`/sub/${gameId}`, message => {
-      const data = JSON.parse(message.body);
+    // 플레이어 입장 OR 퇴장
+    if (
+      socketMessage.message == "ENTER_SUCCESS" ||
+      socketMessage.message == "PLAYER_LEAVED"
+    ) {
+      // 방 인원 새로고침
+      setPlayers(socketMessage.room.inRoomPlayers);
 
-      // 플레이어 입장 OR 퇴장
-      if (data.message == "ENTER_SUCCESS" || data.message == "PLAYER_LEAVED") {
-        // 방 인원 새로고침
-        setPlayers(data.room.inRoomPlayers);
+      // 풀방 아님
+      setIsFull(false);
 
-        // 풀방 아님
-        console.log("풀방 아님", data.message);
-        setIsFull(false);
-
-        // 방장 여부 확인
-        if (data.room.host.nickname == nickname) {
-          setIsHost(true);
-        }
+      // 방장 여부 확인
+      if (socketMessage.room.host.nickname == nickname) {
+        setIsHost(true);
       }
+    }
 
-      // 방 최대 인원 입장
-      if (data.message == "PREPARE_GAME_START") {
-        // 시작하기 버튼 활성화
-        console.log("시작하기 활성화", data.message);
-        setIsFull(true);
-      }
+    // 방 최대 인원 입장
+    if (socketMessage.message == "PREPARE_GAME_START") {
+      // 시작하기 버튼 활성화
+      setIsFull(true);
+    }
 
-      // 시작 버튼 클릭
-      if (data.message == "START_BUTTON_CLICKED") {
-        // 인게임 이동
-        router.push(`/room/${gameId}/ingame`);
-      }
+    // 시작 버튼 클릭
+    if (socketMessage.message == "START_BUTTON_CLICKED") {
+      // 인게임 이동
+      router.push(`/room/${gameId}/ingame`);
+    }
 
-      // 방장이 아닌데 게임 시작한 경우
-      if (data.message == "ONLY_HOST_CAN_START") {
-        // 인게임 이동
-        alert("게임시작은 방장만 가능합니다.");
-      }
-    });
+    // 방장이 아닌데 게임 시작한 경우
+    if (socketMessage.message == "ONLY_HOST_CAN_START") {
+      // 인게임 이동
+      alert("게임시작은 방장만 가능합니다.");
+    }
+    // });
 
     // 입장 시, 알림
-    send("/pub/room", {
-      message: "ENTER_ROOM",
-      sender: nickname,
-      gameId,
-    });
-  }, []);
+  }, [socketMessage]);
 
   return (
     <>

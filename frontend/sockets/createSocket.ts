@@ -44,6 +44,8 @@ export const createSocket = () => {
     if (!stomp) {
       throw new Error("socket이 연결되어있지 않아요");
     }
+    console.log("클 > 서", body);
+
     stomp.publish({
       destination,
       body: JSON.stringify(body),
