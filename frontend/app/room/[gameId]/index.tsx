@@ -1,15 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { gameSocket } from "~/sockets";
 import useNickname from "~/store/nickname";
 import Image from "next/image";
 
-const { connect, disconnect, subscribe, send } = gameSocket;
+const { subscribe, send } = gameSocket;
 
 export default function Room() {
   const params = useParams() as { gameId: string };
+  const router = useRouter();
   const { gameId } = params;
   const { nickname } = useNickname();
   const [isHost, setIsHost] = useState(false);
@@ -42,13 +43,10 @@ export default function Room() {
     });
   };
 
-  const onConnect = () => {
-    console.log("대기실 소켓 연결 성공");
-
+  useEffect(() => {
     // 해당 룸코드를 구독
     subscribe(`/sub/${gameId}`, message => {
       const data = JSON.parse(message.body);
-      console.log("소켓 메세지", data);
 
       // 플레이어 입장 OR 퇴장
       if (data.message == "ENTER_SUCCESS" || data.message == "PLAYER_LEAVED") {
@@ -56,6 +54,7 @@ export default function Room() {
         setPlayers(data.room.inRoomPlayers);
 
         // 풀방 아님
+        console.log("풀방 아님", data.message);
         setIsFull(false);
 
         // 방장 여부 확인
@@ -67,13 +66,14 @@ export default function Room() {
       // 방 최대 인원 입장
       if (data.message == "PREPARE_GAME_START") {
         // 시작하기 버튼 활성화
+        console.log("시작하기 활성화", data.message);
         setIsFull(true);
       }
 
       // 시작 버튼 클릭
       if (data.message == "START_BUTTON_CLICKED") {
         // 인게임 이동
-        window.location.href = "/ingame";
+        router.push(`/room/${gameId}/ingame`);
       }
 
       // 방장이 아닌데 게임 시작한 경우
@@ -89,13 +89,6 @@ export default function Room() {
       sender: nickname,
       gameId,
     });
-  };
-
-  useEffect(() => {
-    connect(onConnect);
-    return () => {
-      disconnect();
-    };
   }, []);
 
   return (

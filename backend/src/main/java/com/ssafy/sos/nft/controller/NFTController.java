@@ -46,6 +46,11 @@ public class NFTController {
         return ResponseEntity.status(HttpStatus.OK).body(wallet);
     }
 
+    @GetMapping("/upload")
+    public String uploadPage() {
+        return "NFT";
+    }
+
     @PostMapping("/upload")
     @ResponseBody
     public ResponseEntity<?> handleFileUpload(@RequestParam("file") MultipartFile file,
@@ -68,8 +73,7 @@ public class NFTController {
     //TEST URL
     @PostMapping("/mint")
     @ResponseBody
-    public ResponseEntity<?> mintNFT(Authentication authentication, @RequestParam("title") String title,
-                          @RequestParam("description") String description) {
+    public ResponseEntity<?> mintNFT(Authentication authentication, @RequestParam("fileId") String fileId) {
         if (authentication == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("로그인 해야함. 여길 어떻게 왔지?");
         }
@@ -77,11 +81,10 @@ public class NFTController {
         CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
 
         try {
-            nftService.mintingNFT(user, title, description);
+            nftService.mintingNFT(user, fileId);
             return ResponseEntity.status(HttpStatus.OK).body("success");
-        } catch(IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("success");
+        }  catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
         }
     }
 

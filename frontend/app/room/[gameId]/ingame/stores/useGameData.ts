@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 interface GameDataState {
-  type: string;
+  type: string[];
   treasures: { [key: number]: boolean };
   pirateRoute: number[];
   marineOneRoute: number[];
@@ -21,7 +21,7 @@ interface GameDataState {
 }
 
 export const useGameData = create<GameDataState>(set => ({
-  type: "",
+  type: [],
   treasures: {},
   pirateRoute: [],
   marineOneRoute: [],
@@ -30,7 +30,8 @@ export const useGameData = create<GameDataState>(set => ({
   currentPosition: [0, 0, 0, 0],
   setType: newType => {
     set(state => {
-      return { ...state, type: newType };
+      const updatedType = [...state.type, newType];
+      return { ...state, type: updatedType };
     });
   },
   setTreasures: newTreasures => {

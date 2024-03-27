@@ -1,9 +1,9 @@
-FROM node:20 AS runner
+FROM node:20-alpine AS runner
 
 WORKDIR /usr/src/app
 
 COPY ./.next/standalone ./
 COPY ./public ./public
-COPY ./.next/static ./static
+COPY ./.next/static ./.next/static
 
 CMD ["node", "server.js"]

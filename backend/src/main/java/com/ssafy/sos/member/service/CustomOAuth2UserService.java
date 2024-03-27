@@ -17,10 +17,11 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class CustomOAuth2UserService extends DefaultOAuth2UserService {
     private final UserRepository userRepository;
+    private final MemberService memberService;
 
-    public CustomOAuth2UserService(UserRepository userRepository) {
-
+    public CustomOAuth2UserService(UserRepository userRepository, MemberService memberService) {
         this.userRepository = userRepository;
+        this.memberService = memberService;
     }
 
     @Override
@@ -63,6 +64,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
 
             userRepository.save(userEntity);
 
+            userEntity = userRepository.findByUsername(username);
+            // 오늘 출석하지 않았으면 골드 지급
+            if (memberService.checkAttendance(userEntity.getId())) {
+                userRepository.addGoldById(userEntity.getId());
+            }
+
             UserDTO userDTO = new UserDTO();
             userDTO.setUsername(username);
             userDTO.setName(oAuth2Response.getName());
@@ -76,6 +83,10 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             existData.setName(oAuth2Response.getName());
 
             userRepository.save(existData);
+
+            if (memberService.checkAttendance(existData.getId())) {
+                userRepository.addGoldById(existData.getId());
+            }
 
             UserDTO userDTO = new UserDTO();
             userDTO.setUsername(existData.getUsername());
