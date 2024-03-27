@@ -203,7 +203,7 @@ public class JWTFilter extends OncePerRequestFilter {
             //레디스 TTL 계산
             long exp = jwtUtil.getExp(refresh);
             long ttl = BlackToken.calcTTL(exp);
-            blackToken.setTtl(10000);
+            blackToken.setTtl(ttl);
             jwtService.blackTokenSave(blackToken);
             log.info("black token saved.");
             filterChain.doFilter(request, response);
