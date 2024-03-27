@@ -1,8 +1,9 @@
 import { create } from "zustand";
 
 interface GameDataState {
-  type: string;
+  type: string[];
   treasures: { [key: number]: boolean };
+  openTreasure: number;
   pirateRoute: number[];
   marineOneRoute: number[];
   marineTwoRoute: number[];
@@ -10,6 +11,7 @@ interface GameDataState {
   currentPosition: number[];
   setType: (newType: string) => void;
   setTreasures: (newTreasures: { [key: number]: boolean }) => void;
+  setOpenTreasure: (newTreasure: number) => void;
   setPirateRoute: (newRoute: number[]) => void;
   setMarineOneRoute: (newRoute: number[]) => void;
   setMarineTwoRoute: (newRoute: number[]) => void;
@@ -21,8 +23,9 @@ interface GameDataState {
 }
 
 export const useGameData = create<GameDataState>(set => ({
-  type: "",
+  type: [],
   treasures: {},
+  openTreasure: 0,
   pirateRoute: [],
   marineOneRoute: [],
   marineTwoRoute: [],
@@ -30,12 +33,18 @@ export const useGameData = create<GameDataState>(set => ({
   currentPosition: [0, 0, 0, 0],
   setType: newType => {
     set(state => {
-      return { ...state, type: newType };
+      const updatedType = [...state.type, newType];
+      return { ...state, type: updatedType };
     });
   },
   setTreasures: newTreasures => {
     set(state => {
       return { ...state, treasures: newTreasures };
+    });
+  },
+  setOpenTreasure: newTreasure => {
+    set(state => {
+      return { ...state, openTreasure: newTreasure };
     });
   },
   setPirateRoute: newRoute => {

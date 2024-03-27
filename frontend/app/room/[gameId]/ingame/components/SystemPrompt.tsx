@@ -2,7 +2,7 @@ import styles from "./SystemPrompt.module.scss";
 
 import clsx from "clsx";
 
-import { useSystemPrompt } from "~/app/ingame/stores/useSystemPrompt";
+import { useSystemPrompt } from "../stores/useSystemPrompt";
 
 export default function SystemPrompt() {
   const { headerMessage, footerMessage } = useSystemPrompt();
