@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -141,5 +142,10 @@ public class NFTService {
         userEntity.setWalletAddress(wallet.getAddress());
 
         return wallet;
+    }
+
+
+    public List<FileEntity> getNFTFiles() {
+        return (List<FileEntity>) fileRepository.findAll();
     }
 }

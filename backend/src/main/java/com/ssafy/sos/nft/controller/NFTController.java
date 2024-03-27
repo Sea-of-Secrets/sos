@@ -3,6 +3,7 @@ package com.ssafy.sos.nft.controller;
 import com.ssafy.sos.member.domain.CustomOAuth2User;
 import com.ssafy.sos.member.domain.UserDTO;
 import com.ssafy.sos.member.domain.UserEntity;
+import com.ssafy.sos.nft.domain.FileEntity;
 import com.ssafy.sos.nft.domain.Wallet;
 import com.ssafy.sos.nft.service.NFTService;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -24,11 +26,6 @@ import java.io.IOException;
 public class NFTController {
 
     public final NFTService nftService;
-
-    @GetMapping
-    public String nft() {
-        return "NFT";
-    }
 
     @PostMapping("/wallet")
     @ResponseBody
@@ -84,21 +81,23 @@ public class NFTController {
             nftService.mintingNFT(user, fileId);
             return ResponseEntity.status(HttpStatus.OK).body("success");
         }  catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
-    @GetMapping("/qrcode")
-    public String qrcode(Model model) {
-
-        return "Klip";
+    @GetMapping("/files")
+    public ResponseEntity<?> getNFTFiles() {
+        try {
+            List<FileEntity> nftFile = nftService.getNFTFiles();
+            return ResponseEntity.status(HttpStatus.OK).body(nftFile);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
     }
 
-//    @PostMapping("/success")
-//    @ResponseBody
-//    public ResponseEntity<?> connectSuccess(@RequestBody Wallet wallet) {
-//
-//        return ResponseEntity.status(HttpStatus.OK).body(wallet);
-//    }
 
+    @GetMapping("/qrcode")
+    public String qrcode(Model model) {
+        return "Klip";
+    }
 }
