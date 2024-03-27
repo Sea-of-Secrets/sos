@@ -17,6 +17,7 @@ public class Game {
     private int[] currentPosition; // players의 현재 위치
     private HashMap<Integer, Player> players; // 역할 : player 객체 정보
     private HashMap<Integer, Boolean> treasures; // 해적이 가야할 보물 위치
+    private List<Integer> totalPirateRoute;  // 전적용 전체 해적 이동 경로
     private List<Integer> pirateRoute; // 해적 이동 경로
     private List<Integer> marineOneRoute; // 해군1 이동 경로
     private List<Integer> marineTwoRoute; // 해군2 이동 경로
