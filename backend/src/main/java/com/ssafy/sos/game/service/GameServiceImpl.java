@@ -347,12 +347,13 @@ public class GameServiceImpl implements GameService {
         return room;
     }
 
+    // 조사 가능한 노드 반환
     @Override
-    public boolean investigate(String gameId, int nodeNumber, int role) {
+    public void findMarineInvestigableNode(String gameId, int role) {
         Game game = board.getGameMap().get(gameId);
         Investigate investigate = game.getInvestigate();
-
         HashMap<Integer, Boolean> nodes = investigate.getNodes();
+
         if (nodes == null) {
             // 인접한 노드 중 해적 노드만 가져오기
             int[] adjList;
@@ -364,7 +365,16 @@ public class GameServiceImpl implements GameService {
             for (int j : adjList) {
                 nodes.put(j, false);
             }
+
+            investigate.setNodes(nodes);
         }
+    }
+
+    @Override
+    public boolean investigate(String gameId, int nodeNumber, int role) {
+        Game game = board.getGameMap().get(gameId);
+        Investigate investigate = game.getInvestigate();
+        HashMap<Integer, Boolean> nodes = investigate.getNodes();
 
         nodes.put(nodeNumber, true);
 

@@ -19,6 +19,7 @@ public interface GameService {
     boolean move(String gameId, int nodeNumber, int role);
     Room makeRoom(Player player, GameMode gameMode);
     Room enterRoom(String gameId, Player player);
+    void findMarineInvestigableNode(String gameId, int role);
     boolean investigate(String gameId, int nodeNumber, int role);
     boolean arrest(String gameId, int nodeNumber);
     void gameOver(String gameId, boolean gameResult);
