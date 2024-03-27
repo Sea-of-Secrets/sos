@@ -17,7 +17,7 @@ class NFTServiceTest {
 
     @Test
     public void fileTest() {
-        List<FileEntity> nftFile = nftService.getNFTFile();
+        List<FileEntity> nftFile = nftService.getNFTFiles();
 
         System.out.println(nftFile);
     }
