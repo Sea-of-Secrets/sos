@@ -35,6 +35,7 @@ public class NFTService {
     private final UserRepository userRepository;
     private final FileRepository fileRepository;
     private final WalletRepository walletRepository;
+    private final String BLOCK_SERVER_URL = "http://localhost:4000";
 
     private static final String PATH = "C:/Users/SSAFY/Desktop";
 
@@ -114,7 +115,7 @@ public class NFTService {
 
         // REST 템플릿을 사용하여 POST 요청 전송
         try {
-            restTemplate.postForObject("http://localhost:4000/nft", requestEntity, Void.class);
+            restTemplate.postForObject(BLOCK_SERVER_URL + "/nft", requestEntity, Void.class);
         } catch (Exception e) {
             throw new Exception(e);
         }
@@ -137,7 +138,7 @@ public class NFTService {
         HttpEntity<NFTDTO> requestEntity = new HttpEntity<>(headers);
 
         // REST 템플릿을 사용하여 POST 요청 전송
-        Wallet wallet = restTemplate.postForObject("http://localhost:4000/wallet", requestEntity, Wallet.class);
+        Wallet wallet = restTemplate.postForObject(BLOCK_SERVER_URL+"/wallet", requestEntity, Wallet.class);
 
         walletRepository.save(wallet);
         userEntity.setWalletAddress(wallet.getAddress());
@@ -156,7 +157,6 @@ public class NFTService {
         if (userEntity.getWalletAddress() == null) {
             return null;
         }
-        System.out.println(userEntity.getWalletAddress());
 
         RestTemplate restTemplate = new RestTemplate();
         // HTTP 요청 헤더 설정
@@ -170,7 +170,7 @@ public class NFTService {
         HttpEntity<NFTDTO> requestEntity = new HttpEntity<>(dto, headers);
 
         try {
-            ResponseEntity<NFTResponse[]> response = restTemplate.postForEntity("http://localhost:4000/nfts",requestEntity,NFTResponse[].class);
+            ResponseEntity<NFTResponse[]> response = restTemplate.postForEntity(BLOCK_SERVER_URL+"/nfts",requestEntity,NFTResponse[].class);
             NFTResponse[] body = response.getBody();
             for (NFTResponse r : body) {
                 System.out.println(r);
