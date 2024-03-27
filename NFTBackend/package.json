@@ -1,0 +1,22 @@
+{
+  "name": "test",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "blocksdk-js": "^3.1.0",
+    "dotenv": "^16.4.5",
+    "ethers": "^6.11.1",
+    "express": "^4.18.3",
+    "ipfs-core": "^0.18.1",
+    "mime": "^4.0.1",
+    "nft.storage": "^7.1.1",
+    "web3": "^4.6.0"
+  }
+}

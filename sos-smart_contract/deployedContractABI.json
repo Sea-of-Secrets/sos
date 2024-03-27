@@ -1,0 +1,1995 @@
+{
+  "fragments": [
+    {
+      "name": null,
+      "type": "constructor",
+      "inputs": [
+        {
+          "name": "deployer",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "gas": null,
+      "_isFragment": true
+    },
+    {
+      "type": "error",
+      "name": "ERC721IncorrectOwner",
+      "inputs": [
+        {
+          "name": "sender",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        },
+        {
+          "name": "owner",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "_isFragment": true
+    },
+    {
+      "type": "error",
+      "name": "ERC721InsufficientApproval",
+      "inputs": [
+        {
+          "name": "operator",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "_isFragment": true
+    },
+    {
+      "type": "error",
+      "name": "ERC721InvalidApprover",
+      "inputs": [
+        {
+          "name": "approver",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "_isFragment": true
+    },
+    {
+      "type": "error",
+      "name": "ERC721InvalidOperator",
+      "inputs": [
+        {
+          "name": "operator",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "_isFragment": true
+    },
+    {
+      "type": "error",
+      "name": "ERC721InvalidOwner",
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "_isFragment": true
+    },
+    {
+      "type": "error",
+      "name": "ERC721InvalidReceiver",
+      "inputs": [
+        {
+          "name": "receiver",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "_isFragment": true
+    },
+    {
+      "type": "error",
+      "name": "ERC721InvalidSender",
+      "inputs": [
+        {
+          "name": "sender",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "_isFragment": true
+    },
+    {
+      "type": "error",
+      "name": "ERC721NonexistentToken",
+      "inputs": [
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "_isFragment": true
+    },
+    {
+      "type": "error",
+      "name": "OwnableInvalidOwner",
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "_isFragment": true
+    },
+    {
+      "type": "error",
+      "name": "OwnableUnauthorizedAccount",
+      "inputs": [
+        {
+          "name": "account",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "_isFragment": true
+    },
+    {
+      "name": "Approval",
+      "anonymous": false,
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "address",
+          "indexed": true,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "approved",
+          "type": "address",
+          "indexed": true,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": true,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "type": "event",
+      "_isFragment": true
+    },
+    {
+      "name": "ApprovalForAll",
+      "anonymous": false,
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "address",
+          "indexed": true,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "operator",
+          "type": "address",
+          "indexed": true,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "approved",
+          "type": "bool",
+          "indexed": false,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "bool",
+          "_isParamType": true
+        }
+      ],
+      "type": "event",
+      "_isFragment": true
+    },
+    {
+      "name": "BatchMetadataUpdate",
+      "anonymous": false,
+      "inputs": [
+        {
+          "name": "_fromTokenId",
+          "type": "uint256",
+          "indexed": false,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        },
+        {
+          "name": "_toTokenId",
+          "type": "uint256",
+          "indexed": false,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "type": "event",
+      "_isFragment": true
+    },
+    {
+      "name": "MetadataUpdate",
+      "anonymous": false,
+      "inputs": [
+        {
+          "name": "_tokenId",
+          "type": "uint256",
+          "indexed": false,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "type": "event",
+      "_isFragment": true
+    },
+    {
+      "name": "OwnershipTransferred",
+      "anonymous": false,
+      "inputs": [
+        {
+          "name": "previousOwner",
+          "type": "address",
+          "indexed": true,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "newOwner",
+          "type": "address",
+          "indexed": true,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "type": "event",
+      "_isFragment": true
+    },
+    {
+      "name": "Transfer",
+      "anonymous": false,
+      "inputs": [
+        {
+          "name": "from",
+          "type": "address",
+          "indexed": true,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "to",
+          "type": "address",
+          "indexed": true,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": true,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "type": "event",
+      "_isFragment": true
+    },
+    {
+      "type": "function",
+      "name": "approve",
+      "constant": false,
+      "inputs": [
+        {
+          "name": "to",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "gas": null,
+      "_isFragment": true
+    },
+    {
+      "type": "function",
+      "name": "balanceOf",
+      "constant": true,
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": null,
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "gas": null,
+      "_isFragment": true
+    },
+    {
+      "type": "function",
+      "name": "burn",
+      "constant": false,
+      "inputs": [
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "gas": null,
+      "_isFragment": true
+    },
+    {
+      "type": "function",
+      "name": "getApproved",
+      "constant": true,
+      "inputs": [
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": null,
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "gas": null,
+      "_isFragment": true
+    },
+    {
+      "type": "function",
+      "name": "isApprovedForAll",
+      "constant": true,
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "operator",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": null,
+          "type": "bool",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "bool",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "gas": null,
+      "_isFragment": true
+    },
+    {
+      "type": "function",
+      "name": "mintNFT",
+      "constant": false,
+      "inputs": [
+        {
+          "name": "recipient",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "ipfsHash",
+          "type": "string",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "string",
+          "_isParamType": true
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "string",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": null,
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "gas": null,
+      "_isFragment": true
+    },
+    {
+      "type": "function",
+      "name": "name",
+      "constant": true,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": null,
+          "type": "string",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "string",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "gas": null,
+      "_isFragment": true
+    },
+    {
+      "type": "function",
+      "name": "owner",
+      "constant": true,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": null,
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "gas": null,
+      "_isFragment": true
+    },
+    {
+      "type": "function",
+      "name": "ownerOf",
+      "constant": true,
+      "inputs": [
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": null,
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "gas": null,
+      "_isFragment": true
+    },
+    {
+      "type": "function",
+      "name": "renounceOwnership",
+      "constant": false,
+      "inputs": [],
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "gas": null,
+      "_isFragment": true
+    },
+    {
+      "type": "function",
+      "name": "safeTransferFrom",
+      "constant": false,
+      "inputs": [
+        {
+          "name": "from",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "to",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "gas": null,
+      "_isFragment": true
+    },
+    {
+      "type": "function",
+      "name": "safeTransferFrom",
+      "constant": false,
+      "inputs": [
+        {
+          "name": "from",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "to",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        },
+        {
+          "name": "data",
+          "type": "bytes",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "bytes",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "gas": null,
+      "_isFragment": true
+    },
+    {
+      "type": "function",
+      "name": "setApprovalForAll",
+      "constant": false,
+      "inputs": [
+        {
+          "name": "operator",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "approved",
+          "type": "bool",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "bool",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "gas": null,
+      "_isFragment": true
+    },
+    {
+      "type": "function",
+      "name": "supportsInterface",
+      "constant": true,
+      "inputs": [
+        {
+          "name": "interfaceId",
+          "type": "bytes4",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "bytes4",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": null,
+          "type": "bool",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "bool",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "gas": null,
+      "_isFragment": true
+    },
+    {
+      "type": "function",
+      "name": "symbol",
+      "constant": true,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": null,
+          "type": "string",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "string",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "gas": null,
+      "_isFragment": true
+    },
+    {
+      "type": "function",
+      "name": "tokenURI",
+      "constant": true,
+      "inputs": [
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": null,
+          "type": "string",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "string",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "gas": null,
+      "_isFragment": true
+    },
+    {
+      "type": "function",
+      "name": "transferFrom",
+      "constant": false,
+      "inputs": [
+        {
+          "name": "from",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "to",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "gas": null,
+      "_isFragment": true
+    },
+    {
+      "type": "function",
+      "name": "transferOwnership",
+      "constant": false,
+      "inputs": [
+        {
+          "name": "newOwner",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "gas": null,
+      "_isFragment": true
+    }
+  ],
+  "_abiCoder": {
+    "coerceFunc": null
+  },
+  "functions": {
+    "approve(address,uint256)": {
+      "type": "function",
+      "name": "approve",
+      "constant": false,
+      "inputs": [
+        {
+          "name": "to",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "gas": null,
+      "_isFragment": true
+    },
+    "balanceOf(address)": {
+      "type": "function",
+      "name": "balanceOf",
+      "constant": true,
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": null,
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "gas": null,
+      "_isFragment": true
+    },
+    "burn(uint256)": {
+      "type": "function",
+      "name": "burn",
+      "constant": false,
+      "inputs": [
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "gas": null,
+      "_isFragment": true
+    },
+    "getApproved(uint256)": {
+      "type": "function",
+      "name": "getApproved",
+      "constant": true,
+      "inputs": [
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": null,
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "gas": null,
+      "_isFragment": true
+    },
+    "isApprovedForAll(address,address)": {
+      "type": "function",
+      "name": "isApprovedForAll",
+      "constant": true,
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "operator",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": null,
+          "type": "bool",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "bool",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "gas": null,
+      "_isFragment": true
+    },
+    "mintNFT(address,string,string)": {
+      "type": "function",
+      "name": "mintNFT",
+      "constant": false,
+      "inputs": [
+        {
+          "name": "recipient",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "ipfsHash",
+          "type": "string",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "string",
+          "_isParamType": true
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "string",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": null,
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "gas": null,
+      "_isFragment": true
+    },
+    "name()": {
+      "type": "function",
+      "name": "name",
+      "constant": true,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": null,
+          "type": "string",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "string",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "gas": null,
+      "_isFragment": true
+    },
+    "owner()": {
+      "type": "function",
+      "name": "owner",
+      "constant": true,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": null,
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "gas": null,
+      "_isFragment": true
+    },
+    "ownerOf(uint256)": {
+      "type": "function",
+      "name": "ownerOf",
+      "constant": true,
+      "inputs": [
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": null,
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "gas": null,
+      "_isFragment": true
+    },
+    "renounceOwnership()": {
+      "type": "function",
+      "name": "renounceOwnership",
+      "constant": false,
+      "inputs": [],
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "gas": null,
+      "_isFragment": true
+    },
+    "safeTransferFrom(address,address,uint256)": {
+      "type": "function",
+      "name": "safeTransferFrom",
+      "constant": false,
+      "inputs": [
+        {
+          "name": "from",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "to",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "gas": null,
+      "_isFragment": true
+    },
+    "safeTransferFrom(address,address,uint256,bytes)": {
+      "type": "function",
+      "name": "safeTransferFrom",
+      "constant": false,
+      "inputs": [
+        {
+          "name": "from",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "to",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        },
+        {
+          "name": "data",
+          "type": "bytes",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "bytes",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "gas": null,
+      "_isFragment": true
+    },
+    "setApprovalForAll(address,bool)": {
+      "type": "function",
+      "name": "setApprovalForAll",
+      "constant": false,
+      "inputs": [
+        {
+          "name": "operator",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "approved",
+          "type": "bool",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "bool",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "gas": null,
+      "_isFragment": true
+    },
+    "supportsInterface(bytes4)": {
+      "type": "function",
+      "name": "supportsInterface",
+      "constant": true,
+      "inputs": [
+        {
+          "name": "interfaceId",
+          "type": "bytes4",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "bytes4",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": null,
+          "type": "bool",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "bool",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "gas": null,
+      "_isFragment": true
+    },
+    "symbol()": {
+      "type": "function",
+      "name": "symbol",
+      "constant": true,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": null,
+          "type": "string",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "string",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "gas": null,
+      "_isFragment": true
+    },
+    "tokenURI(uint256)": {
+      "type": "function",
+      "name": "tokenURI",
+      "constant": true,
+      "inputs": [
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": null,
+          "type": "string",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "string",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "gas": null,
+      "_isFragment": true
+    },
+    "transferFrom(address,address,uint256)": {
+      "type": "function",
+      "name": "transferFrom",
+      "constant": false,
+      "inputs": [
+        {
+          "name": "from",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "to",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "gas": null,
+      "_isFragment": true
+    },
+    "transferOwnership(address)": {
+      "type": "function",
+      "name": "transferOwnership",
+      "constant": false,
+      "inputs": [
+        {
+          "name": "newOwner",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "gas": null,
+      "_isFragment": true
+    }
+  },
+  "errors": {
+    "ERC721IncorrectOwner(address,uint256,address)": {
+      "type": "error",
+      "name": "ERC721IncorrectOwner",
+      "inputs": [
+        {
+          "name": "sender",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        },
+        {
+          "name": "owner",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "_isFragment": true
+    },
+    "ERC721InsufficientApproval(address,uint256)": {
+      "type": "error",
+      "name": "ERC721InsufficientApproval",
+      "inputs": [
+        {
+          "name": "operator",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "_isFragment": true
+    },
+    "ERC721InvalidApprover(address)": {
+      "type": "error",
+      "name": "ERC721InvalidApprover",
+      "inputs": [
+        {
+          "name": "approver",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "_isFragment": true
+    },
+    "ERC721InvalidOperator(address)": {
+      "type": "error",
+      "name": "ERC721InvalidOperator",
+      "inputs": [
+        {
+          "name": "operator",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "_isFragment": true
+    },
+    "ERC721InvalidOwner(address)": {
+      "type": "error",
+      "name": "ERC721InvalidOwner",
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "_isFragment": true
+    },
+    "ERC721InvalidReceiver(address)": {
+      "type": "error",
+      "name": "ERC721InvalidReceiver",
+      "inputs": [
+        {
+          "name": "receiver",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "_isFragment": true
+    },
+    "ERC721InvalidSender(address)": {
+      "type": "error",
+      "name": "ERC721InvalidSender",
+      "inputs": [
+        {
+          "name": "sender",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "_isFragment": true
+    },
+    "ERC721NonexistentToken(uint256)": {
+      "type": "error",
+      "name": "ERC721NonexistentToken",
+      "inputs": [
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "_isFragment": true
+    },
+    "OwnableInvalidOwner(address)": {
+      "type": "error",
+      "name": "OwnableInvalidOwner",
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "_isFragment": true
+    },
+    "OwnableUnauthorizedAccount(address)": {
+      "type": "error",
+      "name": "OwnableUnauthorizedAccount",
+      "inputs": [
+        {
+          "name": "account",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "_isFragment": true
+    }
+  },
+  "events": {
+    "Approval(address,address,uint256)": {
+      "name": "Approval",
+      "anonymous": false,
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "address",
+          "indexed": true,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "approved",
+          "type": "address",
+          "indexed": true,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": true,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "type": "event",
+      "_isFragment": true
+    },
+    "ApprovalForAll(address,address,bool)": {
+      "name": "ApprovalForAll",
+      "anonymous": false,
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "address",
+          "indexed": true,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "operator",
+          "type": "address",
+          "indexed": true,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "approved",
+          "type": "bool",
+          "indexed": false,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "bool",
+          "_isParamType": true
+        }
+      ],
+      "type": "event",
+      "_isFragment": true
+    },
+    "BatchMetadataUpdate(uint256,uint256)": {
+      "name": "BatchMetadataUpdate",
+      "anonymous": false,
+      "inputs": [
+        {
+          "name": "_fromTokenId",
+          "type": "uint256",
+          "indexed": false,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        },
+        {
+          "name": "_toTokenId",
+          "type": "uint256",
+          "indexed": false,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "type": "event",
+      "_isFragment": true
+    },
+    "MetadataUpdate(uint256)": {
+      "name": "MetadataUpdate",
+      "anonymous": false,
+      "inputs": [
+        {
+          "name": "_tokenId",
+          "type": "uint256",
+          "indexed": false,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "type": "event",
+      "_isFragment": true
+    },
+    "OwnershipTransferred(address,address)": {
+      "name": "OwnershipTransferred",
+      "anonymous": false,
+      "inputs": [
+        {
+          "name": "previousOwner",
+          "type": "address",
+          "indexed": true,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "newOwner",
+          "type": "address",
+          "indexed": true,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "type": "event",
+      "_isFragment": true
+    },
+    "Transfer(address,address,uint256)": {
+      "name": "Transfer",
+      "anonymous": false,
+      "inputs": [
+        {
+          "name": "from",
+          "type": "address",
+          "indexed": true,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "to",
+          "type": "address",
+          "indexed": true,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "tokenId",
+          "type": "uint256",
+          "indexed": true,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "type": "event",
+      "_isFragment": true
+    }
+  },
+  "structs": {},
+  "deploy": {
+    "name": null,
+    "type": "constructor",
+    "inputs": [
+      {
+        "name": "deployer",
+        "type": "address",
+        "indexed": null,
+        "components": null,
+        "arrayLength": null,
+        "arrayChildren": null,
+        "baseType": "address",
+        "_isParamType": true
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "gas": null,
+    "_isFragment": true
+  },
+  "_isInterface": true
+}
