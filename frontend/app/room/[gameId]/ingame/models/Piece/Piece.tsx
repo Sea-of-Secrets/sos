@@ -6,7 +6,7 @@ import { PiecePathMap } from "~/assetPath";
 import { PieceProps } from "./types";
 import PieceEffect from "./PieceEffect";
 
-const Z_AXIS_AJ_VALUE = 20;
+const Z_AXIS_AJ_VALUE = 0;
 
 export default function Piece({
   position,
@@ -58,7 +58,8 @@ export default function Piece({
             ? [position.x, position.z + Z_AXIS_AJ_VALUE, position.y]
             : [0, 0, 0]
         }
-        scale={15}
+        rotation={[0, Math.PI, 0]}
+        scale={50}
         onClick={handleClickPiece}
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}

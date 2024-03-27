@@ -19,17 +19,20 @@ import useGameId from "~/store/gameId";
 import { useCamera } from "./stores/useCamera";
 import { getNode, marineStartList } from "~/_lib/data/data";
 import { useSocketMessage } from "./stores/useSocketMessage";
+import { usePiratePiece } from "./stores/piece";
 
 const { send } = gameSocket;
 
 export default function IngameClient() {
-  const { loading, setLoading } = useGameLoading();
+  const [loading, setLoading] = useState(true);
+  const [loading2, setLoading2] = useState(true);
+  const [timeOut, setTimeOut] = useState(false);
+
   const { nickname } = useNickname();
   const { gameId } = useGameId();
   const { zoom, zoomFullScreen, gameStartAnimation } = useCamera();
-
   const { socketMessage } = useSocketMessage();
-  const [timeOut, setTimeOut] = useState(false);
+  const { movePieceTwo } = usePiratePiece();
 
   const {
     setHeaderMessage,
@@ -48,6 +51,7 @@ export default function IngameClient() {
     currentPosition,
     setType,
     setTreasures,
+    setOpenTreasure,
     setPirateRoute,
     setMarineOneRoute,
     setMarineTwoRoute,
@@ -63,6 +67,7 @@ export default function IngameClient() {
 
   // 게임 시작
   const startAnimation = () => {
+    setLoading2(false);
     // TODO : 애니메이션 실행
     gameStartAnimation();
 
@@ -76,7 +81,7 @@ export default function IngameClient() {
 
   // 해적의 시작위치 지정 명령
   const orderInitPirateStart = () => {
-    if (type.includes("pirate")) {
+    if (socketMessage.game.players[0]["nickname"] === nickname) {
       setHeaderMessage("시작 위치를 결정하세요");
       // TODO : 푸터에 4가지 선택지 나오고 마우스 호버 시, 카메라 이동
       setFooterMessage(
@@ -106,7 +111,7 @@ export default function IngameClient() {
 
   // 해적의 시작위치 지정 완료
   const actionInitPirateStart = () => {
-    if (type.includes("pirate")) {
+    if (socketMessage.game.players[0]["nickname"] === nickname) {
       // 시간 초과 여부에 따라 메시지 출력
       setHeaderMessage(
         timeOut
@@ -127,7 +132,7 @@ export default function IngameClient() {
 
   // 해군 1의 시작위치 지정 명령
   const orderInitMarineOneStart = () => {
-    if (type.includes("marineOne")) {
+    if (socketMessage.game.players[1]["nickname"] === nickname) {
       setHeaderMessage("시작 위치를 결정하세요");
       // TODO : 푸터에 6가지 선택지 나오고 마우스 호버 시, 카메라 이동
       const marineOneStartList = marineStartList;
@@ -159,7 +164,7 @@ export default function IngameClient() {
 
   // 해군 1의 시작위치 지정 완료
   const actionInitMarineOneStart = () => {
-    if (type.includes("marineOne")) {
+    if (socketMessage.game.players[1]["nickname"] === nickname) {
       // 시간 초과 여부에 따라 메시지 출력
       setHeaderMessage(
         timeOut
@@ -182,7 +187,7 @@ export default function IngameClient() {
 
   // 해군 2의 시작위치 지정 명령
   const orderInitMarineTwoStart = () => {
-    if (type.includes("marineTwo")) {
+    if (socketMessage.game.players[2]["nickname"] === nickname) {
       setHeaderMessage("시작 위치를 결정하세요");
       // TODO : 푸터에 5가지 선택지 나오고 마우스 호버 시, 카메라 이동
       const marineTwoStartList = marineStartList.filter(
@@ -216,7 +221,7 @@ export default function IngameClient() {
 
   // 해군 2의 시작위치 지정 완료
   const actionInitMarineTwoStart = () => {
-    if (type.includes("marineTwo")) {
+    if (socketMessage.game.players[2]["nickname"] === nickname) {
       // 시간 초과 여부에 따라 메시지 출력
       setHeaderMessage(
         timeOut
@@ -239,7 +244,7 @@ export default function IngameClient() {
 
   // 해군 3의 시작위치 지정 명령
   const orderInitMarineThreeStart = () => {
-    if (type.includes("marineThree")) {
+    if (socketMessage.game.players[3]["nickname"] === nickname) {
       setHeaderMessage("시작 위치를 결정하세요");
       // TODO : 푸터에 4가지 선택지 나오고 마우스 호버 시, 카메라 이동
       const marineThreeStartList = marineStartList.filter(
@@ -275,7 +280,7 @@ export default function IngameClient() {
 
   // 해군 3의 시작위치 지정 완료
   const actionInitMarineThreeStart = () => {
-    if (type.includes("marineThree")) {
+    if (socketMessage.game.players[3]["nickname"] === nickname) {
       // 시간 초과 여부에 따라 메시지 출력
       setHeaderMessage(
         timeOut
@@ -293,17 +298,18 @@ export default function IngameClient() {
     removeFooterMessage();
     // 해당 노드 줌 인
     zoom(getNode(socketMessage.game.currentPosition[3]).position);
+  };
 
-    setTimeout(() => {
-      setHeaderMessage("해적의 출발지가 공개됩니다");
-      zoom(getNode(socketMessage.game.currentPosition[0]).position);
-      // TODO : 3초간 보물 열리는 애니메이션 (해군도 보이게 수정하기)
-    }, 1500); // 재형이가 6초로 수정해주면 3000으로 변경
+  // 해적 시작 위치 공개
+  const openPirateStart = () => {
+    // TODO : 3초간 보물 열리는 애니메이션 (해군도 보이게 수정하기)
+    setHeaderMessage("해적의 출발지가 공개됩니다");
+    zoom(getNode(socketMessage.game.currentPosition[0]).position);
   };
 
   // 해적의 이동 명령
   const orderMovePirate = () => {
-    if (type.includes("pirate")) {
+    if (socketMessage.game.players[0]["nickname"] === nickname) {
       setHeaderMessage("이동할 위치를 결정하세요");
       zoom(getNode(socketMessage.game.currentPosition[0]).position);
       // TODO : availableNode변수를 이동 가능 노드로 넘겨주기
@@ -329,6 +335,12 @@ export default function IngameClient() {
                     gameId,
                     node: nodeId,
                   });
+                  // 말 이동
+                  const movePaths = socketMessage.availableNode[nodeId];
+                  movePieceTwo({
+                    positionList: movePaths,
+                    moveAnimationStyle: "JUMPTWO",
+                  });
                 }}
               >
                 <p>{nodeId}번 </p>
@@ -337,6 +349,10 @@ export default function IngameClient() {
           )}
         </>,
       );
+      // TODO : 이동 가능 노드 비우기
+      // TODO : 이동 애니메이션 구현
+
+      // 경로 : socketMessage.availableNode[socketMessage.game.currentPosition[0]]
     } else {
       setHeaderMessage(
         `[해적] ${socketMessage.game.players[0]["nickname"]} 님이 이동중입니다`,
@@ -346,16 +362,13 @@ export default function IngameClient() {
 
   // 해적의 이동 완료
   const actionMovePirate = () => {
-    if (type.includes("pirate")) {
+    if (socketMessage.game.players[0]["nickname"] === nickname) {
       setHeaderMessage(
         timeOut
           ? "시간초과! 이동 위치가 랜덤으로 결정되었습니다"
           : "이동 위치가 결정되었습니다",
       );
-      // TODO : 이동 가능 노드 비우기
-      // TODO : 이동 애니메이션 구현
-
-      // 경로 : socketMessage.pirateAvailableNode[socketMessage.game.currentPosition[0]]
+      zoom(getNode(socketMessage.game.currentPosition[0]).position);
     } else {
       setHeaderMessage(
         `[해적] ${socketMessage.game.players[0]["nickname"]} 님의 이동이 완료되었습니다`,
@@ -370,7 +383,7 @@ export default function IngameClient() {
   // 해군 1의 이동 명령
   const orderMoveMarineOne = () => {
     zoom(getNode(socketMessage.game.currentPosition[1]).position);
-    if (type.includes("marineOne")) {
+    if (socketMessage.game.players[1]["nickname"] === nickname) {
       setHeaderMessage("이동할 위치를 결정하세요");
       // TODO : availableNode변수를 이동 가능 노드로 넘겨주기
       // 이동 가능 노드는 푸터와 헤더메시지처럼 빈 상태에서는 비활성화
@@ -412,7 +425,7 @@ export default function IngameClient() {
 
   // 해군 1의 이동 완료
   const actionMoveMarineOne = () => {
-    if (type.includes("marineOne")) {
+    if (socketMessage.game.players[1]["nickname"] === nickname) {
       setHeaderMessage(
         timeOut
           ? "시간초과! 이동 위치가 랜덤으로 결정되었습니다"
@@ -430,6 +443,38 @@ export default function IngameClient() {
     // 푸터, 시간초과 초기화
     setTimeOut(false);
     removeFooterMessage();
+  };
+
+  // 해군 1의 행동 명령
+  const orderSelectWorkMarineOne = () => {
+    zoom(getNode(socketMessage.game.currentPosition[1]).position);
+    if (socketMessage.game.players[1]["nickname"] === nickname) {
+      setHeaderMessage("행동을 선택하세요");
+      // TODO : 조사, 체포 푸터에 컴포넌트화해서 담기
+      const actionList = ["조사", "체포"];
+      setFooterMessage(
+        <>
+          {actionList.map(action => (
+            <button
+              key={action}
+              onClick={() => {
+                send("/pub/marine", {
+                  message: "???",
+                  sender: nickname,
+                  gameId,
+                });
+              }}
+            >
+              <p>{action}</p>
+            </button>
+          ))}
+        </>,
+      );
+    } else {
+      setHeaderMessage(
+        `[해군1] ${socketMessage.game.players[1]["nickname"]} 님이 행동을 선택중입니다`,
+      );
+    }
   };
 
   useEffect(() => {
@@ -513,6 +558,10 @@ export default function IngameClient() {
     if (socketMessage.message === "ACTION_INIT_MARINE_THREE_START") {
       actionInitMarineThreeStart();
       setTreasures(socketMessage.game.treasures);
+      // 해적 위치 공개
+      setTimeout(() => {
+        openPirateStart();
+      }, 3000);
     }
 
     // 해적의 이동 명령
@@ -534,6 +583,11 @@ export default function IngameClient() {
     if (socketMessage.message === "ACTION_MOVE_MARINE_ONE") {
       actionMoveMarineOne();
     }
+
+    // 해군 1의 행동 명령
+    if (socketMessage.message === "ORDER_SELECT_WORK_MARINE_ONE") {
+      orderSelectWorkMarineOne();
+    }
   }, [socketMessage]);
 
   useEffect(() => {
@@ -548,7 +602,7 @@ export default function IngameClient() {
 
   return (
     <>
-      {loading && <Loading />}
+      {loading2 && <Loading />}
       <Round topLeft={[60, 1]} />
       <Turn topLeft={[360, 1]} currentTurn={turn} />
       <SystemPrompt />

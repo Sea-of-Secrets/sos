@@ -1,7 +1,8 @@
 import { Mesh } from "three";
 import { NodePosition } from "~/_lib/data/types";
 
-export type MoveAnimaitonStyle = "JUMP" | "FLOWING";
+export type MoveAnimationStyle = "JUMP" | "FLOWING";
+export type MoveAnimationStyleTwo = "JUMPTWO";
 
 export interface PieceState {
   piece: Mesh | null;
@@ -11,7 +12,14 @@ export interface PieceState {
     moveAnimationStyle,
   }: {
     position: NodePosition;
-    moveAnimationStyle: MoveAnimaitonStyle;
+    moveAnimationStyle: MoveAnimationStyle;
+  }) => void;
+  movePieceTwo: ({
+    positionList,
+    moveAnimationStyle,
+  }: {
+    positionList: number[];
+    moveAnimationStyle: MoveAnimationStyleTwo;
   }) => void;
   position: NodePosition | null;
   setPosition: (nextPosition: NodePosition) => void;
@@ -25,4 +33,12 @@ export type Animation = ({
 }: {
   state: PieceState;
   position: NodePosition;
+}) => PieceState;
+
+export type AnimationTwo = ({
+  state,
+  positionList,
+}: {
+  state: PieceState;
+  positionList: number[];
 }) => PieceState;
