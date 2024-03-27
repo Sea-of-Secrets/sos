@@ -27,6 +27,6 @@ public enum GameRole {
                 return role;
             }
         }
-        throw new IllegalArgumentException("Invalid role number: " + roleNumber);
+        throw new IllegalArgumentException("유효하지 않은 role 번호: " + roleNumber);
     }
 }
