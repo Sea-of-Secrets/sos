@@ -40,4 +40,12 @@ function createRandomWallet() {
     return wallet;
 }
 
-module.exports = { mintNFT, createRandomWallet };
+//지갑 nft 조회
+async function getNFTs(dto) {
+    const walletAddress = dto.walletAddress;
+    const result = await contract.getAllNFTs(walletAddress);
+    
+    return result;
+}
+
+module.exports = { mintNFT, createRandomWallet, getNFTs };

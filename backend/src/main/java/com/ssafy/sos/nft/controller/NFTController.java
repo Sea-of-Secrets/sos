@@ -1,23 +1,18 @@
 package com.ssafy.sos.nft.controller;
 
-import com.ssafy.sos.member.domain.CustomOAuth2User;
-import com.ssafy.sos.member.domain.UserDTO;
-import com.ssafy.sos.member.domain.UserEntity;
+import com.ssafy.sos.user.domain.CustomOAuth2User;
 import com.ssafy.sos.nft.domain.FileEntity;
+import com.ssafy.sos.nft.domain.NFTResponse;
 import com.ssafy.sos.nft.domain.Wallet;
 import com.ssafy.sos.nft.service.NFTService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
 @Controller
@@ -26,6 +21,24 @@ import java.util.List;
 public class NFTController {
 
     public final NFTService nftService;
+
+    @GetMapping("/wallet")
+    @ResponseBody
+    public ResponseEntity<?> getNFTs(Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("로그인 해야함. 여길 어떻게 왔지?");
+        }
+
+        CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
+         try {
+             NFTResponse[] ownNFTs = nftService.getOwnNFTs(user);
+             return ResponseEntity.status(HttpStatus.OK).body(ownNFTs);
+         } catch(Exception e) {
+             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+         }
+
+    }
+
 
     @PostMapping("/wallet")
     @ResponseBody
@@ -94,7 +107,6 @@ public class NFTController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
-
 
     @GetMapping("/qrcode")
     public String qrcode(Model model) {
