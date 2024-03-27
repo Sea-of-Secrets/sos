@@ -5,11 +5,13 @@ import com.ssafy.sos.member.domain.UserEntity;
 import com.ssafy.sos.member.repository.UserRepository;
 import com.ssafy.sos.nft.domain.FileEntity;
 import com.ssafy.sos.nft.domain.NFTDTO;
+import com.ssafy.sos.nft.domain.NFTResponse;
 import com.ssafy.sos.nft.domain.Wallet;
 import com.ssafy.sos.nft.repository.FileRepository;
 import com.ssafy.sos.nft.repository.WalletRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.units.qual.N;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -20,7 +22,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
@@ -110,7 +111,7 @@ public class NFTService {
 
         // HTTP 요청 본문에 객체 추가
         HttpEntity<NFTDTO> requestEntity = new HttpEntity<>(nft, headers);
-        System.out.println(requestEntity);
+
         // REST 템플릿을 사용하여 POST 요청 전송
         try {
             restTemplate.postForObject("http://localhost:4000/nft", requestEntity, Void.class);
@@ -147,5 +148,36 @@ public class NFTService {
 
     public List<FileEntity> getNFTFiles() {
         return (List<FileEntity>) fileRepository.findAll();
+    }
+
+    public NFTResponse[] getOwnNFTs(CustomOAuth2User user) throws Exception {
+        //user 찾기
+        UserEntity userEntity = userRepository.findByUsername(user.getMemberDto().getUsername());
+        if (userEntity.getWalletAddress() == null) {
+            return null;
+        }
+        System.out.println(userEntity.getWalletAddress());
+
+        RestTemplate restTemplate = new RestTemplate();
+        // HTTP 요청 헤더 설정
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        NFTDTO dto = new NFTDTO();
+        dto.setWalletAddress(userEntity.getWalletAddress());
+
+        // HTTP 요청 본문에 객체 추가
+        HttpEntity<NFTDTO> requestEntity = new HttpEntity<>(dto, headers);
+
+        try {
+            ResponseEntity<NFTResponse[]> response = restTemplate.postForEntity("http://localhost:4000/nfts",requestEntity,NFTResponse[].class);
+            NFTResponse[] body = response.getBody();
+            for (NFTResponse r : body) {
+                System.out.println(r);
+            }
+            return body;
+        } catch (Exception e) {
+            throw new Exception(e);
+        }
     }
 }
