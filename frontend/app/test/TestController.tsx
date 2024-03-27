@@ -1,13 +1,14 @@
 import { useRef } from "react";
 import styled from "@emotion/styled";
 
-import { useSystemPrompt } from "~/app/ingame/stores/useSystemPrompt";
-import { useCamera } from "~/app/ingame/stores/useCamera";
-import { getNearEdgeIdList, getNode } from "~/_lib/data/data";
-import { usePiratePiece } from "../stores/piece";
-import { usePirateGraph } from "../stores/graph";
+import { usePiratePiece } from "../room/[gameId]/ingame/stores/piece";
+import { usePirateGraph } from "../room/[gameId]/ingame/stores/graph";
+import { useSystemPrompt } from "../room/[gameId]/ingame/stores/useSystemPrompt";
+import { useCamera } from "../room/[gameId]/ingame/stores/useCamera";
 
-export default function YongSangYoonTestController() {
+import { getNearEdgeIdList, getNode } from "~/_lib/data/data";
+
+export default function TestController() {
   const cameraZoomInputRef = useRef<HTMLInputElement>(null);
   const systemPromptHeaderInputRef = useRef<HTMLInputElement>(null);
   const systemPromptFooterInputRef = useRef<HTMLInputElement>(null);
