@@ -10,7 +10,15 @@ export const DEFAULT_FOV = 50;
 interface CameraState {
   cameraRef: MutableRefObject<CameraControls> | null;
   initialize: (cameraRef: MutableRefObject<CameraControls>) => void;
-  zoom: (position: NodePosition) => void;
+  zoom: (
+    position: NodePosition,
+    options?: {
+      x?: number;
+      y?: number;
+      z?: number;
+      level?: number;
+    },
+  ) => void;
   zoomFullScreen: () => void;
   gameStartAnimation: () => void;
 }
@@ -25,12 +33,20 @@ export const useCamera = create<CameraState>(set => ({
       return { ...state, cameraRef };
     });
   },
-  zoom: position => {
+  zoom: (position, options) => {
     set(state => {
       const { x, y, z } = position;
       if (state.cameraRef) {
-        state.cameraRef.current.setLookAt(x, 250, y + 200, x, 0, y, true);
-        state.cameraRef.current.zoomTo(1.5, true);
+        state.cameraRef.current.setLookAt(
+          x,
+          250,
+          y + 200,
+          options?.x ?? x,
+          options?.z ?? 0,
+          options?.y ?? y,
+          true,
+        );
+        state.cameraRef.current.zoomTo(options?.level ?? 1.5, true);
       } else {
         console.error(`Camera not initialized...`);
         window.alert("카메라가 없다...");
@@ -40,7 +56,7 @@ export const useCamera = create<CameraState>(set => ({
   },
   zoomFullScreen: () => {
     set(state => {
-      if (state.cameraRef) {
+      if (state.cameraRef?.current) {
         state.cameraRef.current.setLookAt(...DEFAULT_POSITION, 0, 0, 100, true);
         state.cameraRef.current.zoomTo(1, true);
       } else {

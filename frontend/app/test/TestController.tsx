@@ -6,6 +6,8 @@ import { usePirateGraph } from "../room/[gameId]/ingame/stores/graph";
 import { useSystemPrompt } from "../room/[gameId]/ingame/stores/useSystemPrompt";
 import { useCamera } from "../room/[gameId]/ingame/stores/useCamera";
 
+import SelectPirateLocationGrid from "../room/[gameId]/ingame/components/SelectPirateLocationGrid";
+
 import { getNearEdgeIdList, getNode } from "~/_lib/data/data";
 
 export default function TestController() {
@@ -108,6 +110,24 @@ export default function TestController() {
     }
   };
 
+  const handleSelectPirateLocation = () => {
+    const treasures = [36, 45, 175, 185];
+
+    setFooterMessage(
+      <>
+        <div>가령 보물이 {JSON.stringify(treasures)} 노드에 있다고 하자.</div>
+        <SelectPirateLocationGrid
+          nodeIdListOnTreasures={treasures}
+          onSelectLocation={nodeId => {
+            window.alert(`${nodeId}를 선택한 당신..`);
+            setFooterMessage("");
+            zoomFullScreen();
+          }}
+        />
+      </>,
+    );
+  };
+
   return (
     <ContainerStyle>
       <Test>
@@ -152,6 +172,11 @@ export default function TestController() {
           </Button>
           <Button onClick={handleZoomFullScreen}>전체화면</Button>
         </div>
+      </Test>
+      <Test>
+        <Button onClick={handleSelectPirateLocation}>
+          해적이 초기 위치를 설정할 수 있는 그리드
+        </Button>
       </Test>
     </ContainerStyle>
   );
