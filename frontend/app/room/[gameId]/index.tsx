@@ -6,7 +6,7 @@ import { gameSocket } from "~/sockets";
 import useNickname from "~/store/nickname";
 import Image from "next/image";
 
-const { connect, disconnect, subscribe, send } = gameSocket;
+const { subscribe, send } = gameSocket;
 
 export default function Room() {
   const params = useParams() as { gameId: string };
@@ -54,6 +54,7 @@ export default function Room() {
         setPlayers(data.room.inRoomPlayers);
 
         // 풀방 아님
+        console.log("풀방 아님", data.message);
         setIsFull(false);
 
         // 방장 여부 확인
@@ -65,6 +66,7 @@ export default function Room() {
       // 방 최대 인원 입장
       if (data.message == "PREPARE_GAME_START") {
         // 시작하기 버튼 활성화
+        console.log("시작하기 활성화", data.message);
         setIsFull(true);
       }
 
@@ -72,7 +74,6 @@ export default function Room() {
       if (data.message == "START_BUTTON_CLICKED") {
         // 인게임 이동
         router.push(`/room/${gameId}/ingame`);
-        // window.location.href = "/ingame";
       }
 
       // 방장이 아닌데 게임 시작한 경우

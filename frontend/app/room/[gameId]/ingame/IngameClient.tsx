@@ -305,6 +305,8 @@ export default function IngameClient() {
     if (type.includes("pirate")) {
       setHeaderMessage("이동할 위치를 결정하세요");
       zoom(getNode(socketMessage.game.currentPosition[0]).position);
+      console.log(socketMessage.pirateAvailableNode);
+
       // TODO : pirateAvailableNode변수를 이동 가능 노드로 넘겨주기
       // 이동 가능 노드는 푸터와 헤더메시지처럼 빈 상태에서는 비활성화
       // 데이터가 있으면 푸터에 노드번호가 뜨며 호버 할 때 경로 표시
@@ -317,7 +319,7 @@ export default function IngameClient() {
       // }
       setFooterMessage(
         <>
-          {socketMessage.pirateAvailableNode.map((nodeId: any) => (
+          {/* {socketMessage.pirateAvailableNode.map((nodeId: any) => (
             <button
               key={nodeId}
               onClick={() => {
@@ -331,7 +333,7 @@ export default function IngameClient() {
             >
               <p>{nodeId}번 </p>
             </button>
-          ))}
+          ))} */}
         </>,
       );
     } else {
@@ -352,13 +354,15 @@ export default function IngameClient() {
 
   useEffect(() => {
     if (socketMessage) {
-      // console.log("소켓 메세지", socketMessage);
+      console.log("소켓 메세지", socketMessage);
       if (socketMessage.message === "RENDER_COMPLETE_ACCEPTED") {
         // 직업 세팅
         const players = socketMessage.game.players;
         const number = Object.keys(players).filter(
           key => players[key]["nickname"] === nickname,
         );
+        console.log("직업 세팅", number);
+
         setTreasures(socketMessage.game.treasures);
         if (number.includes("0")) {
           setType("pirate");
