@@ -10,10 +10,10 @@ import java.util.HashMap;
 
 @Data
 @Builder
-public class ServerPirateMessage {
+public class ServerMoveMessage {
     private String gameId;
     private String message;
     private Game game;
     private Room room;
-    private HashMap<Integer, Deque<Integer>> pirateAvailableNode;
+    private HashMap<Integer, Deque<Integer>> availableNode;
 }
