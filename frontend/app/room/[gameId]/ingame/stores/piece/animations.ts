@@ -6,6 +6,7 @@ import {
   MoveAnimationStyleTwo,
 } from "./types";
 import { getNode } from "~/_lib/data/data";
+import { useCamera } from "../useCamera";
 
 const jump: Animation = ({ state, position }) => {
   if (!state.piece) {
@@ -50,36 +51,33 @@ const jump: Animation = ({ state, position }) => {
 };
 
 const jumpTwo: AnimationTwo = ({ state, positionList }) => {
-  if (!state.piece || !positionList || positionList.length < 2) {
+  if (!state.piece || !positionList || positionList.length === 0) {
     return { ...state };
   }
 
-  const jumpDuration = 1000; // 전체 점프 시간
-  const jumpHeight = 15; // 점프 높이
-  const intervalDuration = jumpDuration / (positionList.length - 1); // 각 구간별 점프 시간
+  let currentIndex = 1;
 
-  // 각 구간별 점프 실행
-  for (let i = 1; i < positionList.length; i++) {
-    const beforePosition = getNode(positionList[i - 1]);
-    const nextPosition = getNode(positionList[i]).position;
+  const jumpToNextPosition = () => {
+    const currentPosition = getNode(positionList[currentIndex]).position;
+    const moveSpeed = 100;
 
-    new TWEEN.Tween(state.piece.position)
+    new TWEEN.Tween(state.piece!.position)
       .to(
         {
-          x: nextPosition.x,
-          z: nextPosition.y,
+          x: currentPosition.x,
+          z: currentPosition.y,
         },
-        intervalDuration,
+        4 * moveSpeed,
       )
       .easing(TWEEN.Easing.Cubic.Out)
       .start();
 
-    new TWEEN.Tween(state.piece.position)
+    new TWEEN.Tween(state.piece!.position)
       .to(
         {
-          y: state.piece.position.y + jumpHeight,
+          y: state.piece!.position.y + 15,
         },
-        intervalDuration / 4,
+        moveSpeed,
       )
       .easing(TWEEN.Easing.Cubic.Out)
       .start()
@@ -88,15 +86,23 @@ const jumpTwo: AnimationTwo = ({ state, positionList }) => {
           new TWEEN.Tween(state.piece.position)
             .to(
               {
-                y: state.piece.position.y - jumpHeight,
+                y: state.piece.position.y - 15,
               },
-              (intervalDuration * 3) / 4,
+              4 * moveSpeed,
             )
             .easing(TWEEN.Easing.Bounce.Out)
-            .start();
+            .start()
+            .onComplete(() => {
+              currentIndex++;
+              if (currentIndex < positionList.length) {
+                jumpToNextPosition();
+              }
+            });
         }
       });
-  }
+  };
+
+  jumpToNextPosition();
 
   return { ...state };
 };

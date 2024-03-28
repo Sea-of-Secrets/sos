@@ -5,8 +5,9 @@ import { useGLTF } from "../../hooks/useGLTF";
 import { PiecePathMap } from "~/assetPath";
 import { PieceProps } from "./types";
 import PieceEffect from "./PieceEffect";
+import { Vector3, Euler } from "three";
 
-const Z_AXIS_AJ_VALUE = 0;
+// const Z_AXIS_AJ_VALUE = 0;
 
 export default function Piece({
   position,
@@ -48,18 +49,44 @@ export default function Piece({
     }
   }, [hovered]);
 
+  let piecePosition;
+  if (pieceName === "PIRATE") {
+    piecePosition = position
+      ? new Vector3(position.x, position.z, position.y + 10)
+      : undefined;
+  } else if (pieceName === "MARINE1") {
+    piecePosition = position
+      ? new Vector3(position.x, position.z + 6, position.y)
+      : undefined;
+  } else if (pieceName === "MARINE2") {
+    piecePosition = position
+      ? new Vector3(position.x, position.z + 6, position.y)
+      : undefined;
+  } else if (pieceName === "MARINE3") {
+    piecePosition = position
+      ? new Vector3(position.x, position.z + 6, position.y)
+      : undefined;
+  }
+
+  let pieceRotation;
+  if (pieceName === "PIRATE") {
+    pieceRotation = new Euler(0, Math.PI, 0);
+  } else if (pieceName === "MARINE1") {
+    pieceRotation = new Euler(0, Math.PI, 0);
+  } else if (pieceName === "MARINE2") {
+    pieceRotation = new Euler(0, Math.PI, 0);
+  } else if (pieceName === "MARINE3") {
+    pieceRotation = new Euler(0, Math.PI, 0);
+  }
+
   return (
     <>
       <mesh
         {...props}
         ref={meshRef}
-        position={
-          position
-            ? [position.x, position.z + Z_AXIS_AJ_VALUE, position.y]
-            : [0, 0, 0]
-        }
-        rotation={[0, Math.PI, 0]}
-        scale={50}
+        position={piecePosition}
+        rotation={pieceRotation}
+        scale={PiecePathMap[pieceName].size}
         onClick={handleClickPiece}
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}

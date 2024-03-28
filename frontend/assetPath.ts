@@ -9,6 +9,18 @@ export const PiecePathMap = {
   },
   PIRATE: {
     src: "/pirate_ship/scene.gltf",
+    size: 50,
+  },
+  MARINE1: {
+    src: "/marine_ship1/scene.gltf",
+    size: 5,
+  },
+  MARINE2: {
+    src: "/marine_ship2/scene.gltf",
+    size: 5,
+  },
+  MARINE3: {
+    src: "/marine_ship3/scene.gltf",
     size: 5,
   },
 } as const;
