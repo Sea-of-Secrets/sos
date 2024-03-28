@@ -4,7 +4,6 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.*;
 import com.amazonaws.util.IOUtils;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -21,7 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Component
 @Service
-public class S3Uploader {
+public class S3Service {
 
     private final AmazonS3 amazonS3;
 
