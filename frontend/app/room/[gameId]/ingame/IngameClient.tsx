@@ -24,6 +24,7 @@ import {
   useMarineTwoPiece,
   useMarineThreePiece,
 } from "./stores/piece";
+import SelectPirateLocationGrid from "./components/SelectPirateLocationGrid";
 
 const { send } = gameSocket;
 
@@ -90,10 +91,13 @@ export default function IngameClient() {
   const orderInitPirateStart = () => {
     if (socketMessage.game.players[0]["nickname"] === nickname) {
       setHeaderMessage("시작 위치를 결정하세요");
-      // TODO : 푸터에 4가지 선택지 나오고 마우스 호버 시, 카메라 이동
       setFooterMessage(
-        <button
-          onClick={() => {
+        <SelectPirateLocationGrid
+          nodeIdListOnTreasures={Object.keys(treasures).map(nodeIdString =>
+            parseInt(nodeIdString, 10),
+          )}
+          onSelectLocation={() => {
+            console.log(treasures);
             const keys = Object.keys(treasures);
             const randomIndex = Math.floor(Math.random() * keys.length);
             const randomKey = parseInt(keys[randomIndex]);
@@ -105,9 +109,7 @@ export default function IngameClient() {
               node: randomKey, // TODO : 클릭한 노드로 변경
             });
           }}
-        >
-          클릭해주세요
-        </button>,
+        />,
       );
     } else {
       setHeaderMessage(
