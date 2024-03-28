@@ -9,7 +9,7 @@ import useNickname from "~/store/nickname";
 const { connect, subscribe, send, disconnect } = gameSocket;
 
 const SocketProvider = ({ children }: { children: React.ReactNode }) => {
-  const { setSocketMessage } = useSocketMessage();
+  const { setSocketMessage, setChatMessage } = useSocketMessage();
   const { nickname } = useNickname();
   const { gameId } = useGameId();
 
@@ -20,8 +20,10 @@ const SocketProvider = ({ children }: { children: React.ReactNode }) => {
       const localGameId = JSON.parse(gameIdFromLocalStorage).state.gameId;
       subscribe(`/sub/${localGameId}`, message => {
         const data = JSON.parse(message.body);
-        if (data) {
-          console.log("서 > 클", data);
+        console.log("서 > 클", data);
+        if (data.message === "CHATTING") {
+          setChatMessage(data);
+        } else {
           setSocketMessage(data);
         }
       });
