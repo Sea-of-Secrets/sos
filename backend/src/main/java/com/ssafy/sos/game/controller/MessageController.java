@@ -249,7 +249,6 @@ public class MessageController {
                     .room(room)
                     .message("PLAYER_LEAVED")
                     .build();
-
             sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
         }
     }
@@ -289,6 +288,17 @@ public class MessageController {
         sendingOperations.convertAndSend("/sub/" + gameId, serverArrestMessage);
     }
 
+    private void sendMessageWithArrestTriedNode(String gameId, Game game, String message, int triedNode) {
+        ServerArrestMessage serverArrestMessage;
+        serverArrestMessage = ServerArrestMessage.builder()
+                .gameId(gameId)
+                .message(message)
+                .arrestTriedNode(triedNode)
+                .game(game)
+                .build();
+        sendingOperations.convertAndSend("/sub/" + gameId, serverArrestMessage);
+    }
+
     // 시작 위치 지정 제한 시간 초과
     private void initResponseTimeOut(String gameId, Game game, GameRole role) {
         // 응답 잠그기
@@ -296,12 +306,18 @@ public class MessageController {
         // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
         sendMessageWithGame(gameId, game, "INIT_"+role+"_START_TIME_OUT");
         // 시작위치 랜덤 지정
-        gameService.initMarineStartRandom(gameId, role.getRoleNumber());
+        if (role == GameRole.PIRATE) {
+            gameService.initPirateRandomStart(gameId);
+        }
+        else {
+            gameService.initMarineStartRandom(gameId, role.getRoleNumber());
+        }
         // 해적 시작위치 지정완료 브로드캐스트 (서 -> 클)
         sendMessageWithGame(gameId, game, "ACTION_INIT_"+role+"_START");
         // 2초 타이머 시작
         if (role == GameRole.MARINE_THREE) {
-            gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_"+role.getNextRole());
+            // 해군 3 시작위치 지정 후 8초 기다려야 함
+            gameTimerService.afterInitTimer(gameId, "READY_MOVE_"+role.getNextRole());
         } else {
             gameTimerService.startRenderWaitingTimer(gameId, "READY_INIT_"+role.getNextRole()+"_START");
         }
@@ -309,7 +325,7 @@ public class MessageController {
 
     // 시작위치 렌더 타이머 종료
     private void initRenderTimeOut(String gameId, Game game, GameRole role) {
-        // 해군1 시작위치 지정 (서 -> 클)
+        // 시작위치 지정 (서 -> 클)
         sendMessageWithGame(gameId, game, "ORDER_INIT_"+role+"_START");
         // 응답 허용
         lockRespond = false;
@@ -345,7 +361,7 @@ public class MessageController {
         }
     }
 
-    // 이동 렌더타이머 종료
+    // 이동 렌더 타이머 종료
     private void moveRenderTimeOut(String gameId, Game game, GameRole role) {
         HashMap<Integer, Deque<Integer>> availableNode;
         if (role == GameRole.PIRATE) {
@@ -375,8 +391,12 @@ public class MessageController {
             game.getInvestigate().setNodes(null);
             game.getInvestigate().setSuccess(false);
             // 2초 타이머 시작
-            // TODO: 해군3은 로직이 다름
-            gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_"+role.getNextRole());
+            if (role == GameRole.MARINE_THREE) {
+                gameTimerService.startRenderWaitingTimer(gameId, "READY_TURN_OVER");
+            }
+            else {
+                gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_"+role.getNextRole());
+            }
         }
         // 조사 실패
         else {
@@ -394,8 +414,119 @@ public class MessageController {
                 // investigate 초기화
                 game.getInvestigate().setNodes(null);
                 game.getInvestigate().setSuccess(false);
+
                 // 2초 타이머 시작
-                // TODO: 해군3은 로직이 다름
+                if (role == GameRole.MARINE_THREE) {
+                    gameTimerService.startRenderWaitingTimer(gameId, "READY_TURN_OVER");
+                }
+                else {
+                    gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_"+role.getNextRole());
+                }
+            }
+        }
+    }
+
+    // 이동 -> 행동선택 2초 타이머 경과 후
+    private void moveToSelectRenderTimeOut(String gameId, Game game, GameRole role) {
+        // 해군 조사 또는 체포 선택 (서 -> 클)
+        sendMessageWithGame(gameId, game, "ORDER_SELECT_WORK_"+role);
+        // 응답 허용
+        lockRespond = false;
+        // 15초 타이머 시작
+        gameTimerService.startResponseWaitingTimer(gameId, "SELECT_WORK_"+role+"_TIME_OUT");
+    }
+
+    // 행동선택 응답 제한시간 초과
+    private void selectResponseTimeOut(String gameId, Game game, GameRole role) {
+        // 응답 잠그기
+        lockRespond = true;
+        // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
+        sendMessageWithGame(gameId, game, "SELECT_WORK_"+role+"_TIME_OUT");
+        // 응답이 없을 경우 행동은 항상 조사, 해군 행동 선택완료 브로드캐스트 (서 -> 클)
+        sendMessageWithGame(gameId, game,"ACTION_SELECT_WORK_"+role+"_INVESTIGATE");
+        // 2초 타이머 시작
+        gameTimerService.startRenderWaitingTimer(gameId, "READY_INVESTIGATE_"+role);
+    }
+
+    // 행동선택 -> 조사 2초 타이머 경과 후
+    private void investigateRenderTimeOut(String gameId, Game game, GameRole role) {
+        // 조사 가능한 노드 조회
+        gameService.findMarineInvestigableNode(gameId, role.getRoleNumber());
+        // 해군 조사 명령 (서 -> 클)
+        sendMessageWithGame(gameId, game, "ORDER_INVESTIGATE_"+role);
+        // 응답 허용
+        lockRespond = false;
+        // 15초 타이머 시작
+        gameTimerService.startResponseWaitingTimer(gameId, "INVESTIGATE_"+role+"_TIME_OUT");
+    }
+
+    // 조사 응답 제한 시간 초과
+    private Integer investigateResponseTimeOut(String gameId, Game game, GameRole role) {
+        // 응답 잠그기
+        lockRespond = true;
+        // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
+        sendMessageWithGame(gameId, game, "INVESTIGATE_"+role+"_TIME_OUT");
+        // 선택 가능한 노드 들 중 하나 랜덤 선택
+        Integer nextNode = null;
+        for (Integer node : game.getInvestigate().getNodes().keySet()) {
+            if (!game.getInvestigate().getNodes().get(node)) {
+                nextNode = node;
+                break;
+            }
+        }
+        // 더 이상 조사할 노드가 없으면
+        if (nextNode == null) {
+            // 해군 조사 실패 브로드캐스트 (서 -> 클)
+            sendMessageWithGame(gameId, game, "ACTION_INVESTIGATE_"+role+"_ALL_FAILED");
+            // investigate 초기화
+            game.getInvestigate().setNodes(null);
+            game.getInvestigate().setSuccess(false);
+            // 2초 타이머 시작
+            if (role == GameRole.MARINE_THREE) {
+                gameTimerService.startRenderWaitingTimer(gameId, "READY_TURN_OVER");
+            } else {
+                gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_" + role.getNextRole());
+            }
+        }
+        return nextNode;
+    }
+
+    // 행동선택 -> 체포 2초 타이머 경과 후
+    private void arrestRenderTimeOut(String gameId, Game game, GameRole role) {
+        // 조사 가능한 노드 조회
+        int[] arrestableNode = gameService.findMarineArrestableNode(gameId, role.getRoleNumber());
+        // 해군 체포 명령 (서 -> 클)
+        sendMessageWithArrestableNode(gameId, game, "ORDER_ARREST_"+role, arrestableNode);
+        // 응답 허용
+        lockRespond = false;
+        // 15초 타이머 시작
+        gameTimerService.startResponseWaitingTimer(gameId, "ARREST_"+role+"_TIME_OUT");
+    }
+
+    // 체포 응답 제한 시간 초과
+    private void arrestResponseTimeOut(String gameId, Game game, GameRole role) {
+        // 응답 잠그기
+        lockRespond = true;
+        // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
+        sendMessageWithGame(gameId, game, "ARREST_"+role+"_TIME_OUT");
+        // 랜덤 위치 지정하여 체포 조사하기 (서 -> 클)
+        int[] arrestableNode = gameService.findMarineArrestableNode(gameId, role.getRoleNumber());
+        // 체포 성공여부 확인
+        boolean isArrestSuccess = gameService.arrest(gameId, arrestableNode[0]);
+        // 체포 성공 시 게임 종료
+        if (isArrestSuccess) {
+            // 게임종료 (해군 승리) 브로드캐스트 (서 -> 클)
+            sendMessageWithGame(gameId, game,"GAME_OVER_"+role+"_ARREST_SUCCESS");
+            gameService.gameOver(gameId, false);
+        }
+        // 체포 실패 시 게임 진행
+        else {
+            // 해군 체포 실패 브로드캐스트 (서 -> 클)
+            sendMessageWithArrestTriedNode(gameId, game, "ACTION_ARREST_"+role+"_FAIL", arrestableNode[0]);
+            // 2초 타이머 시작
+            if (role == GameRole.MARINE_THREE) {
+                gameTimerService.startRenderWaitingTimer(gameId, "READY_TURN_OVER");
+            } else {
                 gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_"+role.getNextRole());
             }
         }
@@ -465,104 +596,38 @@ public class MessageController {
 
         // 2초 타이머 경과 (해군 1 이동 -> 해군 1 조사 or 체포 선택)
         if (message.equals("READY_SELECT_WORK_MARINE_ONE")) {
-            // 해군 1 조사 또는 체포 선택 (서 -> 클)
-            sendMessageWithGame(gameId, game, "ORDER_SELECT_WORK_MARINE_ONE");
-            // 응답 허용
-            lockRespond = false;
-            // 15초 타이머 시작
-            gameTimerService.startResponseWaitingTimer(gameId, "SELECT_WORK_MARINE_ONE_TIME_OUT");
+            moveToSelectRenderTimeOut(gameId, game, GameRole.MARINE_ONE);
         }
 
         // 해군 1 행동 선택 응답 제한시간 초과
         if (message.equals("SELECT_WORK_MARINE_ONE_TIME_OUT")) {
-            // 응답 잠그기
-            lockRespond = true;
-            // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
-            sendMessageWithGame(gameId, game, "SELECT_WORK_MARINE_ONE_TIME_OUT");
-            // 응답이 없을 경우 행동은 항상 조사, 해군 1 행동 선택완료 브로드캐스트 (서 -> 클)
-            sendMessageWithGame(gameId, game,"ACTION_SELECT_WORK_MARINE_ONE_INVESTIGATE");
-            // 2초 타이머 시작
-            gameTimerService.startRenderWaitingTimer(gameId, "READY_INVESTIGATE_MARINE_ONE");
+            selectResponseTimeOut(gameId, game, GameRole.MARINE_ONE);
         }
 
         // 조사 선택시
         // 2초 타이머 경과 (해군 1 행동 선택 -> 해군 1 조사)
         if (message.equals("READY_INVESTIGATE_MARINE_ONE")) {
-            // 조사 가능한 노드 조회
-            gameService.findMarineInvestigableNode(gameId, 1);
-            // 해군 1 조사 명령 (서 -> 클)
-            sendMessageWithGame(gameId, game, "ORDER_INVESTIGATE_MARINE_ONE");
-            // 응답 허용
-            lockRespond = false;
-            // 15초 타이머 시작
-            gameTimerService.startResponseWaitingTimer(gameId, "INVESTIGATE_MARINE_ONE_TIME_OUT");
+            investigateRenderTimeOut(gameId, game, GameRole.MARINE_ONE);
         }
 
         // 해군 1 조사 응답 제한시간 초과
         if (message.equals("INVESTIGATE_MARINE_ONE_TIME_OUT")) {
-            // 응답 잠그기
-            lockRespond = true;
-            // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
-            sendMessageWithGame(gameId, game, "INVESTIGATE_MARINE_ONE_TIME_OUT");
-            // 선택 가능한 노드 들 중 하나 랜덤 선택
-            Integer nextNode = null;
-            for (Integer node : game.getInvestigate().getNodes().keySet()) {
-                if (!game.getInvestigate().getNodes().get(node)) {
-                    nextNode = node;
-                    break;
-                }
+            Integer nextNode = investigateResponseTimeOut(gameId, game, GameRole.MARINE_ONE);
+            // 조사할 노드가 남아 있으면
+            if (nextNode != null) {
+                // 조사 진행
+                marineInvestigate(gameId, game, GameRole.MARINE_ONE, nextNode);
             }
-            // 더 이상 조사할 노드가 없으면
-            if (nextNode == null) {
-                // 해군 1 조사 실패 브로드캐스트 (서 -> 클)
-                sendMessageWithGame(gameId, game, "ACTION_INVESTIGATE_MARINE_ONE_ALL_FAILED");
-                // investigate 초기화
-                game.getInvestigate().setNodes(null);
-                game.getInvestigate().setSuccess(false);
-                // 2초 타이머 시작
-                gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_MARINE_TWO");
-                return;
-            }
-            // 조사 진행
-            marineInvestigate(gameId, game, GameRole.MARINE_ONE, nextNode);
         }
 
         // 2초 타이머 경과 (해군 1 행동 선택 -> 해군 1 체포)
         if (message.equals("READY_ARREST_MARINE_ONE")) {
-            // 조사 가능한 노드 조회
-            int[] arrestableNode = gameService.findMarineArrestableNode(gameId, 1);
-            // 해군 1 체포 명령 (서 -> 클)
-            sendMessageWithArrestableNode(gameId, game, "ORDER_ARREST_MARINE_ONE", arrestableNode);
-            // 응답 허용
-            lockRespond = false;
-            // 15초 타이머 시작
-            gameTimerService.startResponseWaitingTimer(gameId, "ARREST_MARINE_ONE_TIME_OUT");
+            arrestRenderTimeOut(gameId, game, GameRole.MARINE_ONE);
         }
 
         // 해군 1 체포 응답 제한시간 초과
         if (message.equals("ARREST_MARINE_ONE_TIME_OUT")) {
-            // 응답 잠그기
-            lockRespond = true;
-            // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
-            sendMessageWithGame(gameId, game, "ARREST_MARINE_ONE_TIME_OUT");
-            // 랜덤 위치 지정하여 체포 조사하기 (서 -> 클)
-            int[] arrestableNode = gameService.findMarineArrestableNode(gameId, 1);
-            // 체포 성공여부 확인
-            boolean isArrestSuccess = gameService.arrest(gameId, arrestableNode[0]);
-            // 체포 성공 시 게임 종료
-            if (isArrestSuccess) {
-                // 게임종료 (해군 승리) 브로드캐스트 (서 -> 클)
-                sendMessageWithGame(gameId, game,"ACTION_ARREST_MARINE_ONE_SUCCESS");
-                sendMessageWithGame(gameId, game,"GAME_OVER_MARINE_WIN");
-                gameService.gameOver(gameId, false);
-            }
-            // 체포 실패 시 게임 진행
-            else {
-                // 해군 1 체포 실패 브로드캐스트 (서 -> 클)
-                sendMessageWithGame(gameId, game, "ACTION_ARREST_MARINE_ONE_FAIL");
-                // 2초 타이머 시작
-                gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_MARINE_TWO");
-            }
+            arrestResponseTimeOut(gameId, game, GameRole.MARINE_ONE);
         }
 
         // 2초 타이머 경과 (해군 1 조사 또는 체포 -> 해군 2 이동)
@@ -577,104 +642,38 @@ public class MessageController {
 
         // 2초 타이머 경과 (해군 2 이동 -> 해군 2 조사 or 체포 선택)
         if (message.equals("READY_SELECT_WORK_MARINE_TWO")) {
-            // 해군 2 조사 또는 체포 선택 (서 -> 클)
-            sendMessageWithGame(gameId, game, "ORDER_SELECT_WORK_MARINE_TWO");
-            // 응답 허용
-            lockRespond = false;
-            // 15초 타이머 시작
-            gameTimerService.startResponseWaitingTimer(gameId, "SELECT_WORK_MARINE_TWO_TIME_OUT");
+            moveToSelectRenderTimeOut(gameId, game, GameRole.MARINE_TWO);
         }
 
         // 해군 2 행동 선택 응답 제한시간 초과
         if (message.equals("SELECT_WORK_MARINE_TWO_TIME_OUT")) {
-            // 응답 잠그기
-            lockRespond = true;
-            // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
-            sendMessageWithGame(gameId, game, "SELECT_WORK_MARINE_TWO_TIME_OUT");
-            // 응답이 없을 경우 행동은 항상 조사, 해군 2 행동 선택완료 브로드캐스트 (서 -> 클)
-            sendMessageWithGame(gameId, game,"ACTION_SELECT_WORK_MARINE_TWO_INVESTIGATE");
-            // 2초 타이머 시작
-            gameTimerService.startRenderWaitingTimer(gameId, "READY_INVESTIGATE_MARINE_TWO");
+            selectResponseTimeOut(gameId, game, GameRole.MARINE_TWO);
         }
 
         // 조사 선택시
         // 2초 타이머 경과 (해군 2 행동 선택 -> 해군 2 조사)
         if (message.equals("READY_INVESTIGATE_MARINE_TWO")) {
-            // 조사 가능한 노드 조회
-            gameService.findMarineInvestigableNode(gameId, 2);
-            // 해군 2 조사 명령 (서 -> 클)
-            sendMessageWithGame(gameId, game, "ORDER_INVESTIGATE_MARINE_TWO");
-            // 응답 허용
-            lockRespond = false;
-            // 15초 타이머 시작
-            gameTimerService.startResponseWaitingTimer(gameId, "INVESTIGATE_MARINE_TWO_TIME_OUT");
+            investigateRenderTimeOut(gameId, game, GameRole.MARINE_TWO);
         }
 
         // 해군 2 조사 응답 제한시간 초과
         if (message.equals("INVESTIGATE_MARINE_TWO_TIME_OUT")) {
-            // 응답 잠그기
-            lockRespond = true;
-            // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
-            sendMessageWithGame(gameId, game, "INVESTIGATE_MARINE_TWO_TIME_OUT");
-            // 선택 가능한 노드 들 중 하나 랜덤 선택
-            Integer nextNode = null;
-            for (Integer node : game.getInvestigate().getNodes().keySet()) {
-                if (!game.getInvestigate().getNodes().get(node)) {
-                    nextNode = node;
-                    break;
-                }
+            Integer nextNode = investigateResponseTimeOut(gameId, game, GameRole.MARINE_TWO);
+            // 조사할 노드가 남아 있으면
+            if (nextNode != null) {
+                // 조사 진행
+                marineInvestigate(gameId, game, GameRole.MARINE_TWO, nextNode);
             }
-            // 더 이상 조사할 노드가 없으면
-            if (nextNode == null) {
-                // 해군 2 조사 실패 브로드캐스트 (서 -> 클)
-                sendMessageWithGame(gameId, game, "ACTION_INVESTIGATE_MARINE_TWO_ALL_FAILED");
-                // investigate 초기화
-                game.getInvestigate().setNodes(null);
-                game.getInvestigate().setSuccess(false);
-                // 2초 타이머 시작
-                gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_MARINE_THREE");
-                return;
-            }
-            // 조사 진행
-            marineInvestigate(gameId, game, GameRole.MARINE_TWO, nextNode);
         }
 
         // 2초 타이머 경과 (해군 2 행동 선택 -> 해군 2 체포)
         if (message.equals("READY_ARREST_MARINE_TWO")) {
-            // 조사 가능한 노드 조회
-            int[] arrestableNode = gameService.findMarineArrestableNode(gameId, 2);
-            // 해군 2 체포 명령 (서 -> 클)
-            sendMessageWithArrestableNode(gameId, game, "ORDER_ARREST_MARINE_TWO", arrestableNode);
-            // 응답 허용
-            lockRespond = false;
-            // 15초 타이머 시작
-            gameTimerService.startResponseWaitingTimer(gameId, "ARREST_MARINE_TWO_TIME_OUT");
+            arrestRenderTimeOut(gameId, game, GameRole.MARINE_TWO);
         }
 
         // 해군 2 체포 응답 제한시간 초과
         if (message.equals("ARREST_MARINE_TWO_TIME_OUT")) {
-            // 응답 잠그기
-            lockRespond = true;
-            // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
-            sendMessageWithGame(gameId, game, "ARREST_MARINE_TWO_TIME_OUT");
-            // 랜덤 위치 지정하여 체포 조사하기 (서 -> 클)
-            int[] arrestableNode = gameService.findMarineArrestableNode(gameId, 2);
-            // 체포 성공여부 확인
-            boolean isArrestSuccess = gameService.arrest(gameId, arrestableNode[0]);
-            // 체포 성공 시 게임 종료
-            if (isArrestSuccess) {
-                // 게임종료 (해군 승리) 브로드캐스트 (서 -> 클)
-                sendMessageWithGame(gameId, game,"ACTION_ARREST_MARINE_TWO_SUCCESS");
-                sendMessageWithGame(gameId, game,"GAME_OVER_MARINE_WIN");
-                gameService.gameOver(gameId, false);
-            }
-            // 체포 실패 시 게임 진행
-            else {
-                // 해군 2 체포 실패 브로드캐스트 (서 -> 클)
-                sendMessageWithGame(gameId, game, "ACTION_ARREST_MARINE_TWO_FAIL");
-                // 2초 타이머 시작
-                gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_MARINE_THREE");
-            }
+            arrestResponseTimeOut(gameId, game, GameRole.MARINE_TWO);
         }
 
         // 2초 타이머 경과 (해군 2 조사 또는 체포 -> 해군 3 이동)
@@ -689,103 +688,79 @@ public class MessageController {
 
         // 2초 타이머 경과 (해군 3 이동 -> 해군 3 조사 or 체포 선택)
         if (message.equals("READY_SELECT_WORK_MARINE_THREE")) {
-            // 해군 3 조사 또는 체포 선택 (서 -> 클)
-            sendMessageWithGame(gameId, game, "ORDER_SELECT_WORK_MARINE_THREE");
-            // 응답 허용
-            lockRespond = false;
-            // 15초 타이머 시작
-            gameTimerService.startResponseWaitingTimer(gameId, "SELECT_WORK_MARINE_THREE_TIME_OUT");
+            moveToSelectRenderTimeOut(gameId, game, GameRole.MARINE_THREE);
         }
 
         // 해군 3 행동 선택 응답 제한시간 초과
         if (message.equals("SELECT_WORK_MARINE_THREE_TIME_OUT")) {
-            // 응답 잠그기
-            lockRespond = true;
-            // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
-            sendMessageWithGame(gameId, game, "SELECT_WORK_MARINE_THREE_TIME_OUT");
-            // 응답이 없을 경우 행동은 항상 조사, 해군 3 행동 선택완료 브로드캐스트 (서 -> 클)
-            sendMessageWithGame(gameId, game,"ACTION_SELECT_WORK_MARINE_THREE_INVESTIGATE");
-            // 2초 타이머 시작
-            gameTimerService.startRenderWaitingTimer(gameId, "READY_INVESTIGATE_MARINE_THREE");
+            selectResponseTimeOut(gameId, game, GameRole.MARINE_THREE);
         }
 
         // 조사 선택시
         // 2초 타이머 경과 (해군 3 행동 선택 -> 해군 3 조사)
         if (message.equals("READY_INVESTIGATE_MARINE_THREE")) {
-            // 조사 가능한 노드 조회
-            gameService.findMarineInvestigableNode(gameId, 3);
-            // 해군 3 조사 명령 (서 -> 클)
-            sendMessageWithGame(gameId, game, "ORDER_INVESTIGATE_MARINE_THREE");
-            // 응답 허용
-            lockRespond = false;
-            // 15초 타이머 시작
-            gameTimerService.startResponseWaitingTimer(gameId, "INVESTIGATE_MARINE_THREE_TIME_OUT");
+            investigateRenderTimeOut(gameId, game, GameRole.MARINE_THREE);
         }
 
         // 해군 3 조사 응답 제한시간 초과
         if (message.equals("INVESTIGATE_MARINE_THREE_TIME_OUT")) {
-            // 응답 잠그기
-            lockRespond = true;
-            // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
-            sendMessageWithGame(gameId, game, "INVESTIGATE_MARINE_THREE_TIME_OUT");
-            // 선택 가능한 노드 들 중 하나 랜덤 선택
-            Integer nextNode = null;
-            for (Integer node : game.getInvestigate().getNodes().keySet()) {
-                if (!game.getInvestigate().getNodes().get(node)) {
-                    nextNode = node;
-                    break;
-                }
+            Integer nextNode = investigateResponseTimeOut(gameId, game, GameRole.MARINE_THREE);
+            // 조사할 노드가 남아 있으면
+            if (nextNode != null) {
+                // 조사 진행
+                marineInvestigate(gameId, game, GameRole.MARINE_THREE, nextNode);
             }
-            // 더 이상 조사할 노드가 없으면
-            if (nextNode == null) {
-                // 해군 3 조사 실패 브로드캐스트 (서 -> 클)
-                sendMessageWithGame(gameId, game, "ACTION_INVESTIGATE_MARINE_THREE_ALL_FAILED");
-                // investigate 초기화
-                game.getInvestigate().setNodes(null);
-                game.getInvestigate().setSuccess(false);
-                // 2초 타이머 시작
-                gameTimerService.startRenderWaitingTimer(gameId, "READY_TURN_OVER");
-                return;
-            }
-            // 조사 진행
-            marineInvestigate(gameId, game, GameRole.MARINE_THREE, nextNode);
         }
 
         // 2초 타이머 경과 (해군 3 행동 선택 -> 해군 3 체포)
         if (message.equals("READY_ARREST_MARINE_THREE")) {
-            // 조사 가능한 노드 조회
-            int[] arrestableNode = gameService.findMarineArrestableNode(gameId, 3);
-            // 해군 3 체포 명령 (서 -> 클)
-            sendMessageWithArrestableNode(gameId, game, "ORDER_ARREST_MARINE_THREE", arrestableNode);
-            // 응답 허용
-            lockRespond = false;
-            // 15초 타이머 시작
-            gameTimerService.startResponseWaitingTimer(gameId, "ARREST_MARINE_THREE_TIME_OUT");
+            arrestRenderTimeOut(gameId, game, GameRole.MARINE_THREE);
         }
 
         // 해군 3 체포 응답 제한시간 초과
         if (message.equals("ARREST_MARINE_THREE_TIME_OUT")) {
-            // 응답 잠그기
-            lockRespond = true;
-            // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
-            sendMessageWithGame(gameId, game, "ARREST_MARINE_THREE_TIME_OUT");
-            // 랜덤 위치 지정하여 체포 조사하기 (서 -> 클)
-            int[] arrestableNode = gameService.findMarineArrestableNode(gameId, 3);
-            // 체포 성공여부 확인
-            boolean isArrestSuccess = gameService.arrest(gameId, arrestableNode[0]);
-            // 체포 성공 시 게임 종료
-            if (isArrestSuccess) {
-                // 게임종료 (해군 승리) 브로드캐스트 (서 -> 클)
-                sendMessageWithGame(gameId, game,"ACTION_ARREST_MARINE_THREE_SUCCESS");
-                sendMessageWithGame(gameId, game,"GAME_OVER_MARINE_WIN");
-                gameService.gameOver(gameId, false);
-            }
-            // 체포 실패 시 게임 진행
+            arrestResponseTimeOut(gameId, game, GameRole.MARINE_THREE);
+        }
+
+        // 턴 종료 로직 수행
+        if (message.equals("READY_TURN_OVER")) {
+            // 해적이 보물상자에 도착했는가?
+            // 도착했다면
+            if (game.getTreasures().containsKey(game.getCurrentPosition()[0])) {
+                // 해당 보물상자 열어주기
+                game.getTreasures().put(game.getCurrentPosition()[0], true);
+                // 라운드 + 1
+                game.increaseRound();
+                if (game.getRound() > 4) {
+                    // 4라운드 종료, 해적 승리, 게임 종료 알림
+                    sendMessageWithGame(gameId, game, "GAME_OVER_PIRATE_WIN");
+                    gameService.gameOver(gameId, true);
+                } else {
+                    // 라운드 종료 알림
+                    sendMessageWithGame(gameId, game, "ROUND_OVER");
+                    // 턴 초기화
+                    game.setTurn(1);
+                    // 맵 초기화
+                    game.getPirateRoute().clear();
+                    game.getInvestigateSuccess().clear();
+                    // 해적 이동으로 보내기 (2초 타이머 실행)
+                    gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_PIRATE");
+                    }
+                }
+            // 해적이 보물상자에 도착하지 않았다면
             else {
-                // 해군 3 체포 실패 브로드캐스트 (서 -> 클)
-                sendMessageWithGame(gameId, game, "ACTION_ARREST_MARINE_THREE_FAIL");
-                // 2초 타이머 시작
-                gameTimerService.startRenderWaitingTimer(gameId, "READY_TURN_OVER");
+                // 턴 + 1
+                game.increaseTurn();
+                // 15턴을 넘어간다면 (보물상자에 도착하지 못했으므로 해군 승리)
+                if (game.getTurn() > 15) {
+                    sendMessageWithGame(gameId, game, "GAME_OVER_FIFTEEN_TURN_OVER_MARINE_WIN");
+                    gameService.gameOver(gameId, false);
+                } else {
+                    // 턴 종료 알림
+                    sendMessageWithGame(gameId, game, "TURN_OVER");
+                    // 해적 이동으로 보내기 (2초 타이머 실행)
+                    gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_PIRATE");
+                }
             }
         }
     }
@@ -809,7 +784,8 @@ public class MessageController {
         sendMessageWithGame(gameId, game, "ACTION_INIT_"+role+"_START");
         // 2초 타이머 시작
         if (role == GameRole.MARINE_THREE) {
-            gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_"+role.getNextRole());
+            // 해군 3 시작위치 지정 후 8초 기다려야 함
+            gameTimerService.afterInitTimer(gameId, "READY_MOVE_"+role.getNextRole());
         } else {
             gameTimerService.startRenderWaitingTimer(gameId, "READY_INIT_"+role.getNextRole()+"_START");
         }
@@ -944,14 +920,13 @@ public class MessageController {
             // 체포 성공 시 게임 종료
             if (isArrestSuccess) {
                 // 게임종료 (해군 승리) 브로드캐스트 (서 -> 클)
-                sendMessageWithGame(gameId, game,"ACTION_ARREST_MARINE_ONE_SUCCESS");
-                sendMessageWithGame(gameId, game,"GAME_OVER_MARINE_WIN");
+                sendMessageWithGame(gameId, game,"GAME_OVER_MARINE_ONE_ARREST_SUCCESS");
                 gameService.gameOver(gameId, false);
             }
             // 체포 실패 시 게임 진행
             else {
                 // 해군 1 체포 실패 브로드캐스트 (서 -> 클)
-                sendMessageWithGame(gameId, game, "ACTION_ARREST_MARINE_ONE_FAIL");
+                sendMessageWithArrestTriedNode(gameId, game, "ACTION_ARREST_MARINE_ONE_FAIL", message.getNode());
                 // 2초 타이머 시작
                 gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_MARINE_TWO");
             }
@@ -1008,14 +983,13 @@ public class MessageController {
             // 체포 성공 시 게임 종료
             if (isArrestSuccess) {
                 // 게임종료 (해군 승리) 브로드캐스트 (서 -> 클)
-                sendMessageWithGame(gameId, game,"ACTION_ARREST_MARINE_TWO_SUCCESS");
-                sendMessageWithGame(gameId, game,"GAME_OVER_MARINE_WIN");
+                sendMessageWithGame(gameId, game,"GAME_OVER_MARINE_TWO_ARREST_SUCCESS");
                 gameService.gameOver(gameId, false);
             }
             // 체포 실패 시 게임 진행
             else {
                 // 해군 2 체포 실패 브로드캐스트 (서 -> 클)
-                sendMessageWithGame(gameId, game, "ACTION_ARREST_MARINE_TWO_FAIL");
+                sendMessageWithArrestTriedNode(gameId, game, "ACTION_ARREST_MARINE_TWO_FAIL", message.getNode());
                 // 2초 타이머 시작
                 gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_MARINE_THREE");
             }
@@ -1072,14 +1046,13 @@ public class MessageController {
             // 체포 성공 시 게임 종료
             if (isArrestSuccess) {
                 // 게임종료 (해군 승리) 브로드캐스트 (서 -> 클)
-                sendMessageWithGame(gameId, game,"ACTION_ARREST_MARINE_THREE_SUCCESS");
-                sendMessageWithGame(gameId, game,"GAME_OVER_MARINE_WIN");
+                sendMessageWithGame(gameId, game,"GAME_OVER_MARINE_THREE_ARREST_SUCCESS");
                 gameService.gameOver(gameId, false);
             }
             // 체포 실패 시 게임 진행
             else {
                 // 해군 3 체포 실패 브로드캐스트 (서 -> 클)
-                sendMessageWithGame(gameId, game, "ACTION_ARREST_MARINE_THREE_FAIL");
+                sendMessageWithArrestTriedNode(gameId, game, "ACTION_ARREST_MARINE_THREE_FAIL", message.getNode());
                 // 2초 타이머 시작
                 gameTimerService.startRenderWaitingTimer(gameId, "READY_TURN_OVER");
             }
