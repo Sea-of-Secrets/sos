@@ -19,6 +19,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import static com.ssafy.sos.user.CustomSuccessHandler.createCookie;
+
 @RequiredArgsConstructor
 @Slf4j
 public class JWTFilter extends OncePerRequestFilter {
@@ -29,7 +31,18 @@ public class JWTFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, IOException {
-        String accessToken = request.getHeader("access");
+        Cookie[] cookiesForAccess = request.getCookies();
+        String accessToken = null;
+        if (cookiesForAccess == null) {
+            log.info("Cookies are null. Guest.");
+            filterChain.doFilter(request, response);
+            return;
+        }
+        for (Cookie cookie : cookiesForAccess) {
+            if (cookie.getName().equals("access")) {
+                accessToken = cookie.getValue();
+            }
+        }
 
         if (accessToken == null) {
             log.info("access token is null. Guest.");
@@ -174,7 +187,7 @@ public class JWTFilter extends OncePerRequestFilter {
             String newRefresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
 
             //response
-            response.setHeader("access", newAccess);
+            response.addCookie(createCookie("access", newAccess));
             Cookie refreshCookie = new Cookie("refresh", newRefresh);
             refreshCookie.setMaxAge(24*60*60);
             //cookie.setSecure(true);

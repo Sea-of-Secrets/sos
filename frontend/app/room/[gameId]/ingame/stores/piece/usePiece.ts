@@ -1,7 +1,7 @@
 import { create } from "zustand";
 
 import { PieceState } from "./types";
-import { AnimationMap } from "./animations";
+import { AnimationMap, AnimationMapTwo } from "./animations";
 
 export const createUsePiece = () =>
   create<PieceState>(set => ({
@@ -13,6 +13,11 @@ export const createUsePiece = () =>
     movePiece: ({ position, moveAnimationStyle }) => {
       set(state => {
         return AnimationMap[moveAnimationStyle]({ state, position });
+      });
+    },
+    movePieceTwo: ({ positionList, moveAnimationStyle }) => {
+      set(state => {
+        return AnimationMapTwo[moveAnimationStyle]({ state, positionList });
       });
     },
     position: null,

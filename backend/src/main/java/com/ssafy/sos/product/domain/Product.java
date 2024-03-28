@@ -1,35 +1,48 @@
 package com.ssafy.sos.product.domain;
 
-import com.ssafy.sos.user.domain.UserEntity;
+import com.ssafy.sos.global.Entity.BaseEntity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 @Entity
+@Table(name = "product")
 @Getter
-@Setter
-@ToString
-public class Product {
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Product extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "product_id")
+    private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private UserEntity user;
-
-    private String nftId;
-
-    private String title;
+    private String name;
 
     private String description;
 
     @Column(length = 1024)
     private String imageUrl;
 
-    private Long price;
+    private String imageName;
 
+    @ColumnDefault("false")
+    private Boolean isUnique;
+
+    @ColumnDefault("false")
     private Boolean isSoldOut;
+
+    @Builder
+    private Product(Integer id, String name, String description, String imageUrl, String imageName, Boolean isUnique, Boolean isSoldOut) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.imageUrl = imageUrl;
+        this.imageName = imageName;
+        this.isUnique = isUnique;
+        this.isSoldOut = isSoldOut;
+    }
+
+    public void soldOut() {
+        this.isSoldOut = true;
+    }
 }
