@@ -24,7 +24,7 @@ export default function SelectPirateLocationGrid({
       const nodeId = LocationToNodeIdMap[location];
       const { position } = getNode(nodeId);
       zoom(position, {
-        level: 1,
+        level: 2,
       });
     },
     [LocationToNodeIdMap, zoom],

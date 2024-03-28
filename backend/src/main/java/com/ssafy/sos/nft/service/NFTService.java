@@ -1,6 +1,6 @@
 package com.ssafy.sos.nft.service;
 
-import com.ssafy.sos.global.S3.S3Uploader;
+import com.ssafy.sos.global.S3.S3Service;
 import com.ssafy.sos.product.domain.Product;
 import com.ssafy.sos.user.domain.CustomOAuth2User;
 import com.ssafy.sos.user.domain.UserEntity;
@@ -20,14 +20,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -36,7 +34,7 @@ public class NFTService {
     private final UserRepository userRepository;
     private final FileRepository fileRepository;
     private final WalletRepository walletRepository;
-    private final S3Uploader s3Uploader;
+    private final S3Service s3Service;
     private final String BLOCK_SERVER_URL = "http://localhost:4000";
 
     private static final String PATH = "C:/Users/SSAFY/Desktop";
@@ -91,7 +89,7 @@ public class NFTService {
             return;
         }
 
-        byte[] bytes = s3Uploader.downloadFile(product.getImageName());
+        byte[] bytes = s3Service.downloadFile(product.getImageName());
         String fileData = Base64.getEncoder().encodeToString(bytes);
 
         System.out.println(fileData);
@@ -111,9 +109,7 @@ public class NFTService {
 
         // REST 템플릿을 사용하여 POST 요청 전송
         try {
-            System.out.println("before");
             restTemplate.postForObject(BLOCK_SERVER_URL + "/nft", requestEntity, Void.class);
-            System.out.println("after");
         } catch (Exception e) {
             throw new Exception(e);
         }
