@@ -9,12 +9,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
-@RestController
+@Controller
 @RequestMapping("/products")
 @RequiredArgsConstructor
 public class ProductController {
@@ -35,6 +36,7 @@ public class ProductController {
         return ResponseEntity.ok().body(productService.randomProduct(user));
     }
 
+
 //    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping()
     public ResponseEntity<Void> postProduct(@RequestPart("product") ProductDTO.Post productDto, @RequestPart(value = "file") MultipartFile imageFile) {
@@ -43,5 +45,4 @@ public class ProductController {
 
         return ResponseEntity.ok().body(null);
     }
-
 }
