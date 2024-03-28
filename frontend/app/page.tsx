@@ -8,9 +8,6 @@ export default function Home() {
       <div className={styles.background}></div>
       <div className={styles.main}>
         <div>
-          <Link className="button" href="/ingame">
-            인게임 테스트 페이지로 click!
-          </Link>
           <Link className="button" href="/room">
             대기방으로
           </Link>
@@ -35,6 +32,9 @@ export default function Home() {
           >
             google login
           </a>
+          <Link className="button" href="/test">
+            차린건 없지만 테스트라도...
+          </Link>
           <Client />
         </div>
       </div>
