@@ -90,12 +90,13 @@ public class NFTController {
 
         CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
 
-        try {
-            nftService.mintingNFT(user, fileId);
-            return ResponseEntity.status(HttpStatus.OK).body("success");
-        }  catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+//        try {
+//            nftService.mintingNFT(user, fileId);
+//            return ResponseEntity.status(HttpStatus.OK).body("success");
+//        }  catch (Exception e) {
+//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+//        }
+        return null;
     }
 
     @GetMapping("/files")
