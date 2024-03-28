@@ -3,11 +3,15 @@ package com.ssafy.sos.user.controller;
 import com.ssafy.sos.game.domain.record.GameRecord;
 import com.ssafy.sos.game.domain.record.GameRecordMember;
 import com.ssafy.sos.game.repository.GameMemberRepository;
+import com.ssafy.sos.user.domain.CustomOAuth2User;
 import com.ssafy.sos.user.domain.UserEntity;
 import com.ssafy.sos.user.domain.UserNicknameRequest;
 import com.ssafy.sos.user.repository.UserRepository;
+import com.ssafy.sos.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,15 +21,24 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/users")
 public class UserController {
+    private final UserService userService;
     private final UserRepository userRepository;
     private final GameMemberRepository gameMemberRepository;
 
     @GetMapping
-    public ResponseEntity<Optional<UserEntity>> getUserInfo(@RequestParam int id) {
-        // TODO: Auth 정보를 통해 조회하는 것으로 변경 필요
-        Long userId = (long) id;
-        Optional<UserEntity> userInfo = userRepository.findById(userId);
-        return ResponseEntity.ok(userInfo);
+    public ResponseEntity<?> getUserInfo(Authentication authentication) {
+        if (authentication == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("로그인 해야함. 여길 어떻게 왔지?");
+        }
+
+        CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
+
+        UserEntity userInfo = userService.getUserInfo(user);
+        if (userInfo != null) {
+            return ResponseEntity.ok(userInfo);
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("없음. 뭐지?");
     }
 
     @GetMapping("/name")
