@@ -20,7 +20,7 @@ export function useFetch<T>(cb: () => Promise<AxiosResponse<T, any>>) {
     } finally {
       setLoading(false);
     }
-  }, [cb]);
+  }, [cb, loading]);
 
   return {
     loading,
