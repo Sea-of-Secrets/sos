@@ -1,8 +1,7 @@
 package com.ssafy.sos.product.service;
 
-import com.ssafy.sos.member.domain.UserDTO;
-import com.ssafy.sos.product.domain.Product;
 import com.ssafy.sos.product.dto.ProductDTO;
+import com.ssafy.sos.user.domain.UserDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;

@@ -1,8 +1,8 @@
 package com.ssafy.sos.product.controller;
 
-import com.ssafy.sos.member.domain.UserDTO;
 import com.ssafy.sos.product.dto.ProductDTO;
 import com.ssafy.sos.product.service.ProductService;
+import com.ssafy.sos.user.domain.UserDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
