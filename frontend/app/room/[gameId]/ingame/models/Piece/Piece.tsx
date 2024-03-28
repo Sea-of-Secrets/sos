@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { ThreeEvent } from "@react-three/fiber";
+import { Vector3, Euler } from "three";
 
 import { useGLTF } from "../../hooks/useGLTF";
 import { PiecePathMap } from "~/assetPath";
 import { PieceProps } from "./types";
-import PieceEffect from "./PieceEffect";
-import { Vector3, Euler } from "three";
 
 // const Z_AXIS_AJ_VALUE = 0;
 
@@ -93,7 +92,6 @@ export default function Piece({
       >
         <primitive object={gltf.scene} />
       </mesh>
-      <PieceEffect effectName="FOOTHOLD_LIGHT_BEAM" position={position} />
     </>
   );
 }

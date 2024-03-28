@@ -6,6 +6,7 @@ import Graph from "../room/[gameId]/ingame/models/Graph";
 import Piece from "../room/[gameId]/ingame/models/Piece/Piece";
 import Map from "../room/[gameId]/ingame/models/Map";
 import Light from "../room/[gameId]/ingame/models/Light";
+import SelectableMarineNodeMarkerGroup from "../room/[gameId]/ingame/models/Piece/SelectableMarineNodeMarkerGroup";
 
 import { usePiratePiece } from "../room/[gameId]/ingame/stores/piece";
 
@@ -38,6 +39,7 @@ export default function IngameThree() {
           set={setPiratePiece}
         />
       )}
+      <SelectableMarineNodeMarkerGroup />
       <Map />
       <Light />
       <axesHelper scale={10} />
