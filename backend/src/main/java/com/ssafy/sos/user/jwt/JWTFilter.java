@@ -29,7 +29,18 @@ public class JWTFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException, IOException {
-        String accessToken = request.getHeader("access");
+        Cookie[] cookiesForAccess = request.getCookies();
+        String accessToken = null;
+        if (cookiesForAccess == null) {
+            log.info("Cookies are null. Guest.");
+            filterChain.doFilter(request, response);
+            return;
+        }
+        for (Cookie cookie : cookiesForAccess) {
+            if (cookie.getName().equals("access")) {
+                accessToken = cookie.getValue();
+            }
+        }
 
         if (accessToken == null) {
             log.info("access token is null. Guest.");
