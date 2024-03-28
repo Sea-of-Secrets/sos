@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 
-import Light from "~/app/ingame/models/Light";
-import Tween from "~/app/ingame/models/Tween";
-import Camera from "~/app/ingame/models/Camera";
-import Graph from "~/app/ingame/models/Graph";
-import Map from "~/app/ingame/models/Map";
-import Piece from "~/app/ingame/models/Piece/Piece";
+import Light from "~/app/room/[gameId]/ingame/models/Light";
+import Tween from "~/app/room/[gameId]/ingame/models/Tween";
+import Camera from "~/app/room/[gameId]/ingame/models/Camera";
+import Graph from "~/app/room/[gameId]/ingame/models/Graph";
+import Map from "~/app/room/[gameId]/ingame/models/Map";
+import Piece from "~/app/room/[gameId]/ingame/models/Piece/Piece";
 
-import { usePiratePiece } from "~/app/ingame/stores/piece";
-import { useGameData } from "~/app/ingame/stores/useGameData";
+import { usePiratePiece } from "~/app/room/[gameId]/ingame/stores/piece";
+import { useGameData } from "~/app/room/[gameId]/ingame/stores/useGameData";
 import { getNode } from "~/_lib/data/data";
 
 const TEST_NODE_ID = 107; // 시바견을 일단 107번 노드에 띄워보자

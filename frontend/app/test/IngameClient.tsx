@@ -9,12 +9,14 @@ import { gameSocket } from "~/sockets";
 
 import useNickname from "~/store/nickname";
 import useGameId from "~/store/gameId";
-import Loading from "../ingame/components/Loading";
-import Round from "../ingame/components/Round";
-import Turn from "../ingame/components/Turn";
-import SystemPrompt from "../ingame/components/SystemPrompt";
-import YongSangYoonTestController from "../ingame/test-components/YsyTestController";
-import { useGameLoading } from "../ingame/stores/useGameLoading";
+
+import Loading from "../room/[gameId]/ingame/components/Loading";
+import Round from "../room/[gameId]/ingame/components/Round";
+import Turn from "../room/[gameId]/ingame/components/Turn";
+import SystemPrompt from "../room/[gameId]/ingame/components/SystemPrompt";
+
+import YongSangYoonTestController from "../room/[gameId]/ingame/test-components/YsyTestController";
+import { useGameLoading } from "../room/[gameId]/ingame/stores/useGameLoading";
 
 const { connect, send, subscribe, disconnect } = gameSocket;
 
