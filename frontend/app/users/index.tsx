@@ -1,25 +1,24 @@
-"use client"
-import {useState, useEffect} from "react";
+"use client";
+
+import { useState, useEffect } from "react";
 import * as mypageAPI from "../api/users";
 
-export default function index() {
-    const [user, setUser] = useState();
+export default function Index() {
+  const [user, setUser] = useState();
 
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                alert("hi");
-                const res = await mypageAPI.getUserInfo();
-                alert(res);
-            } catch (error) {
-                console.log(error);
-            }
-        }
-        
-        fetchData();
-    }, [])
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        alert("hi");
+        const res = await mypageAPI.getUserInfo();
+        alert(res);
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
-    return (
-        <p>mypage</p>
-    )
+    fetchData();
+  }, []);
+
+  return <p>mypage</p>;
 }
