@@ -1,8 +1,10 @@
+import { MutableRefObject } from "react";
+import { Mesh } from "three";
 import { create } from "zustand";
 
 interface GameDataState {
   type: string[];
-  treasures: { [key: number]: boolean };
+  treasures: { [nodeId: number]: boolean };
   openTreasure: number;
   pirateRoute: number[];
   marineOneRoute: number[];
