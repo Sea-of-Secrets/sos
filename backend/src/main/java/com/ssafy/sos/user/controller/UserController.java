@@ -27,10 +27,6 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<?> getUserInfo(Authentication authentication) {
-        if (authentication == null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("로그인 해야함. 여길 어떻게 왔지?");
-        }
-
         CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
 
         UserEntity userInfo = userService.getUserInfo(user);
