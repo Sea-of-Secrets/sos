@@ -1,15 +1,27 @@
+const getStorage = (storageType: "LOCAL" | "SESSION" = "SESSION") => {
+  if (typeof window === "undefined") {
+    return null;
+  }
+
+  return storageType === "LOCAL" ? window.localStorage : window.sessionStorage;
+};
+
 export const defineWebStorage = <T>(
   key: string,
   storageType?: "LOCAL" | "SESSION",
 ) => {
-  const webStorage =
-    storageType === "LOCAL" ? window.localStorage : window.sessionStorage;
+  const getValue = (): T | null => {
+    const storage = getStorage(storageType);
 
-  const getValue = (): T => {
+    if (!storage) {
+      return null;
+    }
+
     try {
-      const value = webStorage.getItem(key);
+      const value = storage.getItem(key);
       if (!value) {
-        throw new Error(`${key}에 해당하는 value가 없어요`);
+        resetValue();
+        return null;
       }
       return JSON.parse(value);
     } catch (e) {
@@ -18,15 +30,27 @@ export const defineWebStorage = <T>(
   };
 
   const setValue = (value: T) => {
+    const storage = getStorage(storageType);
+
+    if (!storage) {
+      return;
+    }
+
     try {
-      webStorage.setItem(key, JSON.stringify(value));
+      storage.setItem(key, JSON.stringify(value));
     } catch (e) {
       throw new Error(`${key}에 해당하는 value를 세팅하는데 에러가 발생했어요`);
     }
   };
 
   const resetValue = () => {
-    webStorage.removeItem(key);
+    const storage = getStorage(storageType);
+
+    if (!storage) {
+      return;
+    }
+
+    storage.removeItem(key);
   };
 
   return {
