@@ -9,13 +9,14 @@ import org.springframework.http.HttpStatus;
 public enum ExceptionEnum {
 
     // Member Error: 1000 ~
-    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "CE1000", Message.MEMBER_NOT_FOUND);
+    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "CE1000", Message.MEMBER_NOT_FOUND),
 
 
     // Game Error: 2000 ~
 
 
     // Shop Error: 3000 ~
+    NOT_ENOUGH_GOLD(HttpStatus.BAD_REQUEST, "CE3000", Message.NOT_ENOUGH_GOLD);
 
 
     private final HttpStatus status;
@@ -30,5 +31,6 @@ public enum ExceptionEnum {
 
     public interface Message{
         String MEMBER_NOT_FOUND = "회원을 찾을 수 없습니다.";
+        String NOT_ENOUGH_GOLD = "보유 골드가 부족합니다.";
     }
 }
