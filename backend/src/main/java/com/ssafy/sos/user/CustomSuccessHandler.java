@@ -48,7 +48,8 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         log.info("access = " + access);
         log.info("refresh = " + refresh);
 
-        response.setHeader("access", access);
+//        response.setHeader("access", access);
+        response.addCookie(createCookie("access", access));
         response.addCookie(createCookie("refresh", refresh));
         response.setStatus(HttpStatus.OK.value());
         response.sendRedirect("http://localhost:3000/");
@@ -56,7 +57,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         jwtService.save(username, refresh);
     }
 
-    private Cookie createCookie(String key, String value) {
+    public static Cookie createCookie(String key, String value) {
 
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(24*60*60);

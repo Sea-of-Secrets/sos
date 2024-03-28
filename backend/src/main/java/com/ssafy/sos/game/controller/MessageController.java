@@ -1209,7 +1209,8 @@ public class MessageController {
                 .gameId(gameId)
                 .sender(message.getSender())
                 .role(role)
-                .message(message.getMessage())
+                .message("CHATTING")
+                .chatMessage(message.getMessage())
                 .build();
 
         sendingOperations.convertAndSend("/sub/"+ gameId, chat);

@@ -1,7 +1,7 @@
 package com.ssafy.sos.global.error;
 
 import org.springframework.http.ResponseEntity;
-//import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -33,10 +33,10 @@ public class ExceptionAdvice {
             errorCode = "400";
             errorMessage = "Bad Request:" + e.getMessage();
         }
-//        else if(e instanceof AccessDeniedException) {
-//            errorCode = "403";
-//            errorMessage = "Access Denied:" + e.getMessage();
-//        }
+        else if(e instanceof AccessDeniedException) {
+            errorCode = "403";
+            errorMessage = "Access Denied:" + e.getMessage();
+        }
         else {
             errorCode = "500";
             errorMessage = "Internal Server Error";

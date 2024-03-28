@@ -1,13 +1,18 @@
 import { useRef } from "react";
 import styled from "@emotion/styled";
 
-import { useSystemPrompt } from "~/app/ingame/stores/useSystemPrompt";
-import { useCamera } from "~/app/ingame/stores/useCamera";
 import { getNearEdgeIdList, getNode } from "~/_lib/data/data";
-import { usePiratePiece } from "../stores/piece";
-import { usePirateGraph } from "../stores/graph";
 
-export default function YongSangYoonTestController() {
+import { usePiratePiece } from "../room/[gameId]/ingame/stores/piece";
+import { usePirateGraph } from "../room/[gameId]/ingame/stores/graph";
+import { useSystemPrompt } from "../room/[gameId]/ingame/stores/useSystemPrompt";
+import { useCamera } from "../room/[gameId]/ingame/stores/useCamera";
+
+import SelectPirateLocationGrid from "../room/[gameId]/ingame/components/SelectPirateLocationGrid";
+
+import { useTimer } from "../room/[gameId]/ingame/stores/useTimer";
+
+export default function TestController() {
   const cameraZoomInputRef = useRef<HTMLInputElement>(null);
   const systemPromptHeaderInputRef = useRef<HTMLInputElement>(null);
   const systemPromptFooterInputRef = useRef<HTMLInputElement>(null);
@@ -15,6 +20,7 @@ export default function YongSangYoonTestController() {
   const { zoom, zoomFullScreen } = useCamera();
   const { movePiece } = usePiratePiece();
   const { setMovableNodeIdList, setMovableEdgeIdList } = usePirateGraph();
+  const { handleShowTimer } = useTimer();
 
   const handleClickSystemPromptHeader = () => {
     if (systemPromptHeaderInputRef.current) {
@@ -107,6 +113,24 @@ export default function YongSangYoonTestController() {
     }
   };
 
+  const handleSelectPirateLocation = () => {
+    const treasures = [36, 45, 175, 185];
+
+    setFooterMessage(
+      <>
+        <div>가령 보물이 {JSON.stringify(treasures)} 노드에 있다고 하자.</div>
+        <SelectPirateLocationGrid
+          nodeIdListOnTreasures={treasures}
+          onSelectLocation={nodeId => {
+            window.alert(`${nodeId}를 선택한 당신..`);
+            setFooterMessage("");
+            zoomFullScreen();
+          }}
+        />
+      </>,
+    );
+  };
+
   return (
     <ContainerStyle>
       <Test>
@@ -152,13 +176,21 @@ export default function YongSangYoonTestController() {
           <Button onClick={handleZoomFullScreen}>전체화면</Button>
         </div>
       </Test>
+      <Test>
+        <Button onClick={handleSelectPirateLocation}>
+          해적이 초기 위치를 설정할 수 있는 그리드
+        </Button>
+      </Test>
+      <Test>
+        <Button onClick={() => handleShowTimer()}>Timer 소환</Button>
+      </Test>
     </ContainerStyle>
   );
 }
 
 const ContainerStyle = styled.div`
   position: absolute;
-  top: 0;
+  top: 150px;
   right: 0;
   z-index: 999;
   border: 3px solid tomato;
