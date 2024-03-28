@@ -1,7 +1,15 @@
+.container {
+  position: absolute;
+  top: 30px;
+  right: 30px;
+  background: none;
+  z-index: 999;
+}
+
 .base-timer {
   position: relative;
-  width: 300px;
-  height: 300px;
+  width: 100px;
+  height: 100px;
 }
 
 .base-timer__svg {
@@ -9,7 +17,7 @@
 }
 
 .base-timer__circle {
-  fill: none;
+  fill: rgba(0, 0, 0, 0.6);
   stroke: none;
 }
 
@@ -28,25 +36,15 @@
   stroke: currentColor;
 }
 
-.base-timer__path-remaining.green {
-  color: rgb(65, 184, 131);
-}
-
-.base-timer__path-remaining.orange {
-  color: orange;
-}
-
-.base-timer__path-remaining.red {
-  color: red;
-}
-
 .base-timer__label {
   position: absolute;
-  width: 300px;
-  height: 300px;
+  width: 100px;
+  height: 100px;
   top: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 48px;
+
+  color: white;
 }

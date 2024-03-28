@@ -26,7 +26,6 @@
     "react-dom": "^18",
     "sass": "^1.71.1",
     "three": "^0.162.0",
-    "usehooks-ts": "^3.0.2",
     "zustand": "^4.5.2"
   },
   "devDependencies": {

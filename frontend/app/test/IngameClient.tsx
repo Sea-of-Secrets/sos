@@ -19,7 +19,7 @@ export default function IngameClient() {
 
   return (
     <>
-      {/* <Timer /> */}
+      <Timer />
       {loading && <Loading />}
       <Round topLeft={[60, 1]} />
       <Turn topLeft={[360, 1]} currentTurn={1} />

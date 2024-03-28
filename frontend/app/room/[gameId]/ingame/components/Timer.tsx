@@ -1,61 +1,76 @@
-import clsx from "clsx";
 import styles from "./Timer.module.scss";
+import { useEffect, useRef, useState } from "react";
+import { useTimer } from "../stores/useTimer";
 
-import { HTMLAttributes, useState } from "react";
-import { useInterval } from "usehooks-ts";
+const DEFAULT_TIME = 15;
 
-const REMAIN_TIME = 15;
-
-interface TimerProps extends HTMLAttributes<HTMLDivElement> {
-  onTerminate?: () => void;
+export default function Timer() {
+  const { isShowTimer } = useTimer();
+  if (!isShowTimer) {
+    return null;
+  }
+  return <Clock />;
 }
 
-export default function Timer({ onTerminate, ...props }: TimerProps) {
-  const [seconds, setSeconds] = useState(REMAIN_TIME);
+function Clock() {
+  const [seconds, setSeconds] = useState(DEFAULT_TIME);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const { handleCloseTimer } = useTimer();
 
-  useInterval(() => {
-    if (seconds === 0) {
-      onTerminate && onTerminate();
-    }
+  useEffect(() => {
+    intervalRef.current = setInterval(() => {
+      if (seconds === 0) {
+        handleCloseTimer();
+        return;
+      }
 
-    if (seconds > 0) {
-      setSeconds(prev => prev - 1);
-    }
-  }, 1000);
+      if (seconds > 0) {
+        setSeconds(prev => prev - 1);
+      }
+    }, 1000);
+
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [seconds, handleCloseTimer]);
 
   return (
-    <div {...props} className={styles["base-timer"]}>
-      <svg
-        className={styles["base-timer__svg"]}
-        viewBox="0 0 100 100"
-        xmlns="http://www.w3.org/2000/svg"
-      >
-        <g className={styles["base-timer__circle"]}>
-          <circle
-            className={styles["base-timer__path-elapsed"]}
-            cx="50"
-            cy="50"
-            r="45"
-          ></circle>
-          <_Path seconds={seconds} />
-        </g>
-      </svg>
-      <span id="base-timer-label" className={styles["base-timer__label"]}>
-        {formatTime(seconds)}
-      </span>
+    <div className={styles["container"]}>
+      <div className={styles["base-timer"]}>
+        <svg
+          className={styles["base-timer__svg"]}
+          viewBox="0 0 100 100"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <g className={styles["base-timer__circle"]}>
+            <circle
+              className={styles["base-timer__path-elapsed"]}
+              cx="50"
+              cy="50"
+              r="46"
+              stroke={getColor(seconds)}
+            ></circle>
+            <Path seconds={seconds} />
+          </g>
+        </svg>
+        <span id="base-timer-label" className={styles["base-timer__label"]}>
+          {seconds}
+        </span>
+      </div>
     </div>
   );
 }
 
-const _Path = ({ seconds }: { seconds: number }) => {
+const Path = ({ seconds }: { seconds: number }) => {
   return (
     <path
       id="base-timer-path-remaining"
-      strokeDasharray="283"
-      className={clsx(
-        "base-timer__path-remaining",
-        setRemainingPathColor(seconds),
-      )}
+      strokeDasharray={setCircleDasharray(seconds)}
+      stroke={getColor(seconds)}
+      className={styles[`base-timer__path-remaining`]}
+      color={getColor(seconds)}
       d="
           M 50, 50
           m -45, 0
@@ -66,70 +81,23 @@ const _Path = ({ seconds }: { seconds: number }) => {
   );
 };
 
-// startTimer();
+const FULL_DASH_ARRAY = 283;
 
-// function onTimesUp() {
-//   clearInterval(timerInterval);
-// }
-
-// function startTimer() {
-//   timerInterval = setInterval(() => {
-//     timePassed = timePassed += 1;
-//     timeLeft = TIME_LIMIT - timePassed;
-//     document.getElementById("base-timer-label").innerHTML =
-//       formatTime(timeLeft);
-//     setCircleDasharray();
-//     setRemainingPathColor(timeLeft);
-
-//     if (timeLeft === 0) {
-//       onTimesUp();
-//     }
-//   }, 1000);
-// }
-
-const WARNING_THRESHOLD = 10;
-const ALERT_THRESHOLD = 5;
-const COLOR_CODES = {
-  info: {
-    color: "green",
-  },
-  warning: {
-    color: "orange",
-    threshold: WARNING_THRESHOLD,
-  },
-  alert: {
-    color: "red",
-    threshold: ALERT_THRESHOLD,
-  },
-};
-
-const pad = (time: number) => {
-  if (time < 10) {
-    return `0${time}`;
-  }
-  return String(time);
-};
-
-function formatTime(seconds: number) {
-  const min = Math.floor(seconds / 60);
-  const sec = seconds % 60;
-  return `${pad(min)}:${pad(sec)}`;
+function calculateTimeFraction(seconds: number) {
+  const rawTimeFraction = seconds / DEFAULT_TIME;
+  return rawTimeFraction - (1 / DEFAULT_TIME) * (1 - rawTimeFraction);
 }
 
-function setRemainingPathColor(seconds: number) {
-  const { alert, warning, info } = COLOR_CODES;
-  if (seconds <= alert.threshold) {
-    return alert.color;
-  }
-
-  if (seconds <= warning.threshold) {
-    return warning.color;
-  }
-
-  return info.color;
+function setCircleDasharray(seconds: number) {
+  return `${(calculateTimeFraction(seconds) * FULL_DASH_ARRAY).toFixed(0)} ${FULL_DASH_ARRAY}`;
 }
 
-// function calculateTimeFraction() {
-//   const rawTimeFraction = timeLeft / TIME_LIMIT;
-//   return rawTimeFraction - (1 / TIME_LIMIT) * (1 - rawTimeFraction);
-// }
+function getColor(seconds: number) {
+  if (seconds <= 5) {
+    return "red";
+  }
+  if (seconds <= 10) {
+    return "orange";
+  }
+  return "rgb(65, 184, 131)";
+}

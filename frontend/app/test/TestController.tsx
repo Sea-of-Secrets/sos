@@ -1,6 +1,8 @@
 import { useRef } from "react";
 import styled from "@emotion/styled";
 
+import { getNearEdgeIdList, getNode } from "~/_lib/data/data";
+
 import { usePiratePiece } from "../room/[gameId]/ingame/stores/piece";
 import { usePirateGraph } from "../room/[gameId]/ingame/stores/graph";
 import { useSystemPrompt } from "../room/[gameId]/ingame/stores/useSystemPrompt";
@@ -8,7 +10,7 @@ import { useCamera } from "../room/[gameId]/ingame/stores/useCamera";
 
 import SelectPirateLocationGrid from "../room/[gameId]/ingame/components/SelectPirateLocationGrid";
 
-import { getNearEdgeIdList, getNode } from "~/_lib/data/data";
+import { useTimer } from "../room/[gameId]/ingame/stores/useTimer";
 
 export default function TestController() {
   const cameraZoomInputRef = useRef<HTMLInputElement>(null);
@@ -18,6 +20,7 @@ export default function TestController() {
   const { zoom, zoomFullScreen } = useCamera();
   const { movePiece } = usePiratePiece();
   const { setMovableNodeIdList, setMovableEdgeIdList } = usePirateGraph();
+  const { handleShowTimer } = useTimer();
 
   const handleClickSystemPromptHeader = () => {
     if (systemPromptHeaderInputRef.current) {
@@ -178,13 +181,16 @@ export default function TestController() {
           해적이 초기 위치를 설정할 수 있는 그리드
         </Button>
       </Test>
+      <Test>
+        <Button onClick={() => handleShowTimer()}>Timer 소환</Button>
+      </Test>
     </ContainerStyle>
   );
 }
 
 const ContainerStyle = styled.div`
   position: absolute;
-  top: 0;
+  top: 150px;
   right: 0;
   z-index: 999;
   border: 3px solid tomato;
