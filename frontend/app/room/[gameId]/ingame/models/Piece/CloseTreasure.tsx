@@ -1,8 +1,8 @@
 import { useEffect } from "react";
+
 import { useGLTF, useAnimations } from "@react-three/drei";
 import { PieceProps } from "./types";
 import { PiecePathMap } from "~/assetPath";
-import { useGameData } from "../../stores/useGameData";
 
 export default function TreasureRenderer({
   position,
@@ -13,30 +13,26 @@ export default function TreasureRenderer({
     PiecePathMap["TREASURE"].src,
   );
 
-  const { openTreasure } = useGameData();
   const clonedScene = originalScene.clone();
   const { actions } = useAnimations(animations, clonedScene);
 
-  // 3초간 상자 열리고 멈추기
-  useEffect(() => {
-    console.log(openTreasure, nodeId);
-
-    if (openTreasure === nodeId) {
-      const action = actions.Scene;
-      if (action) {
-        action.timeScale = 2000;
-        action.play();
-        setTimeout(() => {
-          action.timeScale = 0;
-        }, 3000);
-      }
-    }
-  }, [openTreasure, nodeId, actions]);
+  // // 3초간 상자 열리고 멈추기
+  // useEffect(() => {
+  //   const action = actions.Scene;
+  //   if (action) {
+  //     action.time = 4000;
+  //     action.reset().play();
+  //     setTimeout(() => {
+  //       action.time = 5000;
+  //       action.timeScale = 0;
+  //     }, 3000);
+  //   }
+  // }, []);
 
   return (
     <mesh
       {...props}
-      position={[position.x, position.z, position.y - 25]}
+      position={[position.x, position.z, position.y - 45]}
       scale={0.5}
     >
       <primitive object={clonedScene} />

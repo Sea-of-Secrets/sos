@@ -1,18 +1,24 @@
 import { useGameData } from "../../stores/useGameData";
+import { useSocketMessage } from "../../stores/useSocketMessage";
 import TreasureRenderer from "./TreasureRenderer";
 
 export default function TreasureGroup() {
   const { treasures } = useGameData();
+  const { socketMessage } = useSocketMessage();
 
   return (
     <>
-      {Object.entries(treasures).map(([nodeId, hasTreasure]) => (
-        <TreasureRenderer
-          key={nodeId}
-          isOpen={hasTreasure}
-          nodeId={parseInt(nodeId)}
-        />
-      ))}
+      {socketMessage &&
+        socketMessage.game?.treasures &&
+        Object.entries(socketMessage.game?.treasures).map(
+          ([nodeId, isOpen]) => (
+            <TreasureRenderer
+              key={nodeId}
+              isOpen={isOpen as boolean}
+              nodeId={parseInt(nodeId)}
+            />
+          ),
+        )}
     </>
   );
 }
