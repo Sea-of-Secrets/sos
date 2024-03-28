@@ -1,5 +1,7 @@
 package com.ssafy.sos.nft.service;
 
+import com.ssafy.sos.global.S3.S3Service;
+import com.ssafy.sos.product.domain.Product;
 import com.ssafy.sos.user.domain.CustomOAuth2User;
 import com.ssafy.sos.user.domain.UserEntity;
 import com.ssafy.sos.user.repository.UserRepository;
@@ -18,14 +20,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -34,6 +34,7 @@ public class NFTService {
     private final UserRepository userRepository;
     private final FileRepository fileRepository;
     private final WalletRepository walletRepository;
+    private final S3Service s3Service;
     private final String BLOCK_SERVER_URL = "http://localhost:4000";
 
     private static final String PATH = "C:/Users/SSAFY/Desktop";
@@ -82,32 +83,21 @@ public class NFTService {
         }
     }
 
-    public void mintingNFT(CustomOAuth2User user, String fileId) throws Exception {
-        UserEntity userEntity = userRepository.findByUsername(user.getUserDto().getUsername());
-        System.out.println(userEntity);
+    public void mintingNFT(UserEntity userEntity, Product product) throws Exception {
         if (userEntity.getWalletAddress() == null) {
             System.out.println("지갑 없음");
             return;
         }
 
-        Optional<FileEntity> opt = fileRepository.findById(Long.valueOf(fileId));
-        FileEntity fileEntity = opt.get();
-        if (fileEntity == null) {
-            System.out.println("파일 없음");
-            return;
-        }
+        byte[] bytes = s3Service.downloadFile(product.getImageName());
+        String fileData = Base64.getEncoder().encodeToString(bytes);
 
-        Path filePath = Paths.get(fileEntity.getFilePath() + "." + fileEntity.getFileNameExtension());
-        File file = new File(String.valueOf(filePath));
-        byte[] fileContent = FileUtils.readFileToByteArray(file);
-        String fileData = Base64.getEncoder().encodeToString(fileContent);
-
-        if (userEntity.getWalletAddress() == null) {
-            return;
-        }
+        System.out.println(fileData);
 
         //NFT 생성
-        NFTDTO nft = new NFTDTO(userEntity.getWalletAddress(), fileData, fileEntity.getTitle(), fileEntity.getDescription());
+        NFTDTO nft = new NFTDTO(userEntity.getWalletAddress(), fileData, product.getName(), product.getDescription());
+
+        System.out.println(nft);
 
         RestTemplate restTemplate = new RestTemplate();
         // HTTP 요청 헤더 설정
