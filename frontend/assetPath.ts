@@ -23,6 +23,10 @@ export const PiecePathMap = {
     src: "/marine_ship3/scene.gltf",
     size: 5,
   },
+  RED_ARROW: {
+    src: "/red_arrow_down/scene.gltf",
+    size: 20,
+  },
 } as const;
 
 export const PieceEffectPathMap = {
