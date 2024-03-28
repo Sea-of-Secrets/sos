@@ -70,7 +70,12 @@ public class NFTService {
 
         try {
             fileRepository.save(fileEntity);
-            return fileEntity.getId();
+            if (fileEntity.getId() != null) {
+                return fileEntity.getId();
+            } else {
+                // 파일 엔티티가 저장되지 않았을 때의 처리
+                throw new Exception("Failed to save file entity");
+            }
         } catch(Exception e) {
             e.printStackTrace();
             return -1;
