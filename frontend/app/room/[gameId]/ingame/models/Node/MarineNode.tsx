@@ -13,7 +13,7 @@ export default function MarineNode({ node, ...props }: MarineNodeProps) {
   const {
     meshRef,
     position,
-    handleClickPiece,
+    handleClickNode,
     handlePointerOut,
     handlePointerOver,
   } = useNode({ node });
@@ -44,7 +44,7 @@ export default function MarineNode({ node, ...props }: MarineNodeProps) {
       ref={meshRef}
       position={position}
       scale={NODE_SCALE}
-      onClick={handleClickPiece}
+      onClick={handleClickNode}
       onPointerOver={handlePointerOver}
       onPointerOut={handlePointerOut}
     >

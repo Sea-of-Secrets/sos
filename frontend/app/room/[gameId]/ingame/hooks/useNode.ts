@@ -22,7 +22,7 @@ export const useNode = ({ node }: { node: IngameGraphNode }) => {
   } = useWhenMarineStartGame();
   const { setHeaderMessage } = useSystemPrompt();
 
-  const handleClickPiece = useCallback(
+  const handleClickNode = useCallback(
     (e: ThreeEvent<MouseEvent>) => {
       if (
         isMarineStartGameTurn &&
@@ -65,7 +65,7 @@ export const useNode = ({ node }: { node: IngameGraphNode }) => {
     position,
     meshRef,
     isHover,
-    handleClickPiece,
+    handleClickNode,
     handlePointerOver,
     handlePointerOut,
   };
