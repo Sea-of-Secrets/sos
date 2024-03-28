@@ -1,7 +1,7 @@
 package com.ssafy.sos.product.domain;
 
 import com.ssafy.sos.global.Entity.BaseEntity;
-import com.ssafy.sos.member.domain.UserEntity;
+import com.ssafy.sos.user.domain.UserEntity;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
