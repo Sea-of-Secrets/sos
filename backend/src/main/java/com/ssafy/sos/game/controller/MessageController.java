@@ -22,7 +22,6 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
@@ -317,7 +316,8 @@ public class MessageController {
         sendMessageWithGame(gameId, game, "ACTION_INIT_"+role+"_START");
         // 2초 타이머 시작
         if (role == GameRole.MARINE_THREE) {
-            gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_"+role.getNextRole());
+            // 해군 3 시작위치 지정 후 8초 기다려야 함
+            gameTimerService.afterInitTimer(gameId, "READY_MOVE_"+role.getNextRole());
         } else {
             gameTimerService.startRenderWaitingTimer(gameId, "READY_INIT_"+role.getNextRole()+"_START");
         }
@@ -361,7 +361,7 @@ public class MessageController {
         }
     }
 
-    // 이동 렌더타이머 종료
+    // 이동 렌더 타이머 종료
     private void moveRenderTimeOut(String gameId, Game game, GameRole role) {
         HashMap<Integer, Deque<Integer>> availableNode;
         if (role == GameRole.PIRATE) {
@@ -784,7 +784,8 @@ public class MessageController {
         sendMessageWithGame(gameId, game, "ACTION_INIT_"+role+"_START");
         // 2초 타이머 시작
         if (role == GameRole.MARINE_THREE) {
-            gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_"+role.getNextRole());
+            // 해군 3 시작위치 지정 후 8초 기다려야 함
+            gameTimerService.afterInitTimer(gameId, "READY_MOVE_"+role.getNextRole());
         } else {
             gameTimerService.startRenderWaitingTimer(gameId, "READY_INIT_"+role.getNextRole()+"_START");
         }
