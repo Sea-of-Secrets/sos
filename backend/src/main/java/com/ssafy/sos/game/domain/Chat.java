@@ -11,14 +11,16 @@ public class Chat {
     private String sender;
     private int role;
     private String message;
+    private String chatMessage;
     private LocalDateTime sendDate;
 
     @Builder
-    public Chat(String gameId, String sender, int role, String message) {
+    public Chat(String gameId, String sender, int role, String message, String chatMessage) {
         this.gameId = gameId;
         this.sender = sender;
         this.role = role;
         this.message = message;
+        this.chatMessage = chatMessage;
         this.sendDate = LocalDateTime.now();
     }
 }
