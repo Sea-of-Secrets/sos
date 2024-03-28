@@ -5,6 +5,7 @@ import com.ssafy.sos.game.domain.record.GameRecordMember;
 import com.ssafy.sos.game.domain.record.GameRecord;
 import com.ssafy.sos.game.repository.GameMemberRepository;
 import com.ssafy.sos.game.util.GameMode;
+import com.ssafy.sos.game.util.GameStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
@@ -104,6 +105,7 @@ public class GameServiceImpl implements GameService {
         game = board.getGameMap().get(gameId);
         game.getCurrentPosition()[0] = selectedNode;
         game.getTreasures().put(selectedNode, true);
+        game.getPirateRoute().add(selectedNode);
         return selectedNode;
     }
 
@@ -119,6 +121,7 @@ public class GameServiceImpl implements GameService {
         // getCurrentPosition 배열의 해적 위치[0]
         game.getCurrentPosition()[0] = nextNode;
         game.getTreasures().put(nextNode, true);
+        game.getPirateRoute().add(nextNode);
         return nextNode;
     }
 
@@ -183,20 +186,25 @@ public class GameServiceImpl implements GameService {
 
     // 해군 시작 위치 수동 지정
     @Override
-    public int[] initMarineStart(String gameId, int MarineNumber, int selectedNode) {
+    public int[] initMarineStart(String gameId, int marineNumber, int selectedNode) {
         // 이미 다른 해군이 고른 번호라면
         game = board.getGameMap().get(gameId);
         if (selectedNode == game.getCurrentPosition()[1] || selectedNode == game.getCurrentPosition()[2] || selectedNode == game.getCurrentPosition()[3]) {
             System.out.println("이미 다른 해군에 의해 선택된 위치입니다. 다른 위치에서 시작해주세요.");
             return null;
         }
-        game.getCurrentPosition()[MarineNumber] = selectedNode;
+        game.getCurrentPosition()[marineNumber] = selectedNode;
+        switch (marineNumber) {
+            case 1 -> game.getMarineOneRoute().add(selectedNode);
+            case 2 -> game.getMarineTwoRoute().add(selectedNode);
+            case 3 -> game.getMarineThreeRoute().add(selectedNode);
+        }
         return game.getCurrentPosition();
     }
 
     // 해군 시작 위치 랜덤 지정
     @Override
-    public int[] initMarineStartRandom(String gameId, int MarineNumber) {
+    public int[] initMarineStartRandom(String gameId, int marineNumber) {
         int[] marineStart = board.getMarineStartList();
         List<Integer> marineStartList = new ArrayList<>();
         for (int node : marineStart) {
@@ -209,7 +217,12 @@ public class GameServiceImpl implements GameService {
             if ((node == game.getCurrentPosition()[1] || node == game.getCurrentPosition()[2] || node == game.getCurrentPosition()[3])) {
                 continue;
             }
-            game.getCurrentPosition()[MarineNumber] = node;
+            game.getCurrentPosition()[marineNumber] = node;
+            switch (marineNumber) {
+                case 1 -> game.getMarineOneRoute().add(node);
+                case 2 -> game.getMarineTwoRoute().add(node);
+                case 3 -> game.getMarineThreeRoute().add(node);
+            }
             break;
         }
         return game.getCurrentPosition();
@@ -301,12 +314,16 @@ public class GameServiceImpl implements GameService {
         switch (role) {
             case 0:
                 game.getPirateRoute().add(nodeNumber);
+                break;
             case 1:
                 game.getMarineOneRoute().add(nodeNumber);
+                break;
             case 2:
                 game.getMarineTwoRoute().add(nodeNumber);
+                break;
             case 3:
                 game.getMarineThreeRoute().add(nodeNumber);
+                break;
         }
 
         return true;
@@ -339,9 +356,8 @@ public class GameServiceImpl implements GameService {
     public Room enterRoom(String gameId, Player player) {
         Room room = board.getRoomMap().get(gameId);
 
-        // TOOD: 게임 모드에 따라서 변경
         // 방이 다 차있지 않으면
-        if (room.getInRoomPlayers().size() < 4) {
+        if (room.getInRoomPlayers().size() < room.getGameMode().playerLimit()) {
             room.getInRoomPlayers().add(player);
         }
         return room;
@@ -446,6 +462,7 @@ public class GameServiceImpl implements GameService {
             }
         }
 
+        game.setGameStatus(GameStatus.GAME_FINISHED);
         board.getGameMap().remove(gameId);
     }
 
