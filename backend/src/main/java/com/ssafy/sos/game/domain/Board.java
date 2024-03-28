@@ -478,7 +478,7 @@ public class Board {
         };
 
         this.marineStartList = new int[] {
-                93, 94, 97, 106, 109, 200
+                200, 293, 294, 297, 306, 309
         };
 
         this.sessionMap = new HashMap<>();

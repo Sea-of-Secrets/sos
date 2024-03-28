@@ -13,4 +13,5 @@ public class ServerArrestMessage {
     private Game game;
     private Room room;
     private int[] arrestableNode;
+    private int arrestTriedNode;
 }

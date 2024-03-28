@@ -1,8 +1,9 @@
 package com.ssafy.sos.product.service;
 
-import com.ssafy.sos.global.S3.S3Uploader;
+import com.ssafy.sos.global.S3.S3Service;
 import com.ssafy.sos.global.error.CustomException;
 import com.ssafy.sos.global.error.ExceptionEnum;
+import com.ssafy.sos.nft.service.NFTService;
 import com.ssafy.sos.product.domain.Product;
 import com.ssafy.sos.product.domain.Purchase;
 import com.ssafy.sos.product.domain.PurchaseId;
@@ -10,7 +11,7 @@ import com.ssafy.sos.product.dto.ProductDTO;
 import com.ssafy.sos.product.mapper.ProductMapper;
 import com.ssafy.sos.product.repository.ProductRepository;
 import com.ssafy.sos.product.repository.PurchaseRepository;
-import com.ssafy.sos.user.domain.UserDTO;
+import com.ssafy.sos.user.domain.CustomOAuth2User;
 import com.ssafy.sos.user.domain.UserEntity;
 import com.ssafy.sos.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,9 +34,11 @@ public class ProductServiceImpl implements ProductService {
 
     private final PurchaseRepository purchaseRepository;
 
-    private final S3Uploader s3Uploader;
+    private final S3Service s3Service;
 
     private final ProductMapper productMapper;
+
+    private final NFTService nftService;
 
     @Transactional(readOnly = true)
     @Override
@@ -47,7 +50,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO.Response randomProduct(UserDTO userDTO) {
+    public ProductDTO.Response randomProduct(CustomOAuth2User userDTO) {
 
         UserEntity userEntity = userRepository.findByUsername(userDTO.getUsername());
         int userGold = userEntity.getGold();
@@ -79,11 +82,15 @@ public class ProductServiceImpl implements ProductService {
                         .userId(userEntity)
                         .build());
 
-                //nft 발행 로직 추가
+                try {
+                    nftService.mintingNFT(userEntity, selectedUniqueProduct);
 
-                selectedUniqueProduct.soldOut();
+                    selectedUniqueProduct.soldOut();
 
-                return productMapper.entityToDto(selectedUniqueProduct);
+                    return productMapper.entityToDto(selectedUniqueProduct);
+                } catch(Exception e) {
+                    throw new CustomException(ExceptionEnum.NFT_MINTING_ERROR);
+                }
             }
         }
 
@@ -112,8 +119,8 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void registerProduct(ProductDTO.Post productDTO, MultipartFile imageFile) {
 
-        String imageName = s3Uploader.saveUploadFile(imageFile);
-        String imageUrl = s3Uploader.getFilePath(imageName);
+        String imageName = s3Service.saveUploadFile(imageFile);
+        String imageUrl = s3Service.getFilePath(imageName);
 
         productRepository.save(Product.builder()
                 .name(productDTO.name())

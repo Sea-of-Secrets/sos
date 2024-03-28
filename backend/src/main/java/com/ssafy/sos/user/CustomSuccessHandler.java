@@ -57,7 +57,7 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         jwtService.save(username, refresh);
     }
 
-    private Cookie createCookie(String key, String value) {
+    public static Cookie createCookie(String key, String value) {
 
         Cookie cookie = new Cookie(key, value);
         cookie.setMaxAge(24*60*60);

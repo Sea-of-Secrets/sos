@@ -17,7 +17,6 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public class BaseEntity {
 
-    @Column(name = "is_deleted")
     @ColumnDefault("false")
     @Comment("삭제 여부")
     private boolean isDeleted;
