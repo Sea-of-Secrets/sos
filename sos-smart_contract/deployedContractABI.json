@@ -22,6 +22,12 @@
     },
     {
       "type": "error",
+      "name": "ERC721EnumerableForbiddenBatchMint",
+      "inputs": [],
+      "_isFragment": true
+    },
+    {
+      "type": "error",
       "name": "ERC721IncorrectOwner",
       "inputs": [
         {
@@ -175,6 +181,33 @@
       "inputs": [
         {
           "name": "tokenId",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "_isFragment": true
+    },
+    {
+      "type": "error",
+      "name": "ERC721OutOfBoundsIndex",
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "index",
           "type": "uint256",
           "indexed": null,
           "components": null,
@@ -492,6 +525,110 @@
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
+      "gas": null,
+      "_isFragment": true
+    },
+    {
+      "type": "function",
+      "name": "getAllNFTs",
+      "constant": true,
+      "inputs": [
+        {
+          "name": "walletAddress",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": null,
+          "type": "tuple[]",
+          "indexed": null,
+          "components": [
+            {
+              "name": "publisher",
+              "type": "address",
+              "indexed": null,
+              "components": null,
+              "arrayLength": null,
+              "arrayChildren": null,
+              "baseType": "address",
+              "_isParamType": true
+            },
+            {
+              "name": "ipfsHash",
+              "type": "string",
+              "indexed": null,
+              "components": null,
+              "arrayLength": null,
+              "arrayChildren": null,
+              "baseType": "string",
+              "_isParamType": true
+            },
+            {
+              "name": "description",
+              "type": "string",
+              "indexed": null,
+              "components": null,
+              "arrayLength": null,
+              "arrayChildren": null,
+              "baseType": "string",
+              "_isParamType": true
+            }
+          ],
+          "arrayLength": -1,
+          "arrayChildren": {
+            "name": null,
+            "type": "tuple",
+            "indexed": null,
+            "components": [
+              {
+                "name": "publisher",
+                "type": "address",
+                "indexed": null,
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null,
+                "baseType": "address",
+                "_isParamType": true
+              },
+              {
+                "name": "ipfsHash",
+                "type": "string",
+                "indexed": null,
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null,
+                "baseType": "string",
+                "_isParamType": true
+              },
+              {
+                "name": "description",
+                "type": "string",
+                "indexed": null,
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null,
+                "baseType": "string",
+                "_isParamType": true
+              }
+            ],
+            "arrayLength": null,
+            "arrayChildren": null,
+            "baseType": "tuple",
+            "_isParamType": true
+          },
+          "baseType": "array",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
       "gas": null,
       "_isFragment": true
     },
@@ -895,6 +1032,82 @@
     },
     {
       "type": "function",
+      "name": "tokenByIndex",
+      "constant": true,
+      "inputs": [
+        {
+          "name": "index",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": null,
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "gas": null,
+      "_isFragment": true
+    },
+    {
+      "type": "function",
+      "name": "tokenOfOwnerByIndex",
+      "constant": true,
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "index",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": null,
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "gas": null,
+      "_isFragment": true
+    },
+    {
+      "type": "function",
       "name": "tokenURI",
       "constant": true,
       "inputs": [
@@ -918,6 +1131,28 @@
           "arrayLength": null,
           "arrayChildren": null,
           "baseType": "string",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "gas": null,
+      "_isFragment": true
+    },
+    {
+      "type": "function",
+      "name": "totalSupply",
+      "constant": true,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": null,
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
           "_isParamType": true
         }
       ],
@@ -1079,6 +1314,110 @@
       "outputs": [],
       "payable": false,
       "stateMutability": "nonpayable",
+      "gas": null,
+      "_isFragment": true
+    },
+    "getAllNFTs(address)": {
+      "type": "function",
+      "name": "getAllNFTs",
+      "constant": true,
+      "inputs": [
+        {
+          "name": "walletAddress",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": null,
+          "type": "tuple[]",
+          "indexed": null,
+          "components": [
+            {
+              "name": "publisher",
+              "type": "address",
+              "indexed": null,
+              "components": null,
+              "arrayLength": null,
+              "arrayChildren": null,
+              "baseType": "address",
+              "_isParamType": true
+            },
+            {
+              "name": "ipfsHash",
+              "type": "string",
+              "indexed": null,
+              "components": null,
+              "arrayLength": null,
+              "arrayChildren": null,
+              "baseType": "string",
+              "_isParamType": true
+            },
+            {
+              "name": "description",
+              "type": "string",
+              "indexed": null,
+              "components": null,
+              "arrayLength": null,
+              "arrayChildren": null,
+              "baseType": "string",
+              "_isParamType": true
+            }
+          ],
+          "arrayLength": -1,
+          "arrayChildren": {
+            "name": null,
+            "type": "tuple",
+            "indexed": null,
+            "components": [
+              {
+                "name": "publisher",
+                "type": "address",
+                "indexed": null,
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null,
+                "baseType": "address",
+                "_isParamType": true
+              },
+              {
+                "name": "ipfsHash",
+                "type": "string",
+                "indexed": null,
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null,
+                "baseType": "string",
+                "_isParamType": true
+              },
+              {
+                "name": "description",
+                "type": "string",
+                "indexed": null,
+                "components": null,
+                "arrayLength": null,
+                "arrayChildren": null,
+                "baseType": "string",
+                "_isParamType": true
+              }
+            ],
+            "arrayLength": null,
+            "arrayChildren": null,
+            "baseType": "tuple",
+            "_isParamType": true
+          },
+          "baseType": "array",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
       "gas": null,
       "_isFragment": true
     },
@@ -1480,6 +1819,82 @@
       "gas": null,
       "_isFragment": true
     },
+    "tokenByIndex(uint256)": {
+      "type": "function",
+      "name": "tokenByIndex",
+      "constant": true,
+      "inputs": [
+        {
+          "name": "index",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": null,
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "gas": null,
+      "_isFragment": true
+    },
+    "tokenOfOwnerByIndex(address,uint256)": {
+      "type": "function",
+      "name": "tokenOfOwnerByIndex",
+      "constant": true,
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "index",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "outputs": [
+        {
+          "name": null,
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "gas": null,
+      "_isFragment": true
+    },
     "tokenURI(uint256)": {
       "type": "function",
       "name": "tokenURI",
@@ -1505,6 +1920,28 @@
           "arrayLength": null,
           "arrayChildren": null,
           "baseType": "string",
+          "_isParamType": true
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "gas": null,
+      "_isFragment": true
+    },
+    "totalSupply()": {
+      "type": "function",
+      "name": "totalSupply",
+      "constant": true,
+      "inputs": [],
+      "outputs": [
+        {
+          "name": null,
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
           "_isParamType": true
         }
       ],
@@ -1579,6 +2016,12 @@
     }
   },
   "errors": {
+    "ERC721EnumerableForbiddenBatchMint()": {
+      "type": "error",
+      "name": "ERC721EnumerableForbiddenBatchMint",
+      "inputs": [],
+      "_isFragment": true
+    },
     "ERC721IncorrectOwner(address,uint256,address)": {
       "type": "error",
       "name": "ERC721IncorrectOwner",
@@ -1734,6 +2177,33 @@
       "inputs": [
         {
           "name": "tokenId",
+          "type": "uint256",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "uint256",
+          "_isParamType": true
+        }
+      ],
+      "_isFragment": true
+    },
+    "ERC721OutOfBoundsIndex(address,uint256)": {
+      "type": "error",
+      "name": "ERC721OutOfBoundsIndex",
+      "inputs": [
+        {
+          "name": "owner",
+          "type": "address",
+          "indexed": null,
+          "components": null,
+          "arrayLength": null,
+          "arrayChildren": null,
+          "baseType": "address",
+          "_isParamType": true
+        },
+        {
+          "name": "index",
           "type": "uint256",
           "indexed": null,
           "components": null,

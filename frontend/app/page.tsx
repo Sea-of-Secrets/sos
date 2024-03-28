@@ -12,6 +12,9 @@ export default function Home() {
       <Link className="button" href="/room">
         대기방으로
       </Link>
+      <Link className="button" href="/users">
+        마이페이지
+      </Link>
       <a
         className="button"
         href="http://localhost:8080/oauth2/authorization/naver"

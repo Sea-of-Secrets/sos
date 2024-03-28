@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { mintNFT, createRandomWallet } = require('../service/NFTService');
+const axios = require('axios');
+const { mintNFT, createRandomWallet, getNFTs } = require('../service/NFTService');
 
-//nft 정보 받기
+//nft 민팅
 router.post("/nft", async (req, res) => {
     console.log(req.body);
     // console.log("data : ",  data);
@@ -24,5 +25,40 @@ router.post('/wallet', (req, res) => {
         privateKey: newWallet.privateKey
     });
 });
+
+//NFT 불러오기
+router.post('/nfts', async (req, res) => {
+    const nftList = await getNFTs(req.body);
+
+    const promises = nftList.map(element => new Promise((resolve, reject) => {
+        axios.get(element[1]).then(res => resolve(res, element)).catch(err => reject(err))
+    }))
+
+    let result = [];
+    await Promise.allSettled(promises).then(results => {
+        results.forEach(response => {
+            const nft = response.value.data;
+            
+            let ipfsUrl = nft.image;
+            ipfsUrl = ipfsUrl.split("ipfs://")[1];
+            ipfsUrl = "https://ipfs.io/ipfs/"+ipfsUrl;
+            
+            const parseResult = {
+                name: nft.name,
+                description: nft.description,
+                image: ipfsUrl
+            }
+            
+            console.log(parseResult);
+            result.push(parseResult);
+        })
+    })
+    .catch(err => {
+        console.log(err)
+    })
+    
+    console.log(result);
+    res.send(result);
+})
 
 module.exports = router

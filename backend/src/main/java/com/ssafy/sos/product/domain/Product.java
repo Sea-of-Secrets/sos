@@ -1,8 +1,7 @@
 package com.ssafy.sos.product.domain;
 
-import com.ssafy.sos.member.domain.UserEntity;
+import com.ssafy.sos.user.domain.UserEntity;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
