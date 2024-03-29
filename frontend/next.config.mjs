@@ -6,7 +6,7 @@ const nextConfig = {
     return [
       {
         source: "/:path*",
-        destination: "http://j10a710.p.ssafy.io:3000/:path*",
+        destination: "http://j10a710.p.ssafy.io/:path*",
       },
     ];
   },
@@ -18,7 +18,7 @@ const nextConfig = {
           { key: "Access-Control-Allow-Credentials", value: "true" },
           {
             key: "Access-Control-Allow-Origin",
-            value: "http://j10a710.p.ssafy.io",
+            value: "http://j10a710.p.ssafy.io:3000",
           },
           {
             key: "Access-Control-Allow-Methods",
