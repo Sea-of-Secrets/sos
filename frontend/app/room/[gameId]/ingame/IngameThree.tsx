@@ -16,7 +16,7 @@ import {
   useMarineThreePiece,
 } from "./stores/piece";
 import { useSocketMessage } from "./stores/useSocketMessage";
-import useNickname from "~/store/nickname";
+import AvailableNode from "./models/Piece/AvailableNode";
 
 export default function IngameThree() {
   const { setPiece: setPiratePiece } = usePiratePiece();
@@ -25,7 +25,6 @@ export default function IngameThree() {
   const { setPiece: setMarineThreePiece } = useMarineThreePiece();
 
   const { socketMessage } = useSocketMessage();
-  const { nickname } = useNickname();
   const pirateNodeId = socketMessage?.game?.currentPosition[0];
   const marineOneNodeId = socketMessage?.game?.currentPosition[1];
   const marineTwoNodeId = socketMessage?.game?.currentPosition[2];
@@ -45,46 +44,41 @@ export default function IngameThree() {
 
   return (
     <>
-      <axesHelper scale={10} />
+      {/* <axesHelper scale={10} /> */}
       <Light />
       <Camera />
       <Tween />
       <Map />
       <SelectableMarineNodeMarkerGroup />
+      <AvailableNode />
       <Graph />
-      {socketMessage &&
-        socketMessage.game?.currentPosition[0] !== 0 &&
-        socketMessage.game?.players[0]["nickname"] === nickname && (
+      {socketMessage && (
+        <>
           <Piece
             name="PIRATE"
             position={piratePosition}
             pieceName="PIRATE"
             set={setPiratePiece}
           />
-        )}
-      {socketMessage && socketMessage.game?.currentPosition[1] !== 0 && (
-        <Piece
-          name="MARINE1"
-          position={marineOnePosition}
-          pieceName="MARINE1"
-          set={setMarineOnePiece}
-        />
-      )}
-      {socketMessage && socketMessage.game?.currentPosition[2] !== 0 && (
-        <Piece
-          name="MARINE2"
-          position={marineTwoPosition}
-          pieceName="MARINE2"
-          set={setMarineTwoPiece}
-        />
-      )}
-      {socketMessage && socketMessage.game?.currentPosition[3] !== 0 && (
-        <Piece
-          name="MARINE3"
-          position={marineThreePosition}
-          pieceName="MARINE3"
-          set={setMarineThreePiece}
-        />
+          <Piece
+            name="MARINE1"
+            position={marineOnePosition}
+            pieceName="MARINE1"
+            set={setMarineOnePiece}
+          />
+          <Piece
+            name="MARINE2"
+            position={marineTwoPosition}
+            pieceName="MARINE2"
+            set={setMarineTwoPiece}
+          />
+          <Piece
+            name="MARINE3"
+            position={marineThreePosition}
+            pieceName="MARINE3"
+            set={setMarineThreePiece}
+          />
+        </>
       )}
       {socketMessage &&
         socketMessage.game?.investigateSuccess &&

@@ -17,7 +17,7 @@ import useNickname from "~/store/nickname";
 import useGameId from "~/store/gameId";
 
 import { useCamera } from "./stores/useCamera";
-import { getNode, marineStartList } from "~/_lib/data/data";
+import { getNode } from "~/_lib/data/data";
 import { useSocketMessage } from "./stores/useSocketMessage";
 import {
   usePiratePiece,
@@ -38,9 +38,10 @@ export default function IngameClient() {
 
   const { nickname } = useNickname();
   const { gameId } = useGameId();
-  const { zoom, zoomMarineStart, gameStartAnimation } = useCamera();
+  const { zoom, zoomMarineStart, gameStartAnimation, zoomFullScreen } =
+    useCamera();
   const { handleShowTimer, handleCloseTimer } = useTimer();
-  const { startMarineTurn } = useWhenMarineStartGame();
+  const { selectStartNode, startMarineTurn } = useWhenMarineStartGame();
 
   const { socketMessage } = useSocketMessage();
   const { movePieceTwo: movePirate } = usePiratePiece();
@@ -58,7 +59,6 @@ export default function IngameClient() {
   // 게임 시작
   const startAnimation = () => {
     setLoading2(false);
-    // TODO : 애니메이션 실행
     gameStartAnimation();
 
     // 애니메이션 끝났다고 알림
@@ -125,7 +125,6 @@ export default function IngameClient() {
       );
       // 해당 노드 줌 인
       zoom(getNode(socketMessage.game.currentPosition[0]).position);
-      // TODO : 피스 등장 이펙트
     } else {
       setHeaderMessage("해적의 시작 위치가 결정되었습니다");
     }
@@ -154,8 +153,6 @@ export default function IngameClient() {
   // 해군의 시작위치 지정 완료
   const actionInitMarineStart = (number: number) => {
     // 타이머, 시간초과 초기화
-    setTimeOut(false);
-    handleCloseTimer();
     if (socketMessage.game.players[number]["nickname"] === nickname) {
       // 시간 초과 여부에 따라 메시지 출력
       setHeaderMessage(
@@ -163,11 +160,16 @@ export default function IngameClient() {
           ? "시간초과! 시작 위치가 랜덤으로 결정되었습니다"
           : "시작 위치가 결정되었습니다",
       );
+      if (timeOut) {
+        selectStartNode(socketMessage.game.currentPosition[number]);
+      }
     } else {
       setHeaderMessage(
         `[해군${number}] ${socketMessage.game.players[number]["nickname"]} 님의 시작 위치가 결정되었습니다`,
       );
     }
+    setTimeOut(false);
+    handleCloseTimer();
 
     // 해당 노드 줌 인
     zoom(getNode(socketMessage.game.currentPosition[number]).position);
@@ -175,7 +177,6 @@ export default function IngameClient() {
 
   // 해적 시작 위치 공개
   const openPirateStart = () => {
-    // TODO : 3초간 보물 열리는 애니메이션 (해군도 보이게 수정하기)
     setHeaderMessage("해적의 출발지가 공개됩니다");
     zoom(getNode(socketMessage.game.currentPosition[0]).position);
   };
@@ -185,31 +186,14 @@ export default function IngameClient() {
     handleShowTimer();
     if (socketMessage.game.players[0]["nickname"] === nickname) {
       setHeaderMessage("이동할 위치를 결정하세요");
-      zoom(getNode(socketMessage.game.currentPosition[0]).position);
-      setFooterMessage(
-        <>
-          {Object.entries(socketMessage.availableNode).map(([nodeId]) => (
-            <button
-              key={nodeId}
-              onClick={() => {
-                send("/pub/game", {
-                  message: "MOVE_PIRATE",
-                  sender: nickname,
-                  gameId,
-                  node: nodeId,
-                });
-              }}
-            >
-              <p>{nodeId}번 </p>
-            </button>
-          ))}
-        </>,
-      );
-      // TODO : 이동 가능 노드 비우기
+      zoom(getNode(socketMessage.game.currentPosition[0]).position, {
+        level: 2,
+      });
     } else {
       setHeaderMessage(
         `[해적] ${socketMessage.game.players[0]["nickname"]} 님이 이동중입니다`,
       );
+      zoomFullScreen();
     }
   };
 
@@ -243,29 +227,11 @@ export default function IngameClient() {
   // 해군의 이동 명령
   const orderMoveMarine = (number: number) => {
     handleShowTimer();
-    const EnglishNumber = number === 1 ? "ONE" : number === 2 ? "TWO" : "THREE";
-    zoom(getNode(socketMessage.game.currentPosition[number]).position);
+    zoom(getNode(socketMessage.game.currentPosition[number]).position, {
+      level: 2,
+    });
     if (socketMessage.game.players[number]["nickname"] === nickname) {
       setHeaderMessage("이동할 위치를 결정하세요");
-      setFooterMessage(
-        <>
-          {Object.entries(socketMessage.availableNode).map(([nodeId]) => (
-            <button
-              key={nodeId}
-              onClick={() => {
-                send("/pub/game", {
-                  message: `MOVE_MARINE_${EnglishNumber}`,
-                  sender: nickname,
-                  gameId,
-                  node: nodeId,
-                });
-              }}
-            >
-              <p>{nodeId}번 </p>
-            </button>
-          ))}
-        </>,
-      );
     } else {
       setHeaderMessage(
         `[해군${number}] ${socketMessage.game.players[number]["nickname"]} 님이 이동중입니다`,

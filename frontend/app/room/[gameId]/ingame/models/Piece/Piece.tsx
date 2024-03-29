@@ -54,33 +54,34 @@ export default function Piece({
   }, [hovered]);
 
   let piecePosition;
+  let pieceRotation;
+  let visible;
   if (pieceName === "PIRATE") {
+    visible =
+      socketMessage?.game?.currentPosition[0] !== 0 &&
+      socketMessage?.game?.players[0]?.nickname === nickname;
+    pieceRotation = new Euler(0, Math.PI, 0);
     piecePosition = position
       ? new Vector3(position.x, position.z, position.y + 10)
       : undefined;
   } else if (pieceName === "MARINE1") {
+    visible = socketMessage?.game?.currentPosition[1] !== 0;
+    pieceRotation = new Euler(0, Math.PI, 0);
     piecePosition = position
       ? new Vector3(position.x, position.z + 6, position.y)
       : undefined;
   } else if (pieceName === "MARINE2") {
+    visible = socketMessage?.game?.currentPosition[2] !== 0;
+    pieceRotation = new Euler(0, Math.PI, 0);
     piecePosition = position
       ? new Vector3(position.x, position.z + 6, position.y)
       : undefined;
   } else if (pieceName === "MARINE3") {
+    visible = socketMessage?.game?.currentPosition[3] !== 0;
+    pieceRotation = new Euler(0, Math.PI, 0);
     piecePosition = position
       ? new Vector3(position.x, position.z + 6, position.y)
       : undefined;
-  }
-
-  let pieceRotation;
-  if (pieceName === "PIRATE") {
-    pieceRotation = new Euler(0, Math.PI, 0);
-  } else if (pieceName === "MARINE1") {
-    pieceRotation = new Euler(0, Math.PI, 0);
-  } else if (pieceName === "MARINE2") {
-    pieceRotation = new Euler(0, Math.PI, 0);
-  } else if (pieceName === "MARINE3") {
-    pieceRotation = new Euler(0, Math.PI, 0);
   }
 
   return (
@@ -90,6 +91,7 @@ export default function Piece({
         ref={meshRef}
         position={piecePosition}
         rotation={pieceRotation}
+        visible={visible}
         scale={PiecePathMap[pieceName].size}
         onClick={handleClickPiece}
         onPointerOver={handlePointerOver}

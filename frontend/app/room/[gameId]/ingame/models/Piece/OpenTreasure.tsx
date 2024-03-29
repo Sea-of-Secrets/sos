@@ -19,18 +19,18 @@ export default function TreasureRenderer({
     const action = actions.Scene;
     if (action) {
       action.time = 4000;
-      action.reset().play();
+      action.play();
       setTimeout(() => {
         action.time = 5000;
         action.timeScale = 0;
-      }, 3000);
+      }, 5000);
     }
   };
 
   return (
     <mesh
       {...props}
-      position={[position.x, position.z, position.y - 45]}
+      position={[position.x, position.z, position.y - 25]}
       onClick={handleClickTreasure}
       scale={PiecePathMap["TREASURE"].size}
     >
