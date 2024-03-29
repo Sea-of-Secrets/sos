@@ -3,7 +3,7 @@ import { Client, messageCallbackType } from "@stomp/stompjs";
 <<<<<<< Updated upstream
 // TODO: env 처리해야한다.
 // const SERVER_END_POINT = "ws://localhost:8080";
-const SERVER_END_POINT = "http://j10a710.p.ssafy.io:8081/api";
+const SERVER_END_POINT = "ws://j10a710.p.ssafy.io:8081";
 const SOCKET_END_POINT = `${SERVER_END_POINT}/sos`;
 =======
 const { SERVER_SOCKET_API_END_POINT } = process.env;

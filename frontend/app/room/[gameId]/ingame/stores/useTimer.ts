@@ -5,7 +5,7 @@ type Cb = () => void;
 interface TimerState {
   isShowTimer: boolean;
   handleShowTimer: (onCloseCallback?: Cb) => void;
-  handleCloseTimer: () => void;
+  handleCloseTimer: (onCloseCallback?: Cb) => void;
 }
 
 let onCloseCallback = () => {};
@@ -20,9 +20,11 @@ export const useTimer = create<TimerState>(set => ({
       return { ...state, isShowTimer: true };
     });
   },
-  handleCloseTimer: () => {
+  handleCloseTimer: onCloseCallback => {
     set(state => {
-      onCloseCallback();
+      if (onCloseCallback) {
+        onCloseCallback();
+      }
       return { ...state, isShowTimer: false };
     });
   },

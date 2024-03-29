@@ -7,6 +7,10 @@ import { usePiratePiece } from "../room/[gameId]/ingame/stores/piece";
 import { usePirateGraph } from "../room/[gameId]/ingame/stores/graph";
 import { useSystemPrompt } from "../room/[gameId]/ingame/stores/useSystemPrompt";
 import { useCamera } from "../room/[gameId]/ingame/stores/useCamera";
+import {
+  MarinePlayerKey,
+  useWhenMarineStartGame,
+} from "../room/[gameId]/ingame/stores/useWhenMarineStartGame";
 
 import SelectPirateLocationGrid from "../room/[gameId]/ingame/components/SelectPirateLocationGrid";
 
@@ -21,6 +25,7 @@ export default function TestController() {
   const { movePiece } = usePiratePiece();
   const { setMovableNodeIdList, setMovableEdgeIdList } = usePirateGraph();
   const { handleShowTimer } = useTimer();
+  const { startMarineTurn } = useWhenMarineStartGame();
 
   const handleClickSystemPromptHeader = () => {
     if (systemPromptHeaderInputRef.current) {
@@ -117,7 +122,14 @@ export default function TestController() {
     const treasures = [36, 45, 175, 185];
 
     setFooterMessage(
-      <>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
         <div>가령 보물이 {JSON.stringify(treasures)} 노드에 있다고 하자.</div>
         <SelectPirateLocationGrid
           nodeIdListOnTreasures={treasures}
@@ -127,8 +139,15 @@ export default function TestController() {
             zoomFullScreen();
           }}
         />
-      </>,
+      </div>,
     );
+  };
+
+  const handleStartMarinePlayersSelectNode = (
+    marinePlayerKey: MarinePlayerKey,
+  ) => {
+    setHeaderMessage(`해군 ${marinePlayerKey}은(는) 시작 노드를 골라주세욤`);
+    startMarineTurn(marinePlayerKey);
   };
 
   return (
@@ -183,6 +202,17 @@ export default function TestController() {
       </Test>
       <Test>
         <Button onClick={() => handleShowTimer()}>Timer 소환</Button>
+      </Test>
+      <Test>
+        <Button onClick={() => handleStartMarinePlayersSelectNode("1")}>
+          해군 1 은 처음 위치를 골라줘용
+        </Button>
+        <Button onClick={() => handleStartMarinePlayersSelectNode("2")}>
+          해군 2 은 처음 위치를 골라줘용
+        </Button>
+        <Button onClick={() => handleStartMarinePlayersSelectNode("3")}>
+          해군 3 은 처음 위치를 골라줘용
+        </Button>
       </Test>
     </ContainerStyle>
   );

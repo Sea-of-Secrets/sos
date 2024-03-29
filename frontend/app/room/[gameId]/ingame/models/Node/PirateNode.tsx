@@ -9,7 +9,7 @@ export default function PirateNode({ node, ...props }: PirateNodeProps) {
   const {
     meshRef,
     position,
-    handleClickPiece,
+    handleClickNode,
     handlePointerOut,
     handlePointerOver,
   } = useNode({ node });
@@ -23,7 +23,7 @@ export default function PirateNode({ node, ...props }: PirateNodeProps) {
         ref={meshRef}
         position={position}
         scale={NODE_SCALE}
-        onClick={handleClickPiece}
+        onClick={handleClickNode}
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
       >
