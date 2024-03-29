@@ -18,6 +18,7 @@ export interface PieceEffectProps
 }
 
 export interface TreasureProps {
+  pieceName: keyof typeof PiecePathMap;
   isOpen: boolean;
   nodeId: number;
 }

@@ -8,6 +8,7 @@ import { gameSocket } from "~/sockets";
 import { useWhenMarineStartGame } from "../stores/useWhenMarineStartGame";
 import useNickname from "~/store/nickname";
 import useGameId from "~/store/gameId";
+import { useSocketMessage } from "../stores/useSocketMessage";
 
 export const useNode = ({ node }: { node: IngameGraphNode }) => {
   const position: [number, number, number] = useMemo(
@@ -25,6 +26,7 @@ export const useNode = ({ node }: { node: IngameGraphNode }) => {
   } = useWhenMarineStartGame();
   const { nickname } = useNickname();
   const { gameId } = useGameId();
+  const { socketMessage } = useSocketMessage();
   const { send } = gameSocket;
 
   const handleClickNode = useCallback(
@@ -48,7 +50,68 @@ export const useNode = ({ node }: { node: IngameGraphNode }) => {
         selectStartNode(node.nodeId);
         return;
       }
+      if (
+        socketMessage.message === "ORDER_MOVE_PIRATE" &&
+        socketMessage.game.players[0]["nickname"] === nickname &&
+        Object.keys(socketMessage.availableNode)
+          .map(Number)
+          .includes(node.nodeId)
+      ) {
+        send("/pub/game", {
+          message: "MOVE_PIRATE",
+          sender: nickname,
+          gameId,
+          node: node.nodeId,
+        });
+        return;
+      }
+      if (
+        socketMessage.message === "ORDER_MOVE_MARINE_ONE" &&
+        socketMessage.game.players[1]["nickname"] === nickname &&
+        Object.keys(socketMessage.availableNode)
+          .map(Number)
+          .includes(node.nodeId)
+      ) {
+        send("/pub/game", {
+          message: "MOVE_MARINE_ONE",
+          sender: nickname,
+          gameId,
+          node: node.nodeId,
+        });
+        return;
+      }
+      if (
+        socketMessage.message === "ORDER_MOVE_MARINE_TWO" &&
+        socketMessage.game.players[2]["nickname"] === nickname &&
+        Object.keys(socketMessage.availableNode)
+          .map(Number)
+          .includes(node.nodeId)
+      ) {
+        send("/pub/game", {
+          message: "MOVE_MARINE_TWO",
+          sender: nickname,
+          gameId,
+          node: node.nodeId,
+        });
+        return;
+      }
+      if (
+        socketMessage.message === "ORDER_MOVE_MARINE_THREE" &&
+        socketMessage.game.players[3]["nickname"] === nickname &&
+        Object.keys(socketMessage.availableNode)
+          .map(Number)
+          .includes(node.nodeId)
+      ) {
+        send("/pub/game", {
+          message: "MOVE_MARINE_THREE",
+          sender: nickname,
+          gameId,
+          node: node.nodeId,
+        });
+        return;
+      }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [
       isMarineStartGameTurn,
       selectableStartNodeList,
@@ -56,6 +119,7 @@ export const useNode = ({ node }: { node: IngameGraphNode }) => {
       nickname,
       gameId,
       selectStartNode,
+      socketMessage,
     ],
   );
 

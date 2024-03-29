@@ -8,12 +8,7 @@ import { useWhenMarineStartGame } from "../../stores/useWhenMarineStartGame";
 import { PiecePathMap } from "~/assetPath";
 
 export default function SelectableMarineNodeMarkerGroup() {
-  const { isMarineStartGameTurn, selectableStartNodeList } =
-    useWhenMarineStartGame();
-
-  if (!isMarineStartGameTurn) {
-    return null;
-  }
+  const { selectableStartNodeList } = useWhenMarineStartGame();
 
   return (
     <>
@@ -41,7 +36,7 @@ const Marker = ({ src, node, size }: MarkerProps) => {
   const { scene: originalScene } = useGLTF(src);
 
   const clonedScene = originalScene.clone();
-
+  const { isMarineStartGameTurn } = useWhenMarineStartGame();
   useFrame(state => {
     if (meshRef.current) {
       const time = state.clock.elapsedTime * 4;
@@ -53,6 +48,7 @@ const Marker = ({ src, node, size }: MarkerProps) => {
 
   return (
     <mesh
+      visible={isMarineStartGameTurn}
       ref={meshRef}
       position={[position.x, position.z, position.y]}
       scale={size}
