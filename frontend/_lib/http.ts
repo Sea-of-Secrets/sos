@@ -6,11 +6,11 @@ const { NEXT_PUBLIC_CLIENT_API_END_POINT, NEXT_PUBLIC_SERVER_API_END_POINT } =
 const _SERVER_API_END_POINT =
   process.env.NODE_ENV === "development"
     ? "http://localhost:8080"
-    : NEXT_PUBLIC_SERVER_API_END_POINT;
+    : "http://j10a710.p.ssafy.io:8081/api";
 const _CLIENT_API_END_POINT =
   process.env.NODE_ENV === "development"
     ? "http://localhost:3000/api"
-    : NEXT_PUBLIC_CLIENT_API_END_POINT;
+    : "http://j10a710.p.ssafy.io:3000/api";
 
 export const http = axios.create({
   baseURL: _SERVER_API_END_POINT,
