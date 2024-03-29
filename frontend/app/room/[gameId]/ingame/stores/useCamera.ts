@@ -39,7 +39,7 @@ export const useCamera = create<CameraState>(set => ({
       if (state.cameraRef) {
         state.cameraRef.current.setLookAt(
           x,
-          250 * (options?.level ?? 1),
+          300 * (options?.level ?? 1),
           y + 200,
           options?.x ?? x,
           options?.z ?? 0,

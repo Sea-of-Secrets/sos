@@ -10,6 +10,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>,
 ) {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+
+  // 다른 CORS 관련 헤더를 설정할 수도 있습니다.
+  res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
   try {
     if (req.method === "GET") {
       const response = await http.get("/shops");

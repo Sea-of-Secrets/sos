@@ -18,6 +18,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.CorsUtils;
 
 import java.util.Collections;
 
@@ -52,10 +53,15 @@ public class SecurityConfig {
         http
                 .httpBasic((auth) -> auth.disable());
 
-//        //JWTFilter 추가
+        //JWTFilter 추가
         //임시로 없앰
         http
                 .addFilterBefore(new JWTFilter(jwtUtil, jwtService), UsernamePasswordAuthenticationFilter.class);
+
+        //preflight 허용
+//        http
+//                .authorizeHttpRequests((request) -> request.requestMatchers(CorsUtils::isPreFlightRequest).permitAll());
+
 
 
         //oauth2
@@ -88,6 +94,7 @@ public class SecurityConfig {
                         CorsConfiguration configuration = new CorsConfiguration();
 
                         configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                        configuration.setAllowedOrigins(Collections.singletonList("http://j10a710.p.ssafy.io:3000"));
                         configuration.setAllowedOriginPatterns(Collections.singletonList("*"));
                         configuration.setAllowedMethods(Collections.singletonList("*"));
                         configuration.setAllowCredentials(true);
