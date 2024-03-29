@@ -5,7 +5,7 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: ":path*/api",
+        source: "/:path*/api",
         headers: [
           { key: "Access-Control-Allow-Credentials", value: "false" },
           {
@@ -14,7 +14,7 @@ const nextConfig = {
           },
           {
             key: "Access-Control-Allow-Methods",
-            value: "GET,POST,OPTIONS",
+            value: "GET, POST, OPTIONS",
           },
           {
             key: "Access-Control-Allow-Headers",
