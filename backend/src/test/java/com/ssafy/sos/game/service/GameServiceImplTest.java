@@ -1,9 +1,6 @@
 package com.ssafy.sos.game.service;
 
-import com.ssafy.sos.game.domain.Board;
-import com.ssafy.sos.game.domain.Game;
-import com.ssafy.sos.game.domain.Player;
-import com.ssafy.sos.game.domain.Room;
+import com.ssafy.sos.game.domain.*;
 import com.ssafy.sos.game.util.GameMode;
 import org.assertj.core.api.Assertions;
 
@@ -106,17 +103,17 @@ class GameServiceImplTest {
 
         // 검사2 : 앞서 선택한 해군이 있을때 (해당 번호는 선택이 되면 안됨)
         // 수동 검사
-        game.getCurrentPosition()[1] = 93;
-        Assertions.assertThat(gameService.initMarineStart(gameId, 2, 93))
+        game.getCurrentPosition()[1] = 293;
+        Assertions.assertThat(gameService.initMarineStart(gameId, 2, 293))
                 .isEqualTo(null);
 
         // 랜덤 검사
-        game.getCurrentPosition()[1] = 93;
-        game.getCurrentPosition()[2] = 94;
+        game.getCurrentPosition()[1] = 293;
+        game.getCurrentPosition()[2] = 294;
         List<Integer> check = new ArrayList<>();
-        check.add(97);
-        check.add(106);
-        check.add(109);
+        check.add(297);
+        check.add(306);
+        check.add(309);
         check.add(200);
         for (int i = 0; i < 100; i++) {
             gameService.initMarineStartRandom(gameId, 3);
@@ -128,11 +125,11 @@ class GameServiceImplTest {
     // 해적 이동 가능 위치 조회 (해군 포함시 해당 경로 이동 불가한지 검사)
     public void findPirateAvailableNode() {
         // 검사1 : 모든 해적 위치 경우의 수 검사
-        for (int i = 1; i <= 188; i++) {
-            HashMap<Integer, Deque<Integer>> pirateMovableNode =  gameService.findPirateAvailableNode(gameId, i);
-            // 기존 검사 완료 하였음 (로그 출력 정리 위해 주석처리)
-            // System.out.println(pirateMovableNode);
-        }
+//        for (int i = 1; i <= 188; i++) {
+//            HashMap<Integer, Deque<Integer>> pirateMovableNode =  gameService.findPirateAvailableNode(gameId, i);
+//            // 기존 검사 완료 하였음 (로그 출력 정리 위해 주석처리)
+//             System.out.println(pirateMovableNode);
+//        }
 
         // 검사2 : 특정 노드에서의 해적 이동 가능 위치 조회 결과가 올바르게 나오는지 검사
         // 169의 경우
@@ -172,7 +169,7 @@ class GameServiceImplTest {
         for (int i = 201; i <= 373; i++) {
             HashMap<Integer, Deque<Integer>> marineMovableNode =  gameService.findMarineAvailableNode(gameId, i);
             // 기존 검사 완료 하였음 (로그 출력 정리 위해 주석처리)
-            // System.out.println(marineMovableNode);
+             System.out.println(marineMovableNode);
         }
 
         // 검사2 : 다른 해군이 포함된 경우 해당 정점은 선택할 수 없음
@@ -240,7 +237,7 @@ class GameServiceImplTest {
 
         Assertions.assertThat(result.getInRoomPlayers())
                 .extracting(Player::getNickname)
-                .contains("Player2");
+                .contains("zuhee");
     }
 
     @Test
@@ -266,6 +263,8 @@ class GameServiceImplTest {
     public void investigate() {
         // given
         game = board.getGameMap().get(gameId);
+        game.setInvestigate(new Investigate());
+        game.getInvestigate().setNodes(new HashMap<>());
 
         int nodeNumber = 76;
         game.getPirateRoute().add(76);

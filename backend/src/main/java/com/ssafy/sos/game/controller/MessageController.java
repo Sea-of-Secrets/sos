@@ -44,6 +44,9 @@ public class MessageController {
     // 응답이 왔는지 여부를 판단할 flag
     private boolean lockRespond;
 
+    // 게임 시작했는지 판단
+    public boolean isStarted = false;
+
     // 소켓 연결시 실행
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectEvent event) {
@@ -80,7 +83,7 @@ public class MessageController {
                         .build();
                 sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
             }
-
+            isStarted = false;
             Game game = board.getGameMap().getOrDefault(gameId, null);
 
             if (game == null) return;
@@ -326,6 +329,10 @@ public class MessageController {
             gameService.initMarineStartRandom(gameId, role.getRoleNumber());
         }
         // 해적 시작위치 지정완료 브로드캐스트 (서 -> 클)
+        if (role == GameRole.MARINE_THREE) {
+            // 해적 시작위치 보물상자 열어주기
+            game.getTreasures().put(game.getCurrentPosition()[0], true);
+        }
         sendMessageWithGame(gameId, game, "ACTION_INIT_"+role+"_START");
         // 2초 타이머 시작
         if (role == GameRole.MARINE_THREE) {
@@ -794,6 +801,10 @@ public class MessageController {
             return;
         }
         // 올바르게 선택했다면 해군 시작위치 지정완료 브로드캐스트 (서 -> 클)
+        if (role == GameRole.MARINE_THREE) {
+            // 해적 시작위치 보물상자 열어주기
+            game.getTreasures().put(game.getCurrentPosition()[0], true);
+        }
         sendMessageWithGame(gameId, game, "ACTION_INIT_"+role+"_START");
         // 2초 타이머 시작
         if (role == GameRole.MARINE_THREE) {
@@ -808,13 +819,11 @@ public class MessageController {
     @MessageMapping("/init")
     public void init(ClientInitMessage message) {
         String gameId = message.getGameId();
-        String sender = message.getSender();
         Game game = board.getGameMap().get(gameId);
 
         // 게임 시작 (클 -> 서)
-        if (message.getMessage().equals("START_GAME")) {
-            // sender 가 player 0번째와 똑같을때
-            if (!game.getPlayers().get(0).getNickname().equals(sender)) return;
+        if (message.getMessage().equals("START_GAME") && !isStarted) {
+            isStarted = true;
             // 게임 시작하면 방 폭파
             board.getRoomMap().remove(gameId);
             // 해적 시작위치 지정 (서 -> 클)
