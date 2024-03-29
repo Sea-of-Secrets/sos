@@ -1,11 +1,11 @@
 import { Client, messageCallbackType } from "@stomp/stompjs";
 
-const { SERVER_SOCKET_API_END_POINT } = process.env;
+const { NEXT_PUBLIC_SERVER_SOCKET_API_END_POINT } = process.env;
 
 const SERVER_API_END_POINT =
   process.env.NODE_ENV === "development"
     ? "ws://localhost:8080"
-    : SERVER_SOCKET_API_END_POINT;
+    : NEXT_PUBLIC_SERVER_SOCKET_API_END_POINT;
 
 const SOCKET_END_POINT = `${SERVER_API_END_POINT}/game`;
 
