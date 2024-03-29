@@ -2,34 +2,32 @@
 
 const nextConfig = {
   output: "standalone",
-  async rewrites() {
-    return [
-      {
-        source: "/:path*",
-        destination: "http://j10a710.p.ssafy.io/:path*",
-      },
-    ];
-  },
   async headers() {
     return [
       {
-        source: "/:path*",
+        source: "/(.*)",
         headers: [
-          { key: "Access-Control-Allow-Credentials", value: "true" },
           {
             key: "Access-Control-Allow-Origin",
-            value: "http://j10a710.p.ssafy.io",
-          },
-          {
-            key: "Access-Control-Allow-Methods",
-            value: "GET, POST, OPTIONS",
-          },
-          {
-            key: "Access-Control-Allow-Headers",
-            value:
-              "Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date",
+            value: "*", // 모든 Origin에 대해 허용
           },
         ],
+        // headers: [
+        //   { key: "Access-Control-Allow-Credentials", value: "true" },
+        //   {
+        //     key: "Access-Control-Allow-Origin",
+        //     value: "http://j10a710.p.ssafy.io",
+        //   },
+        //   {
+        //     key: "Access-Control-Allow-Methods",
+        //     value: "GET, POST, OPTIONS",
+        //   },
+        //   {
+        //     key: "Access-Control-Allow-Headers",
+        //     value:
+        //       "Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date",
+        //   },
+        // ],
       },
     ];
   },
