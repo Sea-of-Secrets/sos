@@ -863,6 +863,26 @@ public class MessageController {
         }
     }
 
+    // 행동 선택 완료 후
+    private void afterSelect(String gameId, Game game, GameRole role, String action) {
+        // 제한시간 내로 선택을 한 것이므로 타이머 취소
+        gameTimerService.cancelTimer(gameId);
+        // 조건 분기 (조사를 선택했을 경우)
+        if (action.equals("INVESTIGATE")) {
+            // 해군 행동 선택완료 브로드캐스트 (서 -> 클)
+            sendMessageWithGame(gameId, game,"ACTION_SELECT_WORK_"+role+"_INVESTIGATE");
+            // 2초 타이머 시작
+            gameTimerService.startRenderWaitingTimer(gameId, "READY_INVESTIGATE_"+role);
+        }
+        // 조건 분기 (체포를 선택했을 경우)
+        else if (action.equals("ARREST")) {
+            // 해군 행동 선택완료 브로드캐스트 (서 -> 클)
+            sendMessageWithGame(gameId, game,"ACTION_SELECT_WORK_"+role+"_ARREST");
+            // 2초 타이머 시작
+            gameTimerService.startRenderWaitingTimer(gameId, "READY_ARREST_"+role);
+        }
+    }
+
     // 게임 로직
     @MessageMapping("/game")
     public void marine(ClientMoveMessage message) {
@@ -881,22 +901,7 @@ public class MessageController {
 
         // 해군 1 행동 선택 완료
         if (message.getMessage().equals("SELECT_WORK_MARINE_ONE") && !lockRespond) {
-            // 제한시간 내로 선택을 한 것이므로 타이머 취소
-            gameTimerService.cancelTimer(gameId);
-            // 조건 분기 (조사를 선택했을 경우)
-            if (message.getAction().equals("INVESTIGATE")) {
-                // 해군 1 행동 선택완료 브로드캐스트 (서 -> 클)
-                sendMessageWithGame(gameId, game,"ACTION_SELECT_WORK_MARINE_ONE_INVESTIGATE");
-                // 2초 타이머 시작
-                gameTimerService.startRenderWaitingTimer(gameId, "READY_INVESTIGATE_MARINE_ONE");
-            }
-            // 조건 분기 (체포를 선택했을 경우)
-            else if (message.getAction().equals("ARREST")) {
-                // 해군 1 행동 선택완료 브로드캐스트 (서 -> 클)
-                sendMessageWithGame(gameId, game,"ACTION_SELECT_WORK_MARINE_ONE_ARREST");
-                // 2초 타이머 시작
-                gameTimerService.startRenderWaitingTimer(gameId, "READY_ARREST_MARINE_ONE");
-            }
+            afterSelect(gameId, game, GameRole.MARINE_ONE, message.getAction());
         }
 
         // 해군 1 조사 완료
@@ -935,22 +940,7 @@ public class MessageController {
 
         // 해군 2 행동 선택 완료
         if (message.getMessage().equals("SELECT_WORK_MARINE_TWO") && !lockRespond) {
-            // 제한시간 내로 선택을 한 것이므로 타이머 취소
-            gameTimerService.cancelTimer(gameId);
-            // 조건 분기 (조사를 선택했을 경우)
-            if (message.getAction().equals("INVESTIGATE")) {
-                // 해군 2 행동 선택완료 브로드캐스트 (서 -> 클)
-                sendMessageWithGame(gameId, game,"ACTION_SELECT_WORK_MARINE_TWO_INVESTIGATE");
-                // 2초 타이머 시작
-                gameTimerService.startRenderWaitingTimer(gameId, "READY_INVESTIGATE_MARINE_TWO");
-            }
-            // 조건 분기 (체포를 선택했을 경우)
-            else if (message.getAction().equals("ARREST")) {
-                // 해군 2 행동 선택완료 브로드캐스트 (서 -> 클)
-                sendMessageWithGame(gameId, game,"ACTION_SELECT_WORK_MARINE_TWO_ARREST");
-                // 2초 타이머 시작
-                gameTimerService.startRenderWaitingTimer(gameId, "READY_ARREST_MARINE_TWO");
-            }
+            afterSelect(gameId, game, GameRole.MARINE_TWO, message.getAction());
         }
 
         // 해군 2 조사 완료
@@ -989,22 +979,7 @@ public class MessageController {
 
         // 해군 3 행동 선택 완료
         if (message.getMessage().equals("SELECT_WORK_MARINE_THREE") && !lockRespond) {
-            // 제한시간 내로 선택을 한 것이므로 타이머 취소
-            gameTimerService.cancelTimer(gameId);
-            // 조건 분기 (조사를 선택했을 경우)
-            if (message.getAction().equals("INVESTIGATE")) {
-                // 해군 3 행동 선택완료 브로드캐스트 (서 -> 클)
-                sendMessageWithGame(gameId, game,"ACTION_SELECT_WORK_MARINE_THREE_INVESTIGATE");
-                // 2초 타이머 시작
-                gameTimerService.startRenderWaitingTimer(gameId, "READY_INVESTIGATE_MARINE_THREE");
-            }
-            // 조건 분기 (체포를 선택했을 경우)
-            else if (message.getAction().equals("ARREST")) {
-                // 해군 3 행동 선택완료 브로드캐스트 (서 -> 클)
-                sendMessageWithGame(gameId, game,"ACTION_SELECT_WORK_MARINE_THREE_ARREST");
-                // 2초 타이머 시작
-                gameTimerService.startRenderWaitingTimer(gameId, "READY_ARREST_MARINE_THREE");
-            }
+            afterSelect(gameId, game, GameRole.MARINE_THREE, message.getAction());
         }
 
         // 해군 3 조사 완료
