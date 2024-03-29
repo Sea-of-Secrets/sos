@@ -27,6 +27,7 @@ import {
 } from "./stores/piece";
 import SelectPirateLocationGrid from "./components/SelectPirateLocationGrid";
 import { useTimer } from "./stores/useTimer";
+import { useWhenMarineStartGame } from "./stores/useWhenMarineStartGame";
 
 const { send } = gameSocket;
 
@@ -37,8 +38,10 @@ export default function IngameClient() {
 
   const { nickname } = useNickname();
   const { gameId } = useGameId();
-  const { zoom, gameStartAnimation } = useCamera();
+  const { zoom, zoomMarineStart, gameStartAnimation } = useCamera();
   const { handleShowTimer, handleCloseTimer } = useTimer();
+  const { startMarineTurn } = useWhenMarineStartGame();
+
   const { socketMessage } = useSocketMessage();
   const { movePieceTwo: movePirate } = usePiratePiece();
   const { movePieceTwo: moveMarineOne } = useMarineOnePiece();
@@ -132,180 +135,42 @@ export default function IngameClient() {
     removeFooterMessage();
   };
 
-  // 해군 1의 시작위치 지정 명령
-  const orderInitMarineOneStart = () => {
+  // 해군의 시작위치 지정 명령
+  const orderInitMarineStart = (number: number) => {
+    // 타이머 시작
     handleShowTimer();
-    if (socketMessage.game.players[1]["nickname"] === nickname) {
+    zoomMarineStart();
+    if (socketMessage.game.players[number]["nickname"] === nickname) {
       setHeaderMessage("시작 위치를 결정하세요");
-      // TODO : 푸터에 6가지 선택지 나오고 마우스 호버 시, 카메라 이동
-      const marineOneStartList = marineStartList;
-      setFooterMessage(
-        <>
-          {marineOneStartList.map(nodeId => (
-            <button
-              key={nodeId}
-              onClick={() => {
-                send("/pub/init", {
-                  message: "INIT_MARINE_ONE_START",
-                  sender: nickname,
-                  gameId,
-                  node: nodeId,
-                });
-              }}
-            >
-              <p>{nodeId}번 </p>
-            </button>
-          ))}
-        </>,
-      );
+      const stringNumber = number.toString();
+      startMarineTurn(stringNumber as "1" | "2" | "3");
     } else {
       setHeaderMessage(
-        `[해군1] ${socketMessage.game.players[1]["nickname"]} 님이 시작 위치를 결정중입니다`,
+        `[해군${number}] ${socketMessage.game.players[number]["nickname"]} 님이 시작 위치를 결정중입니다`,
       );
     }
   };
 
-  // 해군 1의 시작위치 지정 완료
-  const actionInitMarineOneStart = () => {
+  // 해군의 시작위치 지정 완료
+  const actionInitMarineStart = (number: number) => {
+    // 타이머, 시간초과 초기화
+    setTimeOut(false);
     handleCloseTimer();
-    if (socketMessage.game.players[1]["nickname"] === nickname) {
+    if (socketMessage.game.players[number]["nickname"] === nickname) {
       // 시간 초과 여부에 따라 메시지 출력
       setHeaderMessage(
         timeOut
           ? "시간초과! 시작 위치가 랜덤으로 결정되었습니다"
           : "시작 위치가 결정되었습니다",
       );
-      // TODO : 피스 등장 이펙트
     } else {
       setHeaderMessage(
-        `[해군1] ${socketMessage.game.players[1]["nickname"]} 님의 시작 위치가 결정되었습니다`,
+        `[해군${number}] ${socketMessage.game.players[number]["nickname"]} 님의 시작 위치가 결정되었습니다`,
       );
     }
 
-    // 푸터, 시간초과 초기화
-    setTimeOut(false);
-    removeFooterMessage();
     // 해당 노드 줌 인
-    zoom(getNode(socketMessage.game.currentPosition[1]).position);
-  };
-
-  // 해군 2의 시작위치 지정 명령
-  const orderInitMarineTwoStart = () => {
-    handleShowTimer();
-    if (socketMessage.game.players[2]["nickname"] === nickname) {
-      setHeaderMessage("시작 위치를 결정하세요");
-      // TODO : 푸터에 5가지 선택지 나오고 마우스 호버 시, 카메라 이동
-      const marineTwoStartList = marineStartList.filter(
-        nodeId => nodeId !== socketMessage.game.currentPosition[1],
-      );
-      setFooterMessage(
-        <>
-          {marineTwoStartList.map(nodeId => (
-            <button
-              key={nodeId}
-              onClick={() => {
-                send("/pub/init", {
-                  message: "INIT_MARINE_TWO_START",
-                  sender: nickname,
-                  gameId,
-                  node: nodeId,
-                });
-              }}
-            >
-              <p>{nodeId}번 </p>
-            </button>
-          ))}
-        </>,
-      );
-    } else {
-      setHeaderMessage(
-        `[해군2] ${socketMessage.game.players[2]["nickname"]} 님이 시작 위치를 결정중입니다`,
-      );
-    }
-  };
-
-  // 해군 2의 시작위치 지정 완료
-  const actionInitMarineTwoStart = () => {
-    handleCloseTimer();
-    if (socketMessage.game.players[2]["nickname"] === nickname) {
-      // 시간 초과 여부에 따라 메시지 출력
-      setHeaderMessage(
-        timeOut
-          ? "시간초과! 시작 위치가 랜덤으로 결정되었습니다"
-          : "시작 위치가 결정되었습니다",
-      );
-      // TODO : 피스 등장 이펙트
-    } else {
-      setHeaderMessage(
-        `[해군2] ${socketMessage.game.players[2]["nickname"]} 님의 시작 위치가 결정되었습니다`,
-      );
-    }
-
-    // 푸터, 시간초과 초기화
-    setTimeOut(false);
-    removeFooterMessage();
-    // 해당 노드 줌 인
-    zoom(getNode(socketMessage.game.currentPosition[2]).position);
-  };
-
-  // 해군 3의 시작위치 지정 명령
-  const orderInitMarineThreeStart = () => {
-    handleShowTimer();
-    if (socketMessage.game.players[3]["nickname"] === nickname) {
-      setHeaderMessage("시작 위치를 결정하세요");
-      // TODO : 푸터에 4가지 선택지 나오고 마우스 호버 시, 카메라 이동
-      const marineThreeStartList = marineStartList.filter(
-        nodeId =>
-          nodeId !== socketMessage.game.currentPosition[1] &&
-          nodeId !== socketMessage.game.currentPosition[2],
-      );
-      setFooterMessage(
-        <>
-          {marineThreeStartList.map(nodeId => (
-            <button
-              key={nodeId}
-              onClick={() => {
-                send("/pub/init", {
-                  message: "INIT_MARINE_THREE_START",
-                  sender: nickname,
-                  gameId,
-                  node: nodeId,
-                });
-              }}
-            >
-              <p>{nodeId}번 </p>
-            </button>
-          ))}
-        </>,
-      );
-    } else {
-      setHeaderMessage(
-        `[해군3] ${socketMessage.game.players[3]["nickname"]} 님이 시작 위치를 결정중입니다`,
-      );
-    }
-  };
-
-  // 해군 3의 시작위치 지정 완료
-  const actionInitMarineThreeStart = () => {
-    handleCloseTimer();
-    if (socketMessage.game.players[3]["nickname"] === nickname) {
-      // 시간 초과 여부에 따라 메시지 출력
-      setHeaderMessage(
-        timeOut
-          ? "시간초과! 시작 위치가 랜덤으로 결정되었습니다"
-          : "시작 위치가 결정되었습니다",
-      );
-      // TODO : 피스 등장 이펙트
-    } else {
-      setHeaderMessage(
-        `[해군3] ${socketMessage.game.players[3]["nickname"]} 님의 시작 위치가 결정되었습니다`,
-      );
-    }
-    // 푸터, 시간초과 초기화
-    setTimeOut(false);
-    removeFooterMessage();
-    // 해당 노드 줌 인
-    zoom(getNode(socketMessage.game.currentPosition[3]).position);
+    zoom(getNode(socketMessage.game.currentPosition[number]).position);
   };
 
   // 해적 시작 위치 공개
@@ -463,7 +328,6 @@ export default function IngameClient() {
     zoom(getNode(socketMessage.game.currentPosition[number]).position);
     if (socketMessage.game.players[number]["nickname"] === nickname) {
       setHeaderMessage("행동을 선택하세요");
-      // TODO : 조사, 체포 푸터에 컴포넌트화해서 담기
       const actionList = ["조사", "체포"];
       setFooterMessage(
         <>
@@ -766,34 +630,26 @@ export default function IngameClient() {
       actionInitPirateStart();
     }
 
-    // 해군 1의 시작위치 지정 명령
+    // 해군의 시작위치 지정 명령
     if (socketMessage.message === "ORDER_INIT_MARINE_ONE_START") {
-      orderInitMarineOneStart();
+      orderInitMarineStart(1);
     }
-
-    // 해군 1의 시작위치 지정 완료
-    if (socketMessage.message === "ACTION_INIT_MARINE_ONE_START") {
-      actionInitMarineOneStart();
-    }
-
-    // 해군 2의 시작위치 지정 명령
     if (socketMessage.message === "ORDER_INIT_MARINE_TWO_START") {
-      orderInitMarineTwoStart();
+      orderInitMarineStart(2);
     }
-
-    // 해군 2의 시작위치 지정 완료
-    if (socketMessage.message === "ACTION_INIT_MARINE_TWO_START") {
-      actionInitMarineTwoStart();
-    }
-
-    // 해군 3의 시작위치 지정 명령
     if (socketMessage.message === "ORDER_INIT_MARINE_THREE_START") {
-      orderInitMarineThreeStart();
+      orderInitMarineStart(3);
     }
 
-    // 해군 3의 시작위치 지정 완료
+    // 해군의 시작위치 지정 완료
+    if (socketMessage.message === "ACTION_INIT_MARINE_ONE_START") {
+      actionInitMarineStart(1);
+    }
+    if (socketMessage.message === "ACTION_INIT_MARINE_TWO_START") {
+      actionInitMarineStart(2);
+    }
     if (socketMessage.message === "ACTION_INIT_MARINE_THREE_START") {
-      actionInitMarineThreeStart();
+      actionInitMarineStart(3);
       // 해적 위치 공개
       setTimeout(() => {
         openPirateStart();
@@ -810,162 +666,138 @@ export default function IngameClient() {
       actionMovePirate();
     }
 
-    // 해군 1의 이동 명령
+    // 해군의 이동 명령
     if (socketMessage.message === "ORDER_MOVE_MARINE_ONE") {
       orderMoveMarine(1);
     }
-    // 해군 2의 이동 명령
     if (socketMessage.message === "ORDER_MOVE_MARINE_TWO") {
       orderMoveMarine(2);
     }
-    // 해군 3의 이동 명령
     if (socketMessage.message === "ORDER_MOVE_MARINE_THREE") {
       orderMoveMarine(3);
     }
 
-    // 해군 1의 이동 완료
+    // 해군의 이동 완료
     if (socketMessage.message === "ACTION_MOVE_MARINE_ONE") {
       actionMoveMarine(1);
     }
-    // 해군 2의 이동 완료
     if (socketMessage.message === "ACTION_MOVE_MARINE_TWO") {
       actionMoveMarine(2);
     }
-    // 해군 3의 이동 완료
     if (socketMessage.message === "ACTION_MOVE_MARINE_THREE") {
       actionMoveMarine(3);
     }
 
-    // 해군 1의 행동 명령
+    // 해군의 행동 명령
     if (socketMessage.message === "ORDER_SELECT_WORK_MARINE_ONE") {
       orderSelectWorkMarine(1);
     }
-    // 해군 2의 행동 명령
     if (socketMessage.message === "ORDER_SELECT_WORK_MARINE_TWO") {
       orderSelectWorkMarine(2);
     }
-    // 해군 3의 행동 명령
     if (socketMessage.message === "ORDER_SELECT_WORK_MARINE_THREE") {
       orderSelectWorkMarine(3);
     }
 
-    // 해군 1의 조사 행동 선택
+    // 해군의 조사 행동 선택
     if (socketMessage.message === "ACTION_SELECT_WORK_MARINE_ONE_INVESTIGATE") {
       actionSelectWorkMarineInvestigate(1);
     }
-    // 해군 2의 조사 행동 선택
     if (socketMessage.message === "ACTION_SELECT_WORK_MARINE_TWO_INVESTIGATE") {
       actionSelectWorkMarineInvestigate(2);
     }
-    // 해군 3의 조사 행동 선택
     if (
       socketMessage.message === "ACTION_SELECT_WORK_MARINE_THREE_INVESTIGATE"
     ) {
       actionSelectWorkMarineInvestigate(3);
     }
 
-    // 해군 1의 조사 행동 명령
+    // 해군의 조사 행동 명령
     if (socketMessage.message === "ORDER_INVESTIGATE_MARINE_ONE") {
       orderInvestigateMarine(1);
     }
-    // 해군 2의 조사 행동 명령
     if (socketMessage.message === "ORDER_INVESTIGATE_MARINE_TWO") {
       orderInvestigateMarine(2);
     }
-    // 해군 3의 조사 행동 명령
     if (socketMessage.message === "ORDER_INVESTIGATE_MARINE_THREE") {
       orderInvestigateMarine(3);
     }
 
-    // 해군 1의 조사 행동 성공
+    // 해군의 조사 행동 성공
     if (socketMessage.message === "ACTION_INVESTIGATE_MARINE_ONE_SUCCESS") {
       actionInvestigateSuccess(1);
     }
-    // 해군 2의 조사 행동 성공
     if (socketMessage.message === "ACTION_INVESTIGATE_MARINE_TWO_SUCCESS") {
       actionInvestigateSuccess(2);
     }
-    // 해군 3의 조사 행동 성공
     if (socketMessage.message === "ACTION_INVESTIGATE_MARINE_THREE_SUCCESS") {
       actionInvestigateSuccess(3);
     }
 
-    // 해군 1의 조사 행동 실패
+    // 해군의 조사 행동 실패
     if (socketMessage.message === "ACTION_INVESTIGATE_MARINE_ONE_FAIL") {
       actionInvestigateFail(1);
     }
-    // 해군 2의 조사 행동 실패
     if (socketMessage.message === "ACTION_INVESTIGATE_MARINE_TWO_FAIL") {
       actionInvestigateFail(2);
     }
-    // 해군 3의 조사 행동 실패
     if (socketMessage.message === "ACTION_INVESTIGATE_MARINE_THREE_FAIL") {
       actionInvestigateFail(3);
     }
 
-    // 해군 1의 조사 행동 모두 실패
+    // 해군의 조사 행동 모두 실패
     if (socketMessage.message === "ACTION_INVESTIGATE_MARINE_ONE_ALL_FAILED") {
       actionInvestigateAllFail(1);
     }
-    // 해군 2의 조사 행동 모두 실패
     if (socketMessage.message === "ACTION_INVESTIGATE_MARINE_TWO_ALL_FAILED") {
       actionInvestigateAllFail(2);
     }
-    // 해군 3의 조사 행동 모두 실패
     if (
       socketMessage.message === "ACTION_INVESTIGATE_MARINE_THREE_ALL_FAILED"
     ) {
       actionInvestigateAllFail(3);
     }
 
-    // 해군 1의 체포 행동 선택
+    // 해군의 체포 행동 선택
     if (socketMessage.message === "ACTION_SELECT_WORK_MARINE_ONE_ARREST") {
       actionSelectWorkMarineArrest(1);
     }
-    // 해군 2의 체포 행동 선택
     if (socketMessage.message === "ACTION_SELECT_WORK_MARINE_TWO_ARREST") {
       actionSelectWorkMarineArrest(2);
     }
-    // 해군 3의 체포 행동 선택
     if (socketMessage.message === "ACTION_SELECT_WORK_MARINE_THREE_ARREST") {
       actionSelectWorkMarineArrest(3);
     }
 
-    // 해군 1의 체포 행동 명령
+    // 해군의 체포 행동 명령
     if (socketMessage.message === "ORDER_ARREST_MARINE_ONE") {
       orderArrestMarine(1);
     }
-    // 해군 2의 체포 행동 명령
     if (socketMessage.message === "ORDER_ARREST_MARINE_TWO") {
       orderArrestMarine(2);
     }
-    // 해군 3의 체포 행동 명령
     if (socketMessage.message === "ORDER_ARREST_MARINE_THREE") {
       orderArrestMarine(3);
     }
 
-    // 해군 1의 체포 행동 성공
+    // 해군의 체포 행동 성공
     if (socketMessage.message === "ACTION_ARREST_MARINE_ONE_SUCCESS") {
       console.log("해군 1 체포 성공");
     }
-    // 해군 2의 체포 행동 성공
     if (socketMessage.message === "ACTION_ARREST_MARINE_TWO_SUCCESS") {
       console.log("해군 2 체포 성공");
     }
-    // 해군 3의 체포 행동 성공
     if (socketMessage.message === "ACTION_ARREST_MARINE_THREE_SUCCESS") {
       console.log("해군 3 체포 성공");
     }
 
-    // 해군 1의 체포 행동 실패
+    // 해군의 체포 행동 실패
     if (socketMessage.message === "ACTION_ARREST_MARINE_ONE_FAIL") {
       actionArrestMarineFail(1);
     }
-    // 해군 2의 체포 행동 실패
     if (socketMessage.message === "ACTION_ARREST_MARINE_TWO_FAIL") {
       actionArrestMarineFail(2);
     }
-    // 해군 3의 체포 행동 실패
     if (socketMessage.message === "ACTION_ARREST_MARINE_THREE_FAIL") {
       actionArrestMarineFail(3);
     }

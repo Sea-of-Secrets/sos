@@ -3,8 +3,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
 import { IngameGraphNode } from "~/_lib/data/types";
+import { gameSocket } from "~/sockets";
+
 import { useWhenMarineStartGame } from "../stores/useWhenMarineStartGame";
-import { useSystemPrompt } from "../stores/useSystemPrompt";
+import useNickname from "~/store/nickname";
+import useGameId from "~/store/gameId";
 
 export const useNode = ({ node }: { node: IngameGraphNode }) => {
   const position: [number, number, number] = useMemo(
@@ -20,7 +23,9 @@ export const useNode = ({ node }: { node: IngameGraphNode }) => {
     selectableStartNodeList,
     currentMarinePlayerKey,
   } = useWhenMarineStartGame();
-  const { setHeaderMessage } = useSystemPrompt();
+  const { nickname } = useNickname();
+  const { gameId } = useGameId();
+  const { send } = gameSocket;
 
   const handleClickNode = useCallback(
     (e: ThreeEvent<MouseEvent>) => {
@@ -28,19 +33,28 @@ export const useNode = ({ node }: { node: IngameGraphNode }) => {
         isMarineStartGameTurn &&
         selectableStartNodeList.map(v => v.nodeId).includes(node.nodeId)
       ) {
-        setHeaderMessage(
-          `해군 ${currentMarinePlayerKey}이 ${node.nodeId}를 선택했습니다.`,
-        );
+        const EnglishNumber =
+          currentMarinePlayerKey === "1"
+            ? "ONE"
+            : currentMarinePlayerKey === "2"
+              ? "TWO"
+              : "THREE";
+        send("/pub/init", {
+          message: `INIT_MARINE_${EnglishNumber}_START`,
+          sender: nickname,
+          gameId,
+          node: node.nodeId,
+        });
         selectStartNode(node.nodeId);
         return;
       }
     },
     [
-      currentMarinePlayerKey,
       isMarineStartGameTurn,
-      setHeaderMessage,
-      node,
       selectableStartNodeList,
+      node.nodeId,
+      nickname,
+      gameId,
       selectStartNode,
     ],
   );
