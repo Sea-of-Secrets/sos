@@ -108,7 +108,6 @@ public class GameServiceImpl implements GameService {
     public int initPirateStart(String gameId, int selectedNode) {
         game = board.getGameMap().get(gameId);
         game.getCurrentPosition()[0] = selectedNode;
-        game.getTreasures().put(selectedNode, true);
         game.getPirateRoute().add(selectedNode);
         return selectedNode;
     }
@@ -124,7 +123,6 @@ public class GameServiceImpl implements GameService {
 
         // getCurrentPosition 배열의 해적 위치[0]
         game.getCurrentPosition()[0] = nextNode;
-        game.getTreasures().put(nextNode, true);
         game.getPirateRoute().add(nextNode);
         return nextNode;
     }
@@ -296,6 +294,13 @@ public class GameServiceImpl implements GameService {
             }
             resultMap.put(node, route);
         }
+
+        Deque<Integer> route = new LinkedList<>();
+        route.add(nodeNumber);
+        route.add(nodeNumber);
+
+        resultMap.put(nodeNumber, route);
+
         return resultMap;
     }
 
