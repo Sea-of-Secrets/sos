@@ -10,7 +10,7 @@ const nextConfig = {
           { key: "Access-Control-Allow-Credentials", value: "true" },
           {
             key: "Access-Control-Allow-Origin",
-            value: "*",
+            value: "http://j10a710.p.ssafy.io",
           },
           {
             key: "Access-Control-Allow-Methods",
