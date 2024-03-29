@@ -3,10 +3,10 @@ import Tween from "./models/Tween";
 import Camera from "./models/Camera";
 import Graph from "./models/Graph";
 import Map from "./models/Map";
-
 import Piece from "./models/Piece/Piece";
 import Flag from "./models/Piece/Flag";
 import TreasureGroup from "./models/Piece/TreasureGroup";
+import SelectableMarineNodeMarkerGroup from "./models/Piece/SelectableMarineNodeMarkerGroup";
 
 import { getNode } from "~/_lib/data/data";
 import {
@@ -50,6 +50,7 @@ export default function IngameThree() {
       <Camera />
       <Tween />
       <Map />
+      <SelectableMarineNodeMarkerGroup />
       <Graph />
       {socketMessage &&
         socketMessage.game?.currentPosition[0] !== 0 &&
