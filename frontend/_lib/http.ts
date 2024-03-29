@@ -11,7 +11,6 @@ export const http = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: true,
 });
 
 export const client = axios.create({
@@ -20,5 +19,4 @@ export const client = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: true,
 });
