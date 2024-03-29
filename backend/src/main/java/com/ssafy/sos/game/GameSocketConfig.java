@@ -18,7 +18,7 @@ public class GameSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         //클라이언트가 요청보내는 소켓 연결 주소
-        registry.addEndpoint("/game")
+        registry.addEndpoint("/sos")
                 .setAllowedOriginPatterns("*")
                 .addInterceptors(customHandshakeInterceptor);
     }

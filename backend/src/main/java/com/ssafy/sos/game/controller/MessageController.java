@@ -802,10 +802,8 @@ public class MessageController {
         if (message.getMessage().equals("START_GAME")) {
             // sender 가 player 0번째와 똑같을때
             if (!game.getPlayers().get(0).getNickname().equals(sender)) return;
-
             // 게임 시작하면 방 폭파
             board.getRoomMap().remove(gameId);
-
             // 해적 시작위치 지정 (서 -> 클)
             sendMessageWithGame(gameId, game, "ORDER_INIT_PIRATE_START");
             // 응답 허용
@@ -842,45 +840,43 @@ public class MessageController {
         }
     }
 
-    // 해적 이동
-    @MessageMapping("/pirate")
-    public void pirate(ClientMoveMessage message) {
+    // 이동 응답 후
+    private void afterMove(String gameId, Game game, GameRole role, int node) {
+        // 제한시간 내로 선택을 한 것이므로 타이머 취소
+        gameTimerService.cancelTimer(gameId);
+        HashMap<Integer, Deque<Integer>> availableNode;
+        // 이동 경로 재예상
+        if (role == GameRole.PIRATE) {
+            availableNode = gameService.findPirateAvailableNode(gameId, game.getCurrentPosition()[role.getRoleNumber()]);
+        } else {
+            availableNode = gameService.findMarineAvailableNode(gameId, game.getCurrentPosition()[role.getRoleNumber()]);
+        }
+        // 입력받은 노드 저장
+        gameService.move(gameId, node, role.getRoleNumber());
+        // 이동 완료 브로드캐스트 (서 -> 클)
+        sendMessageWithAvailableNode(gameId, game,"ACTION_MOVE_"+role, availableNode);
+        // 2초 타이머 시작
+        if (role == GameRole.PIRATE) {
+            gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_"+role.getNextRole());
+        } else {
+            gameTimerService.startRenderWaitingTimer(gameId, "READY_SELECT_WORK_"+role);
+        }
+    }
+
+    // 게임 로직
+    @MessageMapping("/game")
+    public void marine(ClientMoveMessage message) {
         String gameId = message.getGameId();
         Game game = board.getGameMap().get(gameId);
 
         // 해적 이동 완료 (클 -> 서)
         if (message.getMessage().equals("MOVE_PIRATE") && !lockRespond) {
-            // 제한시간 내로 선택을 한 것이므로 타이머 취소
-            gameTimerService.cancelTimer(gameId);
-            // 해적 이동 경로 재예상
-            HashMap<Integer, Deque<Integer>> pirateAvailableNode = gameService.findPirateAvailableNode(gameId, game.getCurrentPosition()[0]);
-            // 입력받은 노드 저장
-            gameService.move(gameId, message.getNode(), 0);
-            // 해적 이동 완료 브로드캐스트 (서 -> 클)
-            sendMessageWithAvailableNode(gameId, game,"ACTION_MOVE_PIRATE", pirateAvailableNode);
-            // 2초 타이머 시작
-            gameTimerService.startRenderWaitingTimer(gameId, "READY_MOVE_MARINE_ONE");
+            afterMove(gameId, game, GameRole.PIRATE, message.getNode());
         }
-    }
-
-    // 해군 이동, 조사, 체포
-    @MessageMapping("/marine")
-    public void marine(ClientMoveMessage message) {
-        String gameId = message.getGameId();
-        Game game = board.getGameMap().get(gameId);
 
         // 해군 1 이동 완료 (클 -> 서)
         if (message.getMessage().equals("MOVE_MARINE_ONE") && !lockRespond) {
-            // 제한시간 내로 선택을 한 것이므로 타이머 취소
-            gameTimerService.cancelTimer(gameId);
-            // 해군 1 이동 경로 재예상
-            HashMap<Integer, Deque<Integer>> marineAvailableNode = gameService.findMarineAvailableNode(gameId, game.getCurrentPosition()[1]);
-            // 입력받은 노드 저장
-            gameService.move(gameId, message.getNode(), 1);
-            // 해군 1 이동완료 브로드캐스트 (서 -> 클)
-            sendMessageWithAvailableNode(gameId, game,"ACTION_MOVE_MARINE_ONE", marineAvailableNode);
-            // 2초 타이머 시작
-            gameTimerService.startRenderWaitingTimer(gameId, "READY_SELECT_WORK_MARINE_ONE");
+            afterMove(gameId, game, GameRole.MARINE_ONE, message.getNode());
         }
 
         // 해군 1 행동 선택 완료
@@ -934,16 +930,7 @@ public class MessageController {
 
         // 해군 2 이동 완료 (클 -> 서)
         if (message.getMessage().equals("MOVE_MARINE_TWO") && !lockRespond) {
-            // 제한시간 내로 선택을 한 것이므로 타이머 취소
-            gameTimerService.cancelTimer(gameId);
-            // 해군 2 이동 경로 재예상
-            HashMap<Integer, Deque<Integer>> marineAvailableNode = gameService.findMarineAvailableNode(gameId, game.getCurrentPosition()[2]);
-            // 입력받은 노드 저장
-            gameService.move(gameId, message.getNode(), 2);
-            // 해군 2 이동완료 브로드캐스트 (서 -> 클)
-            sendMessageWithAvailableNode(gameId, game,"ACTION_MOVE_MARINE_TWO", marineAvailableNode);
-            // 2초 타이머 시작
-            gameTimerService.startRenderWaitingTimer(gameId, "READY_SELECT_WORK_MARINE_TWO");
+            afterMove(gameId, game, GameRole.MARINE_TWO, message.getNode());
         }
 
         // 해군 2 행동 선택 완료
@@ -997,16 +984,7 @@ public class MessageController {
 
         // 해군 3 이동 완료 (클 -> 서)
         if (message.getMessage().equals("MOVE_MARINE_THREE") && !lockRespond) {
-            // 제한시간 내로 선택을 한 것이므로 타이머 취소
-            gameTimerService.cancelTimer(gameId);
-            // 해군 3 이동 경로 재예상
-            HashMap<Integer, Deque<Integer>> marineAvailableNode = gameService.findMarineAvailableNode(gameId, game.getCurrentPosition()[3]);
-            // 입력받은 노드 저장
-            gameService.move(gameId, message.getNode(), 3);
-            // 해군 3 이동완료 브로드캐스트 (서 -> 클)
-            sendMessageWithAvailableNode(gameId, game,"ACTION_MOVE_MARINE_THREE", marineAvailableNode);
-            // 2초 타이머 시작
-            gameTimerService.startRenderWaitingTimer(gameId, "READY_SELECT_WORK_MARINE_THREE");
+            afterMove(gameId, game, GameRole.MARINE_THREE, message.getNode());
         }
 
         // 해군 3 행동 선택 완료
@@ -1059,38 +1037,7 @@ public class MessageController {
         }
     }
 
-
-    @MessageMapping("/increase")
-    public void turnRoundIncrease(ClientMessage message) {
-        String gameId = message.getGameId();
-        Game game = board.getGameMap().get(gameId);
-
-        ServerMessage serverMessage = null;
-        if (message.getMessage().equals("INCREASE_TURN")) {
-            // TODO: 해군3의 action이 끝났을 때 턴 증가하는 것으로 변경
-            game.increaseTurn();
-            serverMessage = ServerMessage.builder()
-                    .gameId(gameId)
-                    .message("INCREASE_TURN")
-                    .game(game)
-                    .build();
-        }
-
-        // TODO: 해적이 보물을 찾았거나 15턴이 끝났을 경우로 변경
-        if (message.getMessage().equals("INCREASE_ROUND")) {
-            game.increaseRound();
-            serverMessage = ServerMessage.builder()
-                    .gameId(gameId)
-                    .message("INCREASE_ROUND")
-                    .game(game)
-                    .build();
-        }
-
-        if (serverMessage != null) {
-            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
-        }
-    }
-
+    // 매칭
     @EventListener
     public void listenMatching(MatchingEvent event) {
         String gameId = event.getGameId();
@@ -1112,6 +1059,7 @@ public class MessageController {
         // 프론트는 MATCHING_SUCCESS를 받으면 수락-거절을 띄우고 다시 요청을 서버한테 보낸다.
     }
 
+    // 채팅
     @MessageMapping("/chat/{gameId}")
     public void chat(@DestinationVariable String gameId, ClientMessage message) {
 
@@ -1129,7 +1077,7 @@ public class MessageController {
         sendingOperations.convertAndSend("/sub/"+ gameId, chat);
     }
 
-    //서버 타이머  제공
+    //서버 타이머 제공
     @Scheduled(fixedRate = 1000)
     public void sendServerTime() throws Exception {
 
