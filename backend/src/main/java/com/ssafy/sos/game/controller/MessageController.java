@@ -162,6 +162,7 @@ public class MessageController {
         String gameId = message.getGameId();
         Room room = board.getRoomMap().get(gameId);
         List<String> sessionInfo = board.getSessionMap().get(sessionId);
+        System.out.println("여기까지 왔지롱");
         // 존재하지 않는 방이라면
         if (room == null) return;
 
