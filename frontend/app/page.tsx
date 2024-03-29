@@ -6,7 +6,7 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-between">
       <div className={style.background}></div>
-      <Link className="button" href="/ingame">
+      <Link className="button" href="/test">
         인게임 테스트 페이지로 click!
       </Link>
       <Link className="button" href="/room">

@@ -321,23 +321,13 @@ export default function IngameClient() {
     if (socketMessage.game.players[0]["nickname"] === nickname) {
       setHeaderMessage("이동할 위치를 결정하세요");
       zoom(getNode(socketMessage.game.currentPosition[0]).position);
-      // TODO : availableNode변수를 이동 가능 노드로 넘겨주기
-      // 이동 가능 노드는 푸터와 헤더메시지처럼 빈 상태에서는 비활성화
-      // 데이터가 있으면 푸터에 노드번호가 뜨며 호버 할 때 경로 표시
-      // 클릭 시 메세지 보내고 이동 가능 노드 비우기
-      // send("/pub/pirate", {
-      //   message: "MOVE_PIRATE",
-      //   sender: nickname,
-      //   gameId,
-      //   node: "클릭한 노드 넘버",
-      // }
       setFooterMessage(
         <>
           {Object.entries(socketMessage.availableNode).map(([nodeId]) => (
             <button
               key={nodeId}
               onClick={() => {
-                send("/pub/pirate", {
+                send("/pub/game", {
                   message: "MOVE_PIRATE",
                   sender: nickname,
                   gameId,
@@ -398,7 +388,7 @@ export default function IngameClient() {
             <button
               key={nodeId}
               onClick={() => {
-                send("/pub/marine", {
+                send("/pub/game", {
                   message: `MOVE_MARINE_${EnglishNumber}`,
                   sender: nickname,
                   gameId,
@@ -484,7 +474,7 @@ export default function IngameClient() {
                 const clickAction =
                   action === "조사" ? "INVESTIGATE" : "ARREST";
 
-                send("/pub/marine", {
+                send("/pub/game", {
                   message: `SELECT_WORK_MARINE_${EnglishNumber}`,
                   sender: nickname,
                   gameId,
@@ -537,7 +527,7 @@ export default function IngameClient() {
                 <button
                   key={node}
                   onClick={() => {
-                    send("/pub/marine", {
+                    send("/pub/game", {
                       message: `INVESTIGATE_MARINE_${EnglishNumber}`,
                       sender: nickname,
                       gameId,
@@ -561,19 +551,31 @@ export default function IngameClient() {
   // 해군의 조사 행동 성공
   const actionInvestigateSuccess = (number: number) => {
     handleCloseTimer();
+    const successNumber = socketMessage.game.investigateSuccess.length - 1;
     if (socketMessage.game.players[number]["nickname"] === nickname) {
       setHeaderMessage(
         timeOut
-          ? `시간초과! ${socketMessage.investigateSuccess[-1]}번에서 해적의 흔적이 발견되었습니다`
-          : `조사한 ${socketMessage.investigateSuccess[-1]}번에서 해적의 흔적이 발견되었습니다`,
+          ? `시간초과! ${socketMessage.game.investigateSuccess[successNumber]}번에서 해적의 흔적이 발견되었습니다`
+          : `조사한 ${socketMessage.game.investigateSuccess[successNumber]}번에서 해적의 흔적이 발견되었습니다`,
       );
     } else {
       setHeaderMessage(
-        `[해군${number}] ${socketMessage.game.players[number]["nickname"]} 님이 ${socketMessage.investigateSuccess[-1]}번에서 해적의 흔적을 발견하였습니다.`,
+        `[해군${number}] ${socketMessage.game.players[number]["nickname"]} 님이 ${socketMessage.game.investigateSuccess[successNumber]}번에서 해적의 흔적을 발견하였습니다.`,
       );
     }
+    console.log("조사 성공한 노드 : ", socketMessage.game.investigateSuccess);
+    console.log(
+      "조사 성공한 마지막 노드 : ",
+      socketMessage.game.investigateSuccess[successNumber],
+    );
+    console.log(
+      "조사 성공한 마지막 노드의 포지션",
+      socketMessage.game.investigateSuccess[successNumber].position,
+    );
 
-    zoom(getNode(socketMessage.investigateSuccess[-1]).position);
+    zoom(
+      getNode(socketMessage.game.investigateSuccess[successNumber]).position,
+    );
 
     // 푸터, 시간초과 초기화
     setTimeOut(false);
@@ -645,7 +647,7 @@ export default function IngameClient() {
             <button
               key={node}
               onClick={() => {
-                send("/pub/marine", {
+                send("/pub/game", {
                   message: `ARREST_MARINE_${EnglishNumber}`,
                   sender: nickname,
                   gameId,
@@ -704,9 +706,7 @@ export default function IngameClient() {
   // 턴 종료
   const turnOver = () => {
     handleCloseTimer();
-    setHeaderMessage(
-      `${socketMessage.game.turn}턴이 종료되어 다음 턴을 시작합니다`,
-    );
+    setHeaderMessage(`${socketMessage.game.turn - 1}턴이 종료되었습니다`);
   };
 
   useEffect(() => {
