@@ -10,17 +10,23 @@ export default async function handler(
   res: NextApiResponse<ResponseData>,
 ) {
   try {
-    const cookies = req.headers.cookie?.split('; ');
-    let accessCookie;
-    let refreshCookie;
+    const { cookie } = req.headers;
+
+    if (!cookie) {
+      return res.status(401);
+    }
+
+    const cookies = cookie.split("; ");
+    let accessCookie = "";
+    let refreshCookie = "";
 
     for (const cookie of cookies) {
-        const [key, value] = cookie.split('='); // 쿠키 문자열을 '=' 기준으로 분리하여 키와 값을 추출
-        if (key === 'access') {
-            accessCookie = value;
-        } else if (key === 'refresh') {
-            refreshCookie = value;
-        }
+      const [key, value] = cookie.split("="); // 쿠키 문자열을 '=' 기준으로 분리하여 키와 값을 추출
+      if (key === "access") {
+        accessCookie = value;
+      } else if (key === "refresh") {
+        refreshCookie = value;
+      }
     }
 
     if (req.method === "GET") {
@@ -48,23 +54,22 @@ export default async function handler(
       if (req.body.type === "get") {
         const response = await http.get("/nft/wallet", {
           headers: {
-            Cookie: `access=${accessCookie}; refresh=${refreshCookie}`
-          }
+            Cookie: `access=${accessCookie}; refresh=${refreshCookie}`,
+          },
         });
-        
+
         return res.status(response.status).json(response.data);
       } else if (req.body.type === "post") {
         const response = await http.post("/nft/wallet", {
           headers: {
             Cookie: `access=${accessCookie}; refresh=${refreshCookie}`,
-            'Content-Type': 'application/json'
+            "Content-Type": "application/json",
           },
-          body: JSON.stringify(null) // JSON.stringify를 사용하여 본문을 문자열로 변환
+          body: JSON.stringify(null), // JSON.stringify를 사용하여 본문을 문자열로 변환
         });
-        
+
         return res.status(response.status).json(response.data);
       }
-      
     }
 
     res.status(400).json({ message: "400" });
