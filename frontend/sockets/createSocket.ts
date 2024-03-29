@@ -1,8 +1,8 @@
 import { Client, StompSubscription, messageCallbackType } from "@stomp/stompjs";
 
 // TODO: env 처리해야한다.
-// const SERVER_END_POINT = "ws://localhost:8080";
-const SERVER_END_POINT = "ws://j10a710.p.ssafy.io:8081";
+const SERVER_END_POINT = "ws://localhost:8080";
+// const SERVER_END_POINT = "ws://j10a710.p.ssafy.io:8081";
 const SOCKET_END_POINT = `${SERVER_END_POINT}/sos`;
 
 export const createSocket = () => {

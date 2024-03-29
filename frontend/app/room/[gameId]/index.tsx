@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { useParams, useRouter } from "next/navigation";
 import { gameSocket } from "~/sockets";
 import useNickname from "~/store/nickname";
 import Image from "next/image";
@@ -12,7 +11,6 @@ const { send } = gameSocket;
 
 export default function Room() {
   const params = useParams() as { gameId: string };
-  const router = useRouter();
   const router = useRouter();
   const { gameId } = params;
   const { nickname } = useNickname();
