@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
 import { ThreeEvent } from "@react-three/fiber";
+import { Vector3, Euler } from "three";
 
 import { useGLTF } from "../../hooks/useGLTF";
 import { PiecePathMap } from "~/assetPath";
 import { PieceProps } from "./types";
-import PieceEffect from "./PieceEffect";
-import { Vector3, Euler } from "three";
 
 import { useSocketMessage } from "../../stores/useSocketMessage";
 import useNickname from "~/store/nickname";
@@ -98,7 +97,6 @@ export default function Piece({
       >
         <primitive object={gltf.scene} />
       </mesh>
-      <PieceEffect effectName="FOOTHOLD_LIGHT_BEAM" position={position} />
     </>
   );
 }
