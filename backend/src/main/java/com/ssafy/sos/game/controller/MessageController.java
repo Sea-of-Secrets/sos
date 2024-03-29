@@ -23,6 +23,7 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.socket.messaging.SessionConnectEvent;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import java.util.*;
@@ -31,6 +32,7 @@ import java.util.*;
 @RequiredArgsConstructor
 @EnableScheduling
 @Slf4j
+@CrossOrigin("*")
 public class MessageController {
     private final SimpMessageSendingOperations sendingOperations;
     private final Board board;
