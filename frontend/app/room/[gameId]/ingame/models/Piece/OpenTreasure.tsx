@@ -30,7 +30,7 @@ export default function TreasureRenderer({
   return (
     <mesh
       {...props}
-      position={[position.x, position.z, position.y - 25]}
+      position={[position.x, position.z, position.y - 45]}
       onClick={handleClickTreasure}
       scale={PiecePathMap["TREASURE"].size}
     >

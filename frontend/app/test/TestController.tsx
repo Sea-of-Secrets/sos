@@ -21,7 +21,7 @@ export default function TestController() {
   const systemPromptHeaderInputRef = useRef<HTMLInputElement>(null);
   const systemPromptFooterInputRef = useRef<HTMLInputElement>(null);
   const { setHeaderMessage, setFooterMessage } = useSystemPrompt();
-  const { zoom, zoomFullScreen } = useCamera();
+  const { zoom, zoomFullScreen, zoomMarineStart } = useCamera();
   const { movePiece } = usePiratePiece();
   const { setMovableNodeIdList, setMovableEdgeIdList } = usePirateGraph();
   const { handleShowTimer } = useTimer();
@@ -213,6 +213,9 @@ export default function TestController() {
         <Button onClick={() => handleStartMarinePlayersSelectNode("3")}>
           해군 3 은 처음 위치를 골라줘용
         </Button>
+      </Test>
+      <Test>
+        <Button onClick={() => zoomMarineStart()}>해군 시작 위치 줌</Button>
       </Test>
     </ContainerStyle>
   );

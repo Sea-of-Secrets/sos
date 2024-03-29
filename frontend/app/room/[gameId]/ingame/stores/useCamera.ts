@@ -20,6 +20,7 @@ interface CameraState {
     },
   ) => void;
   zoomFullScreen: () => void;
+  zoomMarineStart: () => void;
   gameStartAnimation: () => void;
 }
 
@@ -66,8 +67,19 @@ export const useCamera = create<CameraState>(set => ({
       return { ...state };
     });
   },
+  zoomMarineStart: () => {
+    set(state => {
+      if (state.cameraRef?.current) {
+        state.cameraRef.current.setLookAt(...DEFAULT_POSITION, 0, 0, 0, true);
+        state.cameraRef.current.zoomTo(2, true);
+      } else {
+        console.error(`Camera not initialized...`);
+        window.alert("카메라가 없다...");
+      }
+      return { ...state };
+    });
+  },
   gameStartAnimation: () => {
-    // TODO: 일단 시작 애니메이션 변화
     set(state => {
       if (state.cameraRef) {
         state.cameraRef.current.setLookAt(...DEFAULT_POSITION, 0, 0, 100, true);
