@@ -7,6 +7,7 @@ const _SERVER_API_END_POINT =
   process.env.NODE_ENV === "development"
     ? "http://localhost:8080"
     : "http://j10a710.p.ssafy.io:8081/api";
+
 const _CLIENT_API_END_POINT =
   process.env.NODE_ENV === "development"
     ? "http://localhost:3000/api"
@@ -18,6 +19,7 @@ export const http = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true,
 });
 
 export const client = axios.create({
@@ -26,4 +28,5 @@ export const client = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  withCredentials: true,
 });
