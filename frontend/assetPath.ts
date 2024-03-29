@@ -27,6 +27,10 @@ export const PiecePathMap = {
     src: "/red_arrow_down/scene.gltf",
     size: 20,
   },
+  FLAG: {
+    src: "/pirate_flag/scene.gltf",
+    size: 10,
+  },
 } as const;
 
 export const PieceEffectPathMap = {

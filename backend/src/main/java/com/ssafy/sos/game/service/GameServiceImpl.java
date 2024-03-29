@@ -17,6 +17,7 @@ import java.util.*;
 public class GameServiceImpl implements GameService {
 
     private final GameMemberRepository gameMemberRepository;
+    private final GameTimerService gameTimerService;
     private final Board board;
     private final Random rand = new SecureRandom();
     private Game game;
@@ -36,6 +37,9 @@ public class GameServiceImpl implements GameService {
     @Override
     public void gameStart(String gameId) {
         game = new Game(gameId);
+
+        // 게임 상태 변경
+        game.setGameStatus(GameStatus.IN_GAME);
 
         board.getGameMap().put(gameId, game);
         // 보물상자 위치 랜덤 지정
@@ -427,6 +431,9 @@ public class GameServiceImpl implements GameService {
     public void gameOver(String gameId, boolean gameResult) {
         Game game = board.getGameMap().get(gameId);
         game.setEndTime(LocalDateTime.now());
+
+        // 혹시 타이머가 돌아가고 있다면 타이머 종료
+        gameTimerService.cancelTimer(gameId);
 
         // mongodb에 gameRecord 저장
         for (int i = 0; i < game.getGameMode().playerLimit(); i++) {

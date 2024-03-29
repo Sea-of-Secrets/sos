@@ -32,7 +32,7 @@ export default function TreasureRenderer({
       {...props}
       position={[position.x, position.z, position.y - 25]}
       onClick={handleClickTreasure}
-      scale={0.5}
+      scale={PiecePathMap["TREASURE"].size}
     >
       <primitive object={clonedScene} />
     </mesh>

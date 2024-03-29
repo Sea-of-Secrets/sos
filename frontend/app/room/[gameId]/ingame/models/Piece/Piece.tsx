@@ -6,6 +6,9 @@ import { useGLTF } from "../../hooks/useGLTF";
 import { PiecePathMap } from "~/assetPath";
 import { PieceProps } from "./types";
 
+import { useSocketMessage } from "../../stores/useSocketMessage";
+import useNickname from "~/store/nickname";
+
 // const Z_AXIS_AJ_VALUE = 0;
 
 export default function Piece({
@@ -15,6 +18,8 @@ export default function Piece({
   ...props
 }: PieceProps) {
   const { meshRef, gltf } = useGLTF(PiecePathMap[pieceName].src);
+  const { socketMessage } = useSocketMessage();
+  const { nickname } = useNickname();
 
   // TODO: 이동중이면 이펙트를 없애고 이동완료되면 다시 소환
 
