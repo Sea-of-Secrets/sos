@@ -3,6 +3,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 
 import { IngameGraphNode } from "~/_lib/data/types";
+import { useWhenMarineStartGame } from "../stores/useWhenMarineStartGame";
+import { useSystemPrompt } from "../stores/useSystemPrompt";
 
 export const useNode = ({ node }: { node: IngameGraphNode }) => {
   const position: [number, number, number] = useMemo(
@@ -12,14 +14,35 @@ export const useNode = ({ node }: { node: IngameGraphNode }) => {
   const meshRef = useRef<THREE.Mesh>(null);
   const [isHover, setIsHover] = useState(false);
 
-  const handleClickPiece = useCallback(
+  const {
+    isMarineStartGameTurn,
+    selectStartNode,
+    selectableStartNodeList,
+    currentMarinePlayerKey,
+  } = useWhenMarineStartGame();
+  const { setHeaderMessage } = useSystemPrompt();
+
+  const handleClickNode = useCallback(
     (e: ThreeEvent<MouseEvent>) => {
-      console.log("******** Node Click ********");
-      console.log("노드 정보", node);
-      console.log("이벤트", e);
-      console.log("****************************");
+      if (
+        isMarineStartGameTurn &&
+        selectableStartNodeList.map(v => v.nodeId).includes(node.nodeId)
+      ) {
+        setHeaderMessage(
+          `해군 ${currentMarinePlayerKey}이 ${node.nodeId}를 선택했습니다.`,
+        );
+        selectStartNode(node.nodeId);
+        return;
+      }
     },
-    [node],
+    [
+      currentMarinePlayerKey,
+      isMarineStartGameTurn,
+      setHeaderMessage,
+      node,
+      selectableStartNodeList,
+      selectStartNode,
+    ],
   );
 
   const handlePointerOver = useCallback(() => {
@@ -42,7 +65,7 @@ export const useNode = ({ node }: { node: IngameGraphNode }) => {
     position,
     meshRef,
     isHover,
-    handleClickPiece,
+    handleClickNode,
     handlePointerOver,
     handlePointerOut,
   };

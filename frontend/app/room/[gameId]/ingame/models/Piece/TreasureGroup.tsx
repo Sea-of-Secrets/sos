@@ -1,9 +1,7 @@
-import { useGameData } from "../../stores/useGameData";
 import { useSocketMessage } from "../../stores/useSocketMessage";
 import TreasureRenderer from "./TreasureRenderer";
 
 export default function TreasureGroup() {
-  const { treasures } = useGameData();
   const { socketMessage } = useSocketMessage();
 
   return (

@@ -39,14 +39,14 @@ export const useCamera = create<CameraState>(set => ({
       if (state.cameraRef) {
         state.cameraRef.current.setLookAt(
           x,
-          250,
+          300 * (options?.level ?? 1),
           y + 200,
           options?.x ?? x,
           options?.z ?? 0,
           options?.y ?? y,
           true,
         );
-        state.cameraRef.current.zoomTo(options?.level ?? 1.5, true);
+        state.cameraRef.current.zoomTo(1.5, true);
       } else {
         console.error(`Camera not initialized...`);
         window.alert("카메라가 없다...");

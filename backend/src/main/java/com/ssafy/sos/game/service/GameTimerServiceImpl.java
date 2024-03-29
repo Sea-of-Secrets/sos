@@ -28,6 +28,11 @@ public class GameTimerServiceImpl implements GameTimerService {
     }
 
     @Override
+    public void afterInitTimer(String gameId, String message) {
+        future = scheduler.schedule(() -> eventPublisher.publishEvent(new TimerTimeoutEvent(this, gameId, message)), 8, TimeUnit.SECONDS);
+    }
+
+    @Override
     public void cancelTimer(String gameId) {
         if (future != null && !future.isDone()) {
             // 예약된 타이머 취소
