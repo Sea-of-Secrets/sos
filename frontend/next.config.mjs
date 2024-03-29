@@ -2,10 +2,18 @@
 
 const nextConfig = {
   output: "standalone",
+  async rewrites() {
+    return [
+      {
+        source: "/:path*",
+        destination: "http://j10a710.p.ssafy.io/:path*",
+      },
+    ];
+  },
   async headers() {
     return [
       {
-        source: "/:path*/api",
+        source: "/api/:path*",
         headers: [
           { key: "Access-Control-Allow-Credentials", value: "false" },
           {
