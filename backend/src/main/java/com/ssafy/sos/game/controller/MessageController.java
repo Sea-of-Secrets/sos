@@ -236,6 +236,7 @@ public class MessageController {
             if (room.getIsRendered() == room.getGameMode().playerLimit()) {
                 serverMessage = ServerMessage.builder()
                         .message("ALL_RENDERED_COMPLETED")
+                        .game(game)
                         .room(room)
                         .build();
                 sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
