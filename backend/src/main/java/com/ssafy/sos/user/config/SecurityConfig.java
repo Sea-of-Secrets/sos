@@ -53,14 +53,14 @@ public class SecurityConfig {
         http
                 .httpBasic((auth) -> auth.disable());
 
-//        //JWTFilter 추가
+        //JWTFilter 추가
         //임시로 없앰
         http
                 .addFilterBefore(new JWTFilter(jwtUtil, jwtService), UsernamePasswordAuthenticationFilter.class);
 
         //preflight 허용
-        http
-                .authorizeHttpRequests((request) -> request.requestMatchers(CorsUtils::isPreFlightRequest).permitAll());
+//        http
+//                .authorizeHttpRequests((request) -> request.requestMatchers(CorsUtils::isPreFlightRequest).permitAll());
 
 
 
