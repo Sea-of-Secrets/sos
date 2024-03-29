@@ -1,11 +1,5 @@
 import { Client, messageCallbackType } from "@stomp/stompjs";
 
-<<<<<<< Updated upstream
-// TODO: env 처리해야한다.
-// const SERVER_END_POINT = "ws://localhost:8080";
-const SERVER_END_POINT = "ws://j10a710.p.ssafy.io:8081";
-const SOCKET_END_POINT = `${SERVER_END_POINT}/sos`;
-=======
 const { SERVER_SOCKET_API_END_POINT } = process.env;
 
 const SERVER_API_END_POINT =
@@ -14,7 +8,6 @@ const SERVER_API_END_POINT =
     : SERVER_SOCKET_API_END_POINT;
 
 const SOCKET_END_POINT = `${SERVER_API_END_POINT}/game`;
->>>>>>> Stashed changes
 
 export const createSocket = () => {
   let stomp: Client | null = null;
