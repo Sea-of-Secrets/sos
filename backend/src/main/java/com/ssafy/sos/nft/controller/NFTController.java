@@ -25,10 +25,6 @@ public class NFTController {
     @GetMapping("/wallet")
     @ResponseBody
     public ResponseEntity<?> getNFTs(Authentication authentication) {
-        if (authentication == null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("로그인 해야함. 여길 어떻게 왔지?");
-        }
-
         CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
          try {
              NFTResponse[] ownNFTs = nftService.getOwnNFTs(user);
@@ -36,17 +32,12 @@ public class NFTController {
          } catch(Exception e) {
              return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
          }
-
     }
 
 
     @PostMapping("/wallet")
     @ResponseBody
     public ResponseEntity<?> makeWallet(Authentication authentication) {
-        if (authentication == null) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("로그인 해야함. 여길 어떻게 왔지?");
-        }
-
         CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
 
         Wallet wallet = nftService.makeWallet(user);
