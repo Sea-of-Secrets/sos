@@ -22,7 +22,7 @@ export default function Home() {
           </a>
           <a
             className="button"
-            href="http://j10a710.p.ssafy.io/api/login/oauth2/code/kakao"
+            href="https://j10a710.p.ssafy.io/api/oauth2/authorization/kakao"
           >
             kakao login
           </a>
