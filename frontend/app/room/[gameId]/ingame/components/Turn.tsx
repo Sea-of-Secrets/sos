@@ -25,7 +25,10 @@ export default function Turn({
         left,
       }}
     >
-      <div className="bg-yellow-900 border-amber-950">{currentTurn} / 15</div>
+      <div className="bg-yellow-900 border-amber-950">
+        <span className="text-yellow-300">{currentTurn}턴</span>{" "}
+        <span className="text-white">/ 15턴</span>
+      </div>
     </div>
   );
 }

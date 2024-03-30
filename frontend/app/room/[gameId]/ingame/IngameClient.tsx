@@ -29,11 +29,14 @@ import SelectPirateLocationGrid from "./components/SelectPirateLocationGrid";
 import { useTimer } from "./stores/useTimer";
 import { useWhenMarineStartGame } from "./stores/useWhenMarineStartGame";
 import SelectMarineAction from "./components/SelectMarineAction";
+import { useGameLoading } from "./stores/useGameLoading";
+import OptionButton from "./components/OptionButton";
+import Docs from "./components/Docs";
 
 const { send } = gameSocket;
 
 export default function IngameClient() {
-  const [loading, setLoading] = useState(true);
+  const { loading, setLoading } = useGameLoading();
   const [loading2, setLoading2] = useState(true);
   const [timeOut, setTimeOut] = useState(false);
 
@@ -59,7 +62,6 @@ export default function IngameClient() {
 
   // 게임 시작
   const startAnimation = () => {
-    setLoading2(false);
     gameStartAnimation();
 
     // 애니메이션 끝났다고 알림
@@ -520,11 +522,11 @@ export default function IngameClient() {
 
   useEffect(() => {
     if (socketMessage.message === "RENDER_COMPLETE_ACCEPTED") {
-      // TODO 뭔가 깜빡임 관련 넣으면 될 듯?
     }
 
     // 게임 시작
     if (socketMessage.message === "ALL_RENDERED_COMPLETED") {
+      setLoading2(false);
       startAnimation();
     }
 
@@ -771,11 +773,13 @@ export default function IngameClient() {
   return (
     <>
       {loading2 && <Loading />}
-      {!loading && <Chat />}
+      <Chat />
+      <Docs />
+      <OptionButton />
       <Timer />
-      <Round topLeft={[60, 1]} />
+      <Round topLeft={[200, 1]} />
       <Turn
-        topLeft={[360, 1]}
+        topLeft={[500, 1]}
         currentTurn={socketMessage.game ? socketMessage.game.turn : 0}
       />
       <SystemPrompt />
