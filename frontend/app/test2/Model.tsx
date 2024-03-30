@@ -52,7 +52,7 @@ export default function Model(props: JSX.IntrinsicElements["group"]) {
       <group
         position={[0.143, -22325.514, 0]}
         rotation={[Math.PI / 2, 0, -Math.PI]}
-        scale={1}
+        scale={10}
       >
         <group rotation={[-Math.PI, 0, 0]}>
           <group position={[0, 0, 595.616]} scale={[1.329, 1.329, 0.872]}>
