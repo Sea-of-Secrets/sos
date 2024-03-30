@@ -22,13 +22,13 @@ export default function Home() {
           </a>
           <a
             className="button"
-            href="http://j10a710.p.ssafy.io:8081/api/login/oauth2/code/kakao"
+            href="https://j10a710.p.ssafy.io/api/oauth2/authorization/kakao"
           >
             kakao login
           </a>
           <a
             className="button"
-            href="http://localhost:8080/oauth2/authorization/google"
+            href="https://j10a710.p.ssafy.io/api/oauth2/authorization/google"
           >
             google login
           </a>
