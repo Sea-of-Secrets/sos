@@ -39,7 +39,7 @@ const MainBody = styled.div`
   align-items: flex-start;
   justify-content: flex-end;
   flex-grow: 1;
-  min-height: 20rem;
+  min-height: 17rem;
 `;
 
 const MainBodySingleChat = styled.div`

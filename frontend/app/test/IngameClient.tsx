@@ -24,10 +24,10 @@ export default function IngameClient() {
     <>
       <Timer />
       {loading && <Loading />}
-      <Round topLeft={[200, 1]} />
-      <Turn topLeft={[500, 1]} currentTurn={1} />
-      {/* <Round topLeft={[60, 1]} />
-      <Turn topLeft={[360, 1]} currentTurn={1} /> */}
+      {/* <Round topLeft={[200, 1]} />
+      <Turn topLeft={[500, 1]} currentTurn={1} /> */}
+      <Round topLeft={[60, 1]} />
+      <Turn topLeft={[360, 1]} currentTurn={1} />
       <SystemPrompt />
       <Canvas
         camera={{
@@ -39,10 +39,10 @@ export default function IngameClient() {
       >
         <IngameThree />
       </Canvas>
-      {/* <TestController /> */}
-      <Chat />
+      <TestController />
+      {/* <Chat />
       <OptionButton />
-      <Docs />
+      <Docs /> */}
     </>
   );
 }

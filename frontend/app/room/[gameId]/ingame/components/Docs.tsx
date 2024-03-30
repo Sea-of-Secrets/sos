@@ -4,7 +4,7 @@ import { useOption } from "../stores/useOption";
 
 const Main = styled.div`
   position: absolute;
-  bottom: 25.7rem;
+  bottom: 22.7rem;
   right: 0.5rem;
   width: 20rem;
   height: 12rem;
