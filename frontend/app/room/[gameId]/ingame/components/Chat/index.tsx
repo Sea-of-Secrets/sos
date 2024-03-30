@@ -6,14 +6,16 @@ import { gameSocket } from "~/sockets";
 import useGameId from "~/store/gameId";
 import useNickname from "~/store/nickname";
 import { useSocketMessage } from "../../stores/useSocketMessage";
+import { useOption } from "../../stores/useOption";
 
 const { send } = gameSocket;
 
 const Main = styled.div`
   position: absolute;
   bottom: 0.5rem;
+  width: 20rem;
   right: 0.5rem;
-  z-index: 999;
+  z-index: 998;
   display: flex;
   flex-direction: column;
   max-height: 25rem;
@@ -37,7 +39,7 @@ const MainBody = styled.div`
   align-items: flex-start;
   justify-content: flex-end;
   flex-grow: 1;
-  min-height: 20rem;
+  min-height: 17rem;
 `;
 
 const MainBodySingleChat = styled.div`
@@ -95,6 +97,7 @@ export default function Chat() {
   const { nickname } = useNickname();
   const { chatMessage } = useSocketMessage();
   const { gameId } = useGameId();
+  const { isChat } = useOption();
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState<any>([]);
 
@@ -113,6 +116,10 @@ export default function Chat() {
       setMessages((prevMessages: any) => [...prevMessages, chatMessage]);
     }
   }, [chatMessage]);
+
+  if (!isChat) {
+    return null;
+  }
 
   return (
     <Main className="bg-opacity-75 bg-white">

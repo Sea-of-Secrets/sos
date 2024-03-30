@@ -31,7 +31,9 @@ export default function TreasureImage({
   const imageSource = treasureImageSourceMatcher(name);
   return (
     <div {...props} className={clsx(className)}>
-      <Image width={100} height={100} src={imageSource} alt={REFERENCE} />
+      <div>
+        <Image width={100} height={100} src={imageSource} alt={REFERENCE} />
+      </div>
     </div>
   );
 }
