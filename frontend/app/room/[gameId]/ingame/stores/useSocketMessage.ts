@@ -17,7 +17,7 @@ export const useSocketMessage = create<SocketMessageState>(set => ({
   chatMessage: {},
   setChatMessage: newChatMessage => {
     set(state => {
-      return { ...state, socketMessage: newChatMessage };
+      return { ...state, chatMessage: newChatMessage };
     });
   },
 }));

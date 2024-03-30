@@ -28,6 +28,7 @@ import {
 import SelectPirateLocationGrid from "./components/SelectPirateLocationGrid";
 import { useTimer } from "./stores/useTimer";
 import { useWhenMarineStartGame } from "./stores/useWhenMarineStartGame";
+import SelectMarineAction from "./components/SelectMarineAction";
 
 const { send } = gameSocket;
 
@@ -294,29 +295,7 @@ export default function IngameClient() {
     zoom(getNode(socketMessage.game.currentPosition[number]).position);
     if (socketMessage.game.players[number]["nickname"] === nickname) {
       setHeaderMessage("행동을 선택하세요");
-      const actionList = ["조사", "체포"];
-      setFooterMessage(
-        <>
-          {actionList.map(action => (
-            <button
-              key={action}
-              onClick={() => {
-                const clickAction =
-                  action === "조사" ? "INVESTIGATE" : "ARREST";
-
-                send("/pub/game", {
-                  message: `SELECT_WORK_MARINE_${EnglishNumber}`,
-                  sender: nickname,
-                  gameId,
-                  action: clickAction,
-                });
-              }}
-            >
-              <p>{action}</p>
-            </button>
-          ))}
-        </>,
-      );
+      setFooterMessage(<SelectMarineAction turn={EnglishNumber} />);
     } else {
       setHeaderMessage(
         `[해군${number}] ${socketMessage.game.players[number]["nickname"]} 님이 행동을 선택중입니다`,
@@ -792,13 +771,13 @@ export default function IngameClient() {
   return (
     <>
       {loading2 && <Loading />}
+      {!loading && <Chat />}
       <Timer />
       <Round topLeft={[60, 1]} />
       <Turn
         topLeft={[360, 1]}
         currentTurn={socketMessage.game ? socketMessage.game.turn : 0}
       />
-      {/* <Chat /> */}
       <SystemPrompt />
       <Canvas
         camera={{

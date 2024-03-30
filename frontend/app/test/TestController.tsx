@@ -15,6 +15,7 @@ import {
 import SelectPirateLocationGrid from "../room/[gameId]/ingame/components/SelectPirateLocationGrid";
 
 import { useTimer } from "../room/[gameId]/ingame/stores/useTimer";
+import SelectMarineAction from "../room/[gameId]/ingame/components/SelectMarineAction";
 
 export default function TestController() {
   const cameraZoomInputRef = useRef<HTMLInputElement>(null);
@@ -216,6 +217,11 @@ export default function TestController() {
       </Test>
       <Test>
         <Button onClick={() => zoomMarineStart()}>해군 시작 위치 줌</Button>
+        <Button
+          onClick={() => setFooterMessage(<SelectMarineAction turn="ONE" />)}
+        >
+          해군 행동
+        </Button>
       </Test>
     </ContainerStyle>
   );

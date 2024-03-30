@@ -41,9 +41,9 @@ export default function SelectPirateLocationGrid({
     }
   }, [cameraRef]);
 
-  useEffect(() => {
-    fullScreen();
-  }, [fullScreen]);
+  // useEffect(() => {
+  //   fullScreen();
+  // }, [fullScreen]);
 
   return (
     <Grid onMouseLeave={fullScreen}>

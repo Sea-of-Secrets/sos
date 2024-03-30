@@ -52,3 +52,12 @@ export const MapPathMap = {
     src: "/assets/map_bottomright.png",
   },
 };
+
+export const ActionIcon = {
+  INVESTIGATE: {
+    src: "/assets/icon-investigate.png",
+  },
+  ARREST: {
+    src: "/assets/icon-arrest.png",
+  },
+};

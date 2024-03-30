@@ -9,10 +9,12 @@
 .systemPromptContainer {
   position: fixed;
 
-  left: 0;
+  left: 50%;
+  transform: translate(-50%);
   z-index: 999;
 
-  width: 100vw;
+  // width: 50vw;
+  // width: 100vw;
 
   display: flex;
   justify-content: center;
@@ -23,11 +25,12 @@
 }
 
 .systemPrompt {
-  width: 50%;
+  width: 100%;
+  // width: 50%;
   background-color: rgba(0, 0, 0, 0.8);
   border: 1px solid rgb(103, 228, 111);
   border-radius: 8px;
-  padding: 8px;
+  padding: 8px 15px;
   color: white;
   display: flex;
   justify-content: center;
@@ -47,7 +50,8 @@
   bottom: 0;
 
   > .systemPromptFooter {
-    width: 50%;
+    width: 100%;
+    // width: 50%;
     min-height: 150px;
   }
 }

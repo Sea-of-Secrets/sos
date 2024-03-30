@@ -13,6 +13,7 @@ import { useGameLoading } from "../room/[gameId]/ingame/stores/useGameLoading";
 
 import IngameThree from "./IngameThree";
 import TestController from "./TestController";
+import Chat from "../room/[gameId]/ingame/components/Chat";
 
 export default function IngameClient() {
   const { loading, setLoading } = useGameLoading();
@@ -35,6 +36,7 @@ export default function IngameClient() {
         <IngameThree />
       </Canvas>
       <TestController />
+      {/* <Chat /> */}
     </>
   );
 }
