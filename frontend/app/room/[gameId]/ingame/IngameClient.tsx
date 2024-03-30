@@ -64,12 +64,14 @@ export default function IngameClient() {
   const startAnimation = () => {
     gameStartAnimation();
 
-    // 애니메이션 끝났다고 알림
-    send("/pub/init", {
-      message: "START_GAME",
-      sender: nickname,
-      gameId,
-    });
+    setTimeout(() => {
+      // 애니메이션 끝났다고 알림
+      send("/pub/init", {
+        message: "START_GAME",
+        sender: nickname,
+        gameId,
+      });
+    }, 2000);
   };
 
   // 게임 종료
@@ -527,7 +529,9 @@ export default function IngameClient() {
     // 게임 시작
     if (socketMessage.message === "ALL_RENDERED_COMPLETED") {
       setLoading2(false);
-      startAnimation();
+      setTimeout(() => {
+        startAnimation();
+      }, 1000);
     }
 
     // 게임 종료
