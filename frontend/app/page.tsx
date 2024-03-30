@@ -28,7 +28,7 @@ export default function Home() {
           </a>
           <a
             className="button"
-            href="http://localhost:8080/oauth2/authorization/google"
+            href="https://j10a710.p.ssafy.io/api/oauth2/authorization/google"
           >
             google login
           </a>
