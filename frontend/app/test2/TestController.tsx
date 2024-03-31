@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { useCamera } from "./stores/useCamera";
 
 export default function TestController() {
-  const { cameraRef, mainScreen, ShopScreen } = useCamera();
+  const { cameraRef, mainScreen, shopScreen } = useCamera();
   const getPosition = () => {
     console.log(cameraRef?.current.camera.position);
   };
@@ -13,7 +13,7 @@ export default function TestController() {
     mainScreen();
   };
   const zoomShop = () => {
-    ShopScreen();
+    shopScreen();
   };
   return (
     <ContainerStyle>
