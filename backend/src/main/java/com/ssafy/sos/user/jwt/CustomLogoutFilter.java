@@ -81,7 +81,7 @@ public class CustomLogoutFilter extends GenericFilterBean {
         }
 
         //DB에 저장되어 있는지 확인
-        Boolean isExist = refreshTokenRepository.existsByToken(refresh);
+        boolean isExist = refreshTokenRepository.existsByToken(refresh);
         if (!isExist) {
 
             //response status code
