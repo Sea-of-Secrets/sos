@@ -5,7 +5,7 @@ const { NEXT_PUBLIC_SERVER_SOCKET_API_END_POINT } = process.env;
 const SERVER_API_END_POINT =
   process.env.NODE_ENV === "development"
     ? "ws://localhost:8080"
-    : "ws://j10a710.p.ssafy.io:8081/api";
+    : NEXT_PUBLIC_SERVER_SOCKET_API_END_POINT;
 
 const SOCKET_END_POINT = `${SERVER_API_END_POINT}/sos`;
 
