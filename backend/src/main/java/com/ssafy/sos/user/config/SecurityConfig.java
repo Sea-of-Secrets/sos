@@ -1,8 +1,10 @@
 package com.ssafy.sos.user.config;
 
 import com.ssafy.sos.user.CustomSuccessHandler;
+import com.ssafy.sos.user.jwt.CustomLogoutFilter;
 import com.ssafy.sos.user.jwt.JWTFilter;
 import com.ssafy.sos.user.jwt.JWTUtil;
+import com.ssafy.sos.user.repository.RefreshTokenRepository;
 import com.ssafy.sos.user.service.CustomOAuth2UserService;
 import com.ssafy.sos.user.service.JWTService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -16,6 +18,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.CorsUtils;
@@ -29,6 +32,7 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final JWTUtil jwtUtil;
     private final JWTService jwtService;
 
@@ -46,7 +50,7 @@ public class SecurityConfig {
         http
                 .csrf((auth) -> auth.disable());
 
-        //From 로그인 방식 disable
+        //로그인 방식 disable
         http
                 .formLogin((auth) -> auth.disable());
 
@@ -55,9 +59,21 @@ public class SecurityConfig {
                 .httpBasic((auth) -> auth.disable());
 
         //JWTFilter 추가
-        //임시로 없앰
         http
                 .addFilterBefore(new JWTFilter(jwtUtil, jwtService), UsernamePasswordAuthenticationFilter.class);
+
+        //logoutFilter
+//        http
+//                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshTokenRepository), LogoutFilter.class);
+
+        http.logout((logout) -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("https://j10a710.p.ssafy.io")
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .deleteCookies("access", "refresh")
+        );
+
 
         //preflight 허용
 //        http

@@ -1,5 +1,6 @@
 package com.ssafy.sos.user.jwt;
 
+import jakarta.annotation.Nonnull;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
