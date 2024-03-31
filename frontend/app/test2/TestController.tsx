@@ -4,6 +4,7 @@ import { useCamera } from "./stores/useCamera";
 export default function TestController() {
   const { cameraRef, mainScreen, ShopScreen, RoomScreen, aScreen, bScreen } =
     useCamera();
+
   const getPosition = () => {
     console.log(cameraRef?.current.camera.position);
   };
