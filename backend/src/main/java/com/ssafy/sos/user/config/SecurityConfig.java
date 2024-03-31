@@ -68,7 +68,7 @@ public class SecurityConfig {
 
         http.logout((logout) -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("http://localhost:3000")
+                .logoutSuccessUrl("https://j10a710.p.ssafy.io")
                 .invalidateHttpSession(true)
                 .clearAuthentication(true)
                 .deleteCookies("access", "refresh")
