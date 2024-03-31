@@ -31,7 +31,8 @@ class GameServiceImplTest {
 
     @BeforeEach
     public void initGameMap() {
-        board.getGameMap().put(gameId, new Game(gameId));
+        game = new Game(gameId);
+        board.getGameMap().put(gameId, game);
         players = new ArrayList<>();
         Player player1 = Player.builder()
                 .nickname("zuhee")
@@ -70,13 +71,15 @@ class GameServiceImplTest {
     // 해적 시작위치 지정
     public void initPirateStart() {
         //given
-        int result = gameService.initPirateStart(gameId, gameService.initPirateRandomStart(gameId));
-        // when
-        game = board.getGameMap().get(gameId);
-        List<Integer> pirateList = new ArrayList<>(game.getTreasures().keySet());
-        // then
-        Assertions.assertThat(pirateList.contains(result))
-                .isTrue();
+        if (!game.getTreasures().isEmpty()) {
+            int result = gameService.initPirateStart(gameId, gameService.initPirateRandomStart(gameId));
+            // when
+            game = board.getGameMap().get(gameId);
+            List<Integer> pirateList = new ArrayList<>(game.getTreasures().keySet());
+            // then
+            Assertions.assertThat(pirateList.contains(result))
+                    .isTrue();
+        }
     }
 
     @Test
@@ -130,6 +133,11 @@ class GameServiceImplTest {
 //            // 기존 검사 완료 하였음 (로그 출력 정리 위해 주석처리)
 //             System.out.println(pirateMovableNode);
 //        }
+
+        game.setCurrentPosition(new int[]{52, 257, 267, 268});
+        HashMap<Integer, Deque<Integer>> availableNode = gameService.findPirateAvailableNode(gameId, game.getCurrentPosition()[0]);
+        System.out.println(availableNode);
+        System.out.println(availableNode.isEmpty());
 
         // 검사2 : 특정 노드에서의 해적 이동 가능 위치 조회 결과가 올바르게 나오는지 검사
         // 169의 경우

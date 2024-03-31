@@ -388,6 +388,12 @@ public class MessageController {
         if (role == GameRole.PIRATE) {
             // 해적 이동가능 위치 계산
             availableNode = gameService.findPirateAvailableNode(gameId, game.getCurrentPosition()[role.getRoleNumber()]);
+            // 해적이 포위되어서 더 이상 갈 곳이 없다면, 해적 패배 해군 승리
+            if (availableNode.isEmpty()) {
+                sendMessageWithGame(gameId, game, "GAME_OVER_PIRATE_SURROUNDED_MARINE_WIN");
+                gameService.gameOver(gameId, false);
+                return;
+            }
         } else {
             // 해군 이동가능 위치 계산
             availableNode = gameService.findMarineAvailableNode(gameId, game.getCurrentPosition()[role.getRoleNumber()]);
