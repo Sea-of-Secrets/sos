@@ -19,8 +19,7 @@ export default function IngameClient() {
         }}
       >
         <Camera />
-        <ambientLight />
-        <directionalLight />
+        <ambientLight intensity={5} color="#ffffff" />
         <Map />
       </Canvas>
       <TestController />
