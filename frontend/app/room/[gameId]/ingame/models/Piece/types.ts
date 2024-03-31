@@ -22,7 +22,3 @@ export interface TreasureProps {
   isOpen: boolean;
   nodeId: number;
 }
-
-export interface FlagProps {
-  nodeId: number;
-}

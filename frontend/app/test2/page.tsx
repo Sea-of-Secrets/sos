@@ -1,11 +1,11 @@
 import "./index.css";
 
-import IngameClient from "./IngameClient";
+import Renderer from "./Renderer";
 
 export default function Page() {
   return (
     <div id="three-container">
-      <IngameClient />
+      <Renderer />
     </div>
   );
 }

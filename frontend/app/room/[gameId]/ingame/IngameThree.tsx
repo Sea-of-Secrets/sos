@@ -4,7 +4,7 @@ import Camera from "./models/Camera";
 import Graph from "./models/Graph";
 import Map from "./models/Map";
 import Piece from "./models/Piece/Piece";
-import Flag from "./models/Piece/Flag";
+import Flags from "./models/Piece/Flags";
 import TreasureGroup from "./models/Piece/TreasureGroup";
 import SelectableMarineNodeMarkerGroup from "./models/Piece/SelectableMarineNodeMarkerGroup";
 
@@ -17,6 +17,7 @@ import {
 } from "./stores/piece";
 import { useSocketMessage } from "./stores/useSocketMessage";
 import AvailableNode from "./models/Piece/AvailableNode";
+import { Canvas } from "@react-three/fiber";
 
 export default function IngameThree() {
   const { setPiece: setPiratePiece } = usePiratePiece();
@@ -51,6 +52,7 @@ export default function IngameThree() {
       <Map />
       <SelectableMarineNodeMarkerGroup />
       <AvailableNode />
+      <Flags />
       <Graph />
       {socketMessage && (
         <>
@@ -80,12 +82,9 @@ export default function IngameThree() {
           />
         </>
       )}
-      {socketMessage &&
-        socketMessage.game?.investigateSuccess &&
-        socketMessage.game.investigateSuccess.map((nodeId: number) => (
-          <Flag key={nodeId} nodeId={nodeId} />
-        ))}
+      {/* <Canvas> */}
       <TreasureGroup />
+      {/* </Canvas> */}
     </>
   );
 }

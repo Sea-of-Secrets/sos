@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import React, { useRef } from "react";
+import React from "react";
 import { useGLTF } from "@react-three/drei";
 import { GLTF } from "three-stdlib";
 
@@ -43,7 +43,7 @@ type GLTFResult = GLTF & {
   };
 };
 
-export default function Model(props: JSX.IntrinsicElements["group"]) {
+export default function Map(props: JSX.IntrinsicElements["group"]) {
   const { nodes, materials } = useGLTF(
     "/tiki_treasure/scene.gltf",
   ) as GLTFResult;

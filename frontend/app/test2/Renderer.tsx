@@ -2,12 +2,9 @@
 
 import React from "react";
 import { Canvas } from "@react-three/fiber";
-import Model from "./Model";
-import {
-  OrbitControls,
-  CameraControls,
-  PerspectiveCamera,
-} from "@react-three/drei";
+import Map from "./Map";
+import Camera from "./Camera";
+import TestController from "./TestController";
 
 export default function IngameClient() {
   return (
@@ -21,13 +18,12 @@ export default function IngameClient() {
           fov: 50,
         }}
       >
-        <CameraControls />
-
+        <Camera />
         <ambientLight />
         <directionalLight />
-        <Model />
-        <axesHelper scale={1} />
+        <Map />
       </Canvas>
+      <TestController />
     </>
   );
 }

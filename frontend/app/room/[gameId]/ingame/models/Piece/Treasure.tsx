@@ -48,6 +48,7 @@ export default function TreasureRenderer({
         PiecePathMap[`TREASURE${number}` as keyof typeof PiecePathMap].size
       }
       visible={visible}
+      // material={}
     >
       <primitive object={scene} />
     </mesh>

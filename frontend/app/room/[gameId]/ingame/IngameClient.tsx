@@ -90,6 +90,9 @@ export default function IngameClient() {
   const gameOverFifteenTurnOver = () => {
     alert("해적의 15턴 내 보물 미도착으로 게임 종료");
   };
+  const gameOverPiratSurroundedMarineWin = () => {
+    alert("해적의 15턴 내 보물 미도착으로 게임 종료");
+  };
 
   // 해적의 시작위치 지정 명령
   const orderInitPirateStart = () => {
@@ -353,15 +356,6 @@ export default function IngameClient() {
         `[해군${number}] ${socketMessage.game.players[number]["nickname"]} 님이 ${socketMessage.game.investigateSuccess[successNumber]}번에서 해적의 흔적을 발견하였습니다.`,
       );
     }
-    console.log("조사 성공한 노드 : ", socketMessage.game.investigateSuccess);
-    console.log(
-      "조사 성공한 마지막 노드 : ",
-      socketMessage.game.investigateSuccess[successNumber],
-    );
-    console.log(
-      "조사 성공한 마지막 노드의 포지션",
-      socketMessage.game.investigateSuccess[successNumber].position,
-    );
 
     zoom(
       getNode(socketMessage.game.investigateSuccess[successNumber]).position,
@@ -506,6 +500,9 @@ export default function IngameClient() {
     }
     if (socketMessage.message === "GAME_OVER_FIFTEEN_TURN_OVER_MARINE_WIN") {
       gameOverFifteenTurnOver();
+    }
+    if (socketMessage.message === "GAME_OVER_PIRATE_SURROUNDED_MARINE_WIN") {
+      gameOverPiratSurroundedMarineWin();
     }
 
     // 시간초과
@@ -747,7 +744,7 @@ export default function IngameClient() {
       <Canvas
         camera={{
           position: [0, 200, 300],
-          far: 10000,
+          far: 100000,
           fov: 50,
         }}
         onCreated={() => {

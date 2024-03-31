@@ -3,10 +3,13 @@ const defaultPosition: [number, number, number] = [5, 5, 5];
 
 export default function Light() {
   return (
-    <directionalLight
-      color="#FFFFFF"
-      intensity={defaultIntensity}
-      position={defaultPosition}
-    />
+    <>
+      <ambientLight intensity={0.5} color="#ffffff" />
+      <directionalLight
+        color="#FFFFFF"
+        intensity={defaultIntensity}
+        position={defaultPosition}
+      />
+    </>
   );
 }
