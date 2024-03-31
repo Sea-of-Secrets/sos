@@ -1,11 +1,11 @@
 import "./index.css";
 
-import IngameClient from "./IngameClient";
+import Client from "./Client";
 
 export default function Page() {
   return (
     <div id="three-container">
-      <IngameClient />
+      <Client />
     </div>
   );
 }
