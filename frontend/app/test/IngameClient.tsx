@@ -14,6 +14,8 @@ import { useGameLoading } from "../room/[gameId]/ingame/stores/useGameLoading";
 import IngameThree from "./IngameThree";
 import TestController from "./TestController";
 import Chat from "../room/[gameId]/ingame/components/Chat";
+import OptionButton from "../room/[gameId]/ingame/components/OptionButton";
+import Docs from "../room/[gameId]/ingame/components/Docs";
 
 export default function IngameClient() {
   const { loading, setLoading } = useGameLoading();
@@ -22,6 +24,8 @@ export default function IngameClient() {
     <>
       <Timer />
       {loading && <Loading />}
+      {/* <Round topLeft={[200, 1]} />
+      <Turn topLeft={[500, 1]} currentTurn={1} /> */}
       <Round topLeft={[60, 1]} />
       <Turn topLeft={[360, 1]} currentTurn={1} />
       <SystemPrompt />
@@ -36,7 +40,9 @@ export default function IngameClient() {
         <IngameThree />
       </Canvas>
       <TestController />
-      {/* <Chat /> */}
+      {/* <Chat />
+      <OptionButton />
+      <Docs /> */}
     </>
   );
 }
