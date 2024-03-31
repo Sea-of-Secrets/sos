@@ -3,8 +3,20 @@ export const PiecePathMap = {
     src: "/shiba/scene.gltf",
     size: 0.03,
   },
-  TREASURE: {
-    src: "/treasure_chest/scene.gltf",
+  TREASURE1: {
+    src: "/treasure_chest1/scene.gltf",
+    size: 0.5,
+  },
+  TREASURE2: {
+    src: "/treasure_chest2/scene.gltf",
+    size: 0.5,
+  },
+  TREASURE3: {
+    src: "/treasure_chest3/scene.gltf",
+    size: 0.5,
+  },
+  TREASURE4: {
+    src: "/treasure_chest4/scene.gltf",
     size: 0.5,
   },
   PIRATE: {

@@ -110,6 +110,93 @@ export const useNode = ({ node }: { node: IngameGraphNode }) => {
         });
         return;
       }
+      if (
+        socketMessage.message === "ORDER_INVESTIGATE_MARINE_ONE" &&
+        socketMessage.game.players[1]["nickname"] === nickname &&
+        Object.entries(socketMessage.game.investigate.nodes)
+          .filter(([key, value]) => value === false)
+          .map(([key, value]) => Number(key))
+          .includes(node.nodeId)
+      ) {
+        send("/pub/game", {
+          message: "INVESTIGATE_MARINE_ONE",
+          sender: nickname,
+          gameId,
+          node: node.nodeId,
+        });
+        return;
+      }
+      if (
+        socketMessage.message === "ORDER_INVESTIGATE_MARINE_TWO" &&
+        socketMessage.game.players[2]["nickname"] === nickname &&
+        Object.entries(socketMessage.game.investigate.nodes)
+          .filter(([key, value]) => value === false)
+          .map(([key, value]) => Number(key))
+          .includes(node.nodeId)
+      ) {
+        send("/pub/game", {
+          message: "INVESTIGATE_MARINE_TWO",
+          sender: nickname,
+          gameId,
+          node: node.nodeId,
+        });
+        return;
+      }
+      if (
+        socketMessage.message === "ORDER_INVESTIGATE_MARINE_THREE" &&
+        socketMessage.game.players[3]["nickname"] === nickname &&
+        Object.entries(socketMessage.game.investigate.nodes)
+          .filter(([key, value]) => value === false)
+          .map(([key, value]) => Number(key))
+          .includes(node.nodeId)
+      ) {
+        send("/pub/game", {
+          message: "INVESTIGATE_MARINE_THREE",
+          sender: nickname,
+          gameId,
+          node: node.nodeId,
+        });
+        return;
+      }
+      if (
+        socketMessage.message === "ORDER_ARREST_MARINE_ONE" &&
+        socketMessage.game.players[1]["nickname"] === nickname &&
+        socketMessage.arrestableNode.includes(node.nodeId)
+      ) {
+        send("/pub/game", {
+          message: "ARREST_MARINE_ONE",
+          sender: nickname,
+          gameId,
+          node: node.nodeId,
+        });
+        return;
+      }
+      if (
+        socketMessage.message === "ORDER_ARREST_MARINE_TWO" &&
+        socketMessage.game.players[2]["nickname"] === nickname &&
+        socketMessage.arrestableNode.includes(node.nodeId)
+      ) {
+        send("/pub/game", {
+          message: "ARREST_MARINE_TWO",
+          sender: nickname,
+          gameId,
+          node: node.nodeId,
+        });
+        return;
+      }
+      if (
+        socketMessage.message === "ORDER_ARREST_MARINE_THREE" &&
+        socketMessage.game.players[3]["nickname"] === nickname &&
+        socketMessage.arrestableNode.includes(node.nodeId)
+      ) {
+        send("/pub/game", {
+          message: "ARREST_MARINE_THREE",
+          sender: nickname,
+          gameId,
+          node: node.nodeId,
+        });
+        return;
+      }
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [

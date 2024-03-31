@@ -21,6 +21,22 @@ export default function AvailableNode() {
       socketMessage.message === "ORDER_MOVE_MARINE_THREE"
     ) {
       setAvailableNode(Object.keys(socketMessage.availableNode).map(Number));
+    } else if (
+      socketMessage.message === "ORDER_INVESTIGATE_MARINE_ONE" ||
+      socketMessage.message === "ORDER_INVESTIGATE_MARINE_TWO" ||
+      socketMessage.message === "ORDER_INVESTIGATE_MARINE_THREE"
+    ) {
+      setAvailableNode(
+        Object.entries(socketMessage.game.investigate.nodes)
+          .filter(([key, value]) => value === false)
+          .map(([key, value]) => Number(key)),
+      );
+    } else if (
+      socketMessage.message === "ORDER_ARREST_MARINE_ONE" ||
+      socketMessage.message === "ORDER_ARREST_MARINE_TWO" ||
+      socketMessage.message === "ORDER_ARREST_MARINE_THREE"
+    ) {
+      setAvailableNode(socketMessage.arrestableNode);
     } else {
       setAvailableNode([0]);
     }
@@ -71,6 +87,18 @@ const Marker = ({ src, node, size }: MarkerProps) => {
     (socketMessage.message === "ORDER_MOVE_MARINE_TWO" &&
       socketMessage.game.players[2]["nickname"] === nickname) ||
     (socketMessage.message === "ORDER_MOVE_MARINE_THREE" &&
+      socketMessage.game.players[3]["nickname"] === nickname) ||
+    (socketMessage.message === "ORDER_INVESTIGATE_MARINE_ONE" &&
+      socketMessage.game.players[1]["nickname"] === nickname) ||
+    (socketMessage.message === "ORDER_INVESTIGATE_MARINE_TWO" &&
+      socketMessage.game.players[2]["nickname"] === nickname) ||
+    (socketMessage.message === "ORDER_INVESTIGATE_MARINE_THREE" &&
+      socketMessage.game.players[3]["nickname"] === nickname) ||
+    (socketMessage.message === "ORDER_ARREST_MARINE_ONE" &&
+      socketMessage.game.players[1]["nickname"] === nickname) ||
+    (socketMessage.message === "ORDER_ARREST_MARINE_TWO" &&
+      socketMessage.game.players[2]["nickname"] === nickname) ||
+    (socketMessage.message === "ORDER_ARREST_MARINE_THREE" &&
       socketMessage.game.players[3]["nickname"] === nickname);
 
   return (

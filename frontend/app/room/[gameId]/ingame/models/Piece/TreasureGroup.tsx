@@ -1,5 +1,5 @@
 import { useSocketMessage } from "../../stores/useSocketMessage";
-import CloseTreasure from "./CloseTreasure";
+import Treasure from "./Treasure";
 
 export default function TreasureGroup() {
   const { socketMessage } = useSocketMessage();
@@ -9,12 +9,12 @@ export default function TreasureGroup() {
       {socketMessage &&
         socketMessage.game?.treasures &&
         Object.entries(socketMessage.game?.treasures).map(
-          ([nodeId, isOpen]) => (
-            <CloseTreasure
+          ([nodeId, isOpen], index) => (
+            <Treasure
               key={nodeId}
               isOpen={isOpen as boolean}
               nodeId={parseInt(nodeId)}
-              pieceName={"TREASURE"}
+              number={index + 1}
             />
           ),
         )}

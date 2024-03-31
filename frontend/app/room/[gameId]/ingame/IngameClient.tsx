@@ -328,32 +328,9 @@ export default function IngameClient() {
   // 해군의 조사 행동 명령
   const orderInvestigateMarine = (number: number) => {
     handleShowTimer();
-    const EnglishNumber = number === 1 ? "ONE" : number === 2 ? "TWO" : "THREE";
     zoom(getNode(socketMessage.game.currentPosition[number]).position);
     if (socketMessage.game.players[number]["nickname"] === nickname) {
       setHeaderMessage("조사할 위치를 결정하세요");
-      setFooterMessage(
-        <>
-          {Object.entries(socketMessage.game.investigate.nodes).map(
-            ([node, isInvestigate]) =>
-              !isInvestigate && (
-                <button
-                  key={node}
-                  onClick={() => {
-                    send("/pub/game", {
-                      message: `INVESTIGATE_MARINE_${EnglishNumber}`,
-                      sender: nickname,
-                      gameId,
-                      node,
-                    });
-                  }}
-                >
-                  <p>{node}번 </p>
-                </button>
-              ),
-          )}
-        </>,
-      );
     } else {
       setHeaderMessage(
         `[해군${number}] ${socketMessage.game.players[number]["nickname"]} 님이 조사중입니다`,
@@ -450,29 +427,9 @@ export default function IngameClient() {
   // 해군의 체포 행동 명령
   const orderArrestMarine = (number: number) => {
     handleShowTimer();
-    const EnglishNumber = number === 1 ? "ONE" : number === 2 ? "TWO" : "THREE";
     zoom(getNode(socketMessage.game.currentPosition[number]).position);
     if (socketMessage.game.players[number]["nickname"] === nickname) {
       setHeaderMessage("체포할 위치를 결정하세요");
-      setFooterMessage(
-        <>
-          {socketMessage.arrestableNode.map((node: number) => (
-            <button
-              key={node}
-              onClick={() => {
-                send("/pub/game", {
-                  message: `ARREST_MARINE_${EnglishNumber}`,
-                  sender: nickname,
-                  gameId,
-                  node,
-                });
-              }}
-            >
-              <p>{node}번 </p>
-            </button>
-          ))}
-        </>,
-      );
     } else {
       setHeaderMessage(
         `[해군${number}] ${socketMessage.game.players[number]["nickname"]} 님이 체포중입니다`,
