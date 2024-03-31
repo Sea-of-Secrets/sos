@@ -2,7 +2,8 @@ import styled from "@emotion/styled";
 import { useCamera } from "./stores/useCamera";
 
 export default function TestController() {
-  const { cameraRef, mainScreen, ShopScreen } = useCamera();
+  const { cameraRef, mainScreen, ShopScreen, RoomScreen, aScreen, bScreen } =
+    useCamera();
   const getPosition = () => {
     console.log(cameraRef?.current.camera.position);
   };
@@ -15,12 +16,24 @@ export default function TestController() {
   const zoomShop = () => {
     ShopScreen();
   };
+  const zoomRoom = () => {
+    RoomScreen();
+  };
+  const zoomA = () => {
+    aScreen();
+  };
+  const zoomB = () => {
+    bScreen();
+  };
   return (
     <ContainerStyle>
       <Button onClick={() => getPosition()}>현재 위치 반환</Button>
       <Button onClick={() => getRotation()}>현재 방향 반환</Button>
       <Button onClick={() => zoomMain()}>메인 화면</Button>
       <Button onClick={() => zoomShop()}>상점</Button>
+      <Button onClick={() => zoomRoom()}>게임하기</Button>
+      <Button onClick={() => zoomA()}>낚시 줌</Button>
+      <Button onClick={() => zoomB()}>꽃게 줌</Button>
     </ContainerStyle>
   );
 }
