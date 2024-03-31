@@ -3,11 +3,17 @@ import { useControls } from "leva";
 import { create } from "zustand";
 import { CameraControls } from "@react-three/drei";
 
+export const DEFAULT_FAR = 1000000;
+export const DEFAULT_FOV = 50;
+
 interface CameraState {
   cameraRef: MutableRefObject<CameraControls> | null;
   setCamera: (newCameraRef: MutableRefObject<CameraControls>) => void;
   mainScreen: () => void;
-  shopScreen: () => void;
+  ShopScreen: () => void;
+  RoomScreen: () => void;
+  aScreen: () => void;
+  bScreen: () => void;
 }
 
 export const DEFAULT_CAMERA_POSITION = {
@@ -27,9 +33,9 @@ export const useCamera = create<CameraState>(set => ({
     set(state => {
       if (state.cameraRef) {
         state.cameraRef.current.setLookAt(
-          DEFAULT_CAMERA_POSITION.x,
-          DEFAULT_CAMERA_POSITION.y,
-          DEFAULT_CAMERA_POSITION.z,
+          -14863,
+          100000,
+          156881,
           -74590,
           33819,
           -101660,
@@ -43,15 +49,75 @@ export const useCamera = create<CameraState>(set => ({
       return { ...state };
     });
   },
-  shopScreen: () => {
+  ShopScreen: () => {
     set(state => {
       if (state.cameraRef) {
         state.cameraRef.current.setLookAt(
-          23029,
-          -2276,
-          -103889,
-          15000,
+          16926,
+          20000,
+          -170000,
+          -50000,
           30000,
+          0,
+          true,
+        );
+        state.cameraRef.current.zoomTo(1, true);
+      } else {
+        console.error(`Camera not initialized...`);
+        window.alert("카메라가 없다...");
+      }
+      return { ...state };
+    });
+  },
+  RoomScreen: () => {
+    set(state => {
+      if (state.cameraRef?.current) {
+        state.cameraRef.current.setLookAt(
+          45708,
+          48049,
+          -15892,
+          -100000,
+          180000,
+          120000,
+          true,
+        );
+        state.cameraRef.current.zoomTo(1, true);
+      } else {
+        console.error(`Camera not initialized...`);
+        window.alert("카메라가 없다...");
+      }
+      return { ...state };
+    });
+  },
+  aScreen: () => {
+    set(state => {
+      if (state.cameraRef?.current) {
+        state.cameraRef.current.setLookAt(
+          26037,
+          15979,
+          176843,
+          60000,
+          30000,
+          0,
+          true,
+        );
+        state.cameraRef.current.zoomTo(1, true);
+      } else {
+        console.error(`Camera not initialized...`);
+        window.alert("카메라가 없다...");
+      }
+      return { ...state };
+    });
+  },
+  bScreen: () => {
+    set(state => {
+      if (state.cameraRef?.current) {
+        state.cameraRef.current.setLookAt(
+          -62799,
+          -559,
+          -107983,
+          -30000,
+          0,
           0,
           true,
         );
