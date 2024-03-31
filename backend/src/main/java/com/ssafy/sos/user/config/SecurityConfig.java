@@ -50,7 +50,7 @@ public class SecurityConfig {
         http
                 .csrf((auth) -> auth.disable());
 
-        //From 로그인 방식 disable
+        //로그인 방식 disable
         http
                 .formLogin((auth) -> auth.disable());
 
@@ -63,8 +63,17 @@ public class SecurityConfig {
                 .addFilterBefore(new JWTFilter(jwtUtil, jwtService), UsernamePasswordAuthenticationFilter.class);
 
         //logoutFilter
-        http
-                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshTokenRepository), LogoutFilter.class);
+//        http
+//                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshTokenRepository), LogoutFilter.class);
+
+        http.logout((logout) -> logout
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("http://localhost:3000")
+                .invalidateHttpSession(true)
+                .clearAuthentication(true)
+                .deleteCookies("access", "refresh")
+        );
+
 
         //preflight 허용
 //        http
