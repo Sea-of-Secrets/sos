@@ -4,6 +4,7 @@ import com.ssafy.sos.game.domain.Player;
 
 public interface MatchingService {
     int getQueueSize();
-    void enqueue(Player player);
+    boolean enqueue(Player player);
     void matchPlayers();
+    void dequeue(String nickname);
 }
