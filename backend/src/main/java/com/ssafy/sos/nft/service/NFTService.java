@@ -35,7 +35,7 @@ public class NFTService {
     private final FileRepository fileRepository;
     private final WalletRepository walletRepository;
     private final S3Service s3Service;
-    private final String BLOCK_SERVER_URL = "http://localhost:4000";
+    private final String BLOCK_SERVER_URL = "http://j10a710.p.ssafy.io:4000";
 
     private static final String PATH = "C:/Users/SSAFY/Desktop";
 
@@ -173,5 +173,9 @@ public class NFTService {
         } catch (Exception e) {
             throw new Exception(e);
         }
+    }
+
+    public Wallet getWalletInfo(String walletAddress) {
+        return walletRepository.findByAddress(walletAddress);
     }
 }

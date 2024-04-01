@@ -28,13 +28,20 @@ public class MatchingServiceImpl implements MatchingService {
 
     // matchingQueue를 동시에 접근 못하게 함
     @Override
-    public synchronized void enqueue(Player player) {
+    public synchronized boolean enqueue(Player player) {
+        for (Player queuePlayer : matchingQueue) {
+            if (queuePlayer.getNickname().equals(player.getNickname())) {
+                return false;
+            };
+        }
         matchingQueue.add(player);
         System.out.println(matchingQueue);
-        // TODO: 비동기 처리
+
         if (matchingQueue.size() >= 2) {
             matchPlayers();
         }
+
+        return true;
     }
 
     @Override
@@ -50,4 +57,13 @@ public class MatchingServiceImpl implements MatchingService {
         eventPublisher.publishEvent(new MatchingEvent(this, room.getGameId(), playerOne, playerTwo));
     }
 
+    @Override
+    public void dequeue(String nickname) {
+        for (Player queuePlayer : matchingQueue) {
+            if (queuePlayer.getNickname().equals(nickname)) {
+                matchingQueue.remove(queuePlayer);
+                break;
+            };
+        }
+    }
 }

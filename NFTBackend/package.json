@@ -4,8 +4,18 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "dev": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "app": "./index.js"
+  },
+  "pkg":{
+    "assets": [
+      "views/**/*",
+      "public/**/*"
+    ]
   },
   "author": "",
   "license": "ISC",
@@ -18,6 +28,10 @@
     "ipfs-core": "^0.18.1",
     "mime": "^4.0.1",
     "nft.storage": "^7.1.1",
+    "pkg": "^5.8.1",
     "web3": "^4.6.0"
+  },
+  "devDependencies": {       
+    "pkg": "^5.8.1"
   }
 }
