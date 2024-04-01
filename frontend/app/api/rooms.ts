@@ -38,3 +38,11 @@ export const enterRoom = async ({
   });
   return res;
 };
+
+export const duplicateNickname = async ({ nickname }: { nickname: string }) => {
+  const res = await client.post<RoomData | string>("/rooms", {
+    nickname,
+    type: "duplicateNickname",
+  });
+  return res;
+};
