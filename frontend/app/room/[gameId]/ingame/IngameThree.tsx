@@ -17,7 +17,6 @@ import {
 } from "./stores/piece";
 import { useSocketMessage } from "./stores/useSocketMessage";
 import AvailableNode from "./models/Piece/AvailableNode";
-import { Canvas } from "@react-three/fiber";
 
 export default function IngameThree() {
   const { setPiece: setPiratePiece } = usePiratePiece();
