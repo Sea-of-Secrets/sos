@@ -2,7 +2,7 @@ import { cookies } from "next/headers";
 import "./index.css";
 
 import Renderer from "./render/Renderer";
-import Temp from "./Temp";
+import TokenSetter from "./TokenSetter";
 
 export default function Page() {
   return (
@@ -10,7 +10,10 @@ export default function Page() {
       <div id="three-container">
         <Renderer />
       </div>
-      <Temp token={cookies().get("access")} />
+      <TokenSetter
+        access={cookies().get("access")}
+        refresh={cookies().get("refresh")}
+      />
     </>
   );
 }
