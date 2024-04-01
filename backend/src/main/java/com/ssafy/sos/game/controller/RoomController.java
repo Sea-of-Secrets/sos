@@ -6,15 +6,14 @@ import com.ssafy.sos.game.domain.RoomRequest;
 import com.ssafy.sos.game.domain.Room;
 import com.ssafy.sos.game.service.GameService;
 import com.ssafy.sos.game.service.MatchingService;
+import com.ssafy.sos.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/room")
@@ -22,28 +21,28 @@ import java.util.Optional;
 public class RoomController {
     private final GameService gameService;
     private final MatchingService matchingService;
+    private final UserService userService;
     private final Board board;
 
     @PostMapping("/make")
     public ResponseEntity<Room> makeRoom(@RequestBody RoomRequest roomRequest,
-                                         @RequestHeader(value = "Authorization") Optional<String> accessToken) {
-        // TODO: 유효한 Token인지 검증 필요
-        Boolean isMember = accessToken.isPresent();
+                                         Authentication authentication) {
+        Boolean isMember = (authentication != null);
         Player player = Player.builder()
                 .nickname(roomRequest.getNickname())
                 .isMember(isMember)
                 .build();
 
         Room room = gameService.makeRoom(player, roomRequest.getGameMode());
-        System.out.println(room.getGameMode());
         return ResponseEntity.ok(room);
+
     }
 
     @PostMapping("/enter")
     public ResponseEntity<?> enterRoom(@RequestBody RoomRequest roomRequest,
-                                       @RequestHeader(value = "Authorization") Optional<String> accessToken) {
-        // TODO: 유효한 Token인지 검증 필요
-        Boolean isMember = accessToken.isPresent();
+                                       Authentication authentication) {
+        Boolean isMember = (authentication != null);
+
         String nickname = roomRequest.getNickname();
         Player newPlayer = Player.builder()
                 .nickname(nickname)
@@ -58,13 +57,7 @@ public class RoomController {
 
         Room room = board.getRoomMap().get(roomCode);
         // room 이 이미 다 찬 방이라면 return
-        int playerLimit = 0;
-        switch(room.getGameMode()) {
-            case ONE_VS_ONE -> { playerLimit = 2; }
-            case ONE_VS_THREE -> { playerLimit = 4; }
-        }
-
-        if (playerLimit > 0 && room.getInRoomPlayers().size() == playerLimit) {
+        if (room.getInRoomPlayers().size() == room.getGameMode().playerLimit()) {
             return ResponseEntity.ok("ALREADY_FULLED");
         }
 
@@ -81,15 +74,16 @@ public class RoomController {
 
     @PostMapping("/matching")
     public ResponseEntity<?> tryMatching(@RequestBody RoomRequest roomRequest,
-                                         @RequestHeader(value = "Authorization") Optional<String> accessToken) {
-        // TODO: 유효한 Token인지 검증 필요
-        Boolean isMember = accessToken.isPresent();
+                                         Authentication authentication) {
+        Boolean isMember = (authentication != null);
         Player player = Player.builder()
                 .nickname(roomRequest.getNickname())
                 .isMember(isMember)
                 .build();
-
-        matchingService.enqueue(player);
-        return ResponseEntity.ok("OK");
+        if (matchingService.enqueue(player)) {
+            return ResponseEntity.ok("OK");
+        } else {
+            return ResponseEntity.ok("DUPLICATED_NICKNAME");
+        }
     }
 }
