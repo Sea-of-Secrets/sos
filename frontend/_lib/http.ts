@@ -14,15 +14,7 @@ export const getBaseClientUrl = () => {
   return process.env.NEXT_PUBLIC_CLIENT_API_END_POINT;
 };
 
-export const http = axios.create({
-  baseURL: "",
-  timeout: 5000,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-
-export const client = axios.create({
+export const request = axios.create({
   baseURL: "",
   timeout: 5000,
   headers: {
