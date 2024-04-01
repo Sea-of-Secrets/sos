@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "dev": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "pkg . --out-path bin"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
     "app": "./index.js"
