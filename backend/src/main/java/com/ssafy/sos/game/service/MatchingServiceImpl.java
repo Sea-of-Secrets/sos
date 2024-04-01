@@ -57,4 +57,13 @@ public class MatchingServiceImpl implements MatchingService {
         eventPublisher.publishEvent(new MatchingEvent(this, room.getGameId(), playerOne, playerTwo));
     }
 
+    @Override
+    public void dequeue(String nickname) {
+        for (Player queuePlayer : matchingQueue) {
+            if (queuePlayer.getNickname().equals(nickname)) {
+                matchingQueue.remove(queuePlayer);
+                break;
+            };
+        }
+    }
 }

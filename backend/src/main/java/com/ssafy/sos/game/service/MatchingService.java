@@ -6,4 +6,5 @@ public interface MatchingService {
     int getQueueSize();
     boolean enqueue(Player player);
     void matchPlayers();
+    void dequeue(String nickname);
 }

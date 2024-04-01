@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -85,5 +86,11 @@ public class RoomController {
         } else {
             return ResponseEntity.ok("DUPLICATED_NICKNAME");
         }
+    }
+
+    @PatchMapping("/matching")
+    public ResponseEntity<?> cancelMatching(@RequestBody Player player) {
+        matchingService.dequeue(player.getNickname());
+        return ResponseEntity.ok("CANCEL_ACCEPTED");
     }
 }
