@@ -5,7 +5,10 @@ import com.ssafy.sos.nft.domain.FileEntity;
 import com.ssafy.sos.nft.domain.NFTResponse;
 import com.ssafy.sos.nft.domain.Wallet;
 import com.ssafy.sos.nft.service.NFTService;
+import com.ssafy.sos.user.domain.UserEntity;
+import com.ssafy.sos.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -19,11 +22,10 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/nft")
 public class NFTController {
-
+    public final UserService userService;
     public final NFTService nftService;
 
     @GetMapping("/wallet")
-    @ResponseBody
     public ResponseEntity<?> getNFTs(Authentication authentication) {
         CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
          try {
@@ -34,9 +36,22 @@ public class NFTController {
          }
     }
 
+    @GetMapping("/wallet/info")
+    public ResponseEntity<?> getWalletInfo(Authentication authentication) {
+        CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
+
+        UserEntity userInfo = userService.getUserInfo(user);
+        if (userInfo.getWalletAddress() == null) {
+            return ResponseEntity.status(HttpStatus.OK).body("지갑을 만드세요.");
+        }
+        System.out.println(userInfo);
+        Wallet wallet = nftService.getWalletInfo(userInfo.getWalletAddress());
+        System.out.println(wallet);
+        return ResponseEntity.status(HttpStatus.OK).body(wallet);
+    }
+
 
     @PostMapping("/wallet")
-    @ResponseBody
     public ResponseEntity<?> makeWallet(Authentication authentication) {
         CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
 

@@ -1,5 +1,7 @@
 package com.ssafy.sos.user.service;
 
+import com.ssafy.sos.nft.domain.Wallet;
+import com.ssafy.sos.nft.repository.WalletRepository;
 import com.ssafy.sos.product.domain.Product;
 import com.ssafy.sos.product.domain.Purchase;
 import com.ssafy.sos.product.repository.ProductRepository;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -24,8 +27,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final ProductRepository productRepository;
     private final PurchaseRepository purchaseRepository;
     private final TodayVisitedRepository todayVisitedRepository;
+    private final WalletRepository walletRepository;
 
     public boolean checkAttendance(Long userId) {
         // 이미 오늘 방문했으면
@@ -42,6 +47,8 @@ public class UserService {
             return true;
         }
     }
+
+
 
     @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
     public void cleanTodayVisited() {
@@ -60,8 +67,6 @@ public class UserService {
 
     public List<Product> findPurchasesByUser(UserEntity user) {
         List<Purchase> byUserId = purchaseRepository.findByUserId(user);
-
-
 
         // Purchase 리스트에서 Product 리스트를 추출
         List<Product> products = byUserId.stream() // byUserId는 Purchase 객체의 리스트
@@ -89,5 +94,22 @@ public class UserService {
         }
 
         return false;
+    }
+
+    public Product getMyDefaultPiece(UserEntity user) {
+        Optional<Product> byId = productRepository.findById(user.getProductId());
+        return byId.get();
+    }
+
+    @Transactional
+    public String updateWallet(UserEntity user, String address) {
+        //user에 변경 사항 저장
+        user.setWalletAddress(address);
+        
+        //지갑 테이블에 저장
+        Wallet wallet = new Wallet();
+        wallet.setAddress(address);
+        Wallet save = walletRepository.save(wallet);
+        return save.getAddress();
     }
 }

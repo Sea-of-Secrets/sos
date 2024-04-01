@@ -18,6 +18,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -73,6 +74,16 @@ public class UserController {
         return ResponseEntity.ok(gameRecords);
     }
 
+    @GetMapping("/piece")
+    public ResponseEntity<?> getMyDefaultPiece(Authentication authentication) {
+        CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
+
+        UserEntity userInfo = userService.getUserInfo(user);
+        Product myDefaultPiece = userService.getMyDefaultPiece(userInfo);
+
+        return ResponseEntity.ok(myDefaultPiece);
+    }
+
     @GetMapping("/pieces")
     public ResponseEntity<?> getPiecesList(Authentication authentication) {
         CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
@@ -95,5 +106,15 @@ public class UserController {
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("상품 없음");
+    }
+
+    @PostMapping("/wallet")
+    public ResponseEntity<?> updateWalletAddress(Authentication authentication, @RequestBody Map<String, String> walletAddress) {
+        CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
+
+        UserEntity userInfo = userService.getUserInfo(user);
+        String address = userService.updateWallet(userInfo, walletAddress.get("address"));
+
+        return ResponseEntity.status(HttpStatus.OK).body(userInfo);
     }
 }
