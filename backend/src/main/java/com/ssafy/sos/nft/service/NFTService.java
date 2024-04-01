@@ -174,4 +174,8 @@ public class NFTService {
             throw new Exception(e);
         }
     }
+
+    public Wallet getWalletInfo(String walletAddress) {
+        return walletRepository.findByAddress(walletAddress);
+    }
 }
