@@ -3,6 +3,9 @@ package com.ssafy.sos.user.controller;
 import com.ssafy.sos.game.domain.record.GameRecord;
 import com.ssafy.sos.game.domain.record.GameRecordMember;
 import com.ssafy.sos.game.repository.GameMemberRepository;
+import com.ssafy.sos.product.domain.Product;
+import com.ssafy.sos.product.domain.Purchase;
+import com.ssafy.sos.product.domain.PurchaseId;
 import com.ssafy.sos.user.domain.CustomOAuth2User;
 import com.ssafy.sos.user.domain.UserEntity;
 import com.ssafy.sos.user.domain.UserNicknameRequest;
@@ -68,5 +71,29 @@ public class UserController {
         }
 
         return ResponseEntity.ok(gameRecords);
+    }
+
+    @GetMapping("/pieces")
+    public ResponseEntity<?> getPiecesList(Authentication authentication) {
+        CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
+
+        UserEntity userInfo = userService.getUserInfo(user);
+        List<Product> purchasesByUser = userService.findPurchasesByUser(userInfo);
+
+        return ResponseEntity.ok(purchasesByUser);
+    }
+
+    @PostMapping("/pieces")
+    public ResponseEntity<?> choicePiece(Authentication authentication, @RequestParam Integer productId) {
+        CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
+
+        UserEntity userInfo = userService.getUserInfo(user);
+        boolean result = userService.choicePiece(userInfo, productId);
+
+        if (result) {
+            return ResponseEntity.status(HttpStatus.OK).body(userInfo);
+        }
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("상품 없음");
     }
 }
