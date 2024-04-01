@@ -8,8 +8,8 @@ import { useScreenControl } from "../stores/useScreenControl";
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
 
 export default function Button({ children, ...props }: ButtonProps) {
-  const { cameraRef, mainScreen } = useCamera();
-  const { screen, setScreen, setMainScreen } = useScreenControl();
+  const { mainScreen } = useCamera();
+  const { setMainScreen } = useScreenControl();
   const handleClickBackButton = () => {
     mainScreen();
     setMainScreen();
@@ -32,4 +32,8 @@ const BackButton = styled.button`
   top: 0;
   left: 0;
   padding: 1rem;
+  transition: transform 0.4s ease;
+  &:hover {
+    transform: scale(1.1);
+  }
 `;

@@ -7,6 +7,7 @@ export default function Page() {
   return (
     <div id="three-container">
       <Renderer />
+      {/* <Client */}
     </div>
   );
 }

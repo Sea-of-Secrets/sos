@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { http } from "../../_lib/http";
+import { request, getBaseServerUrl } from "../../_lib/http";
 
 type ResponseData = {
   message: string;
@@ -12,7 +12,10 @@ export default async function handler(
   try {
     if (req.method === "POST") {
       if (req.body.type === "matching") {
-        const response = await http.post("/games", req.body);
+        const response = await request.post(
+          `${getBaseServerUrl()}/games`,
+          req.body,
+        );
         return res.status(response.status).json(response.data);
       }
     }

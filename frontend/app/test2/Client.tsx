@@ -5,9 +5,10 @@ import { Canvas } from "@react-three/fiber";
 import { CameraControls } from "@react-three/drei";
 import { DEFAULT_CAMERA_POSITION, useCameraInit } from "./stores/useCamera";
 
+import * as THREE from "three";
+
 import ThreeRenderer from "./ThreeRenderer";
 import MainLoading from "./components/MainLoading";
-import TestController from "./TestController";
 
 export default function Client() {
   const { cameraRef } = useCameraInit();
@@ -27,7 +28,11 @@ export default function Client() {
           near: 10000,
           fov: 50,
         }}
-        onCreated={() => setLoading(false)}
+        onCreated={({ gl, scene }) => {
+          scene.background = new THREE.Color("skyblue"); // 내츄럴 스카이블루
+          // scene.background = new THREE.Color('#56bebc'); // 티파니 에메랄드
+          setLoading(false);
+        }}
       >
         <CameraControls ref={cameraRef} />
         <ambientLight />
@@ -35,7 +40,6 @@ export default function Client() {
         <axesHelper scale={10000000} />
         <ThreeRenderer />
       </Canvas>
-      <TestController />
     </>
   );
 }

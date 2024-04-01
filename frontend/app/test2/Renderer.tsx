@@ -2,11 +2,12 @@
 
 import React, { useState } from "react";
 import { Canvas } from "@react-three/fiber";
+import * as THREE from "three";
 
-import { useCamera } from "./stores/useCamera";
 import { useScreenControl } from "./stores/useScreenControl";
 
 import BackButton from "./components/BackButton";
+import LoginButton from "./components/LoginButton";
 
 import Map from "./Map";
 import Camera from "./Camera";
@@ -14,8 +15,7 @@ import Button from "./Button";
 
 export default function Renderer() {
   const [loading, setLoading] = useState(false);
-  const { cameraRef, mainScreen } = useCamera();
-  const { screen, setScreen, setMainScreen } = useScreenControl();
+  const { screen } = useScreenControl();
   return (
     <>
       <Canvas
@@ -26,13 +26,17 @@ export default function Renderer() {
           near: 1000,
           fov: 50,
         }}
-        onCreated={() => setLoading(true)}
+        onCreated={({ gl, scene }) => {
+          scene.background = new THREE.Color("#AED7DD");
+          setLoading(true);
+        }}
       >
         <Camera />
         <ambientLight intensity={5} color="#ffffff" />
         <Map />
       </Canvas>
       {loading && <Button />}
+      {loading && screen === "MAIN" && <LoginButton />}
       {screen !== "MAIN" && screen !== "FASTMATCHING" && <BackButton />}
     </>
   );

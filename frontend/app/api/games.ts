@@ -1,4 +1,4 @@
-import { client } from "../../_lib/http";
+import { request, getBaseClientUrl } from "../../_lib/http";
 
 type RoomData = {
   nickname: string;
@@ -15,7 +15,7 @@ export const matching = async ({
   gameId: string;
   gameMode: string;
 }) => {
-  const res = await client.post<RoomData>("/games", {
+  const res = await request.post<RoomData>("/games", {
     nickname,
     gameId,
     gameMode,

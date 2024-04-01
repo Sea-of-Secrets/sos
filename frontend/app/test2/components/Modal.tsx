@@ -1,34 +1,34 @@
-import { HTMLAttributes } from "react";
+import { HTMLAttributes, useEffect, useState } from "react";
 import styled from "@emotion/styled";
 
-interface ModalProps extends HTMLAttributes<HTMLDivElement> {}
+interface ModalProps extends HTMLAttributes<HTMLDivElement> {
+  isVisible?: boolean;
+}
 
 export default function Modal({ children, ...props }: ModalProps) {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    setIsVisible(true);
+  }, [screen]);
   return (
     <>
       <ModalBackdrop />
-      <ModalStyle {...props}>{children}</ModalStyle>
+      <ModalStyle isVisible={isVisible} {...props}>
+        {children}
+      </ModalStyle>
     </>
   );
 }
 
-const ModalStyle = styled.div`
-  animation: slideIn 1.5s forwards;
+const ModalStyle = styled.div<{
+  isVisible?: boolean;
+}>`
   transition: bottom 1.5s ease;
-
-  @keyframes slideIn {
-    from {
-      bottom: -100%; /* Start from outside the viewport */
-    }
-    to {
-      bottom: 0%; /* Slide up to the center */
-    }
-  }
-
   position: fixed;
   left: 50%;
-  transform: translateX(-50%); /* Center horizontally */
-
+  bottom: ${({ isVisible }) => (isVisible ? "5%" : "-100%")};
+  transform: translate(-50%);
   display: flex;
   flex-direction: column;
   min-width: 30rem;

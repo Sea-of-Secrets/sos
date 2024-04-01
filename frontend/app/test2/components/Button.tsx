@@ -33,8 +33,10 @@ const StyledButton = styled.button<{ size?: "lg" | "md" | "sm" }>`
   }};
   color: #fff;
   transition: transform 0.4s ease;
+  &:hover {
+    transform: scale(1.1);
+  }
 
-  /* Define styles for each size option */
   ${({ size }) => {
     switch (size) {
       case "lg":
@@ -54,8 +56,4 @@ const StyledButton = styled.button<{ size?: "lg" | "md" | "sm" }>`
         `;
     }
   }}
-
-  &:hover {
-    transform: scale(1.1);
-  }
 `;
