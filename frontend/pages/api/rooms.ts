@@ -14,8 +14,14 @@ export default async function handler(
       if (req.body.type === "make") {
         const response = await http.post("/room/make", req.body);
         return res.status(response.status).json(response.data);
-      } else {
+      } else if (req.body.type === "enter") {
         const response = await http.post("/room/enter", req.body);
+        return res.status(response.status).json(response.data);
+      } else if (req.body.type === "duplicateNickname") {
+        const response = await http.get("/users/name", {
+          params: { name: req.body.nickname },
+        });
+
         return res.status(response.status).json(response.data);
       }
     }

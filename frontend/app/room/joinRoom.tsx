@@ -1,7 +1,8 @@
-import React, { Fragment, useRef, useState, useEffect } from "react";
+import React, { Fragment, useRef, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Dialog, Transition } from "@headlessui/react";
 import { enterRoom } from "~/app/api/rooms";
+import { duplicateNickname } from "~/app/api/rooms";
 import useNickname from "~/store/nickname";
 import useGameId from "~/store/gameId";
 
@@ -18,11 +19,15 @@ export default function CreateRoom({ setOpen, isGuest }: CreateRoomProps) {
 
   const handleConfirm = async () => {
     try {
-      const { data } = await enterRoom({ nickname, gameId });
+      const { data: enterData } = await enterRoom({ nickname, gameId });
+      const { data: duplicateNicknameDate } = await duplicateNickname({
+        nickname,
+      });
+      console.log(duplicateNicknameDate);
 
-      if (data === "ROOM_NOT_EXIST") {
+      if (enterData === "ROOM_NOT_EXIST") {
         alert("유효하지 않은 방 코드입니다.");
-      } else if (data === "ALREADY_FULLED") {
+      } else if (enterData === "ALREADY_FULLED") {
         alert("정원이 초과된 방입니다.");
       } else {
         router.push(`/room/${gameId}`);
