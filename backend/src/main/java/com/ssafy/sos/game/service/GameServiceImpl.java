@@ -312,7 +312,7 @@ public class GameServiceImpl implements GameService {
         int[] currentPosition = game.getCurrentPosition();
 
         // 현재 위치 변경 : nodeNumber와 role의 유효성 검사
-        if ((role == 0 && nodeNumber >= 1 && nodeNumber <= 188) ||
+        if ((role == 0 && nodeNumber >= 1 && nodeNumber <= 189) ||
                 ((role >= 1 && role <= 3) && nodeNumber >= 200 && nodeNumber <= 373)) {
             currentPosition[role] = nodeNumber;
         } else {
