@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { http } from "../../_lib/http";
+import { request, getBaseServerUrl } from "../../_lib/http";
 
 type ResponseData = {
   message: string;
@@ -43,7 +43,7 @@ export default async function handler(
         }
       }
 
-      const response = await http.get("/users", {
+      const response = await request.get(`${getBaseServerUrl()}/users`, {
         headers: {
           Cookie: `access=${accessCookie}; refresh=${refreshCookie}`,
         },
@@ -52,7 +52,7 @@ export default async function handler(
       return res.status(response.status).json(response.data);
     } else {
       if (req.body.type === "get") {
-        const response = await http.get("/nft/wallet", {
+        const response = await request.get(`${getBaseServerUrl()}/nft/wallet`, {
           headers: {
             Cookie: `access=${accessCookie}; refresh=${refreshCookie}`,
           },
@@ -60,13 +60,16 @@ export default async function handler(
 
         return res.status(response.status).json(response.data);
       } else if (req.body.type === "post") {
-        const response = await http.post("/nft/wallet", {
-          headers: {
-            Cookie: `access=${accessCookie}; refresh=${refreshCookie}`,
-            "Content-Type": "application/json",
+        const response = await request.post(
+          `${getBaseServerUrl()}/nft/wallet`,
+          {
+            headers: {
+              Cookie: `access=${accessCookie}; refresh=${refreshCookie}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(null), // JSON.stringify를 사용하여 본문을 문자열로 변환
           },
-          body: JSON.stringify(null), // JSON.stringify를 사용하여 본문을 문자열로 변환
-        });
+        );
 
         return res.status(response.status).json(response.data);
       }

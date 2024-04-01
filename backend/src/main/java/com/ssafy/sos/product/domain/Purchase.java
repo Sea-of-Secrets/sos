@@ -33,4 +33,8 @@ public class Purchase extends BaseEntity {
         this.userId = userId;
         this.productId = productId;
     }
+
+    public Product getProduct() {
+        return productId;
+    }
 }

@@ -5,12 +5,11 @@ import { useCamera } from "./stores/useCamera";
 
 export default function Camera() {
   const cameraRef = useRef<CameraControls>(null!);
-  const { initialize, mainScreen } = useCamera();
+  const { mainScreen } = useCamera();
 
   useEffect(() => {
-    initialize(cameraRef);
     mainScreen();
-  }, [initialize]);
+  }, []);
 
   return <CameraControls ref={cameraRef} />;
 }

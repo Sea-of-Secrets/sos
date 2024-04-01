@@ -1,8 +1,8 @@
-import { client } from "../../_lib/http";
+import { request, getBaseClientUrl } from "../../_lib/http";
 
 type Product = {};
 
 export const getProductList = async () => {
-  const res = await client.get<Product[]>("/shops");
+  const res = await request.get<Product[]>(`${getBaseClientUrl()}/shops`);
   return res;
 };

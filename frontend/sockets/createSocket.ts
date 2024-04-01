@@ -1,13 +1,5 @@
 import { Client, messageCallbackType } from "@stomp/stompjs";
-
-const { NEXT_PUBLIC_SERVER_SOCKET_API_END_POINT } = process.env;
-
-const SERVER_API_END_POINT =
-  process.env.NODE_ENV === "development"
-    ? "ws://localhost:8080"
-    : "ws://j10a710.p.ssafy.io:8081/api";
-
-const SOCKET_END_POINT = `${SERVER_API_END_POINT}/sos`;
+import { getBaseSocketServerUrl } from "~/_lib/http";
 
 export const createSocket = () => {
   let stomp: Client | null = null;
@@ -15,7 +7,7 @@ export const createSocket = () => {
   const connect = (onConnect: () => void) => {
     if (!stomp) {
       stomp = new Client({
-        brokerURL: SOCKET_END_POINT,
+        brokerURL: getBaseSocketServerUrl(),
         onConnect,
         connectHeaders: {},
         reconnectDelay: 100,

@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { http } from "../../_lib/http";
+import { request, getBaseServerUrl } from "../../_lib/http";
 
 type ResponseData = {
   message: string;
@@ -18,7 +18,7 @@ export default async function handler(
 
   try {
     if (req.method === "GET") {
-      const response = await http.get("/shops");
+      const response = await request.get(`${getBaseServerUrl()}/shops`);
       return res.status(response.status).json(response.data);
     }
 

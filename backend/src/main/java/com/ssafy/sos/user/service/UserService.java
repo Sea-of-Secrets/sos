@@ -1,5 +1,9 @@
 package com.ssafy.sos.user.service;
 
+import com.ssafy.sos.product.domain.Product;
+import com.ssafy.sos.product.domain.Purchase;
+import com.ssafy.sos.product.repository.ProductRepository;
+import com.ssafy.sos.product.repository.PurchaseRepository;
 import com.ssafy.sos.user.domain.CustomOAuth2User;
 import com.ssafy.sos.user.domain.TodayVisited;
 import com.ssafy.sos.user.domain.UserEntity;
@@ -9,13 +13,18 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final PurchaseRepository purchaseRepository;
     private final TodayVisitedRepository todayVisitedRepository;
 
     public boolean checkAttendance(Long userId) {
@@ -42,11 +51,43 @@ public class UserService {
 
     public UserEntity getUserInfo(CustomOAuth2User user) {
         UserEntity userEntity = userRepository.findByUsername(user.getUserDto().getUsername());
-        System.out.println(userEntity);
         if (userEntity == null) {
             System.out.println("지갑 없음");
             return null;
         }
         return userEntity;
+    }
+
+    public List<Product> findPurchasesByUser(UserEntity user) {
+        List<Purchase> byUserId = purchaseRepository.findByUserId(user);
+
+
+
+        // Purchase 리스트에서 Product 리스트를 추출
+        List<Product> products = byUserId.stream() // byUserId는 Purchase 객체의 리스트
+                .map(Purchase::getProduct) // 각 Purchase 객체에서 Product 객체를 추출
+                .distinct() // 중복된 Product 객체를 제거
+                .collect(Collectors.toList()); // 결과를 List로 수집
+
+        return products;
+    }
+
+    @Transactional
+    public boolean choicePiece(UserEntity user, Integer productId) {
+        List<Product> purchasesByUser = findPurchasesByUser(user);
+
+        boolean flag = false;
+        for (Product p : purchasesByUser) {
+            if (p.getId().equals(productId)) {
+                flag = true;
+            }
+        }
+
+        if (flag) {
+            user.setProductId(productId);
+            return true;
+        }
+
+        return false;
     }
 }

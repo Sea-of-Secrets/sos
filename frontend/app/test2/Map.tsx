@@ -47,6 +47,7 @@ export default function Map(props: JSX.IntrinsicElements["group"]) {
   const { nodes, materials } = useGLTF(
     "/tiki_treasure/scene.gltf",
   ) as GLTFResult;
+
   return (
     <group {...props} dispose={null}>
       <group
