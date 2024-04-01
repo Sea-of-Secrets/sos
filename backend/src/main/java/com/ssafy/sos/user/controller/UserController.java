@@ -44,9 +44,15 @@ public class UserController {
     }
 
     @PatchMapping("/name")
-    public ResponseEntity<String> updateUserName(@RequestBody UserNicknameRequest user) {
-        // TODO: Auth 정보를 통해 변경하는 것으로 변경 필요
-        userRepository.updateUsernameById(user.getId(), user.getUsername());
+    public ResponseEntity<String> updateUserName(Authentication authentication) {
+        CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
+        if (user == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("권한 없음");
+        }
+
+        UserEntity userInfo = userService.getUserInfo(user);
+
+        userRepository.updateUsernameById(userInfo.getId(), userInfo.getUsername());
         return ResponseEntity.ok("OK");
     }
 
