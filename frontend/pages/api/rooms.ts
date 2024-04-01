@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { http } from "../../_lib/http";
+import { http, getBaseServerUrl } from "../../_lib/http";
 
 type ResponseData = {
   message: string;
@@ -12,13 +12,23 @@ export default async function handler(
   try {
     if (req.method === "POST") {
       if (req.body.type === "make") {
-        const response = await http.post("/room/make", req.body);
+        const response = await http.post(
+          `${getBaseServerUrl()}/room/make`,
+          req.body,
+        );
         return res.status(response.status).json(response.data);
-      } else if (req.body.type === "enter") {
-        const response = await http.post("/room/enter", req.body);
+      }
+
+      if (req.body.type === "enter") {
+        const response = await http.post(
+          `${getBaseServerUrl()}/room/enter`,
+          req.body,
+        );
         return res.status(response.status).json(response.data);
-      } else if (req.body.type === "duplicateNickname") {
-        const response = await http.get("/users/name", {
+      }
+
+      if (req.body.type === "duplicateNickname") {
+        const response = await http.get(`${getBaseServerUrl()}/users/name`, {
           params: { name: req.body.nickname },
         });
 

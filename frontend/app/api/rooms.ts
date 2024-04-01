@@ -1,4 +1,4 @@
-import { client } from "../../_lib/http";
+import { client, getBaseClientUrl } from "../../_lib/http";
 
 type RoomData = {
   gameId: string;
@@ -15,7 +15,7 @@ export const makeRoom = async ({
   nickname: string;
   gameMode: string;
 }) => {
-  const res = await client.post<RoomData>("/rooms", {
+  const res = await client.post<RoomData>(`${getBaseClientUrl()}/rooms`, {
     nickname,
     gameMode,
     type: "make",
@@ -31,18 +31,24 @@ export const enterRoom = async ({
   nickname: string;
   gameId: string;
 }) => {
-  const res = await client.post<RoomData | string>("/rooms", {
-    nickname,
-    gameId,
-    type: "enter",
-  });
+  const res = await client.post<RoomData | string>(
+    `${getBaseClientUrl()}/rooms`,
+    {
+      nickname,
+      gameId,
+      type: "enter",
+    },
+  );
   return res;
 };
 
 export const duplicateNickname = async ({ nickname }: { nickname: string }) => {
-  const res = await client.post<RoomData | string>("/rooms", {
-    nickname,
-    type: "duplicateNickname",
-  });
+  const res = await client.post<RoomData | string>(
+    `${getBaseClientUrl()}/rooms`,
+    {
+      nickname,
+      type: "duplicateNickname",
+    },
+  );
   return res;
 };
