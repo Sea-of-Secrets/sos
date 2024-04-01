@@ -11,8 +11,8 @@ interface CameraState {
   mainScreen: () => void;
   ShopScreen: () => void;
   RoomScreen: () => void;
-  aScreen: () => void;
-  bScreen: () => void;
+  myPageScreen: () => void;
+  fastMatchingScreen: () => void;
 }
 
 export const useCamera = create<CameraState>(set => ({
@@ -85,7 +85,7 @@ export const useCamera = create<CameraState>(set => ({
       return { ...state };
     });
   },
-  aScreen: () => {
+  myPageScreen: () => {
     set(state => {
       if (state.cameraRef?.current) {
         state.cameraRef.current.setLookAt(
@@ -105,7 +105,7 @@ export const useCamera = create<CameraState>(set => ({
       return { ...state };
     });
   },
-  bScreen: () => {
+  fastMatchingScreen: () => {
     set(state => {
       if (state.cameraRef?.current) {
         state.cameraRef.current.setLookAt(

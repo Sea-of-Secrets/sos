@@ -527,6 +527,8 @@ export default function IngameClient() {
 
     // 해적의 시작위치 지정 명령
     if (socketMessage.message === "ORDER_INIT_PIRATE_START") {
+      // 비상용
+      setLoading2(false);
       orderInitPirateStart();
     }
 

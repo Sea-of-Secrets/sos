@@ -1,12 +1,21 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Canvas } from "@react-three/fiber";
+
+import { useCamera } from "./stores/useCamera";
+import { useScreenControl } from "./stores/useScreenControl";
+
+import BackButton from "./components/BackButton";
+
 import Map from "./Map";
 import Camera from "./Camera";
-import TestController from "./TestController";
+import Button from "./Button";
 
-export default function IngameClient() {
+export default function Renderer() {
+  const [loading, setLoading] = useState(false);
+  const { cameraRef, mainScreen } = useCamera();
+  const { screen, setScreen, setMainScreen } = useScreenControl();
   return (
     <>
       <Canvas
@@ -17,12 +26,14 @@ export default function IngameClient() {
           near: 1000,
           fov: 50,
         }}
+        onCreated={() => setLoading(true)}
       >
         <Camera />
         <ambientLight intensity={5} color="#ffffff" />
         <Map />
       </Canvas>
-      <TestController />
+      {loading && <Button />}
+      {screen !== "MAIN" && screen !== "FASTMATCHING" && <BackButton />}
     </>
   );
 }
