@@ -25,7 +25,7 @@ export default function Home() {
               height={50}/>
           </a>
           <a
-            href="https://j10a710.p.ssafy.io/api/oauth2/authorization/kakao"
+            href="https://j10a710.p.ssafy.io/spring/api/oauth2/authorization/kakao"
           >
             <Image 
               src="/images/kakao_login_medium_narrow.png"
@@ -34,7 +34,7 @@ export default function Home() {
               height={50}/>
           </a>
           <a
-            href="https://j10a710.p.ssafy.io/api/oauth2/authorization/google"
+            href="https://j10a710.p.ssafy.io/spring/api/oauth2/authorization/google"
           >
             <Image 
               src="/images/web_light_sq_ctn@4x.png"
