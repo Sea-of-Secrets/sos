@@ -48,28 +48,32 @@ public class UserController {
     }
 
     @PatchMapping("/name")
-    public ResponseEntity<String> updateUserName(Authentication authentication) {
+    public ResponseEntity<String> updateUserName(Authentication authentication, @RequestParam String name) {
         CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
         if (user == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("권한 없음");
         }
 
         UserEntity userInfo = userService.getUserInfo(user);
+        userService.updateUserName(userInfo, name);
 
-        userRepository.updateUsernameById(userInfo.getId(), userInfo.getUsername());
-        return ResponseEntity.ok("OK");
+        return ResponseEntity.ok("success");
     }
 
     @GetMapping("/records")
-    public ResponseEntity<List<GameRecord>> getGameRecords(@RequestParam String nickname,
-                                                           @RequestHeader(value = "Authorization") Optional<String> accessToken) {
+    public ResponseEntity<?> getGameRecords(@RequestParam String nickname,
+                                                           Authentication authentication) {
         List<GameRecord> gameRecords = null;
-        if (accessToken.isPresent()) {
-            Optional<GameRecordMember> gameRecordMember = gameMemberRepository.findByUsername(nickname);
-            if (gameRecordMember.isPresent()) {
-                gameRecords = gameRecordMember.get().getGameRecords();
-            }
+        CustomOAuth2User principal = (CustomOAuth2User) authentication.getPrincipal();
+        if (principal == null) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("회원이 아닙니다.");
         }
+
+        Optional<GameRecordMember> gameRecordMember = gameMemberRepository.findByUsername(nickname);
+        if (gameRecordMember.isPresent()) {
+            gameRecords = gameRecordMember.get().getGameRecords();
+        }
+
 
         return ResponseEntity.ok(gameRecords);
     }
@@ -94,7 +98,7 @@ public class UserController {
         return ResponseEntity.ok(purchasesByUser);
     }
 
-    @PostMapping("/pieces")
+    @PostMapping("/piece")
     public ResponseEntity<?> choicePiece(Authentication authentication, @RequestParam Integer productId) {
         CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
 
@@ -113,8 +117,7 @@ public class UserController {
         CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
 
         UserEntity userInfo = userService.getUserInfo(user);
-        String address = userService.updateWallet(userInfo, walletAddress.get("address"));
-
+        userService.updateWallet(userInfo, walletAddress.get("address"));
         return ResponseEntity.status(HttpStatus.OK).body(userInfo);
     }
 }

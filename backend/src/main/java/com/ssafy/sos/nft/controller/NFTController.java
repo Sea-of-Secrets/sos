@@ -44,9 +44,9 @@ public class NFTController {
         if (userInfo.getWalletAddress() == null) {
             return ResponseEntity.status(HttpStatus.OK).body("지갑을 만드세요.");
         }
-        System.out.println(userInfo);
+
         Wallet wallet = nftService.getWalletInfo(userInfo.getWalletAddress());
-        System.out.println(wallet);
+
         return ResponseEntity.status(HttpStatus.OK).body(wallet);
     }
 

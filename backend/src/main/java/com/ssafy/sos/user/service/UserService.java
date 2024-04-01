@@ -112,4 +112,9 @@ public class UserService {
         Wallet save = walletRepository.save(wallet);
         return save.getAddress();
     }
+
+    @Transactional
+    public void updateUserName(UserEntity user, String name) {
+        user.setName(name);
+    }
 }
