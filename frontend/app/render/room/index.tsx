@@ -2,7 +2,8 @@
 
 import React, { useEffect, useState } from "react";
 
-import { useScreenControl } from "../stores/useScreenControl";
+import useNickname from "~/store/nickname";
+import useGameId from "~/store/gameId";
 
 import CreateRoom from "./createRoom";
 import JoinRoom from "./joinRoom";
@@ -13,13 +14,16 @@ import Container from "../components/Container";
 export default function Room() {
   const [createOpen, setCreateOpen] = useState(false);
   const [joinOpen, setJoinOpen] = useState(false);
-  const [isGuest, setIsGuest] = useState(true);
-  const [nickname, setNickname] = useState("");
+  const { nickname, setNickname } = useNickname();
+  const { gameId, setGameId } = useGameId();
 
   const createRoom = () => {
+    setNickname("");
     setCreateOpen(true);
   };
   const joinRoom = () => {
+    setNickname("");
+    setGameId("");
     setJoinOpen(true);
   };
 
