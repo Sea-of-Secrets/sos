@@ -42,7 +42,7 @@ public class GameServiceImpl implements GameService {
         game = new Game(gameId);
 
         // 게임 상태 변경
-        game.setGameStatus(GameStatus.IN_GAME);
+        game.setGameStatus(GameStatus.BEFORE_START);
 
         board.getGameMap().put(gameId, game);
         // 보물상자 위치 랜덤 지정
