@@ -12,10 +12,13 @@ import LoginButton from "./components/LoginButton";
 import Map from "./Map";
 import Camera from "./Camera";
 import Button from "./Button";
+import { useGatcha } from "./stores/useGatch";
 
 export default function Renderer() {
   const [loading, setLoading] = useState(false);
   const { screen } = useScreenControl();
+  const { gatchaState } = useGatcha();
+
   return (
     <>
       <Canvas
@@ -32,12 +35,14 @@ export default function Renderer() {
         }}
       >
         <Camera />
-        <ambientLight intensity={5} color="#ffffff" />
+        <ambientLight />
         <Map />
       </Canvas>
       {loading && <Button />}
       {loading && screen === "MAIN" && <LoginButton />}
-      {screen !== "MAIN" && screen !== "FASTMATCHING" && <BackButton />}
+      {screen !== "MAIN" &&
+        screen !== "FASTMATCHING" &&
+        gatchaState === "GATCHA_PREV" && <BackButton />}
     </>
   );
 }

@@ -5,6 +5,7 @@ import Room from "./room";
 import Main from "./main";
 import FastMatcing from "./fastmatching";
 import Login from "./login";
+import Shop from "./shop";
 
 export default function Button() {
   const { cameraRef, mainScreen } = useCamera();
@@ -15,7 +16,7 @@ export default function Button() {
   } else if (screen === "ROOM") {
     return <Room />;
   } else if (screen === "SHOP") {
-    return <Room />;
+    return <Shop />;
   } else if (screen === "LOGIN") {
     // if (로그인이 안되어 있다면) {
     return <Login />;

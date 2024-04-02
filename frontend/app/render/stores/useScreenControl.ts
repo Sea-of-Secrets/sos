@@ -1,8 +1,10 @@
 import { create } from "zustand";
 
+type ScreenType = "MAIN" | "ROOM" | "SHOP" | "LOGIN" | "FASTMATCHING";
+
 interface ScreenControlState {
-  screen: string;
-  setScreen: (newScreen: string) => void;
+  screen: ScreenType;
+  setScreen: (newScreen: ScreenType) => void;
   setMainScreen: () => void;
 }
 
