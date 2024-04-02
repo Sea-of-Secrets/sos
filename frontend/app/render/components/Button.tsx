@@ -2,7 +2,7 @@ import { ButtonHTMLAttributes } from "react";
 import styled from "@emotion/styled";
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  size?: "lg" | "md" | "sm";
+  size?: "xs" | "md" | "sm";
 }
 
 export default function Button({
@@ -17,14 +17,14 @@ export default function Button({
   );
 }
 
-const StyledButton = styled.button<{ size?: "lg" | "md" | "sm" }>`
+const StyledButton = styled.button<{ size?: "xs" | "md" | "sm" }>`
   padding: 1rem;
   background: url("/assets/text-background.png") no-repeat center center;
   background-size: cover;
   font-size: ${({ size }) => {
     switch (size) {
-      case "lg":
-        return "50px";
+      case "xs":
+        return "10px";
       case "sm":
         return "20px";
       default:
@@ -39,10 +39,10 @@ const StyledButton = styled.button<{ size?: "lg" | "md" | "sm" }>`
 
   ${({ size }) => {
     switch (size) {
-      case "lg":
+      case "xs":
         return `
-          min-width: 30rem;
-          min-height: 10rem;
+          min-width: 5rem;
+          min-height: 2rem;
         `;
       case "sm":
         return `
