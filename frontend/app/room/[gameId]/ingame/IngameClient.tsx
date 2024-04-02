@@ -738,15 +738,15 @@ export default function IngameClient() {
     }
   }, [socketMessage]);
 
-  useEffect(() => {
-    if (!loading) {
-      send("/pub/room", {
-        message: "RENDERED_COMPLETE",
-        sender: nickname,
-        gameId,
-      });
-    }
-  }, [loading, gameId, nickname]);
+  // useEffect(() => {
+  //   if (!loading) {
+  //     send("/pub/room", {
+  //       message: "RENDERED_COMPLETE",
+  //       sender: nickname,
+  //       gameId,
+  //     });
+  //   }
+  // }, [loading, gameId, nickname]);
 
   return (
     <>
@@ -755,12 +755,7 @@ export default function IngameClient() {
         <MiniModal>
           게임 종료
           <MiniModalContent>{isgameOver}</MiniModalContent>
-          <Button
-            size="sm"
-            onClick={() => {
-              router.push("/");
-            }}
-          >
+          <Button size="sm" onClick={() => (window.location.href = "/")}>
             홈으로
           </Button>
         </MiniModal>
@@ -783,7 +778,12 @@ export default function IngameClient() {
           fov: 50,
         }}
         onCreated={() => {
-          setLoading(false);
+          // setLoading(false);
+          send("/pub/room", {
+            message: "RENDERED_COMPLETE",
+            sender: nickname,
+            gameId,
+          });
         }}
       >
         <IngameThree />

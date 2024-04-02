@@ -17,12 +17,7 @@ export default function Off() {
       종료하시겠습니까?
       <MiniModalContent>게임 이탈은 비매너적인 행위입니다.</MiniModalContent>
       <div className="flex gap-3">
-        <Button
-          size="sm"
-          onClick={() => {
-            router.push("/");
-          }}
-        >
+        <Button size="sm" onClick={() => (window.location.href = "/")}>
           확인
         </Button>
         <Button
