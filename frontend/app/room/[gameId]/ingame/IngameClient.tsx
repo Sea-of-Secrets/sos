@@ -32,6 +32,11 @@ import SelectMarineAction from "./components/SelectMarineAction";
 import { useGameLoading } from "./stores/useGameLoading";
 import OptionButton from "./components/OptionButton";
 import Docs from "./components/Docs";
+import MiniModal from "~/app/render/components/MiniModal";
+import MiniModalContent from "~/app/render/components/MiniModalContent";
+import Button from "~/app/render/components/Button";
+import { useRouter } from "next/navigation";
+import Off from "./components/Off";
 
 const { send } = gameSocket;
 
@@ -39,6 +44,8 @@ export default function IngameClient() {
   const { loading, setLoading } = useGameLoading();
   const [loading2, setLoading2] = useState(true);
   const [timeOut, setTimeOut] = useState(false);
+  const [isgameOver, setIsGameOver] = useState("");
+  const router = useRouter();
 
   const { nickname } = useNickname();
   const { gameId } = useGameId();
@@ -75,23 +82,28 @@ export default function IngameClient() {
   };
 
   // 게임 종료
-  const gameOverPirateWin = () => {
-    alert("해적 승리로 게임 종료");
-  };
-  const gameOverMarineOneArrest = () => {
-    alert("해군 1의 체포로 게임 종료");
-  };
-  const gameOverMarineTwoArrest = () => {
-    alert("해군 2의 체포로 게임 종료");
-  };
-  const gameOverMarineThreeArrest = () => {
-    alert("해군 3의 체포로 게임 종료");
-  };
-  const gameOverFifteenTurnOver = () => {
-    alert("해적의 15턴 내 보물 미도착으로 게임 종료");
-  };
-  const gameOverPiratSurroundedMarineWin = () => {
-    alert("해적의 15턴 내 보물 미도착으로 게임 종료");
+  const gameOver = (message: string) => {
+    removeHeaderMessage();
+    removeFooterMessage();
+    handleCloseTimer();
+    zoomFullScreen();
+    if (message === "PIRATE_WIN") {
+      setIsGameOver("해적이 모든 보물을 획득하였습니다");
+    } else if (message === "MARINE_ONE_ARREST_SUCCESS") {
+      setIsGameOver("해군 1이 해적을 체포하였습니다");
+    } else if (message === "MARINE_TWO_ARREST_SUCCESS") {
+      setIsGameOver("해군 2가 해적을 체포하였습니다");
+    } else if (message === "MARINE_THREE_ARREST_SUCCESS") {
+      setIsGameOver("해군 3이 해적을 체포하였습니다");
+    } else if (message === "FIFTEEN_TURN_OVER_MARINE_WIN") {
+      setIsGameOver("해적이 15턴 내에 보물을 획득하지 못했습니다");
+    } else if (message === "PIRATE_SURROUNDED_MARINE_WIN") {
+      setIsGameOver("해군이 해적의 도주로를 모두 막았습니다");
+    } else if (message === "PIRATE_LEAVED_MARINE_WIN") {
+      setIsGameOver("해적이 게임을 포기하였습니다");
+    } else if (message === "MARINE_LEAVED_PIRATE_WIN") {
+      setIsGameOver("해군이 게임을 포기하였습니다");
+    }
   };
 
   // 해적의 시작위치 지정 명령
@@ -487,22 +499,28 @@ export default function IngameClient() {
 
     // 게임 종료
     if (socketMessage.message === "GAME_OVER_PIRATE_WIN") {
-      gameOverPirateWin();
+      gameOver("PIRATE_WIN");
     }
     if (socketMessage.message === "GAME_OVER_MARINE_ONE_ARREST_SUCCESS") {
-      gameOverMarineOneArrest();
+      gameOver("MARINE_ONE_ARREST_SUCCESS");
     }
     if (socketMessage.message === "GAME_OVER_MARINE_TWO_ARREST_SUCCESS") {
-      gameOverMarineTwoArrest();
+      gameOver("MARINE_TWO_ARREST_SUCCESS");
     }
     if (socketMessage.message === "GAME_OVER_MARINE_THREE_ARREST_SUCCESS") {
-      gameOverMarineThreeArrest();
+      gameOver("MARINE_THREE_ARREST_SUCCESS");
     }
     if (socketMessage.message === "GAME_OVER_FIFTEEN_TURN_OVER_MARINE_WIN") {
-      gameOverFifteenTurnOver();
+      gameOver("FIFTEEN_TURN_OVER_MARINE_WIN");
     }
     if (socketMessage.message === "GAME_OVER_PIRATE_SURROUNDED_MARINE_WIN") {
-      gameOverPiratSurroundedMarineWin();
+      gameOver("PIRATE_SURROUNDED_MARINE_WIN");
+    }
+    if (socketMessage.message === "GAME_OVER_PIRATE_LEAVED_MARINE_WIN") {
+      gameOver("PIRATE_LEAVED_MARINE_WIN");
+    }
+    if (socketMessage.message === "GAME_OVER_MARINE_LEAVED_PIRATE_WIN") {
+      gameOver("MARINE_LEAVED_PIRATE_WIN");
     }
 
     // 시간초과
@@ -733,8 +751,23 @@ export default function IngameClient() {
   return (
     <>
       {loading2 && <Loading />}
+      {isgameOver !== "" && (
+        <MiniModal>
+          게임 종료
+          <MiniModalContent>{isgameOver}</MiniModalContent>
+          <Button
+            size="sm"
+            onClick={() => {
+              router.push("/");
+            }}
+          >
+            홈으로
+          </Button>
+        </MiniModal>
+      )}
       <Chat />
       <Docs />
+      <Off />
       <OptionButton />
       <Timer />
       <Round topLeft={[200, 1]} />
@@ -755,7 +788,6 @@ export default function IngameClient() {
       >
         <IngameThree />
       </Canvas>
-      {/* <YsyTestController /> */}
     </>
   );
 }

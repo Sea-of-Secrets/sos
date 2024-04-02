@@ -14,10 +14,11 @@ const OptionImageSourceMatcher = matcher({
   CHAT: "/assets/icon-chat.png",
   ZOOM: "/assets/icon-zoom.png",
   DOCS: "/assets/icon-docs.png",
+  OFF: "/assets/icon-off.png",
 });
 
 export default function OptionButton() {
-  const { setIsChat, setIsDocs } = useOption();
+  const { isChat, setIsChat, setIsDocs, setIsOff } = useOption();
   const { nickname } = useNickname();
   const { socketMessage } = useSocketMessage();
   const { zoom } = useCamera();
@@ -32,6 +33,9 @@ export default function OptionButton() {
   };
 
   const handleClickButton = (button: string) => {
+    if (button === "OFF") {
+      setIsOff();
+    }
     if (button === "CHAT") {
       setIsChat();
     }
@@ -52,6 +56,19 @@ export default function OptionButton() {
     <div className={clsx(styles.container)}>
       <div
         onClick={() => {
+          handleClickButton("OFF");
+        }}
+      >
+        <Image
+          width={50}
+          height={50}
+          src={OptionImageSourceMatcher("OFF")}
+          alt={"OFF"}
+        />
+        <span>게임 종료</span>
+      </div>
+      <div
+        onClick={() => {
           handleClickButton("CHAT");
         }}
       >
@@ -61,7 +78,7 @@ export default function OptionButton() {
           src={OptionImageSourceMatcher("CHAT")}
           alt={"CHAT"}
         />
-        <span>채팅</span>
+        <span>{isChat ? "채팅 끄기" : "채팅 켜기"}</span>
       </div>
       <div
         onClick={() => {
