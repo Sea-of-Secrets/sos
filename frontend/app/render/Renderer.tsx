@@ -13,14 +13,17 @@ import Map from "./Map";
 import Camera from "./Camera";
 import Button from "./Button";
 import useNickname from "~/store/nickname";
+import { getAccessToken } from "~/store/auth";
 
 export default function Renderer() {
   const [loading, setLoading] = useState(false);
   const { setNickname } = useNickname();
   const { screen } = useScreenControl();
+
   useEffect(() => {
     setNickname("");
   }, []);
+
   return (
     <>
       <Canvas
@@ -43,11 +46,7 @@ export default function Renderer() {
       {loading && <Button />}
       {loading &&
         screen === "MAIN" &&
-        (localStorage.getItem("access") === null ? (
-          <LoginButton />
-        ) : (
-          <MyPageButton />
-        ))}
+        (getAccessToken() === null ? <LoginButton /> : <MyPageButton />)}
       {screen !== "MAIN" && screen !== "FASTMATCHING" && <BackButton />}
     </>
   );
