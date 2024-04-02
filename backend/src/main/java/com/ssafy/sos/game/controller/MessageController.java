@@ -432,8 +432,8 @@ public class MessageController {
             if (game.getInvestigate().getNodes().containsValue(false)) {
                 // 해군 조사 실패 브로드캐스트 (서 -> 클)
                 sendMessageWithGame(gameId, game, "ACTION_INVESTIGATE_"+role+"_FAIL");
-                // 2초 타이머 시작
-                gameTimerService.startRenderWaitingTimer(gameId, "READY_INVESTIGATE_"+role);
+                // 0.1초 타이머 시작
+                gameTimerService.afterSelectTimer(gameId, "READY_INVESTIGATE_"+role);
             }
             // 더 이상 조사할 노드가 없으면
             else {
@@ -472,11 +472,11 @@ public class MessageController {
         sendMessageWithGame(gameId, game, "SELECT_WORK_"+role+"_TIME_OUT");
         // 응답이 없을 경우 행동은 항상 조사, 해군 행동 선택완료 브로드캐스트 (서 -> 클)
         sendMessageWithGame(gameId, game,"ACTION_SELECT_WORK_"+role+"_INVESTIGATE");
-        // 2초 타이머 시작
-        gameTimerService.startRenderWaitingTimer(gameId, "READY_INVESTIGATE_"+role);
+        // 0.1초 타이머 시작
+        gameTimerService.afterSelectTimer(gameId, "READY_INVESTIGATE_"+role);
     }
 
-    // 행동선택 -> 조사 2초 타이머 경과 후
+    // 행동선택 -> 조사 0.1초 타이머 경과 후
     private void investigateRenderTimeOut(String gameId, Game game, GameRole role) {
         // 조사 가능한 노드 조회
         gameService.findMarineInvestigableNode(gameId, role.getRoleNumber());
@@ -633,7 +633,7 @@ public class MessageController {
         }
 
         // 조사 선택시
-        // 2초 타이머 경과 (해군 1 행동 선택 -> 해군 1 조사)
+        // 0.1초 타이머 경과 (해군 1 행동 선택 -> 해군 1 조사)
         if (message.equals("READY_INVESTIGATE_MARINE_ONE")) {
             investigateRenderTimeOut(gameId, game, GameRole.MARINE_ONE);
         }
@@ -648,7 +648,7 @@ public class MessageController {
             }
         }
 
-        // 2초 타이머 경과 (해군 1 행동 선택 -> 해군 1 체포)
+        // 0.1초 타이머 경과 (해군 1 행동 선택 -> 해군 1 체포)
         if (message.equals("READY_ARREST_MARINE_ONE")) {
             arrestRenderTimeOut(gameId, game, GameRole.MARINE_ONE);
         }
@@ -679,7 +679,7 @@ public class MessageController {
         }
 
         // 조사 선택시
-        // 2초 타이머 경과 (해군 2 행동 선택 -> 해군 2 조사)
+        // 0.1초 타이머 경과 (해군 2 행동 선택 -> 해군 2 조사)
         if (message.equals("READY_INVESTIGATE_MARINE_TWO")) {
             investigateRenderTimeOut(gameId, game, GameRole.MARINE_TWO);
         }
@@ -694,7 +694,7 @@ public class MessageController {
             }
         }
 
-        // 2초 타이머 경과 (해군 2 행동 선택 -> 해군 2 체포)
+        // 0.1초 타이머 경과 (해군 2 행동 선택 -> 해군 2 체포)
         if (message.equals("READY_ARREST_MARINE_TWO")) {
             arrestRenderTimeOut(gameId, game, GameRole.MARINE_TWO);
         }
@@ -725,7 +725,7 @@ public class MessageController {
         }
 
         // 조사 선택시
-        // 2초 타이머 경과 (해군 3 행동 선택 -> 해군 3 조사)
+        // 0.1초 타이머 경과 (해군 3 행동 선택 -> 해군 3 조사)
         if (message.equals("READY_INVESTIGATE_MARINE_THREE")) {
             investigateRenderTimeOut(gameId, game, GameRole.MARINE_THREE);
         }
@@ -740,7 +740,7 @@ public class MessageController {
             }
         }
 
-        // 2초 타이머 경과 (해군 3 행동 선택 -> 해군 3 체포)
+        // 0.1초 타이머 경과 (해군 3 행동 선택 -> 해군 3 체포)
         if (message.equals("READY_ARREST_MARINE_THREE")) {
             arrestRenderTimeOut(gameId, game, GameRole.MARINE_THREE);
         }
@@ -901,15 +901,15 @@ public class MessageController {
         if (action.equals("INVESTIGATE")) {
             // 해군 행동 선택완료 브로드캐스트 (서 -> 클)
             sendMessageWithGame(gameId, game,"ACTION_SELECT_WORK_"+role+"_INVESTIGATE");
-            // 2초 타이머 시작
-            gameTimerService.startRenderWaitingTimer(gameId, "READY_INVESTIGATE_"+role);
+            // 0.1초 타이머 시작
+            gameTimerService.afterSelectTimer(gameId, "READY_INVESTIGATE_"+role);
         }
         // 조건 분기 (체포를 선택했을 경우)
         else if (action.equals("ARREST")) {
             // 해군 행동 선택완료 브로드캐스트 (서 -> 클)
             sendMessageWithGame(gameId, game,"ACTION_SELECT_WORK_"+role+"_ARREST");
-            // 2초 타이머 시작
-            gameTimerService.startRenderWaitingTimer(gameId, "READY_ARREST_"+role);
+            // 0.1초 타이머 시작
+            gameTimerService.afterSelectTimer(gameId, "READY_ARREST_"+role);
         }
     }
 

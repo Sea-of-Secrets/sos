@@ -4,5 +4,6 @@ public interface GameTimerService {
     void startResponseWaitingTimer(String gameId, String message);
     void startRenderWaitingTimer(String gameId, String message);
     void afterInitTimer(String gameId, String message);
+    void afterSelectTimer(String gameId, String message);
     void cancelTimer(String gameId);
 }
