@@ -3,11 +3,12 @@
 import React, { useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import * as THREE from "three";
-
+import { useRouter } from "next/navigation";
 import { useScreenControl } from "./stores/useScreenControl";
 
 import BackButton from "./components/BackButton";
 import LoginButton from "./components/LoginButton";
+import MyPageButton from "./components/MyPageButton";
 
 import Map from "./Map";
 import Camera from "./Camera";
@@ -16,6 +17,7 @@ import Button from "./Button";
 export default function Renderer() {
   const [loading, setLoading] = useState(false);
   const { screen } = useScreenControl();
+  const router = useRouter();
   return (
     <>
       <Canvas
@@ -36,7 +38,7 @@ export default function Renderer() {
         <Map />
       </Canvas>
       {loading && <Button />}
-      {loading && screen === "MAIN" && <LoginButton />}
+      {loading && screen === "MAIN" && (localStorage.getItem("access") === null ? <LoginButton /> : <MyPageButton/>)}
       {screen !== "MAIN" && screen !== "FASTMATCHING" && <BackButton />}
     </>
   );

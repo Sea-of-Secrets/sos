@@ -78,18 +78,18 @@ public class UserService {
     }
 
     @Transactional
-    public boolean choicePiece(UserEntity user, Integer productId) {
+    public boolean choicePiece(UserEntity user, String productName) {
         List<Product> purchasesByUser = findPurchasesByUser(user);
 
         boolean flag = false;
         for (Product p : purchasesByUser) {
-            if (p.getId().equals(productId)) {
+            if (p.getName().equals(productName)) {
                 flag = true;
             }
         }
 
         if (flag) {
-            user.setProductId(productId);
+            user.setProductName(productName);
             return true;
         }
 
@@ -97,7 +97,7 @@ public class UserService {
     }
 
     public Product getMyDefaultPiece(UserEntity user) {
-        Optional<Product> byId = productRepository.findById(user.getProductId());
+        Optional<Product> byId = productRepository.findByName(user.getProductName());
         return byId.get();
     }
 
