@@ -1,0 +1,11 @@
+Model Information:
+* title:	The little ghost of the treasure island
+* source:	https://sketchfab.com/3d-models/the-little-ghost-of-the-treasure-island-b4605ec1d4714721894ecaf2312bc989
+* author:	mrcyb (https://sketchfab.com/mrcyb)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "The little ghost of the treasure island" (https://sketchfab.com/3d-models/the-little-ghost-of-the-treasure-island-b4605ec1d4714721894ecaf2312bc989) by mrcyb (https://sketchfab.com/mrcyb) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

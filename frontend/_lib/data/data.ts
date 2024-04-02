@@ -2,7 +2,7 @@ import { IngameGraphNode } from "./types";
 
 export const ORIGIN_GRAPH: Record<string, IngameGraphNode | null> = {
   "0": {
-    nodeId: 1,
+    nodeId: 0,
     position: { x: -100, y: -1000, z: -50 },
     type: "PIRATE",
     neighborNodeIdList: [201, 202],

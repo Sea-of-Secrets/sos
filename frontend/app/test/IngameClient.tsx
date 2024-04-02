@@ -39,7 +39,7 @@ export default function IngameClient() {
       >
         <IngameThree />
       </Canvas>
-      <TestController />
+      {/* <TestController /> */}
       {/* <Chat />
       <OptionButton />
       <Docs /> */}
