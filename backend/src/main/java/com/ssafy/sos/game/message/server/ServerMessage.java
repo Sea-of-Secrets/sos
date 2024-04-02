@@ -12,4 +12,5 @@ public class ServerMessage {
     private String message;
     private Game game;
     private Room room;
+    private String sender;
 }
