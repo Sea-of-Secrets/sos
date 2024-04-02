@@ -1,7 +1,8 @@
 import styled from "@emotion/styled";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-import { matching } from "~/app/api/games";
+import { matching, matchingCancel } from "~/app/api/games";
+import { gameSocket } from "~/sockets";
 
 import { useCamera } from "../stores/useCamera";
 import { useScreenControl } from "../stores/useScreenControl";
@@ -12,6 +13,8 @@ import Modal from "../components/Modal";
 import ModalContent from "../components/ModalContent";
 import Button from "../components/Button";
 
+const { connect, subscribe, send, disconnect } = gameSocket;
+
 export default function FastMatching() {
   const { mainScreen } = useCamera();
   const { setMainScreen } = useScreenControl();
@@ -19,12 +22,80 @@ export default function FastMatching() {
   const { nickname, setNickname } = useNickname();
   const { gameId, setGameId } = useGameId();
 
+  const [isHost, setIsHost] = useState(false);
+  const [isStart, setIsStart] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const handleClickCheckButton = () => {
-    setLoading(true);
-    // TODO 게스트 여부 확인 유저 정보 조회 api 요청
-    console.log("api 요청");
+  useEffect(() => {
+    if (isStart) {
+      if (isHost) {
+        send("/pub/room", {
+          message: "START_BUTTON_CLICKED",
+          sender: nickname,
+          gameId,
+        });
+      }
+      window.location.href = `/room/${gameId}/ingame`;
+    }
+  }, [isHost, isStart, gameId, nickname]);
+
+  const onConnect = () => {
+    subscribe(`/sub/${nickname}`, message => {
+      const data = JSON.parse(message.body);
+      console.log(data);
+
+      if (data.message === "MATCHING_SUCCESS") {
+        setGameId(data.room.gameId);
+        send("/pub/matching", {
+          message: "ENTER_MATCHING_ROOM",
+          sender: nickname,
+          gameId: data.room.gameId,
+        });
+      } else if (
+        data.message === "ENTER_SUCCESS" &&
+        data.room.host.nickname === nickname
+      ) {
+        setIsHost(true);
+      } else if (data.message === "PREPARE_GAME_START") {
+        setIsStart(true);
+      }
+    });
+  };
+
+  const handleClickCheckButton = async () => {
+    try {
+      connect(onConnect);
+      const { data } = await matching({
+        nickname,
+        gameId: "",
+        gameMode: "ONE_VS_ONE",
+      });
+
+      if (data === "DUPLICATED_NICKNAME") {
+        alert("사용할 수 없는 닉네임입니다.");
+        disconnect();
+      } else if (data === "OK") {
+        setLoading(true);
+      }
+    } catch (e) {
+      disconnect();
+      alert("입장 실패");
+    }
+  };
+
+  const handleClickCancelButton = async () => {
+    try {
+      const { data } = await matchingCancel({
+        nickname,
+      });
+
+      if (data === "CANCEL_ACCEPTED") {
+        setLoading(false);
+        disconnect();
+      }
+    } catch (e) {
+      alert("취소 실패");
+    }
   };
 
   const handleClickBackButton = () => {
@@ -50,7 +121,7 @@ export default function FastMatching() {
             </Loading>
 
             <ButtonContainer>
-              <Button onClick={() => setLoading(false)} size="sm">
+              <Button onClick={() => handleClickCancelButton()} size="sm">
                 취소
               </Button>
             </ButtonContainer>

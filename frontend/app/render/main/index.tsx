@@ -1,5 +1,6 @@
 import { useCamera } from "../stores/useCamera";
 import { useScreenControl } from "../stores/useScreenControl";
+import useNickname from "~/store/nickname";
 
 import Button from "../components/Button";
 import Container from "../components/Container";
@@ -7,11 +8,13 @@ import Container from "../components/Container";
 export default function TestController() {
   const { ShopScreen, RoomScreen, LoginScreen, fastMatchingScreen } =
     useCamera();
+  const { setNickname } = useNickname();
   const { screen, setScreen, setMainScreen } = useScreenControl();
   const zoom = (name: string) => {
     if (name === "FASTMATCHING") {
       fastMatchingScreen();
       setScreen("FASTMATCHING");
+      setNickname("");
     } else if (name === "ROOM") {
       RoomScreen();
       setScreen("ROOM");

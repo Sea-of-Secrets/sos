@@ -1,5 +1,6 @@
 "use client";
 
+import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { gameSocket } from "~/sockets";
@@ -16,13 +17,14 @@ export default function Room() {
   const { nickname } = useNickname();
   const [isHost, setIsHost] = useState(false);
   const [isFull, setIsFull] = useState(false);
+  const [roomCode, setRoomCode] = useState("방 코드");
   const [players, setPlayers] = useState([]);
   const { socketMessage } = useSocketMessage();
 
   const gridColumns: { [key: number]: string } = {
     0: "grid-cols-0",
-    1: "grid-cols-1",
-    2: "grid-cols-2",
+    1: "grid-cols-1 sm-grid-cols-2",
+    2: "grid-cols-2 sm-grid-cols-2",
     3: "grid-cols-3 sm-grid-cols-2",
     4: "grid-cols-4 sm-grid-cols-2",
   };
@@ -30,7 +32,7 @@ export default function Room() {
   const copyToClipboard = async () => {
     try {
       await navigator.clipboard.writeText(gameId);
-      alert("클립보드에 복사되었습니다.");
+      setRoomCode("복사됨");
     } catch (err) {
       console.error("클립보드 복사 실패:", err);
     }
@@ -86,66 +88,116 @@ export default function Room() {
   }, [socketMessage]);
 
   return (
-    <>
-      <div className="bg-white py-16">
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="flex max-w-2xl mx-0 gap-5">
-            <h2 className="text-3xl font-bold tracking-tight text-gray-900">
-              방 코드 : {gameId}
-            </h2>
-            <button
-              type="button"
-              className="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-              onClick={copyToClipboard}
-            >
-              복사
-            </button>
-          </div>
-          <ul
-            role="list"
-            className={`mx-auto mt-20 grid ${gridColumns[players.length]} gap-x-8 gap-y-16`}
+    <div className="py-8 px-8 ">
+      <Button onClick={copyToClipboard} size="sm">
+        {roomCode} : {gameId}
+      </Button>
+      <Container>
+        {players.map(player => (
+          <UserContainer key={player["nickname"]}>
+            <UserInfo>
+              <p className="mb-10">닉네임 : {player["nickname"]}</p>
+              <Image
+                src="/pxfuel.jpg"
+                width={100}
+                height={100}
+                alt="기본 이미지"
+                className="mx-auto h-48 w-48 rounded-full "
+              />
+            </UserInfo>
+          </UserContainer>
+        ))}
+      </Container>
+      <div className="mt-5 flex justify-center mx-auto gap-5">
+        {isHost && (
+          <Button
+            size="sm"
+            className={`${
+              !isFull ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50"
+            }`}
+            onClick={handleConfirm}
+            disabled={!isFull}
           >
-            {players.map(player => (
-              <li
-                key={player["nickname"]}
-                className="flex flex-col items-center"
-              >
-                <Image
-                  src="/pxfuel.jpg"
-                  width={100}
-                  height={100}
-                  alt="기본 이미지"
-                  className="mx-auto h-48 w-48 rounded-full"
-                />
-                <h3 className="mt-6 text-lg text-center font-semibold leading-8 tracking-tight text-gray-900">
-                  {player["nickname"]}
-                </h3>
-              </li>
-            ))}
-          </ul>
-          <div className="mt-5 flex justify-center mx-auto gap-5">
-            {isHost && (
-              <button
-                type="button"
-                className={`rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 ${
-                  !isFull ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50"
-                }`}
-                onClick={handleConfirm}
-                disabled={!isFull}
-              >
-                게임시작
-              </button>
-            )}
-            <button
-              type="button"
-              className="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-              onClick={() => (window.location.href = "/")}
-            >
-              나가기
-            </button>
-          </div>
-        </div>
+            게임시작
+          </Button>
+        )}
+        <Button size="sm" onClick={() => (window.location.href = "/")}>
+          나가기
+        </Button>
       </div>
-    </>
+    </div>
   );
 }
+
+const Button = styled.button<{ size?: "xs" | "md" | "sm" }>`
+  position: relative;
+  padding: 0.5rem 1.5rem;
+  background: url("/assets/text-background.png") no-repeat center center;
+  background-size: cover;
+  font-size: ${({ size }) => {
+    switch (size) {
+      case "xs":
+        return "8px";
+      case "sm":
+        return "20px";
+      default:
+        return "40px";
+    }
+  }};
+  color: #fff;
+  transition: transform 0.4s ease;
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  ${({ size }) => {
+    switch (size) {
+      case "xs":
+        return `
+          min-width: 5rem;
+          min-height: 2rem;
+        `;
+      case "sm":
+        return `
+          min-width: 8rem;
+          min-height: 5rem;
+        `;
+      default:
+        return `
+          min-width: 22rem;
+          min-height: 8rem;
+        `;
+    }
+  }}
+`;
+
+const UserContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  align-items: center;
+  justify-content: center;
+  width: 25rem;
+  height: 25rem;
+  padding: 1rem;
+  background: url("/assets/modal-background.png") no-repeat center center;
+  background-size: cover;
+`;
+
+const UserInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 15rem;
+  height: 20rem;
+  padding: 1rem;
+`;
+
+const Container = styled.div`
+  display: flex;
+  min-height: 30rem;
+  padding: 2rem;
+  align-items: center;
+  justify-content: space-around;
+`;

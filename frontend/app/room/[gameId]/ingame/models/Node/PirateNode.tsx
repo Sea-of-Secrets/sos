@@ -1,4 +1,4 @@
-import { Cylinder, Edges, Text } from "@react-three/drei";
+import { Cylinder, Edges, Text, useGLTF, Text3D } from "@react-three/drei";
 
 import { NODE_SCALE } from "./constants";
 import { PirateNodeProps } from "./types";
@@ -15,6 +15,8 @@ export default function PirateNode({ node, ...props }: PirateNodeProps) {
   } = useNode({ node });
 
   const { movableNodeIdList } = usePirateGraph();
+  const { scene } = useGLTF("/pirate_mark/scene.gltf");
+  const clonedScene = scene.clone();
 
   return (
     <>
@@ -22,28 +24,39 @@ export default function PirateNode({ node, ...props }: PirateNodeProps) {
         {...props}
         ref={meshRef}
         position={position}
-        scale={NODE_SCALE}
+        // scale={NODE_SCALE}
+        scale={15}
         onClick={handleClickNode}
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
       >
-        <Cylinder
+        <primitive object={clonedScene} />
+        {/* <Cylinder
           args={[4, 5, 2]}
           material-color={
             movableNodeIdList.includes(node.nodeId) ? "#03fc39" : "orange"
           }
         >
           <Edges color="black" />
-        </Cylinder>
+        </Cylinder> */}
       </mesh>
-      <Text
-        position={[position[0], 12, position[2]]}
+      {/* <Text
+        position={[position[0], -48, position[2]]}
         rotation={[Math.PI / 2, Math.PI, Math.PI]}
         fontSize={6}
         color="black"
       >
         {node.nodeId}
-      </Text>
+      </Text> */}
+      <Text3D
+        material-color={"black"} // 색상 변경용
+        position={[position[0] - 11, -48, position[2] - 15]}
+        rotation={[-Math.PI / 6, 0, 0]}
+        font={"/fonts/Bold_font.json"}
+        scale={[10, 10, 5]}
+      >
+        {node.nodeId}
+      </Text3D>
     </>
   );
 }

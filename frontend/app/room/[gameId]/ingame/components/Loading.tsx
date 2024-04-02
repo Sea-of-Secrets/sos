@@ -1,14 +1,9 @@
-import { useState, useEffect } from "react";
 import { useGameLoading } from "../stores/useGameLoading";
-import { useSocketMessage } from "../stores/useSocketMessage";
 import { useRenderList } from "~/app/room/[gameId]/ingame/stores/useRenderList";
 
 export default function Loading() {
   const { loading } = useGameLoading();
-  const { socketMessage } = useSocketMessage();
-  const { renderList, setRenderList } = useRenderList();
-
-  console.log(renderList);
+  const { renderList } = useRenderList();
 
   if (!loading) {
     return null;

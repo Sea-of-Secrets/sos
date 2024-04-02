@@ -1,6 +1,12 @@
 import { create } from "zustand";
 
-type ScreenType = "MAIN" | "ROOM" | "SHOP" | "LOGIN" | "FASTMATCHING";
+type ScreenType =
+  | "MAIN"
+  | "ROOM"
+  | "SHOP"
+  | "LOGIN"
+  | "FASTMATCHING"
+  | "MYPAGE";
 
 interface ScreenControlState {
   screen: ScreenType;

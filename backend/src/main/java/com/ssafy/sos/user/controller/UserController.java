@@ -99,11 +99,13 @@ public class UserController {
     }
 
     @PostMapping("/piece")
-    public ResponseEntity<?> choicePiece(Authentication authentication, @RequestParam Integer productId) {
+    public ResponseEntity<?> choicePiece(Authentication authentication, @RequestBody Map<String, String> productName) {
         CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
 
         UserEntity userInfo = userService.getUserInfo(user);
-        boolean result = userService.choicePiece(userInfo, productId);
+        String name = productName.get("productName");
+        System.out.println(name);
+        boolean result = userService.choicePiece(userInfo, name);
 
         if (result) {
             return ResponseEntity.status(HttpStatus.OK).body(userInfo);
