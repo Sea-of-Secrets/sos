@@ -12,6 +12,7 @@ import LoginButton from "./components/LoginButton";
 import Map from "./Map";
 import Camera from "./Camera";
 import Button from "./Button";
+import { OrbitControls } from "@react-three/drei";
 
 export default function Renderer() {
   const [loading, setLoading] = useState(false);

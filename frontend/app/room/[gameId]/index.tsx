@@ -21,8 +21,8 @@ export default function Room() {
 
   const gridColumns: { [key: number]: string } = {
     0: "grid-cols-0",
-    1: "grid-cols-1",
-    2: "grid-cols-2",
+    1: "grid-cols-1 sm-grid-cols-2",
+    2: "grid-cols-2 sm-grid-cols-2",
     3: "grid-cols-3 sm-grid-cols-2",
     4: "grid-cols-4 sm-grid-cols-2",
   };

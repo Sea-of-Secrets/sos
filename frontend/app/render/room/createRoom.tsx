@@ -16,7 +16,6 @@ interface CreateRoomProps {
 
 export default function CreateRoom({ setOpen }: CreateRoomProps) {
   const router = useRouter();
-  const cancelButtonRef = useRef(null);
   const { nickname, setNickname } = useNickname();
   const { setGameId } = useGameId();
   const [gameMode, setGameMode] = useState("ONE_VS_ONE");
@@ -45,12 +44,11 @@ export default function CreateRoom({ setOpen }: CreateRoomProps) {
     }
   };
 
-  // useEffect(() => {
-  //   // 게스트인 경우 닉네임 초기화
-  //   if (isGuest) {
-  //     setNickname("");
-  //   }
-  // }, []);
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === "Enter") {
+      handleConfirm();
+    }
+  };
 
   return (
     <Modal>
@@ -99,6 +97,7 @@ export default function CreateRoom({ setOpen }: CreateRoomProps) {
                   name="name"
                   id="name"
                   value={nickname}
+                  onKeyDown={handleKeyDown}
                   onChange={e => setNickname(e.target.value)}
                   className="text-center block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                   placeholder="닉네임을 입력하세요."
