@@ -13,6 +13,7 @@ import com.ssafy.sos.game.service.GameTimerService;
 import com.ssafy.sos.game.service.MatchingService;
 import com.ssafy.sos.game.event.TimerTimeoutEvent;
 import com.ssafy.sos.game.util.GameRole;
+import com.ssafy.sos.game.util.GameStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -45,7 +46,7 @@ public class MessageController {
     private boolean lockRespond;
 
     // 게임 시작했는지 판단
-    public boolean isStarted = false;
+//    public boolean isStarted = false;
 
     // 소켓 연결시 실행
     @EventListener
@@ -73,6 +74,13 @@ public class MessageController {
             String nickname = sessionMemberGame.get(0);
             String gameId = sessionMemberGame.get(1);
             Room room = board.getRoomMap().getOrDefault(gameId, null);
+            Game game = board.getGameMap().getOrDefault(gameId, null);
+
+            if (game != null) {
+                if (game.getGameStatus().equals(GameStatus.BEFORE_START)) {
+                    return;
+                }
+            }
 
             if (room != null) {
                 // 대기실에서 소켓 끊기면 방 퇴장
@@ -95,9 +103,8 @@ public class MessageController {
                         .build();
                 sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
             }
-            isStarted = false;
-            Game game = board.getGameMap().getOrDefault(gameId, null);
 
+//            isStarted = false;
             if (game == null) return;
 
             // 게임 중에 나가진 경우
@@ -167,39 +174,18 @@ public class MessageController {
         }
 
         // 방 입장 (클 -> 서)
-        // TODO: duplicate method
         if (message.getMessage().equals("ENTER_MATCHING_ROOM")) {
-            for (Player player : room.getInRoomPlayers()) {
-                if (player.getNickname().equals(sender)) {
-                    sessionInfo.add(sender);
-                    sessionInfo.add(gameId);
 
+            // 정원이 다 찼을 경우 시작버튼 활성화 broadcast
+            if (room != null) {
+                if (room.getInRoomPlayers().size() == room.getGameMode().playerLimit()) {
                     serverMessage = ServerMessage.builder()
-                            .message("ENTER_SUCCESS")
-                            .gameId(gameId)
-                            .room(board.getRoomMap().get(gameId))
+                            .message("PREPARE_GAME_START")
                             .build();
-                    break;
+                    sendingOperations.convertAndSend("/sub/" + sender, serverMessage);
                 }
             }
 
-            // 서버 메시지 출력
-            if (serverMessage == null) {
-                serverMessage = ServerMessage.builder()
-                        .message("ENTER_FAILURE")
-                        .gameId(gameId)
-                        .build();
-            }
-
-            sendingOperations.convertAndSend("/sub/" + sender, serverMessage);
-
-            // 정원이 다 찼을 경우 시작버튼 활성화 broadcast
-            if (room.getInRoomPlayers().size() == room.getGameMode().playerLimit()) {
-                serverMessage = ServerMessage.builder()
-                        .message("PREPARE_GAME_START")
-                        .build();
-                sendingOperations.convertAndSend("/sub/" + sender, serverMessage);
-            }
         }
     }
 
@@ -212,7 +198,7 @@ public class MessageController {
         String gameId = message.getGameId();
         Room room = board.getRoomMap().get(gameId);
         List<String> sessionInfo = board.getSessionMap().get(sessionId);
-        System.out.println("여기까지 왔지롱");
+
         // 존재하지 않는 방이라면
         if (room == null) return;
 
@@ -880,8 +866,11 @@ public class MessageController {
         Game game = board.getGameMap().get(gameId);
 
         // 게임 시작 (클 -> 서)
-        if (message.getMessage().equals("START_GAME") && !isStarted) {
-            isStarted = true;
+        if (message.getMessage().equals("START_GAME") &&
+                game.getGameStatus().equals(GameStatus.BEFORE_START)) {
+            System.out.println("START_GAME");
+//            isStarted = true;
+            game.setGameStatus(IN_GAME);
             // 게임 시작하면 방 폭파
             board.getRoomMap().remove(gameId);
             // 해적 시작위치 지정 (서 -> 클)
@@ -1080,6 +1069,8 @@ public class MessageController {
                 .room(room)
                 .message("MATCHING_SUCCESS")
                 .build();
+
+        gameService.gameStart(gameId);
 
         // 게임에 속한 플레이어들에게 메시지 전송
         for (int i=0; i<room.getGameMode().playerLimit(); i++) {

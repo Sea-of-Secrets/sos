@@ -1,8 +1,9 @@
-import { request, getBaseClientUrl, getBaseServerUrl } from "../../_lib/http";
+import { getAccessToken, getRefreshToken, removeToken } from "~/store/auth";
+import { request, getBaseServerUrl } from "../../_lib/http";
 
 // export const getUserInfo = async () => {
-//   const access = window.localStorage.getItem("access");
-//   const refresh = window.localStorage.getItem("refresh");
+//   const access = getAccessToken();
+//   const refresh = getRefreshToken();
 //   const res = await request.get(`${getBaseClientUrl()}/users`, {
 //     headers: {
 //       Cookie: `access=${access}; refresh=${refresh};`,
@@ -14,8 +15,8 @@ import { request, getBaseClientUrl, getBaseServerUrl } from "../../_lib/http";
 // };
 
 export const getUserInfo2 = async () => {
-  const access = window.localStorage.getItem("access");
-  const refresh = window.localStorage.getItem("refresh");
+  const access = getAccessToken();
+  const refresh = getRefreshToken();
 
   const res = await request.get(`${getBaseServerUrl()}/users`, {
     headers: {
@@ -28,8 +29,8 @@ export const getUserInfo2 = async () => {
 };
 
 // export const getWalletInfo = async () => {
-//   const access = window.localStorage.getItem("access");
-//   const refresh = window.localStorage.getItem("refresh");
+//   const access = getAccessToken();
+//   const refresh = getRefreshToken();
 
 //   const res = await request.post(`${getBaseClientUrl()}/users`, {
 //     type: "get",
@@ -42,8 +43,8 @@ export const getUserInfo2 = async () => {
 // };
 
 export const getWalletInfo2 = async () => {
-  const access = window.localStorage.getItem("access");
-  const refresh = window.localStorage.getItem("refresh");
+  const access = getAccessToken();
+  const refresh = getRefreshToken();
 
   const res = await request.get(`${getBaseServerUrl()}/nft/wallet/info`, {
     headers: {
@@ -62,8 +63,8 @@ export const getWalletInfo2 = async () => {
 // };
 
 export const makeWallet2 = async () => {
-  const access = window.localStorage.getItem("access");
-  const refresh = window.localStorage.getItem("refresh");
+  const access = getAccessToken();
+  const refresh = getRefreshToken();
 
   const res = await request.post(`${getBaseServerUrl()}/nft/wallet`, {
     Cookie: `access=${access}; refresh=${refresh};`,
@@ -73,30 +74,47 @@ export const makeWallet2 = async () => {
 };
 
 export const getWallet = async () => {
-  const access = window.localStorage.getItem("access");
-  const refresh = window.localStorage.getItem("refresh");
+  const access = getAccessToken();
+  const refresh = getRefreshToken();
 
   const res = await request.get(`${getBaseServerUrl()}/nft/wallet`, {
     headers: {
       Cookie: `access=${access}; refresh=${refresh};`,
       Authorization: `${access},${refresh}`,
-    }
+    },
   });
   return res;
 };
 
-export const saveDefaultPiece = async (productName) => {
-  const access = window.localStorage.getItem("access");
-  const refresh = window.localStorage.getItem("refresh");
-  
-  const res = await request.post(`${getBaseServerUrl()}/users/piece`,{
-    productName: productName  
-  } ,{
+export const saveDefaultPiece = async (productName: string) => {
+  const access = getAccessToken();
+  const refresh = getRefreshToken();
+
+  const res = await request.post(
+    `${getBaseServerUrl()}/users/piece`,
+    {
+      productName: productName,
+    },
+    {
+      headers: {
+        Cookie: `access=${access}; refresh=${refresh};`,
+        Authorization: `${access},${refresh}`,
+      },
+    },
+  );
+  return res;
+};
+
+export const logout = async () => {
+  const access = getAccessToken();
+  const refresh = getRefreshToken();
+  removeToken();
+
+  const res = await request.post(`${getBaseServerUrl()}/logout`, {
     headers: {
       Cookie: `access=${access}; refresh=${refresh};`,
       Authorization: `${access},${refresh}`,
-    }, 
-    
+    },
   });
   return res;
 };
