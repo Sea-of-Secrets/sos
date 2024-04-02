@@ -17,7 +17,7 @@ public class CustomOAuth2FailHandler implements AuthenticationFailureHandler {
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, IOException {
         log.info("로그인 에러남");
-
+        log.info(exception.getMessage());
         response.getWriter().println("??????");
     }
 }

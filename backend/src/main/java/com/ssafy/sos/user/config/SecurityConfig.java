@@ -1,5 +1,6 @@
 package com.ssafy.sos.user.config;
 
+import com.ssafy.sos.user.CustomOAuth2FailHandler;
 import com.ssafy.sos.user.CustomSuccessHandler;
 import com.ssafy.sos.user.jwt.CustomLogoutFilter;
 import com.ssafy.sos.user.jwt.JWTFilter;
@@ -32,6 +33,7 @@ public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
     private final CustomSuccessHandler customSuccessHandler;
+    private final CustomOAuth2FailHandler customOAuth2FailHandler;
     private final RefreshTokenRepository refreshTokenRepository;
     private final JWTUtil jwtUtil;
     private final JWTService jwtService;
@@ -87,6 +89,7 @@ public class SecurityConfig {
                         .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig
                                 .userService(customOAuth2UserService))
                         .successHandler(customSuccessHandler)
+                        .failureHandler(customOAuth2FailHandler)
                 );
 
         //경로별 인가 작업
