@@ -1,6 +1,12 @@
-import { Suspense } from "react";
-import Index from "./index";
+import UserNft from "./UserNft";
+import UserProfile from "./UserProfile";
 
 export default function Page() {
-  return <Index />
+  return (
+    <>
+      <h1>My Page</h1>
+      <UserProfile />
+      <UserNft />
+    </>
+  );
 }

@@ -5,6 +5,23 @@ type ResponseData = {
   message: string;
 };
 
+const parseCookie = (cookie: string) => {
+  const cookies = cookie.split("; ");
+  let accessCookie = "";
+  let refreshCookie = "";
+
+  for (const cookie of cookies) {
+    const [key, value] = cookie.split("="); // 쿠키 문자열을 '=' 기준으로 분리하여 키와 값을 추출
+    if (key === "access") {
+      accessCookie = value;
+    } else if (key === "refresh") {
+      refreshCookie = value;
+    }
+  }
+
+  return { accessCookie, refreshCookie };
+};
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>,
@@ -13,39 +30,26 @@ export default async function handler(
     const { cookie } = req.headers;
 
     if (!cookie) {
-      return res.status(401);
+      return res.status(401).json({ message: "쿠키가 없음" });
     }
 
-    const cookies = cookie.split("; ");
-    let accessCookie = "";
-    let refreshCookie = "";
+    const { accessCookie, refreshCookie } = parseCookie(cookie);
 
-    for (const cookie of cookies) {
-      const [key, value] = cookie.split("="); // 쿠키 문자열을 '=' 기준으로 분리하여 키와 값을 추출
-      if (key === "access") {
-        accessCookie = value;
-      } else if (key === "refresh") {
-        refreshCookie = value;
-      }
+    if (!req.headers.authorization) {
+      return res.status(401).json({ message: "권한이 없음" });
+    }
+
+    const [access, refresh] = req.headers.authorization.split(",");
+
+    if (!access || !refresh) {
+      return res.status(400).json({ message: "토큰 2개 보내라" });
     }
 
     if (req.method === "GET") {
-      const cookies: any = req.headers.cookie?.split("; ");
-      let accessCookie;
-      let refreshCookie;
-
-      for (const cookie of cookies) {
-        const [key, value] = cookie.split("="); // 쿠키 문자열을 '=' 기준으로 분리하여 키와 값을 추출
-        if (key === "access") {
-          accessCookie = value;
-        } else if (key === "refresh") {
-          refreshCookie = value;
-        }
-      }
-
       const response = await request.get(`${getBaseServerUrl()}/users`, {
         headers: {
-          Cookie: `access=${accessCookie}; refresh=${refreshCookie}`,
+          Authorization: `${access},${refresh}`,
+          Cookie: `access=${access}; refresh=${refresh}`,
         },
       });
 
@@ -54,7 +58,8 @@ export default async function handler(
       if (req.body.type === "get") {
         const response = await request.get(`${getBaseServerUrl()}/nft/wallet`, {
           headers: {
-            Cookie: `access=${accessCookie}; refresh=${refreshCookie}`,
+            Authorization: `${access},${refresh}`,
+            Cookie: `access=${access}; refresh=${refresh}`,
           },
         });
 
@@ -64,6 +69,7 @@ export default async function handler(
           `${getBaseServerUrl()}/nft/wallet`,
           {
             headers: {
+              Authorization: `${access},${refresh}`,
               Cookie: `access=${accessCookie}; refresh=${refreshCookie}`,
               "Content-Type": "application/json",
             },
