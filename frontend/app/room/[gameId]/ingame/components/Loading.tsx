@@ -1,4 +1,19 @@
+import { useState, useEffect } from "react";
+import { useGameLoading } from "../stores/useGameLoading";
+import { useSocketMessage } from "../stores/useSocketMessage";
+import { useRenderList } from "~/app/room/[gameId]/ingame/stores/useRenderList";
+
 export default function Loading() {
+  const { loading } = useGameLoading();
+  const { socketMessage } = useSocketMessage();
+  const { renderList, setRenderList } = useRenderList();
+
+  console.log(renderList);
+
+  if (!loading) {
+    return null;
+  }
+
   return (
     <div
       style={{
@@ -16,7 +31,12 @@ export default function Loading() {
         zIndex: 999,
       }}
     >
-      Loading...
+      <p>Loading...</p>
+      <div>
+        {renderList.map((item, index) => (
+          <p key={index}>{item}</p>
+        ))}
+      </div>
     </div>
   );
 }
