@@ -100,3 +100,18 @@ export const saveDefaultPiece = async (productName) => {
   });
   return res;
 };
+
+export const logout = async () => {
+  const access = window.localStorage.getItem("access");
+  const refresh = window.localStorage.getItem("refresh");
+  
+  // const res = await request.post(`${getBaseServerUrl()}/logout`, {
+  const res = await request.post(`http://localhost:8080/logout`, {
+    headers: {
+      Cookie: `access=${access}; refresh=${refresh};`,
+      Authorization: `${access},${refresh}`,
+    }, 
+    
+  });
+  return res;
+};
