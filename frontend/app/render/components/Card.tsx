@@ -24,7 +24,7 @@ export default function NftCarousel({ nfts }: NftCarouselProps) {
   };
 
   if (!nfts || nfts.length === 0) {
-    return <p>No NFTs available.</p>;
+    return <p>가지고 있는 NFT가 없습니다.</p>;
   }
 
   const saveHandler = async () => {
@@ -52,6 +52,7 @@ export default function NftCarousel({ nfts }: NftCarouselProps) {
             boxShadow: '0px 0px 10px rgba(0, 0, 0, 0.5)',
             transform: `rotateY(${currentNftIndex * 360}deg)`
             }}>
+                <p>{currentNftIndex+1}</p>
                 <h2>{nfts[currentNftIndex].name}</h2>
                 <img src={nfts[currentNftIndex].image || ''} alt={nfts[currentNftIndex].name} style={{ maxWidth: '200px', maxHeight:'200px'}} />
                 <p>설명</p>

@@ -1,4 +1,4 @@
-import { getAccessToken, getRefreshToken } from "~/store/auth";
+import { getAccessToken, getRefreshToken, removeToken } from "~/store/auth";
 import { request, getBaseServerUrl } from "../../_lib/http";
 
 // export const getUserInfo = async () => {
@@ -102,5 +102,19 @@ export const saveDefaultPiece = async (productName: string) => {
       },
     },
   );
+  return res;
+};
+
+export const logout = async () => {
+  const access = getAccessToken();
+  const refresh = getRefreshToken();
+  removeToken();
+
+  const res = await request.post(`${getBaseServerUrl()}/logout`, {
+    headers: {
+      Cookie: `access=${access}; refresh=${refresh};`,
+      Authorization: `${access},${refresh}`,
+    },
+  });
   return res;
 };

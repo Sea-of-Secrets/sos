@@ -22,4 +22,5 @@ const Content = styled.div`
   padding: 5rem 0rem;
   align-items: center;
   font-size: 20px;
+  overflow: auto;
 `;

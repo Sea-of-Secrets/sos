@@ -13,9 +13,10 @@ import Map from "./Map";
 import Camera from "./Camera";
 import Button from "./Button";
 import useNickname from "~/store/nickname";
-import { getAccessToken } from "~/store/auth";
+import { getAccessToken, useAuth } from "~/store/auth";
 
 export default function Renderer() {
+  const { isLoggedIn } = useAuth();
   const [loading, setLoading] = useState(false);
   const { setNickname } = useNickname();
   const { screen } = useScreenControl();
@@ -46,7 +47,7 @@ export default function Renderer() {
       {loading && <Button />}
       {loading &&
         screen === "MAIN" &&
-        (getAccessToken() === null ? <LoginButton /> : <MyPageButton />)}
+        (isLoggedIn ? <MyPageButton /> : <LoginButton />)}
       {screen !== "MAIN" && screen !== "FASTMATCHING" && <BackButton />}
     </>
   );

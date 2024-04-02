@@ -34,3 +34,8 @@ export const getAccessToken = () => {
 export const getRefreshToken = () => {
   return window.localStorage.getItem("refresh");
 };
+
+export const removeToken = () => {
+  window.localStorage.removeItem("access");
+  window.localStorage.removeItem("refresh");
+};

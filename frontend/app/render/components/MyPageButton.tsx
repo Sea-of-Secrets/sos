@@ -22,12 +22,13 @@ export default function MyPageButton({ children, ...props }: MyPageButtonProps) 
 
   return (
     <Button onClick={() => handleClickButton()}>
-      <Image
+      {/* <Image
         width={100}
         height={100}
         src={"/assets/icon-user.png"}
         alt={"로그인 버튼"}
-      />
+      /> */}
+      마이페이지
     </Button>
   );
 }
