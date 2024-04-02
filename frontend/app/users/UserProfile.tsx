@@ -59,6 +59,7 @@ export default function UserProfile() {
           <p style={{ marginRight: '10px' }}>지갑 주소 : {maskAddress(user.walletAddress)}</p>
           <Button onClick={handleCopyAddress} size={"xs"}>{copied ? "복사됨" : "복사하기"}</Button>
         </div>}
+      <h2>현재 기본 말 : {user.productName}</h2>
     </div>
   );
 }
