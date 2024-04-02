@@ -6,7 +6,7 @@ export type UserModel = {
   username: string;
   walletAddress: string | null;
   gold: number | null;
-  productId: number | string | null;
+  productName: number | string | null;
 };
 
 export type NFTModel = {
