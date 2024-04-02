@@ -74,7 +74,7 @@ const Marker = ({ src, node, size }: MarkerProps) => {
     if (meshRef.current) {
       const time = state.clock.elapsedTime * 4;
       //meshRef.current.raycast = THREE.MathUtils.degToRad(time * 60);
-      meshRef.current.position.y = Math.sin(time) * 10 + 60; // y축으로의 움직임
+      meshRef.current.position.y = Math.sin(time) * 10 + 5; // y축으로의 움직임
       //meshRef.current.position.z = Math.sin(time * 0.5) * 20; // z축으로의 움직임
     }
   });

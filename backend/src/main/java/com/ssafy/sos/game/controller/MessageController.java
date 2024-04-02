@@ -804,7 +804,7 @@ public class MessageController {
         if (message.equals("READY_TURN_OVER")) {
             // 해적이 보물상자에 도착했는가?
             // 도착했다면
-            if (game.getTreasures().containsKey(game.getCurrentPosition()[0])) {
+            if (game.getTreasures().containsKey(game.getCurrentPosition()[0]) && !game.getTreasures().get(game.getCurrentPosition()[0])) {
                 // 해당 보물상자 열어주기
                 game.getTreasures().put(game.getCurrentPosition()[0], true);
                 // 라운드 + 1
