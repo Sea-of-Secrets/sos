@@ -127,28 +127,35 @@ class GameServiceImplTest {
     @Test
     // 해적 이동 가능 위치 조회 (해군 포함시 해당 경로 이동 불가한지 검사)
     public void findPirateAvailableNode() {
-        // 검사1 : 모든 해적 위치 경우의 수 검사
-//        for (int i = 1; i <= 188; i++) {
+        // 검사1 : 보드판 전체 검사 (노드가 서로 연결되어있어야 함)
+        for (int i = 1; i <= 373; i++) {
+            for (int node: board.getGraph()[i]) {
+                Assertions.assertThat(board.getGraph()[node]).contains(i);
+            }
+        }
+
+        // 검사2 : 모든 해적 위치 경우의 수 검사
+//        for (int i = 1; i <= 189; i++) {
 //            HashMap<Integer, Deque<Integer>> pirateMovableNode =  gameService.findPirateAvailableNode(gameId, i);
 //            // 기존 검사 완료 하였음 (로그 출력 정리 위해 주석처리)
-//             System.out.println(pirateMovableNode);
+//             System.out.println(i + "번 노드: " + pirateMovableNode.keySet().size());
+//            System.out.println(pirateMovableNode);
 //        }
 
         game.setCurrentPosition(new int[]{52, 257, 267, 268});
         HashMap<Integer, Deque<Integer>> availableNode = gameService.findPirateAvailableNode(gameId, game.getCurrentPosition()[0]);
-        System.out.println(availableNode);
-        System.out.println(availableNode.isEmpty());
+        Assertions.assertThat(availableNode.isEmpty()).isTrue();
 
-        // 검사2 : 특정 노드에서의 해적 이동 가능 위치 조회 결과가 올바르게 나오는지 검사
+        // 검사3 : 특정 노드에서의 해적 이동 가능 위치 조회 결과가 올바르게 나오는지 검사
         // 169의 경우
         Assertions.assertThat(gameService.findPirateAvailableNode(gameId, 169))
-                .containsKeys(146, 148, 170, 171, 187, 188);
+                .containsKeys(171, 187, 188);
 
         // 91의 경우
         Assertions.assertThat(gameService.findPirateAvailableNode(gameId, 91))
-                .containsKeys(74, 75, 87, 88, 89, 90, 92, 109);
+                .containsKeys(93, 108, 109);
 
-        // 검사3 : 해군이 길을 가로막고 있는 경우, 해당 경로를 우회한 길을 안내하는지 검사
+        // 검사4 : 해군이 길을 가로막고 있는 경우, 해당 경로를 우회한 길을 안내하는지 검사
         // 51 - 256 - 267 - 52 이동 불가능함
         game = board.getGameMap().get(gameId);
         game.getCurrentPosition()[1] = 256;
@@ -177,7 +184,7 @@ class GameServiceImplTest {
         for (int i = 201; i <= 373; i++) {
             HashMap<Integer, Deque<Integer>> marineMovableNode =  gameService.findMarineAvailableNode(gameId, i);
             // 기존 검사 완료 하였음 (로그 출력 정리 위해 주석처리)
-             System.out.println(marineMovableNode);
+            // System.out.println(marineMovableNode);
         }
 
         // 검사2 : 다른 해군이 포함된 경우 해당 정점은 선택할 수 없음
@@ -190,17 +197,10 @@ class GameServiceImplTest {
 
         // 검사3 : 이동 가능한 경로 여러개일 때 최단 경로 이동하는지 검사
         List<Integer> check = new ArrayList<>();
-        check.add(201);
+        check.add(214);
         check.add(215);
-        // 201 - 215로 이동해야함 (반례: 201 - 8 - 214 - 215)
-        Assertions.assertThat(gameService.findMarineAvailableNode(gameId, 201).get(215))
-                .isEqualTo(check);
-
-        check.clear();
-        check.add(262);
-        check.add(273);
-        // 262-273로 이동해야함 (반례: 262 - 43 - 263 - 60 - 273)
-        Assertions.assertThat(gameService.findMarineAvailableNode(gameId, 262).get(273))
+        // 214 - 215로 이동해야함 (반례: 214 - 28 - 232 - 30 - 233 - 29 - 215)
+        Assertions.assertThat(gameService.findMarineAvailableNode(gameId, 214).get(215))
                 .isEqualTo(check);
     }
 
@@ -252,14 +252,14 @@ class GameServiceImplTest {
     public void getInvestigateList() {
         // given
         game = board.getGameMap().get(gameId);
-        int nodeNumber = 273;
+        int nodeNumber = 274;
 
         // when
         int[] adjList = Arrays.stream(board.getGraph()[nodeNumber])
                 .filter(adjacentNode -> adjacentNode < 200)
                 .toArray();
-        int[] comp1 = new int[]{60, 76, 262, 274};
-        int[] comp2 = new int[]{60, 76};
+        int[] comp1 = new int[]{77, 78, 93};
+        int[] comp2 = new int[]{77, 78};
 
         // then
         Assertions.assertThat(Arrays.equals(adjList, comp1)).isFalse();
@@ -274,9 +274,9 @@ class GameServiceImplTest {
         game.setInvestigate(new Investigate());
         game.getInvestigate().setNodes(new HashMap<>());
 
-        int nodeNumber = 76;
-        game.getPirateRoute().add(76);
-        game.getCurrentPosition()[1] = 273;
+        int nodeNumber = 73;
+        game.getPirateRoute().add(73);
+        game.getCurrentPosition()[1] = 271;
 
         // when
         boolean result = gameService.investigate(gameId, nodeNumber, 1);
