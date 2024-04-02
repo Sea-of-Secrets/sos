@@ -154,7 +154,7 @@ public class MessageController {
     }
 
     @MessageMapping("/room")
-    public void manageRoom(ClientMessage message, StompHeaderAccessor accessor) {
+    public synchronized void manageRoom(ClientMessage message, StompHeaderAccessor accessor) {
         String sender = message.getSender();
         String sessionId = accessor.getSessionId();
 
