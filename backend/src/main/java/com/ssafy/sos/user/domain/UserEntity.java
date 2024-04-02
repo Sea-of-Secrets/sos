@@ -26,7 +26,7 @@ public class UserEntity {
     private String role;
     private String walletAddress;
 
-    private Integer productId;
+    private String productName;
 
     private int gold;
 }
