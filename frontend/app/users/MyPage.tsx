@@ -18,7 +18,10 @@ import Container from "../render/components/Container";
 
 export default function Page() {
   const [user, setUser] = useState<UserModel | null>(null);
-  const [copied, setCopied] = useState(false); // 복사 버튼 클릭 상태를 관리합니다.
+  const [copied, setCopied] = useState(false);
+  const [newAddressCopied, setNewAddressCopied] = useState(false);
+  const [newMnemonicCopied, setNewMnemonicCopied] = useState(false);
+  const [newPrivateKeyCopied, setNewPrivateKeysCopied] = useState(false);
   const [walletLoading, setWalletLoading] = useState(false);
   const [wallet, setWallet] = useState<WalletModel | null>(null);
 
@@ -53,6 +56,25 @@ export default function Page() {
       setCopied(true);
     }
   };
+  const handleCopyNewAddress = () => {
+
+      navigator.clipboard.writeText(wallet?.address);
+      setNewAddressCopied(true);
+    
+  };
+  const handleCopyMnemonic = () => {
+
+      navigator.clipboard.writeText(wallet?.mnemonic);
+      setNewMnemonicCopied(true);
+    
+  };
+  const handleCopyPrivateKey = () => {
+
+      navigator.clipboard.writeText(wallet?.privateKey);
+      setNewPrivateKeysCopied(true);
+    
+  };
+
 
   // 주소를 마스킹하는 함수
   const maskAddress = (address: string) => {
@@ -87,7 +109,7 @@ export default function Page() {
           )}
           {user.walletAddress && <div style={{ display: 'flex', alignItems: 'center' }}>
               <p style={{ marginRight: '10px' }}>지갑 주소 : {maskAddress(user.walletAddress)}</p>
-              <Button onClick={handleCopyAddress} size={"xs"}>{copied ? "복사됨" : "복사하기"}</Button>
+              <Button onClick={handleCopyAddress} size={"xs"}>{copied ? "복사됨!" : "복사하기"}</Button>
             </div>}
           <h2>현재 기본 말 : {user.productName}</h2>
         </div>
@@ -106,11 +128,22 @@ export default function Page() {
       </Container>
       {wallet && 
         <MiniModal>
-          title
+          <h1>발급된 지갑 정보</h1>
           <MiniModalContent>
-              <p>{wallet.address}</p>
-              <p>{wallet.mnemonic}</p>
-              <p>{wallet.privateKey}</p>
+              <p>발급된 지갑을 Kaikas에 연동해서 모바일에서도 NFT를 확인해보세요!</p>
+              <div style={{display:"flex"}}>
+                <p>주소 : {maskAddress(wallet.address)}</p>
+                <Button onClick={handleCopyNewAddress} size={"xs"}>{newAddressCopied ? "복사됨!" : "복사하기"}</Button>
+              </div>
+              <br/>
+              <div>
+                <p>연상 기호 : <br/>{wallet.mnemonic}</p>
+              </div>
+              <br/>
+              <div style={{display:"flex"}}>
+                <p>개인키 : {maskAddress(wallet.privateKey)}</p>
+                <Button onClick={handleCopyPrivateKey} size={"xs"}>{newPrivateKeyCopied ? "복사됨!" : "복사하기"}</Button>
+              </div>
           </MiniModalContent>
         </MiniModal>
           
