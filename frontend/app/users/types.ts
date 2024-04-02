@@ -14,3 +14,9 @@ export type NFTModel = {
   description: string | null;
   image: string | null;
 };
+
+export type WalletModel = {
+  address: string;
+  mnemonic: string;
+  privateKey: string;
+};

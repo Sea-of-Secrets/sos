@@ -22,12 +22,11 @@ router.post("/nft", async (req, res) => {
 //지갑 만들어주기
 router.post("/wallet", (req, res) => {
   const newWallet = createRandomWallet();
-  res.send(newWallet);
-  //   res.send({
-  //     address: newWallet.address,
-  //     mnemonic: newWallet.mnemonic.phrase,
-  //     privateKey: newWallet.privateKey,
-  //   });
+  res.send({
+    address: newWallet.address,
+    mnemonic: newWallet.mnemonic.phrase,
+    privateKey: newWallet.privateKey,
+  });
 });
 
 //NFT 불러오기
