@@ -1,4 +1,3 @@
-
 import { useCamera } from "./stores/useCamera";
 import { useScreenControl } from "./stores/useScreenControl";
 
@@ -6,6 +5,7 @@ import Room from "./room";
 import Main from "./main";
 import FastMatcing from "./fastmatching";
 import Login from "./login";
+import Shop from "./shop";
 import MyPage from "../users/MyPage";
 
 export default function Button() {
@@ -17,19 +17,12 @@ export default function Button() {
   } else if (screen === "ROOM") {
     return <Room />;
   } else if (screen === "SHOP") {
-    return <Room />;
+    return <Shop />;
   } else if (screen === "LOGIN") {
     return <Login />;
-  }
-    else if (screen === "MYPAGE") {
-      return (
-      
-            <MyPage/>
-          
- )
-  
+  } else if (screen === "MYPAGE") {
+    return <MyPage />;
   } else if (screen === "FASTMATCHING") {
     return <FastMatcing />;
   }
 }
-

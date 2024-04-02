@@ -14,6 +14,7 @@ interface CameraState {
   RoomScreen: () => void;
   LoginScreen: () => void;
   fastMatchingScreen: () => void;
+  ShopGatchaScreen: () => void;
 }
 
 export const DEFAULT_CAMERA_POSITION = {
@@ -118,6 +119,26 @@ export const useCamera = create<CameraState>(set => ({
           -107983,
           -30000,
           0,
+          0,
+          true,
+        );
+        state.cameraRef.current.zoomTo(1, true);
+      } else {
+        console.error(`Camera not initialized...`);
+        window.alert("카메라가 없다...");
+      }
+      return { ...state };
+    });
+  },
+  ShopGatchaScreen: () => {
+    set(state => {
+      if (state.cameraRef) {
+        state.cameraRef.current.setLookAt(
+          -50000,
+          120000,
+          -170000,
+          -50000,
+          130000,
           0,
           true,
         );

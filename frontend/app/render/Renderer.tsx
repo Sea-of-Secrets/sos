@@ -12,6 +12,7 @@ import MyPageButton from "./components/MyPageButton";
 import Map from "./Map";
 import Camera from "./Camera";
 import Button from "./Button";
+import { useGatcha } from "./stores/useGatch";
 import useNickname from "~/store/nickname";
 import { getAccessToken, useAuth } from "~/store/auth";
 
@@ -20,6 +21,7 @@ export default function Renderer() {
   const [loading, setLoading] = useState(false);
   const { setNickname } = useNickname();
   const { screen } = useScreenControl();
+  const { gatchaState } = useGatcha();
 
   useEffect(() => {
     setNickname("");
@@ -41,10 +43,14 @@ export default function Renderer() {
         }}
       >
         <Camera />
-        <ambientLight intensity={5} color="#ffffff" />
+        <ambientLight />
         <Map />
       </Canvas>
       {loading && <Button />}
+      {loading && screen === "MAIN" && <LoginButton />}
+      {screen !== "MAIN" &&
+        screen !== "FASTMATCHING" &&
+        gatchaState === "GATCHA_PREV" && <BackButton />}
       {loading &&
         screen === "MAIN" &&
         (isLoggedIn ? <MyPageButton /> : <LoginButton />)}
