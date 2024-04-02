@@ -4,7 +4,7 @@ import { CameraControls } from "@react-three/drei";
 import { useCamera } from "./stores/useCamera";
 
 export default function Camera() {
-  const cameraRef = useRef<CameraControls>(null!);
+  const cameraRef = useRef(null!);
   const { mainScreen, setCamera } = useCamera();
 
   useEffect(() => {
@@ -12,5 +12,9 @@ export default function Camera() {
     mainScreen();
   }, []);
 
-  return <CameraControls ref={cameraRef} />;
+  return (
+    <>
+      <CameraControls ref={cameraRef} />
+    </>
+  );
 }

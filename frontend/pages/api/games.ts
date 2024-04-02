@@ -13,7 +13,16 @@ export default async function handler(
     if (req.method === "POST") {
       if (req.body.type === "matching") {
         const response = await request.post(
-          `${getBaseServerUrl()}/games`,
+          `${getBaseServerUrl()}/room/matching`,
+          req.body,
+        );
+        return res.status(response.status).json(response.data);
+      }
+    }
+    if (req.method === "PATCH") {
+      if (req.body.type === "matchingCancel") {
+        const response = await request.patch(
+          `${getBaseServerUrl()}/room/matching`,
           req.body,
         );
         return res.status(response.status).json(response.data);

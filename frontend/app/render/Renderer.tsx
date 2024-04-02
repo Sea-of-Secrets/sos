@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import * as THREE from "three";
 import { useRouter } from "next/navigation";
@@ -13,11 +13,15 @@ import MyPageButton from "./components/MyPageButton";
 import Map from "./Map";
 import Camera from "./Camera";
 import Button from "./Button";
+import useNickname from "~/store/nickname";
 
 export default function Renderer() {
   const [loading, setLoading] = useState(false);
+  const { setNickname } = useNickname();
   const { screen } = useScreenControl();
-  const router = useRouter();
+  useEffect(() => {
+    setNickname("");
+  }, []);
   return (
     <>
       <Canvas
@@ -38,7 +42,13 @@ export default function Renderer() {
         <Map />
       </Canvas>
       {loading && <Button />}
-      {loading && screen === "MAIN" && (localStorage.getItem("access") === null ? <LoginButton /> : <MyPageButton/>)}
+      {loading &&
+        screen === "MAIN" &&
+        (localStorage.getItem("access") === null ? (
+          <LoginButton />
+        ) : (
+          <MyPageButton />
+        ))}
       {screen !== "MAIN" && screen !== "FASTMATCHING" && <BackButton />}
     </>
   );
