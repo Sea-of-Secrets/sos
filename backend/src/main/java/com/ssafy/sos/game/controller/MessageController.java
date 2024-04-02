@@ -65,6 +65,7 @@ public class MessageController {
         String sessionId = accessor.getSessionId();
         List<String> sessionMemberGame= board.getSessionMap().getOrDefault(sessionId, null);
 
+        System.out.println("disconnect");
         if (sessionMemberGame == null) return;
 
         // connect 후 방 입장 되기 전에 disconnect 됐을 경우
@@ -75,7 +76,18 @@ public class MessageController {
 
             if (room != null) {
                 // 대기실에서 소켓 끊기면 방 퇴장
-                room.getInRoomPlayers().removeIf(player -> player.getNickname().equals(nickname));
+                board.getSessionMap().get(sessionId).clear();
+                // 방에 혼자 남아있었으면 방 폭파
+                if (room.getInRoomPlayers().size() == 1) {
+                    board.getRoomMap().remove(gameId);
+                } else {
+                    // 다음 들어온 사람에게 방장 넘김
+                    if (room.getHost().getNickname().equals(nickname)) {
+                        room.setHost(room.getInRoomPlayers().get(1));
+                    }
+                    room.getInRoomPlayers().removeIf(player -> player.getNickname().equals(nickname));
+                }
+
                 ServerMessage serverMessage = ServerMessage.builder()
                         .message("PLAYER_LEAVED")
                         .gameId(gameId)
@@ -109,11 +121,13 @@ public class MessageController {
     }
 
     @MessageMapping("/matching")
-    public void matching(ClientMessage message) {
+    public void matching(ClientMessage message, StompHeaderAccessor accessor) {
         String sender = message.getSender();
         String gameId = message.getGameId();
         Room room = board.getRoomMap().get(gameId);
-        ServerMessage serverMessage;
+        String sessionId = accessor.getSessionId();
+        ServerMessage serverMessage = null;
+        List<String> sessionInfo = board.getSessionMap().get(sessionId);
 
         if (message.getMessage().equals("MATCHING_ACCEPTED")) {
             room.increaseIsAccepted();
@@ -150,6 +164,42 @@ public class MessageController {
             }
 
             board.getRoomMap().remove(gameId);
+        }
+
+        // 방 입장 (클 -> 서)
+        // TODO: duplicate method
+        if (message.getMessage().equals("ENTER_MATCHING_ROOM")) {
+            for (Player player : room.getInRoomPlayers()) {
+                if (player.getNickname().equals(sender)) {
+                    sessionInfo.add(sender);
+                    sessionInfo.add(gameId);
+
+                    serverMessage = ServerMessage.builder()
+                            .message("ENTER_SUCCESS")
+                            .gameId(gameId)
+                            .room(board.getRoomMap().get(gameId))
+                            .build();
+                    break;
+                }
+            }
+
+            // 서버 메시지 출력
+            if (serverMessage == null) {
+                serverMessage = ServerMessage.builder()
+                        .message("ENTER_FAILURE")
+                        .gameId(gameId)
+                        .build();
+            }
+
+            sendingOperations.convertAndSend("/sub/" + sender, serverMessage);
+
+            // 정원이 다 찼을 경우 시작버튼 활성화 broadcast
+            if (room.getInRoomPlayers().size() == room.getGameMode().playerLimit()) {
+                serverMessage = ServerMessage.builder()
+                        .message("PREPARE_GAME_START")
+                        .build();
+                sendingOperations.convertAndSend("/sub/" + sender, serverMessage);
+            }
         }
     }
 
