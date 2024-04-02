@@ -65,6 +65,7 @@ public class MessageController {
         String sessionId = accessor.getSessionId();
         List<String> sessionMemberGame= board.getSessionMap().getOrDefault(sessionId, null);
 
+        System.out.println("disconnect");
         if (sessionMemberGame == null) return;
 
         // connect 후 방 입장 되기 전에 disconnect 됐을 경우
@@ -75,7 +76,18 @@ public class MessageController {
 
             if (room != null) {
                 // 대기실에서 소켓 끊기면 방 퇴장
-                room.getInRoomPlayers().removeIf(player -> player.getNickname().equals(nickname));
+                board.getSessionMap().get(sessionId).clear();
+                // 방에 혼자 남아있었으면 방 폭파
+                if (room.getInRoomPlayers().size() == 1) {
+                    board.getRoomMap().remove(gameId);
+                } else {
+                    // 다음 들어온 사람에게 방장 넘김
+                    if (room.getHost().getNickname().equals(nickname)) {
+                        room.setHost(room.getInRoomPlayers().get(1));
+                    }
+                    room.getInRoomPlayers().removeIf(player -> player.getNickname().equals(nickname));
+                }
+
                 ServerMessage serverMessage = ServerMessage.builder()
                         .message("PLAYER_LEAVED")
                         .gameId(gameId)
@@ -109,11 +121,13 @@ public class MessageController {
     }
 
     @MessageMapping("/matching")
-    public void matching(ClientMessage message) {
+    public void matching(ClientMessage message, StompHeaderAccessor accessor) {
         String sender = message.getSender();
         String gameId = message.getGameId();
         Room room = board.getRoomMap().get(gameId);
-        ServerMessage serverMessage;
+        String sessionId = accessor.getSessionId();
+        ServerMessage serverMessage = null;
+        List<String> sessionInfo = board.getSessionMap().get(sessionId);
 
         if (message.getMessage().equals("MATCHING_ACCEPTED")) {
             room.increaseIsAccepted();
@@ -150,6 +164,42 @@ public class MessageController {
             }
 
             board.getRoomMap().remove(gameId);
+        }
+
+        // 방 입장 (클 -> 서)
+        // TODO: duplicate method
+        if (message.getMessage().equals("ENTER_MATCHING_ROOM")) {
+            for (Player player : room.getInRoomPlayers()) {
+                if (player.getNickname().equals(sender)) {
+                    sessionInfo.add(sender);
+                    sessionInfo.add(gameId);
+
+                    serverMessage = ServerMessage.builder()
+                            .message("ENTER_SUCCESS")
+                            .gameId(gameId)
+                            .room(board.getRoomMap().get(gameId))
+                            .build();
+                    break;
+                }
+            }
+
+            // 서버 메시지 출력
+            if (serverMessage == null) {
+                serverMessage = ServerMessage.builder()
+                        .message("ENTER_FAILURE")
+                        .gameId(gameId)
+                        .build();
+            }
+
+            sendingOperations.convertAndSend("/sub/" + sender, serverMessage);
+
+            // 정원이 다 찼을 경우 시작버튼 활성화 broadcast
+            if (room.getInRoomPlayers().size() == room.getGameMode().playerLimit()) {
+                serverMessage = ServerMessage.builder()
+                        .message("PREPARE_GAME_START")
+                        .build();
+                sendingOperations.convertAndSend("/sub/" + sender, serverMessage);
+            }
         }
     }
 
@@ -432,8 +482,8 @@ public class MessageController {
             if (game.getInvestigate().getNodes().containsValue(false)) {
                 // 해군 조사 실패 브로드캐스트 (서 -> 클)
                 sendMessageWithGame(gameId, game, "ACTION_INVESTIGATE_"+role+"_FAIL");
-                // 2초 타이머 시작
-                gameTimerService.startRenderWaitingTimer(gameId, "READY_INVESTIGATE_"+role);
+                // 0.1초 타이머 시작
+                gameTimerService.afterSelectTimer(gameId, "READY_INVESTIGATE_"+role);
             }
             // 더 이상 조사할 노드가 없으면
             else {
@@ -472,11 +522,11 @@ public class MessageController {
         sendMessageWithGame(gameId, game, "SELECT_WORK_"+role+"_TIME_OUT");
         // 응답이 없을 경우 행동은 항상 조사, 해군 행동 선택완료 브로드캐스트 (서 -> 클)
         sendMessageWithGame(gameId, game,"ACTION_SELECT_WORK_"+role+"_INVESTIGATE");
-        // 2초 타이머 시작
-        gameTimerService.startRenderWaitingTimer(gameId, "READY_INVESTIGATE_"+role);
+        // 0.1초 타이머 시작
+        gameTimerService.afterSelectTimer(gameId, "READY_INVESTIGATE_"+role);
     }
 
-    // 행동선택 -> 조사 2초 타이머 경과 후
+    // 행동선택 -> 조사 0.1초 타이머 경과 후
     private void investigateRenderTimeOut(String gameId, Game game, GameRole role) {
         // 조사 가능한 노드 조회
         gameService.findMarineInvestigableNode(gameId, role.getRoleNumber());
@@ -633,7 +683,7 @@ public class MessageController {
         }
 
         // 조사 선택시
-        // 2초 타이머 경과 (해군 1 행동 선택 -> 해군 1 조사)
+        // 0.1초 타이머 경과 (해군 1 행동 선택 -> 해군 1 조사)
         if (message.equals("READY_INVESTIGATE_MARINE_ONE")) {
             investigateRenderTimeOut(gameId, game, GameRole.MARINE_ONE);
         }
@@ -648,7 +698,7 @@ public class MessageController {
             }
         }
 
-        // 2초 타이머 경과 (해군 1 행동 선택 -> 해군 1 체포)
+        // 0.1초 타이머 경과 (해군 1 행동 선택 -> 해군 1 체포)
         if (message.equals("READY_ARREST_MARINE_ONE")) {
             arrestRenderTimeOut(gameId, game, GameRole.MARINE_ONE);
         }
@@ -679,7 +729,7 @@ public class MessageController {
         }
 
         // 조사 선택시
-        // 2초 타이머 경과 (해군 2 행동 선택 -> 해군 2 조사)
+        // 0.1초 타이머 경과 (해군 2 행동 선택 -> 해군 2 조사)
         if (message.equals("READY_INVESTIGATE_MARINE_TWO")) {
             investigateRenderTimeOut(gameId, game, GameRole.MARINE_TWO);
         }
@@ -694,7 +744,7 @@ public class MessageController {
             }
         }
 
-        // 2초 타이머 경과 (해군 2 행동 선택 -> 해군 2 체포)
+        // 0.1초 타이머 경과 (해군 2 행동 선택 -> 해군 2 체포)
         if (message.equals("READY_ARREST_MARINE_TWO")) {
             arrestRenderTimeOut(gameId, game, GameRole.MARINE_TWO);
         }
@@ -725,7 +775,7 @@ public class MessageController {
         }
 
         // 조사 선택시
-        // 2초 타이머 경과 (해군 3 행동 선택 -> 해군 3 조사)
+        // 0.1초 타이머 경과 (해군 3 행동 선택 -> 해군 3 조사)
         if (message.equals("READY_INVESTIGATE_MARINE_THREE")) {
             investigateRenderTimeOut(gameId, game, GameRole.MARINE_THREE);
         }
@@ -740,7 +790,7 @@ public class MessageController {
             }
         }
 
-        // 2초 타이머 경과 (해군 3 행동 선택 -> 해군 3 체포)
+        // 0.1초 타이머 경과 (해군 3 행동 선택 -> 해군 3 체포)
         if (message.equals("READY_ARREST_MARINE_THREE")) {
             arrestRenderTimeOut(gameId, game, GameRole.MARINE_THREE);
         }
@@ -901,15 +951,15 @@ public class MessageController {
         if (action.equals("INVESTIGATE")) {
             // 해군 행동 선택완료 브로드캐스트 (서 -> 클)
             sendMessageWithGame(gameId, game,"ACTION_SELECT_WORK_"+role+"_INVESTIGATE");
-            // 2초 타이머 시작
-            gameTimerService.startRenderWaitingTimer(gameId, "READY_INVESTIGATE_"+role);
+            // 0.1초 타이머 시작
+            gameTimerService.afterSelectTimer(gameId, "READY_INVESTIGATE_"+role);
         }
         // 조건 분기 (체포를 선택했을 경우)
         else if (action.equals("ARREST")) {
             // 해군 행동 선택완료 브로드캐스트 (서 -> 클)
             sendMessageWithGame(gameId, game,"ACTION_SELECT_WORK_"+role+"_ARREST");
-            // 2초 타이머 시작
-            gameTimerService.startRenderWaitingTimer(gameId, "READY_ARREST_"+role);
+            // 0.1초 타이머 시작
+            gameTimerService.afterSelectTimer(gameId, "READY_ARREST_"+role);
         }
     }
 
