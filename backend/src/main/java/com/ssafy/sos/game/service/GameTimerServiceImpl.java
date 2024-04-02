@@ -34,7 +34,7 @@ public class GameTimerServiceImpl implements GameTimerService {
 
     @Override
     public void afterSelectTimer(String gameId, String message) {
-        future = scheduler.schedule(() -> eventPublisher.publishEvent(new TimerTimeoutEvent(this, gameId, message)), 100, TimeUnit.MILLISECONDS);
+        future = scheduler.schedule(() -> eventPublisher.publishEvent(new TimerTimeoutEvent(this, gameId, message)), 1, TimeUnit.SECONDS);
     }
 
     @Override

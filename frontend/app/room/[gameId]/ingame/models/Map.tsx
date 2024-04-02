@@ -11,7 +11,7 @@ export default function Map({ ...props }: MapProps) {
 
   return (
     <>
-      <mesh ref={mesh} position={[200, -50, 100]} scale={2000}>
+      <mesh ref={mesh} position={[130, -75, 70]} scale={1500}>
         <primitive object={gltf.scene} {...props} />
       </mesh>
     </>
