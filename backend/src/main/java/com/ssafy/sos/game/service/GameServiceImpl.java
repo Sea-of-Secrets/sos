@@ -5,7 +5,9 @@ import com.ssafy.sos.game.domain.record.GameRecordMember;
 import com.ssafy.sos.game.domain.record.GameRecord;
 import com.ssafy.sos.game.repository.GameMemberRepository;
 import com.ssafy.sos.game.util.GameMode;
+import com.ssafy.sos.game.util.GameRole;
 import com.ssafy.sos.game.util.GameStatus;
+import com.ssafy.sos.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
@@ -16,6 +18,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class GameServiceImpl implements GameService {
 
+    private final UserRepository userRepository;
     private final GameMemberRepository gameMemberRepository;
     private final GameTimerService gameTimerService;
     private final Board board;
@@ -452,7 +455,8 @@ public class GameServiceImpl implements GameService {
                                 game.getPlayers().get(2).getNickname(),
                                 game.getPlayers().get(3).getNickname()})
                         .nodes(game.getPirateRoute())
-                        .victory((gameResult && i == 0) || (!gameResult && i != 0))
+                        .victory((gameResult && i == GameRole.PIRATE.getRoleNumber()) ||
+                                (!gameResult && i != GameRole.PIRATE.getRoleNumber()))
                         .startTime(LocalDateTime.now())
                         .endTime(LocalDateTime.now())
                         .point(100)
@@ -469,11 +473,16 @@ public class GameServiceImpl implements GameService {
                             return newMember;
                         });
 
+                // gold는 승리한 플레이어만 증가
+                if((gameResult && i == GameRole.PIRATE.getRoleNumber()) ||
+                        (!gameResult && i != GameRole.PIRATE.getRoleNumber())) {
+                    userRepository.addGoldByUsername(username);
+                }
+
                 gameRecordMember.getGameRecords().add(gameRecord);
                 gameMemberRepository.save(gameRecordMember);
             }
         }
-
         game.setGameStatus(GameStatus.GAME_FINISHED);
         board.getGameMap().remove(gameId);
     }
