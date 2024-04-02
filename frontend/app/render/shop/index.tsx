@@ -9,11 +9,10 @@ import { useCamera } from "../stores/useCamera";
 import { useGatcha } from "../stores/useGatch";
 import Gatcha from "./Gatcha";
 import { useScreenControl } from "../stores/useScreenControl";
-
-// TODO: 로그인 상태 관리
-const isUserLogin = true;
+import { useAuth } from "~/store/auth";
 
 export default function Shop() {
+  const { isLoggedIn } = useAuth();
   const { gatchaState, setGatchaState } = useGatcha();
   const { ShopGatchaScreen, LoginScreen } = useCamera();
   const { screen, setScreen, setMainScreen } = useScreenControl();
@@ -34,7 +33,7 @@ export default function Shop() {
 
   return (
     <Container position="right">
-      {isUserLogin ? (
+      {isLoggedIn ? (
         <Button onClick={handleClickGatchaView}>700G</Button>
       ) : (
         <Button onClick={handleClickLogin}>로그인</Button>

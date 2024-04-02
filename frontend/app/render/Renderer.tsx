@@ -14,8 +14,10 @@ import Camera from "./Camera";
 import Button from "./Button";
 import { useGatcha } from "./stores/useGatch";
 import useNickname from "~/store/nickname";
+import { getAccessToken, useAuth } from "~/store/auth";
 
 export default function Renderer() {
+  const { isLoggedIn } = useAuth();
   const [loading, setLoading] = useState(false);
   const { setNickname } = useNickname();
   const { screen } = useScreenControl();
@@ -51,11 +53,7 @@ export default function Renderer() {
         gatchaState === "GATCHA_PREV" && <BackButton />}
       {loading &&
         screen === "MAIN" &&
-        (localStorage.getItem("access") === null ? (
-          <LoginButton />
-        ) : (
-          <MyPageButton />
-        ))}
+        (isLoggedIn ? <MyPageButton /> : <LoginButton />)}
       {screen !== "MAIN" && screen !== "FASTMATCHING" && <BackButton />}
     </>
   );
