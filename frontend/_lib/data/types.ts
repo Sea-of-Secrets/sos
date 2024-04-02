@@ -1,14 +1,17 @@
 export type NodePosition = {
-  readonly x: number;
-  readonly y: number;
-  readonly z: number;
+  x: number;
+  y: number;
+  z: number;
 };
 
 export type IngameGraphNode = {
-  readonly type: "MARINE" | "PIRATE" | null;
-  readonly nodeId: number;
-  readonly position: NodePosition;
-  readonly isWater: boolean;
-  readonly neighborNodeIdList: number[];
-  readonly area?: "ONE" | "TWO" | "THREE" | "FOUR" | null;
+  type: "MARINE" | "PIRATE" | null;
+  nodeId: number;
+  position: NodePosition;
+  neighborNodeIdList: number[];
 };
+
+export type OldIngameGraphNode = {
+  isWater: boolean;
+  area?: "ONE" | "TWO" | "THREE" | "FOUR" | null;
+} & IngameGraphNode;
