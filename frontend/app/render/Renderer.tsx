@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import * as THREE from "three";
-import { useRouter } from "next/navigation";
 import { useScreenControl } from "./stores/useScreenControl";
 
 import BackButton from "./components/BackButton";

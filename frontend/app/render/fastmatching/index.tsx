@@ -35,7 +35,6 @@ export default function FastMatching() {
           gameId,
         });
       }
-      disconnect();
       window.location.href = `/room/${gameId}/ingame`;
     }
   }, [isHost, isStart, gameId, nickname]);
