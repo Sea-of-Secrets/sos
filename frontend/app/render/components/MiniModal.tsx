@@ -15,7 +15,7 @@ export default function Modal({ children, ...props }: ModalProps) {
     <>
       <ModalBackdrop />
       <ModalStyle isVisible={isVisible} {...props}>
-        {children}
+        <Content>{children}</Content>
       </ModalStyle>
     </>
   );
@@ -27,15 +27,15 @@ const ModalStyle = styled.div<{
   transition: bottom 1.5s ease;
   position: fixed;
   left: 50%;
-  bottom: ${({ isVisible }) => (isVisible ? "5%" : "-100%")};
+  font-size: 30px;
+  bottom: ${({ isVisible }) => (isVisible ? "10%" : "-100%")};
   transform: translate(-50%);
   display: flex;
   flex-direction: column;
   min-width: 30rem;
-  min-height: 40rem;
+  min-height: 20rem;
   padding: 1rem;
   background: url("/assets/modal-background.png") no-repeat center center;
-  background-size: cover;
   z-index: 999;
 `;
 
@@ -46,5 +46,14 @@ const ModalBackdrop = styled.div`
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+`;
+
+const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 30rem;
+  padding: 5rem;
+  align-items: center;
   z-index: 999;
 `;
