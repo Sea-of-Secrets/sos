@@ -37,7 +37,7 @@ export default function PirateNode({ node, ...props }: PirateNodeProps) {
         </Cylinder>
       </mesh>
       <Text
-        position={[position[0], 12, position[2]]}
+        position={[position[0], -48, position[2]]}
         rotation={[Math.PI / 2, Math.PI, Math.PI]}
         fontSize={6}
         color="black"

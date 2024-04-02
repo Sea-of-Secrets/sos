@@ -26,6 +26,7 @@ export default function FastMatching() {
   const onConnect = () => {
     subscribe(`/sub/${nickname}`, message => {
       const data = JSON.parse(message.body);
+
       if (data.message === "MATCHING_SUCCESS") {
         setGameId(data.room.gameId);
         send("/pub/room", {
@@ -33,14 +34,14 @@ export default function FastMatching() {
           sender: nickname,
           gameId: data.room.gameId,
         });
-        disconnect();
-        window.location.href = "/room/${data.gameId}/ingame";
+        // window.location.href = "/room/${data.gameId}/ingame";
       }
     });
   };
 
   const handleClickCheckButton = async () => {
     try {
+      connect(onConnect);
       const { data } = await matching({
         nickname,
         gameId: "",
@@ -49,11 +50,12 @@ export default function FastMatching() {
 
       if (data === "DUPLICATED_NICKNAME") {
         alert("사용할 수 없는 닉네임입니다.");
+        disconnect();
       } else if (data === "OK") {
-        connect(onConnect);
         setLoading(true);
       }
     } catch (e) {
+      disconnect();
       alert("입장 실패");
     }
   };
@@ -63,7 +65,6 @@ export default function FastMatching() {
       const { data } = await matchingCancel({
         nickname,
       });
-      console.log(data);
 
       if (data === "CANCEL_ACCEPTED") {
         setLoading(false);
