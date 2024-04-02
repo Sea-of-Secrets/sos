@@ -62,7 +62,8 @@ public class ProductServiceImpl implements ProductService {
         userEntity.setGold(userGold - 150);
 
         SecureRandom secureRandom = new SecureRandom();
-        int num = secureRandom.nextInt(100) + 1;
+//        int num = secureRandom.nextInt(100) + 1;
+        int num = 1;
 
         if (num == 1) {
             List<Product> uniqueProductList = productRepository.findByIsUniqueTrueAndIsDeletedFalseAndIsSoldOutFalse();
