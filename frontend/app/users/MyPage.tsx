@@ -5,7 +5,7 @@ import UserNft from "./UserNft";
 import UserProfile from "./UserProfile";
 
 import { UserModel, WalletModel } from "./types";
-import { getUserInfo2, makeWallet2 } from "../api/users";
+import { getUserInfo2, makeWallet2, logout } from "../api/users";
 import { useEffect, useState } from "react";
 import Button from "../render/components/Button";
 
@@ -62,6 +62,16 @@ export default function Page() {
     return address.slice(0, visibleChars) + maskedPart;
   };
 
+  const handleLogout = async () => {
+    const res = await logout();
+
+    if (res.status === 200) {
+      alert("로그아웃!");
+      localStorage.removeItem("access");
+      localStorage.removeItem("refresh");
+    }
+  }
+
   
   return (
     <>
@@ -92,6 +102,7 @@ export default function Page() {
     </div>
     </ModalContent>
         </ModalStyle>
+        <Button size={"sm"} onClick={handleLogout}>로그아웃</Button>
       </Container>
       {wallet && 
         <MiniModal>
