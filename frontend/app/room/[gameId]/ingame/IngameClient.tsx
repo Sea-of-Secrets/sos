@@ -35,17 +35,15 @@ import Docs from "./components/Docs";
 import MiniModal from "~/app/render/components/MiniModal";
 import MiniModalContent from "~/app/render/components/MiniModalContent";
 import Button from "~/app/render/components/Button";
-import { useRouter } from "next/navigation";
 import Off from "./components/Off";
 
 const { send } = gameSocket;
 
 export default function IngameClient() {
   const { loading, setLoading } = useGameLoading();
-  const [loading2, setLoading2] = useState(true);
+  // const [loading2, setLoading2] = useState(true);
   const [timeOut, setTimeOut] = useState(false);
   const [isgameOver, setIsGameOver] = useState("");
-  const router = useRouter();
 
   const { nickname } = useNickname();
   const { gameId } = useGameId();
@@ -78,7 +76,7 @@ export default function IngameClient() {
         sender: nickname,
         gameId,
       });
-    }, 2000);
+    }, 3000);
   };
 
   // 게임 종료
@@ -487,14 +485,14 @@ export default function IngameClient() {
 
   useEffect(() => {
     if (socketMessage.message === "RENDER_COMPLETE_ACCEPTED") {
+      setLoading(false);
     }
 
     // 게임 시작
     if (socketMessage.message === "ALL_RENDERED_COMPLETED") {
-      setLoading2(false);
       setTimeout(() => {
         startAnimation();
-      }, 1000);
+      }, 2000);
     }
 
     // 게임 종료
@@ -545,8 +543,6 @@ export default function IngameClient() {
 
     // 해적의 시작위치 지정 명령
     if (socketMessage.message === "ORDER_INIT_PIRATE_START") {
-      // 비상용
-      setLoading2(false);
       orderInitPirateStart();
     }
 
@@ -750,7 +746,7 @@ export default function IngameClient() {
 
   return (
     <>
-      {loading2 && <Loading />}
+      <Loading />
       {isgameOver !== "" && (
         <MiniModal>
           게임 종료
@@ -778,12 +774,12 @@ export default function IngameClient() {
           fov: 50,
         }}
         onCreated={() => {
-          // setLoading(false);
           send("/pub/room", {
             message: "RENDERED_COMPLETE",
             sender: nickname,
             gameId,
           });
+          setLoading(false);
         }}
       >
         <IngameThree />
