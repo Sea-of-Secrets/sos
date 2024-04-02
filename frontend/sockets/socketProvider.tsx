@@ -22,6 +22,7 @@ const SocketProvider = ({ children }: { children: React.ReactNode }) => {
     const gameIdFromLocalStorage = localStorage.getItem("gameId");
     if (gameIdFromLocalStorage) {
       const localGameId = JSON.parse(gameIdFromLocalStorage).state.gameId;
+
       subscribe(`/sub/${localGameId}`, message => {
         const data = JSON.parse(message.body);
         console.log("서 > 클", data);

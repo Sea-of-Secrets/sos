@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { matching, matchingCancel } from "~/app/api/games";
 import { gameSocket } from "~/sockets";
@@ -22,19 +22,43 @@ export default function FastMatching() {
   const { nickname, setNickname } = useNickname();
   const { gameId, setGameId } = useGameId();
 
+  const [isHost, setIsHost] = useState(false);
+  const [isStart, setIsStart] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isStart) {
+      if (isHost) {
+        send("/pub/room", {
+          message: "START_BUTTON_CLICKED",
+          sender: nickname,
+          gameId,
+        });
+      }
+      disconnect();
+      window.location.href = `/room/${gameId}/ingame`;
+    }
+  }, [isHost, isStart, gameId, nickname]);
+
   const onConnect = () => {
     subscribe(`/sub/${nickname}`, message => {
       const data = JSON.parse(message.body);
+      console.log(data);
 
       if (data.message === "MATCHING_SUCCESS") {
         setGameId(data.room.gameId);
-        send("/pub/room", {
-          message: "ENTER_ROOM",
+        send("/pub/matching", {
+          message: "ENTER_MATCHING_ROOM",
           sender: nickname,
           gameId: data.room.gameId,
         });
-        // window.location.href = "/room/${data.gameId}/ingame";
+      } else if (
+        data.message === "ENTER_SUCCESS" &&
+        data.room.host.nickname === nickname
+      ) {
+        setIsHost(true);
+      } else if (data.message === "PREPARE_GAME_START") {
+        setIsStart(true);
       }
     });
   };

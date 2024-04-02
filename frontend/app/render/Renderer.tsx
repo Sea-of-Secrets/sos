@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import * as THREE from "three";
 
@@ -12,11 +12,15 @@ import LoginButton from "./components/LoginButton";
 import Map from "./Map";
 import Camera from "./Camera";
 import Button from "./Button";
-import { OrbitControls } from "@react-three/drei";
+import useNickname from "~/store/nickname";
 
 export default function Renderer() {
   const [loading, setLoading] = useState(false);
+  const { setNickname } = useNickname();
   const { screen } = useScreenControl();
+  useEffect(() => {
+    setNickname("");
+  }, []);
   return (
     <>
       <Canvas
