@@ -35,8 +35,10 @@ public class RoomController {
         if (authentication != null) {
             CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
             userInfo = userService.getUserInfo(user);
+            System.out.println(userInfo.getUsername());
         }
 
+        System.out.println(authentication);
         Player player = Player.builder()
                 .nickname(roomRequest.getNickname())
                 .userInfo(userInfo)
