@@ -24,24 +24,14 @@ export default function PirateNode({ node, ...props }: PirateNodeProps) {
         {...props}
         ref={meshRef}
         position={position}
-        // scale={NODE_SCALE}
-
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
       >
         <primitive scale={15} object={clonedScene} />
-        <Cylinder args={[14, 14, 2]} onClick={handleClickNode}>
+        <Cylinder args={[13, 13, 0.1]} onClick={handleClickNode}>
           <meshStandardMaterial transparent opacity={0} />
         </Cylinder>
       </mesh>
-      {/* <Text
-        position={[position[0], -48, position[2]]}
-        rotation={[Math.PI / 2, Math.PI, Math.PI]}
-        fontSize={6}
-        color="black"
-      >
-        {node.nodeId}
-      </Text> */}
       <Text3D
         material-color={"black"} // 색상 변경용
         position={[position[0] - 11, -48, position[2] - 15]}
