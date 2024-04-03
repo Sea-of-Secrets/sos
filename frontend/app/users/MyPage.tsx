@@ -95,7 +95,7 @@ export default function Page() {
   };
 
   const handleAddWallet = async () => {
-    const address = window.prompt('지갑 주소를 입력하세요:');
+    const address = window.prompt('지갑 주소를 입력하세요:') as string;
     const response = await addWallet(address);
 
     const updatedWallet = { address : address} as WalletModel;
