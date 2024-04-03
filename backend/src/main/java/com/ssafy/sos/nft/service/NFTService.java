@@ -92,12 +92,8 @@ public class NFTService {
         byte[] bytes = s3Service.downloadFile(product.getImageName());
         String fileData = Base64.getEncoder().encodeToString(bytes);
 
-        System.out.println(fileData);
-
         //NFT 생성
         NFTDTO nft = new NFTDTO(userEntity.getWalletAddress(), fileData, product.getName(), product.getGrade());
-
-        System.out.println(nft);
 
         RestTemplate restTemplate = new RestTemplate();
         // HTTP 요청 헤더 설정
@@ -111,6 +107,7 @@ public class NFTService {
         try {
             restTemplate.postForObject(BLOCK_SERVER_URL + "/nft", requestEntity, Void.class);
         } catch (Exception e) {
+            System.out.println("hello");
             throw new Exception(e);
         }
     }

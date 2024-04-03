@@ -56,7 +56,7 @@ export default function IngameThree() {
       {/* <axesHelper scale={10} /> */}
       <Light />
       <CameraControls ref={cameraRef} />
-      <Camera />
+      {/* <Camera /> */}
       <Tween />
       <Map />
       <SelectableMarineNodeMarkerGroup />
