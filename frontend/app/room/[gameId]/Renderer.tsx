@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import Index from "./index";
 
+import Camera from "./Camera";
 import RoomMap from "./RoomMap";
 import { CameraControls } from "@react-three/drei";
 import { useCamera } from "./stores/useCamera";
@@ -28,7 +29,7 @@ export default function Renderer() {
         setLoading(true);
       }}
     >
-      <CameraControls ref={cameraRef} />
+      <Camera />
       <ambientLight intensity={3} color="#ffffff" />
       <RoomMap />
     </Canvas>

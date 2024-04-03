@@ -107,6 +107,7 @@ public class ProductServiceImpl implements ProductService {
                     selectedProduct.soldOut();
                 }
             } catch(Exception e) {
+                e.printStackTrace();
                 throw new CustomException(ExceptionEnum.NFT_MINTING_ERROR);
             }
         }

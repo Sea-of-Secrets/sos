@@ -17,8 +17,13 @@ import {
 } from "./stores/piece";
 import { useSocketMessage } from "./stores/useSocketMessage";
 import AvailableNode from "./models/Piece/AvailableNode";
+import { useEffect, useRef } from "react";
+import { CameraControls } from "@react-three/drei";
+import { useCamera } from "./stores/useCamera";
 
 export default function IngameThree() {
+  const cameraRef = useRef<CameraControls>(null!);
+  const { initialize } = useCamera();
   const { setPiece: setPiratePiece } = usePiratePiece();
   const { setPiece: setMarineOnePiece } = useMarineOnePiece();
   const { setPiece: setMarineTwoPiece } = useMarineTwoPiece();
@@ -42,11 +47,16 @@ export default function IngameThree() {
     ? getNode(marineThreeNodeId).position
     : getNode(0).position;
 
+  useEffect(() => {
+    initialize(cameraRef);
+  }, [initialize]);
+
   return (
     <>
       {/* <axesHelper scale={10} /> */}
       <Light />
-      <Camera />
+      <CameraControls ref={cameraRef} />
+      {/* <Camera /> */}
       <Tween />
       <Map />
       <SelectableMarineNodeMarkerGroup />
