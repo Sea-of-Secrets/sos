@@ -50,7 +50,7 @@ export const useCamera = create<CameraState>(set => ({
         state.cameraRef.current.zoomTo(1.5, true);
       } else {
         console.error(`Camera not initialized...`);
-        window.alert("카메라가 없다...");
+        // window.alert("카메라가 없다...");
       }
       return { ...state };
     });
@@ -62,7 +62,7 @@ export const useCamera = create<CameraState>(set => ({
         state.cameraRef.current.zoomTo(1, true);
       } else {
         console.error(`Camera not initialized...`);
-        window.alert("카메라가 없다...");
+        // window.alert("카메라가 없다...");
       }
       return { ...state };
     });
@@ -74,7 +74,7 @@ export const useCamera = create<CameraState>(set => ({
         state.cameraRef.current.zoomTo(2, true);
       } else {
         console.error(`Camera not initialized...`);
-        window.alert("카메라가 없다...");
+        // window.alert("카메라가 없다...");
       }
       return { ...state };
     });
@@ -86,7 +86,7 @@ export const useCamera = create<CameraState>(set => ({
         state.cameraRef.current.zoomTo(1, true);
       } else {
         console.error(`Camera not initialized...`);
-        window.alert("카메라가 없다...");
+        // window.alert("카메라가 없다...");
       }
       return { ...state };
     });
