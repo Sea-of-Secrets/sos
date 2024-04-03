@@ -9,9 +9,9 @@ import java.util.List;
 
 public interface ProductService {
 
-    List<ProductDTO.Response> getAllProducts();
+    List<ProductDTO.Info> getAllProducts();
 
-    ProductDTO.Response randomProduct(CustomOAuth2User userDTO);
+    ProductDTO.Result randomProduct(CustomOAuth2User userDTO);
 
     void registerProduct(ProductDTO.Post productDTO, MultipartFile imageFile);
 }

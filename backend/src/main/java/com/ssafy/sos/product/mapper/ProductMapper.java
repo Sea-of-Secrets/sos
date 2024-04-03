@@ -8,25 +8,22 @@ import java.util.List;
 
 @Component
 public class ProductMapper {
-    public List<ProductDTO.Response> entityToDtoForList(List<Product> list) {
+    public List<ProductDTO.Info> entityToDtoForList(List<Product> list) {
 
-        return list.stream().map(product -> ProductDTO.Response.builder()
+        return list.stream().map(product -> ProductDTO.Info.builder()
                 .name(product.getName())
-                .description(product.getDescription())
+                .grade(product.getGrade())
                 .imgUrl(product.getImageUrl())
-                .isUnique(product.getIsUnique())
-                .isSoldOut(product.getIsSoldOut())
                 .build()).toList();
     }
 
-    public ProductDTO.Response entityToDto(Product product) {
+    public ProductDTO.Result entityToDto(Product product, boolean hasItemAlready) {
 
-        return ProductDTO.Response.builder()
+        return ProductDTO.Result.builder()
                 .name(product.getName())
-                .description(product.getDescription())
+                .grade(product.getGrade())
+                .hasItemAlready(hasItemAlready)
                 .imgUrl(product.getImageUrl())
-                .isUnique(product.getIsUnique())
-                .isSoldOut(product.getIsSoldOut())
                 .build();
     }
 }

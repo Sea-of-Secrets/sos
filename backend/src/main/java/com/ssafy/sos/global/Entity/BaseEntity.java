@@ -18,17 +18,14 @@ import java.time.LocalDateTime;
 public class BaseEntity {
 
     @ColumnDefault("false")
-    @Comment("삭제 여부")
     private boolean isDeleted;
 
     @CreatedDate
     @Column(updatable = false)
-    @Comment("생성일시")
     private LocalDateTime createdAt;
 
     @LastModifiedDate
     @Column(updatable = true)
-    @Comment("수정일시")
     private LocalDateTime modifiedAt;
 
     public void deleteData(){

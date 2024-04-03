@@ -95,7 +95,7 @@ public class NFTService {
         System.out.println(fileData);
 
         //NFT 생성
-        NFTDTO nft = new NFTDTO(userEntity.getWalletAddress(), fileData, product.getName(), product.getDescription());
+        NFTDTO nft = new NFTDTO(userEntity.getWalletAddress(), fileData, product.getName(), product.getGrade());
 
         System.out.println(nft);
 
