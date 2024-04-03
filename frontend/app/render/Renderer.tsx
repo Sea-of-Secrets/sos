@@ -18,7 +18,7 @@ import { useCamera } from "./stores/useCamera";
 
 export default function Renderer() {
   const cameraRef = useRef<CameraControls>(null!);
-  const { setCamera } = useCamera();
+  const { setCamera, mainScreen } = useCamera();
   const [loading, setLoading] = useState(false);
   const { setNickname } = useNickname();
   const { screen } = useScreenControl();
@@ -26,11 +26,8 @@ export default function Renderer() {
 
   useEffect(() => {
     setCamera(cameraRef);
-  }, [setCamera]);
-
-  useEffect(() => {
     setNickname("");
-  }, [setNickname]);
+  }, [setNickname, setCamera]);
 
   return (
     <>
