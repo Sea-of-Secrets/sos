@@ -42,12 +42,6 @@ public class MessageController {
     private final GameTimerService gameTimerService;
     private final MatchingService matchingService;
 
-    // 응답이 왔는지 여부를 판단할 flag
-    private boolean lockRespond;
-
-    // 게임 시작했는지 판단
-//    public boolean isStarted = false;
-
     // 소켓 연결시 실행
     @EventListener
     public void handleWebSocketConnectListener(SessionConnectEvent event) {
@@ -104,7 +98,6 @@ public class MessageController {
                 sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
             }
 
-//            isStarted = false;
             if (game == null) return;
 
             // 게임 중에 나가진 경우
@@ -128,13 +121,11 @@ public class MessageController {
     }
 
     @MessageMapping("/matching")
-    public void matching(ClientMessage message, StompHeaderAccessor accessor) {
+    public void matching(ClientMessage message) {
         String sender = message.getSender();
         String gameId = message.getGameId();
         Room room = board.getRoomMap().get(gameId);
-        String sessionId = accessor.getSessionId();
         ServerMessage serverMessage;
-        List<String> sessionInfo = board.getSessionMap().get(sessionId);
 
         if (message.getMessage().equals("MATCHING_ACCEPTED")) {
             room.increaseIsAccepted();
@@ -353,7 +344,7 @@ public class MessageController {
     // 시작 위치 지정 제한 시간 초과
     private void initResponseTimeOut(String gameId, Game game, GameRole role) {
         // 응답 잠그기
-        lockRespond = true;
+        game.setLockRespond(true);
         // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
         sendMessageWithGame(gameId, game, "INIT_"+role+"_START_TIME_OUT");
         // 시작위치 랜덤 지정
@@ -383,7 +374,7 @@ public class MessageController {
         // 시작위치 지정 (서 -> 클)
         sendMessageWithGame(gameId, game, "ORDER_INIT_"+role+"_START");
         // 응답 허용
-        lockRespond = false;
+        game.setLockRespond(false);
         // 15초 타이머 시작
         gameTimerService.startResponseWaitingTimer(gameId, "INIT_"+role+"_START_TIME_OUT");
     }
@@ -391,7 +382,7 @@ public class MessageController {
     // 이동 응답 제한시간 초과
     private void moveResponseTimeOut(String gameId, Game game, GameRole role) {
         // 응답 잠그기
-        lockRespond = true;
+        game.setLockRespond(true);
         // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
         sendMessageWithGame(gameId, game, "MOVE_"+role+"_TIME_OUT");
         HashMap<Integer, Deque<Integer>> findAvailableNode;
@@ -435,7 +426,7 @@ public class MessageController {
         // 이동 명령 (서 -> 클)
         sendMessageWithAvailableNode(gameId, game, "ORDER_MOVE_"+role, availableNode);
         // 응답 허용
-        lockRespond = false;
+        game.setLockRespond(false);
         // 15초 타이머 시작
         gameTimerService.startResponseWaitingTimer(gameId, "MOVE_"+role+"_TIME_OUT");
     }
@@ -492,7 +483,7 @@ public class MessageController {
         // 해군 조사 또는 체포 선택 (서 -> 클)
         sendMessageWithGame(gameId, game, "ORDER_SELECT_WORK_"+role);
         // 응답 허용
-        lockRespond = false;
+        game.setLockRespond(false);
         // 15초 타이머 시작
         gameTimerService.startResponseWaitingTimer(gameId, "SELECT_WORK_"+role+"_TIME_OUT");
     }
@@ -500,7 +491,7 @@ public class MessageController {
     // 행동선택 응답 제한시간 초과
     private void selectResponseTimeOut(String gameId, Game game, GameRole role) {
         // 응답 잠그기
-        lockRespond = true;
+        game.setLockRespond(true);
         // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
         sendMessageWithGame(gameId, game, "SELECT_WORK_"+role+"_TIME_OUT");
         // 응답이 없을 경우 행동은 항상 조사, 해군 행동 선택완료 브로드캐스트 (서 -> 클)
@@ -516,7 +507,7 @@ public class MessageController {
         // 해군 조사 명령 (서 -> 클)
         sendMessageWithGame(gameId, game, "ORDER_INVESTIGATE_"+role);
         // 응답 허용
-        lockRespond = false;
+        game.setLockRespond(false);
         // 15초 타이머 시작
         gameTimerService.startResponseWaitingTimer(gameId, "INVESTIGATE_"+role+"_TIME_OUT");
     }
@@ -524,7 +515,7 @@ public class MessageController {
     // 조사 응답 제한 시간 초과
     private Integer investigateResponseTimeOut(String gameId, Game game, GameRole role) {
         // 응답 잠그기
-        lockRespond = true;
+        game.setLockRespond(true);
         // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
         sendMessageWithGame(gameId, game, "INVESTIGATE_"+role+"_TIME_OUT");
         // 선택 가능한 노드 들 중 하나 랜덤 선택
@@ -559,7 +550,7 @@ public class MessageController {
         // 해군 체포 명령 (서 -> 클)
         sendMessageWithArrestableNode(gameId, game, "ORDER_ARREST_"+role, arrestableNode);
         // 응답 허용
-        lockRespond = false;
+        game.setLockRespond(false);
         // 15초 타이머 시작
         gameTimerService.startResponseWaitingTimer(gameId, "ARREST_"+role+"_TIME_OUT");
     }
@@ -567,7 +558,7 @@ public class MessageController {
     // 체포 응답 제한 시간 초과
     private void arrestResponseTimeOut(String gameId, Game game, GameRole role) {
         // 응답 잠그기
-        lockRespond = true;
+        game.setLockRespond(true);
         // 응답이 오지 않았음을 클라이언트에 알리기 (서 -> 클)
         sendMessageWithGame(gameId, game, "ARREST_"+role+"_TIME_OUT");
         // 랜덤 위치 지정하여 체포 조사하기 (서 -> 클)
@@ -844,7 +835,7 @@ public class MessageController {
         if (currentPosition == null) {
             sendMessageWithGame(gameId, game, role+"_ALREADY_SELECTED_NODE");
             // 응답 허용
-            lockRespond = false;
+            game.setLockRespond(false);
             // 다시 15초 타이머 시작
             gameTimerService.startResponseWaitingTimer(gameId, "INIT_"+role+"_START_TIME_OUT");
             return;
@@ -869,19 +860,19 @@ public class MessageController {
     public void init(ClientInitMessage message) {
         String gameId = message.getGameId();
         Game game = board.getGameMap().get(gameId);
+        System.out.println(game.getGameStatus());
+        boolean lockRespond = game.isLockRespond();
 
         // 게임 시작 (클 -> 서)
         if (message.getMessage().equals("START_GAME") &&
                 game.getGameStatus().equals(GameStatus.BEFORE_START)) {
-            System.out.println("START_GAME");
-//            isStarted = true;
             game.setGameStatus(IN_GAME);
             // 게임 시작하면 방 폭파
             board.getRoomMap().remove(gameId);
             // 해적 시작위치 지정 (서 -> 클)
             sendMessageWithGame(gameId, game, "ORDER_INIT_PIRATE_START");
             // 응답 허용
-            lockRespond = false;
+            game.setLockRespond(false);
             // 15초 타이머 시작
             gameTimerService.startResponseWaitingTimer(gameId, "INIT_PIRATE_START_TIME_OUT");
         }
@@ -987,6 +978,7 @@ public class MessageController {
     public void marine(ClientMoveMessage message) {
         String gameId = message.getGameId();
         Game game = board.getGameMap().get(gameId);
+        boolean lockRespond = game.isLockRespond();
 
         // 해적 이동 완료 (클 -> 서)
         if (message.getMessage().equals("MOVE_PIRATE") && !lockRespond) {
