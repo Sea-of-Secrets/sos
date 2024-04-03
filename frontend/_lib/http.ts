@@ -7,13 +7,6 @@ export const getBaseServerUrl = () => {
   return process.env.NEXT_PUBLIC_SERVER_API_END_POINT;
 };
 
-export const getBaseClientUrl = () => {
-  if (process.env.NODE_ENV === "development") {
-    return "http://localhost:3000/api";
-  }
-  return process.env.NEXT_PUBLIC_CLIENT_API_END_POINT;
-};
-
 export const getBaseSocketServerUrl = () => {
   if (process.env.NODE_ENV === "development") {
     return "ws://localhost:8080/sos";

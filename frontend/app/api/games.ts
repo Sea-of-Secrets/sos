@@ -1,4 +1,4 @@
-import { request, getBaseClientUrl } from "../../_lib/http";
+import { request } from "../../_lib/http";
 
 // type MatchingData = {
 //   nickname: string;
@@ -32,4 +32,11 @@ export const matchingCancel = async ({ nickname }: { nickname: string }) => {
   });
 
   return res;
+};
+
+const getBaseClientUrl = () => {
+  if (process.env.NODE_ENV === "development") {
+    return "http://localhost:3000/api";
+  }
+  return process.env.NEXT_PUBLIC_CLIENT_API_END_POINT;
 };

@@ -1,4 +1,4 @@
-import { request, getBaseClientUrl, getBaseServerUrl } from "../../_lib/http";
+import { request, getBaseServerUrl } from "../../_lib/http";
 import { getAccessToken, getRefreshToken, removeToken } from "~/store/auth";
 
 type RoomData = {
@@ -71,4 +71,11 @@ export const duplicateNickname = async ({ nickname }: { nickname: string }) => {
     },
   );
   return res;
+};
+
+const getBaseClientUrl = () => {
+  if (process.env.NODE_ENV === "development") {
+    return "http://localhost:3000/api";
+  }
+  return process.env.NEXT_PUBLIC_CLIENT_API_END_POINT;
 };
