@@ -104,10 +104,10 @@ const getPieceOption = (props: {
       ? new Vector3(position.x, position.z, position.y)
       : undefined;
   } else if (name === "MARINE1") {
+    visible = socketMessage?.game?.currentPosition[1] !== 0;
     piecePosition = position
       ? new Vector3(position.x, position.z + 6, position.y)
       : undefined;
-    visible = socketMessage?.game?.currentPosition[1] !== 0;
   } else if (name === "MARINE2") {
     visible = socketMessage?.game?.currentPosition[2] !== 0;
     piecePosition = position
@@ -148,6 +148,11 @@ const getPieceOption = (props: {
   if (pieceName === "Zuhee") {
     pieceRotation = new Euler(0, Math.PI, 0);
     piecePosition = new Vector3(position.x - 10, position.z + 30, position.y);
+  }
+
+  if (pieceName === "rare1") {
+    pieceRotation = new Euler(0, Math.PI, 0);
+    piecePosition = new Vector3(position.x - 10, position.z, position.y);
   }
 
   if (pieceName === "common1") {
