@@ -4,6 +4,7 @@ import styled from "@emotion/styled";
 import Button from "../components/Button";
 import { useAuth } from "~/store/auth";
 import { useShopModal } from "./useShopModal";
+import { RANDOM_GATCHA_PRICE } from "~/_lib/constants";
 
 export default function LoggedView() {
   const { toggleModal } = useShopModal();
@@ -13,7 +14,7 @@ export default function LoggedView() {
   return (
     <Container>
       <StyledDiv>보유 골드 : {user ? user.gold : 0} G</StyledDiv>
-      <Button onClick={toggleModal}>150 G</Button>
+      <Button onClick={toggleModal}>{RANDOM_GATCHA_PRICE} G</Button>
     </Container>
   );
 }

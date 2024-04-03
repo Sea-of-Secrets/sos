@@ -16,6 +16,7 @@ import { ShopModalProvier, useShopModal } from "./useShopModal";
 import Modal from "../components/Modal";
 import ModalContent from "../components/ModalContent";
 import { useCamera } from "../stores/useCamera";
+import { RANDOM_GATCHA_PRICE } from "~/_lib/constants";
 
 export default function Shop() {
   return (
@@ -27,7 +28,7 @@ export default function Shop() {
 
 const ShopWrapper = () => {
   const { isOpenedModal, toggleModal } = useShopModal();
-  const { isLoggedIn } = useAuth();
+  const { user, isLoggedIn } = useAuth();
   const { gatchaState, setGatchaState } = useGatcha();
   const { setScreen } = useScreenControl();
   const { ShopGatchaScreen } = useCamera();
@@ -53,17 +54,34 @@ const ShopWrapper = () => {
         <Modal>
           <ModalContent>
             <FlexDirectionColumn>
-              <Title>
-                <div>150 골드를 사용하여 랜덤 가챠!</div>
-              </Title>
-              <ButtonContainer>
-                <Button onClick={handleClickGatchaView} size="sm">
-                  확인
-                </Button>
-                <Button onClick={toggleModal} size="sm">
-                  취소
-                </Button>
-              </ButtonContainer>
+              {user && user.gold && user.gold >= RANDOM_GATCHA_PRICE ? (
+                <>
+                  <Title>
+                    <div>
+                      {RANDOM_GATCHA_PRICE} 골드를 사용하여 NFT 배 획득하기
+                    </div>
+                  </Title>
+                  <ButtonContainer>
+                    <Button onClick={handleClickGatchaView} size="sm">
+                      확인
+                    </Button>
+                    <Button onClick={toggleModal} size="sm">
+                      취소
+                    </Button>
+                  </ButtonContainer>
+                </>
+              ) : (
+                <>
+                  <Title>
+                    <div>골드가 부족해요</div>
+                  </Title>
+                  <ButtonContainer>
+                    <Button onClick={toggleModal} size="sm">
+                      확인
+                    </Button>
+                  </ButtonContainer>
+                </>
+              )}
             </FlexDirectionColumn>
           </ModalContent>
         </Modal>
