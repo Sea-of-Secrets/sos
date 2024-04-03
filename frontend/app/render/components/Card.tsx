@@ -2,7 +2,7 @@ import { useState } from "react";
 import { NFTModel } from "~/app/users/types";
 import styled from "@emotion/styled";
 import Button from "./Button";
-import { saveDefaultPiece } from "~/app/api/users";
+import * as UsersApi from "~/app/api/users";
 
 interface NftCarouselProps {
   nfts: NFTModel[];
@@ -28,12 +28,11 @@ export default function NftCarousel({ nfts }: NftCarouselProps) {
   }
 
   const saveHandler = async () => {
-    const res = await saveDefaultPiece(nfts[currentNftIndex].name);
-
-    if (res.status === 200) {
-      alert("변경 성공!");
-    } else {
-      alert("변경 실패");
+    try {
+      await UsersApi.saveDefaultPiece(nfts[currentNftIndex].name);
+      window.alert("변경 성공!");
+    } catch (e) {
+      window.alert("변경 실패");
     }
   };
 

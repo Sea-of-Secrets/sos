@@ -22,21 +22,9 @@ export const getWallet = async () => {
 };
 
 export const saveDefaultPiece = async (productName: string) => {
-  const access = getAccessToken();
-  const refresh = getRefreshToken();
-
-  const res = await request.post(
-    `${getBaseServerUrl()}/users/piece`,
-    {
-      productName: productName,
-    },
-    {
-      headers: {
-        // Cookie: `access=${access}; refresh=${refresh};`,
-        Authorization: `Bearer ${access}`,
-      },
-    },
-  );
+  const res = await request.post(`${getBaseServerUrl()}/users/piece`, {
+    productName,
+  });
   return res;
 };
 
