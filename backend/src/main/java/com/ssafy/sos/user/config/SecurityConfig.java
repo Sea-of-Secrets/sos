@@ -98,7 +98,6 @@ public class SecurityConfig {
                         .requestMatchers("/nft/**").hasAnyAuthority("ADMIN", "ROLE_USER")
                         .requestMatchers("/users/name").permitAll()
                         .requestMatchers("/users").hasAnyAuthority("ADMIN", "ROLE_USER")
-                        .requestMatchers("/room").hasAnyAuthority("ADMIN", "ROLE_USER")
                         .requestMatchers("/**").permitAll()
                         .anyRequest().authenticated());
 

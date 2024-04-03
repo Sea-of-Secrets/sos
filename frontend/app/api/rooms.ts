@@ -1,4 +1,5 @@
-import { request, getBaseClientUrl } from "../../_lib/http";
+import { request, getBaseClientUrl, getBaseServerUrl } from "../../_lib/http";
+import { getAccessToken, getRefreshToken, removeToken } from "~/store/auth";
 
 type RoomData = {
   gameId: string;
@@ -15,10 +16,17 @@ export const makeRoom = async ({
   nickname: string;
   gameMode: string;
 }) => {
-  const res = await request.post<RoomData>(`${getBaseClientUrl()}/rooms`, {
+  const access = getAccessToken();
+  const refresh = getRefreshToken();
+  const res = await request.post<RoomData>(`${getBaseServerUrl()}/room/make`, {
     nickname,
     gameMode,
     type: "make",
+  },{
+    headers: {
+      Cookie: `access=${access}; refresh=${refresh};`,
+      Authorization: `${access},${refresh}`,
+    },
   });
 
   return res;
@@ -31,13 +39,20 @@ export const enterRoom = async ({
   nickname: string;
   gameId: string;
 }) => {
+  const access = getAccessToken();
+  const refresh = getRefreshToken();
   const res = await request.post<RoomData | string>(
-    `${getBaseClientUrl()}/rooms`,
+    `${getBaseServerUrl()}/rooms`,
     {
       nickname,
       gameId,
       type: "enter",
-    },
+    },{
+      headers: {
+        Cookie: `access=${access}; refresh=${refresh};`,
+        Authorization: `${access},${refresh}`,
+      },
+    }
   );
   return res;
 };
