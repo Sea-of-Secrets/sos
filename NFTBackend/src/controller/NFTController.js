@@ -11,11 +11,15 @@ const {
 router.post("/nft", async (req, res) => {
   console.log(req.body);
   // console.log("data : ",  data);
-  const result = await mintNFT(req.body);
-  if (result != null) {
-    res.send(result);
-  } else {
-    res.send("error");
+  try {
+    const result = await mintNFT(req.body);
+    if (result != null) {
+      res.send(result);
+    } else {
+      res.send("error");
+    }
+  } catch (e) {
+    res.send(e);
   }
 });
 
