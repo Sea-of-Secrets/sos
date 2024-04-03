@@ -1,7 +1,7 @@
 "use client";
 
 import { UserModel, WalletModel } from "./types";
-import { getUserInfo2, logout, makeWallet2 } from "../api/users";
+import * as UsersApi from "../api/users";
 import { useEffect, useState } from "react";
 import Button from "../render/components/Button";
 
@@ -17,7 +17,7 @@ export default function UserProfile() {
 
   const handleMakeWallet = async () => {
     try {
-      const response = await makeWallet2();
+      const response = await UsersApi.makeWallet();
       const { address, mnemonic, privateKey } = response.data as WalletModel;
       setWallet(response.data as WalletModel);
     } catch (e) {

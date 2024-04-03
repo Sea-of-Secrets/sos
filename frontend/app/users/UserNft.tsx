@@ -1,6 +1,6 @@
 "use client";
 
-import { getWallet, getWalletInfo2 } from "../api/users";
+import * as UsersApi from "../api/users";
 import { NFTModel } from "./types";
 import { useEffect, useState } from "react";
 import Card from "../render/components/Card";
@@ -10,7 +10,7 @@ export default function UserNft() {
   const [nftList, setNftList] = useState<NFTModel[]>([]);
 
   const fetchNftList = async () => {
-    const response = await getWallet();
+    const response = await UsersApi.getWallet();
     setNftList(response.data);
     setLoading(true);
   };

@@ -3,8 +3,8 @@ import styled from "@emotion/styled";
 import UserNft from "./UserNft";
 
 import { WalletModel } from "./types";
-import { makeWallet2, logout, getWalletInfo2, addWallet } from "../api/users";
-import { useState, useEffect } from "react";
+import * as UserApi from "../api/users";
+import { useState } from "react";
 
 import Container from "../render/components/Container";
 import { useCamera } from "../render/stores/useCamera";
@@ -27,9 +27,10 @@ export default function Page() {
 
   const handleMakeWallet = async () => {
     try {
-      const response = await makeWallet2();
-      const { address, mnemonic, privateKey } = response.data as WalletModel;
-      setWallet(response.data as WalletModel);
+      const walletResponse = await UserApi.makeWallet();
+      const userResponse = await UserApi.getUserInfo();
+      setWallet(walletResponse.data as WalletModel);
+      setUser(userResponse.data);
     } catch (e) {
       console.error(e);
     }
@@ -78,14 +79,13 @@ export default function Page() {
   };
 
   const handleGetWallet = async () => {
-    const response = await getWalletInfo2();
-    const { address, mnemonic, privateKey } = response.data as WalletModel;
+    const response = await UserApi.getWalletInfo();
     setWallet(response.data as WalletModel);
   };
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await UserApi.logout();
     } catch (e) {
     } finally {
       setUser(null);
@@ -96,12 +96,20 @@ export default function Page() {
 
   const handleAddWallet = async () => {
     const address = window.prompt("지갑 주소를 입력하세요:") as string;
-    const response = await addWallet(address);
 
-    const updatedWallet = { address: address } as WalletModel;
-    setWallet(updatedWallet);
-    if (response.status === 200) {
-      alert("저장 성공");
+    if (!address) {
+      return;
+    }
+
+    try {
+      const response = await UserApi.addWallet(address);
+      const updatedWallet = { address: address } as WalletModel;
+      setWallet(updatedWallet);
+      if (response.status === 200) {
+        window.alert("저장 성공");
+      }
+    } catch (e) {
+      window.alert("올바른 지갑 주소를 입력해주세요");
     }
   };
 
