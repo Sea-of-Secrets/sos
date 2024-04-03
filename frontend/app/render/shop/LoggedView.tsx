@@ -14,7 +14,6 @@ export default function LoggedView() {
     <Container>
       <StyledDiv>보유 골드 : {user ? user.gold : 0} G</StyledDiv>
       <Button onClick={toggleModal}>150 G</Button>
-      {/* <Button onClick={() => setIsOpenedModal(true)}>150 G</Button> */}
     </Container>
   );
 }
