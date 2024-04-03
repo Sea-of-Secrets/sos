@@ -23,7 +23,7 @@ public class Board {
     private int[] marineStartList;
 
     // sessionId : { nickname, gameId }
-    private HashMap<String, List<String>> sessionMap;
+    public HashMap<String, List<String>> sessionMap;
     private HashMap<String, Game> gameMap;
     private HashMap<String, Room> roomMap;
 

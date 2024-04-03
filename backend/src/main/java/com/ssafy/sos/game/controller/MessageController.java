@@ -49,10 +49,10 @@ public class MessageController {
                 event.getMessage().getHeaders().get("simpSessionId"),
                 "message: session ID is null")
                 .toString();
-
+        
         System.out.println(sessionId);
-        board.getSessionMap().put(sessionId, new ArrayList<>());
-        System.out.println(board.getSessionMap().get(sessionId));
+        board.sessionMap.put(sessionId, new ArrayList<>());
+        System.out.println(board.getSessionMap());
     }
 
     // 소켓 연결 해제시 실행
@@ -60,7 +60,7 @@ public class MessageController {
     public void handleDisconnectEvent(SessionDisconnectEvent event) {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         String sessionId = accessor.getSessionId();
-        List<String> sessionMemberGame= board.getSessionMap().getOrDefault(sessionId, null);
+        List<String> sessionMemberGame = board.getSessionMap().getOrDefault(sessionId, null);
 
         System.out.println("disconnect");
         if (sessionMemberGame == null) return;
@@ -123,51 +123,18 @@ public class MessageController {
     }
 
     @MessageMapping("/matching")
-    public void matching(ClientMessage message) {
+    public void matching(ClientMessage message, StompHeaderAccessor accessor) {
+        String sessionId = accessor.getSessionId();
         String sender = message.getSender();
         String gameId = message.getGameId();
         Room room = board.getRoomMap().get(gameId);
         ServerMessage serverMessage;
 
-        if (message.getMessage().equals("MATCHING_ACCEPTED")) {
-            room.increaseIsAccepted();
-
-            if (room.getIsAccepted() == 2) {
-                serverMessage = ServerMessage.builder()
-                        .gameId(gameId)
-                        .room(room)
-                        .message("ALL_ACCEPTED")
-                        .build();
-
-                sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
-            }
-        }
-
-        if (message.getMessage().equals("MATCHING_REJECTED")) {
-            // 거절 발생 시 나머지 플레이어는 자동으로 큐에 넣어 주고
-            // 만들어진 방은 폭파
-            Player acceptPlayer;
-            for (int i=0; i<room.getGameMode().playerLimit(); i++) {
-                Player player = room.getInRoomPlayers().get(i);
-                if (!player.getNickname().equals(sender)) {
-                    acceptPlayer = player;
-
-                    matchingService.enqueue(acceptPlayer);
-                    serverMessage = ServerMessage.builder()
-                            .gameId(gameId)
-                            .message("NEED_RE_MATCHING")
-                            .build();
-
-                    sendingOperations.convertAndSend("/sub/" + acceptPlayer.getNickname(), serverMessage);
-                    break;
-                }
-            }
-
-            board.getRoomMap().remove(gameId);
-        }
-
         // 방 입장 (클 -> 서)
         if (message.getMessage().equals("ENTER_MATCHING_ROOM")) {
+            List<String> sessionInfo = board.getSessionMap().getOrDefault(sessionId, null);
+            sessionInfo.add(sender);
+            sessionInfo.add(gameId);
 
             // 정원이 다 찼을 경우 시작버튼 활성화 broadcast
             if (room != null) {
