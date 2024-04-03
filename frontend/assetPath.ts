@@ -49,15 +49,15 @@ export const PiecePathMap = {
   },
   rare1: {
     src: "/rare1/scene.gltf",
-    size: 5,
+    size: 0.3,
   },
   rare2: {
     src: "/rare2/scene.gltf",
-    size: 0.2,
+    size: 8,
   },
   rare3: {
     src: "/rare3/scene.gltf",
-    size: 10,
+    size: 8,
   },
   common1: {
     src: "/common1/scene.gltf",

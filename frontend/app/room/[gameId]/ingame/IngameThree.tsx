@@ -80,31 +80,34 @@ export default function IngameThree() {
           <Piece
             name="MARINE1"
             position={marineOnePosition}
-            pieceName={
-              socketMessage.game?.players[1]["userInfo"]
-                ? `${socketMessage.game?.players[1]["userInfo"]["productName"]}`
-                : "MARINE1"
-            }
+            pieceName={"rare3"}
+            // pieceName={
+            //   socketMessage.game?.players[1]["userInfo"]
+            //     ? `${socketMessage.game?.players[1]["userInfo"]["productName"]}`
+            //     : "MARINE1"
+            // }
             set={setMarineOnePiece}
           />
           <Piece
             name="MARINE2"
             position={marineTwoPosition}
-            pieceName={
-              socketMessage.game?.players[2]["userInfo"]
-                ? `${socketMessage.game?.players[2]["userInfo"]["productName"]}`
-                : "MARINE2"
-            }
+            pieceName={"rare2"}
+            // pieceName={
+            //   socketMessage.game?.players[2]["userInfo"]
+            //     ? `${socketMessage.game?.players[2]["userInfo"]["productName"]}`
+            //     : "MARINE2"
+            // }
             set={setMarineTwoPiece}
           />
           <Piece
             name="MARINE3"
             position={marineThreePosition}
-            pieceName={
-              socketMessage.game?.players[3]["userInfo"]
-                ? `${socketMessage.game?.players[3]["userInfo"]["productName"]}`
-                : "MARINE3"
-            }
+            pieceName={"rare1"}
+            // pieceName={
+            //   socketMessage.game?.players[3]["userInfo"]
+            //     ? `${socketMessage.game?.players[3]["userInfo"]["productName"]}`
+            //     : "MARINE3"
+            // }
             set={setMarineThreePiece}
           />
         </>
