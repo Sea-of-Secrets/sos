@@ -13,13 +13,13 @@ public class NFTDTO {
     private String file;
     private String author;
     private String title;
-    private Grade grade;
+    private String description;
 
-    public NFTDTO(String walletAddress, String file, String title, Grade grade) {
+    public NFTDTO(String walletAddress, String file, String title, String description) {
         this.walletAddress = walletAddress;
         this.file = file;
         this.author = "SOS";
         this.title = title;
-        this.grade = grade;
+        this.description = description;
     }
 }

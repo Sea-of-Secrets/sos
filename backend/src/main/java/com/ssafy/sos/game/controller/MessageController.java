@@ -49,6 +49,7 @@ public class MessageController {
                 event.getMessage().getHeaders().get("simpSessionId"),
                 "message: session ID is null")
                 .toString();
+        
         System.out.println(sessionId);
         board.sessionMap.put(sessionId, new ArrayList<>());
         System.out.println(board.getSessionMap());
