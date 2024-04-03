@@ -1,31 +1,29 @@
-import { AxiosResponse } from "axios";
-import { useCallback, useState } from "react";
+import { useEffect, useState } from "react";
 
-export function useFetch<T>(cb: () => Promise<AxiosResponse<T, any>>) {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(false);
+export function useFetch<T>(fetchPromise: () => Promise<T>) {
   const [data, setData] = useState<T | null>(null);
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
-  const fetch = useCallback(async () => {
-    if (loading) {
-      return;
-    }
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const result = await fetchPromise();
+        setData(result);
+        setLoading(false);
+      } catch (e) {
+        setError(true);
+        setLoading(false);
+      }
+    };
 
-    try {
-      setLoading(true);
-      const res = await cb();
-      setData(res.data);
-    } catch (e) {
-      setError(true);
-    } finally {
-      setLoading(false);
-    }
-  }, [cb, loading]);
+    fetchData();
 
-  return {
-    loading,
-    error,
-    data,
-    fetch,
-  };
+    // Cleanup 함수를 반환하여 컴포넌트가 언마운트될 때 실행되도록 합니다.
+    return () => {
+      // Cleanup 코드
+    };
+  }, [fetchPromise]); // fetchPromise가 변경될 때마다 useEffect가 실행됩니다.
+
+  return { loading, error, data };
 }

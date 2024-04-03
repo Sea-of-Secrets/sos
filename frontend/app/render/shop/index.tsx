@@ -72,7 +72,8 @@ const ShopWrapper = () => {
         {isLoggedIn ? (
           <LoggedView />
         ) : (
-          <Button onClick={handleClickLogin}>로그인</Button>
+          <LoggedView />
+          // <Button onClick={handleClickLogin}>로그인</Button>
         )}
       </Container>
     </>

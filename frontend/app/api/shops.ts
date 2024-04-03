@@ -9,19 +9,8 @@ export const getProductList = async () => {
 };
 
 export const postGatcha = async () => {
-  const access = getAccessToken();
-  const refresh = getRefreshToken();
-
-  const res = await request.post(`${getBaseServerUrl()}/products/shops`, {
-    headers: {
-      Cookie: `access=${access}; refresh=${refresh};`,
-      Authorization: `${access},${refresh}`,
-    },
+  const res = await request.post(`${getBaseClientUrl()}/shops`, {
+    type: "RANDOM",
   });
   return res;
 };
-
-// export const postGatcha = async () => {
-//   const res = await request.post(`${getBaseServerUrl()}/products/random`);
-//   return res;
-// };

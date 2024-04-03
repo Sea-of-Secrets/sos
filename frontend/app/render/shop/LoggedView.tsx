@@ -1,25 +1,14 @@
 "use client";
 
-import { useCallback, useState } from "react";
 import styled from "@emotion/styled";
 import Button from "../components/Button";
 import { useAuth } from "~/store/auth";
-import { useGatcha } from "../stores/useGatch";
-import { useCamera } from "../stores/useCamera";
-import Modal from "../components/Modal";
-import ModalContent from "../components/ModalContent";
-import * as ShopApi from "~/app/api/shops";
 import { useShopModal } from "./useShopModal";
 
 export default function LoggedView() {
   const { toggleModal } = useShopModal();
 
   const { user } = useAuth();
-
-  // const fetchGatcha = async () => {
-  //   const response = await ShopApi.postGatcha();
-  //   console.log(response);
-  // };
 
   return (
     <Container>
