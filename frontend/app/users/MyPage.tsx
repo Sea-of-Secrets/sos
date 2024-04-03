@@ -149,6 +149,9 @@ export default function Page() {
                       <Button onClick={handleGetWallet} size={"xs"}>
                         지갑 정보
                       </Button>
+                      <Button onClick={handleAddWallet} size={"sm"}>
+                        지갑 수정
+                      </Button>
                     </div>
                   )}
                   <h2 className="pt-5">현재 기본 말 : {user.productName}</h2>
