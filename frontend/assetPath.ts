@@ -83,6 +83,10 @@ export const PiecePathMap = {
     src: "/pirate_flag/scene.gltf",
     size: 10,
   },
+  SHOP_CLOSED_TREASURE_BOX: {
+    src: "/low_poly_treasure_chest/scene.gltf",
+    size: 20,
+  },
 } as const;
 
 export const PieceEffectPathMap = {

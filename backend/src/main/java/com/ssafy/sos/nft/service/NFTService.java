@@ -93,7 +93,7 @@ public class NFTService {
         String fileData = Base64.getEncoder().encodeToString(bytes);
 
         //NFT 생성
-        NFTDTO nft = new NFTDTO(userEntity.getWalletAddress(), fileData, product.getName(), product.getGrade());
+        NFTDTO nft = new NFTDTO(userEntity.getWalletAddress(), fileData, product.getName(), product.getGrade().name());
 
         RestTemplate restTemplate = new RestTemplate();
         // HTTP 요청 헤더 설정
