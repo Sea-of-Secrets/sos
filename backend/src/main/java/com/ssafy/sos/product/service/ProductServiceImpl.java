@@ -4,6 +4,7 @@ import com.ssafy.sos.global.S3.S3Service;
 import com.ssafy.sos.global.error.CustomException;
 import com.ssafy.sos.global.error.ExceptionEnum;
 import com.ssafy.sos.nft.service.NFTService;
+import com.ssafy.sos.product.domain.Grade;
 import com.ssafy.sos.product.domain.Product;
 import com.ssafy.sos.product.domain.Purchase;
 import com.ssafy.sos.product.domain.PurchaseId;
@@ -28,21 +29,21 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class ProductServiceImpl implements ProductService {
 
+    private final S3Service s3Service;
+
+    private final NFTService nftService;
+
     private final UserRepository userRepository;
 
     private final ProductRepository productRepository;
 
     private final PurchaseRepository purchaseRepository;
 
-    private final S3Service s3Service;
-
     private final ProductMapper productMapper;
-
-    private final NFTService nftService;
 
     @Transactional(readOnly = true)
     @Override
-    public List<ProductDTO.Response> getAllProducts() {
+    public List<ProductDTO.Info> getAllProducts() {
 
         List<Product> productList = productRepository.findByIsDeletedFalse();
 
@@ -50,85 +51,90 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public ProductDTO.Response randomProduct(CustomOAuth2User userDTO) {
+    public ProductDTO.Result randomProduct(CustomOAuth2User userDTO) {
 
         UserEntity userEntity = userRepository.findByUsername(userDTO.getUsername());
         int userGold = userEntity.getGold();
 
-        if(userGold < 150) {
+        if (userGold < 150) {
             throw new CustomException(ExceptionEnum.NOT_ENOUGH_GOLD);
+        }
+
+        SecureRandom secureRandom = new SecureRandom();
+        int num = secureRandom.nextInt(100) + 1;
+        Grade grade;
+
+        if (num <= 10) {
+            grade = Grade.LEGENDARY;
+        }
+        else if (num <= 40) {
+            grade = Grade.RARE;
+        }
+        else {
+            grade = Grade.COMMON;
+        }
+
+        List<Product> productList = productRepository.findByGradeAndIsDeletedFalseAndIsSoldOutFalse(grade);
+
+        if (grade == Grade.LEGENDARY && productList.size() == 0) {
+            productRepository.findByGradeAndIsDeletedFalseAndIsSoldOutFalse(Grade.RARE);
         }
 
         userEntity.setGold(userGold - 150);
 
-        SecureRandom secureRandom = new SecureRandom();
-//        int num = secureRandom.nextInt(100) + 1;
-        int num = 1;
-
-        if (num == 1) {
-            List<Product> uniqueProductList = productRepository.findByIsUniqueTrueAndIsDeletedFalseAndIsSoldOutFalse();
-
-            if (!uniqueProductList.isEmpty()) {
-                int index = secureRandom.nextInt(uniqueProductList.size());
-                Product selectedUniqueProduct = uniqueProductList.get(index);
-
-                PurchaseId purchaseId = PurchaseId.builder()
-                        .userId(userEntity.getId())
-                        .productId(selectedUniqueProduct.getId())
-                        .build();
-
-                purchaseRepository.save(Purchase.builder()
-                        .id(purchaseId)
-                        .productId(selectedUniqueProduct)
-                        .userId(userEntity)
-                        .build());
-
-                try {
-                    nftService.mintingNFT(userEntity, selectedUniqueProduct);
-
-                    selectedUniqueProduct.soldOut();
-
-                    return productMapper.entityToDto(selectedUniqueProduct);
-                } catch(Exception e) {
-                    throw new CustomException(ExceptionEnum.NFT_MINTING_ERROR);
-                }
-            }
-        }
-
-        List<Product> commonProductList = productRepository.findByIsUniqueFalseAndIsDeletedFalseAndIsSoldOutFalse();
-        int index = secureRandom.nextInt(commonProductList.size());
-        Product selectedCommonProduct = commonProductList.get(index);
+        int index = secureRandom.nextInt(productList.size());
+        boolean hasItemAlready = false;
+        Product selectedProduct = productList.get(index);
 
         PurchaseId purchaseId = PurchaseId.builder()
                 .userId(userEntity.getId())
-                .productId(selectedCommonProduct.getId())
+                .productId(selectedProduct.getId())
                 .build();
 
         Optional<Purchase> purchase = purchaseRepository.findById(purchaseId);
 
-        if(purchase.isEmpty()) {
+        if (purchase.isEmpty()) {
             purchaseRepository.save(Purchase.builder()
                     .id(purchaseId)
-                    .productId(selectedCommonProduct)
+                    .productId(selectedProduct)
                     .userId(userEntity)
                     .build());
+
+            try {
+                nftService.mintingNFT(userEntity, selectedProduct);
+
+                if(grade == Grade.LEGENDARY) {
+                    selectedProduct.soldOut();
+                }
+            } catch(Exception e) {
+                throw new CustomException(ExceptionEnum.NFT_MINTING_ERROR);
+            }
+        }
+        else {
+            hasItemAlready = true;
         }
 
-        return productMapper.entityToDto(selectedCommonProduct);
+        return productMapper.entityToDto(selectedProduct, hasItemAlready);
     }
 
     @Override
     public void registerProduct(ProductDTO.Post productDTO, MultipartFile imageFile) {
+        Grade grade;
+
+        try {
+            grade = Grade.valueOf(productDTO.grade().toUpperCase());
+        } catch (Exception e) {
+            throw new CustomException(ExceptionEnum.NOT_EXIST_GRADE);
+        }
 
         String imageName = s3Service.saveUploadFile(imageFile);
         String imageUrl = s3Service.getFilePath(imageName);
 
         productRepository.save(Product.builder()
                 .name(productDTO.name())
-                .description(productDTO.description())
+                .grade(grade)
                 .imageName(imageName)
                 .imageUrl(imageUrl)
-                .isUnique(productDTO.isUnique())
                 .build());
     }
 }

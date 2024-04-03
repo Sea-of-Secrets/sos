@@ -17,7 +17,8 @@ public enum ExceptionEnum {
 
     // Shop Error: 3000 ~
     NOT_ENOUGH_GOLD(HttpStatus.BAD_REQUEST, "CE3000", Message.NOT_ENOUGH_GOLD),
-    NFT_MINTING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "CE3001", Message.NFT_MINTING_ERROR);
+    NFT_MINTING_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "CE3001", Message.NFT_MINTING_ERROR),
+    NOT_EXIST_GRADE(HttpStatus.BAD_REQUEST, "CE3002", Message.NOT_EXIST_GRADE);
 
     private final HttpStatus status;
     private final String code;
@@ -33,5 +34,6 @@ public enum ExceptionEnum {
         String MEMBER_NOT_FOUND = "회원을 찾을 수 없습니다.";
         String NOT_ENOUGH_GOLD = "보유 골드가 부족합니다.";
         String NFT_MINTING_ERROR = "NFT 발급에 실패했습니다.";
+        String NOT_EXIST_GRADE = "존재하지 않는 등급입니다.";
     }
 }
