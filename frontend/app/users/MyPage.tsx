@@ -79,7 +79,6 @@ export default function Page() {
 
   const handleGetWallet = async () => {
     const response = await getWalletInfo2();
-    const { address, mnemonic, privateKey } = response.data as WalletModel;
     setWallet(response.data as WalletModel);
   };
 
@@ -96,12 +95,20 @@ export default function Page() {
 
   const handleAddWallet = async () => {
     const address = window.prompt("지갑 주소를 입력하세요:") as string;
-    const response = await addWallet(address);
 
-    const updatedWallet = { address: address } as WalletModel;
-    setWallet(updatedWallet);
-    if (response.status === 200) {
-      alert("저장 성공");
+    if (!address) {
+      return;
+    }
+
+    try {
+      const response = await addWallet(address);
+      const updatedWallet = { address: address } as WalletModel;
+      setWallet(updatedWallet);
+      if (response.status === 200) {
+        window.alert("저장 성공");
+      }
+    } catch (e) {
+      window.alert("올바른 지갑 주소를 입력해주세요");
     }
   };
 
