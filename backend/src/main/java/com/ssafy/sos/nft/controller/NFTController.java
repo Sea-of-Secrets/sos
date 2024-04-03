@@ -68,8 +68,13 @@ public class NFTController {
         CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
 
         String address = wallet.get("walletAddress");
-        if (address == null || address.length() < 27 || address.length() > 40) {
+        System.out.println(address);
+        if (address == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("올바르지 못한 지갑 주소입니다.");
+        }
+
+        if (address.length() < 27 || address.length() > 50) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("올바르지 못한 지갑 주소 길이입니다.");
         }
 
         UserEntity userInfo = userService.getUserInfo(user);
