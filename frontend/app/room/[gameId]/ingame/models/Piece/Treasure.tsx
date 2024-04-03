@@ -22,7 +22,7 @@ export default function TreasureRenderer({
   const [animationPlayed, setAnimationPlayed] = useState(false);
 
   useEffect(() => {
-    if (!animationPlayed && socketMessage?.game.treasures[nodeId]) {
+    if (!animationPlayed && isOpen) {
       setTimeout(() => {
         const action = actions.Scene;
         if (action) {
@@ -35,7 +35,7 @@ export default function TreasureRenderer({
         setAnimationPlayed(true);
       }, 3000);
     }
-  }, [socketMessage, nodeId, animationPlayed, actions]);
+  }, [isOpen, nodeId, animationPlayed, actions]);
 
   let visible =
     isOpen || socketMessage?.game?.players[0]["nickname"] === nickname;
@@ -48,7 +48,6 @@ export default function TreasureRenderer({
         PiecePathMap[`TREASURE${number}` as keyof typeof PiecePathMap].size
       }
       visible={visible}
-      // material={}
     >
       <primitive object={scene} />
     </mesh>

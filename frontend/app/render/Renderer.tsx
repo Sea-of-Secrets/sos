@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import * as THREE from "three";
 import { useScreenControl } from "./stores/useScreenControl";
@@ -10,13 +10,17 @@ import LoginButton from "./components/LoginButton";
 import MyPageButton from "./components/MyPageButton";
 
 import Map from "./Map";
-import Camera from "./Camera";
 import Button from "./Button";
 import { useGatcha } from "./stores/useGatch";
 import useNickname from "~/store/nickname";
 import { getAccessToken, useAuth } from "~/store/auth";
+import { CameraControls } from "@react-three/drei";
+import { useCamera } from "./stores/useCamera";
 
 export default function Renderer() {
+  const cameraRef = useRef<CameraControls>(null!);
+  const { setCamera } = useCamera();
+
   const { isLoggedIn } = useAuth();
   const [loading, setLoading] = useState(false);
   const { setNickname } = useNickname();
@@ -24,8 +28,12 @@ export default function Renderer() {
   const { gatchaState } = useGatcha();
 
   useEffect(() => {
+    setCamera(cameraRef);
+  }, [setCamera]);
+
+  useEffect(() => {
     setNickname("");
-  }, []);
+  }, [setNickname]);
 
   return (
     <>
@@ -42,7 +50,7 @@ export default function Renderer() {
           setLoading(true);
         }}
       >
-        <Camera />
+        <CameraControls ref={cameraRef} />
         <ambientLight />
         <Map />
       </Canvas>

@@ -491,7 +491,7 @@ export default function IngameClient() {
     if (socketMessage.message === "ALL_RENDERED_COMPLETED") {
       setTimeout(() => {
         startAnimation();
-      }, 2000);
+      }, 3000);
     }
 
     // 게임 종료
@@ -735,7 +735,7 @@ export default function IngameClient() {
 
   return (
     <>
-      <Loading />
+      {/* <Loading /> */}
       {isgameOver !== "" && (
         <MiniModal>
           게임 종료

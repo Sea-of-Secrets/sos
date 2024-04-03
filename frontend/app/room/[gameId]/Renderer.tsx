@@ -1,14 +1,21 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Canvas } from "@react-three/fiber";
 import Index from "./index";
 
-import Camera from "./Camera";
 import RoomMap from "./RoomMap";
+import { CameraControls } from "@react-three/drei";
+import { useCamera } from "./stores/useCamera";
 
 export default function Renderer() {
+  const cameraRef = useRef<CameraControls>(null!);
+  const { setCamera } = useCamera();
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setCamera(cameraRef);
+  }, [setCamera]);
 
   return (
     <Canvas
@@ -21,7 +28,7 @@ export default function Renderer() {
         setLoading(true);
       }}
     >
-      <Camera />
+      <CameraControls ref={cameraRef} />
       <ambientLight intensity={3} color="#ffffff" />
       <RoomMap />
     </Canvas>
