@@ -28,6 +28,11 @@ public class GameTimerServiceImpl implements GameTimerService {
     }
 
     @Override
+    public void beforePrepareGameStart(String gameId, String message) {
+        future = scheduler.schedule(() -> eventPublisher.publishEvent(new TimerTimeoutEvent(this, gameId, message)), 1, TimeUnit.SECONDS);
+    }
+
+    @Override
     public void afterInitTimer(String gameId, String message) {
         future = scheduler.schedule(() -> eventPublisher.publishEvent(new TimerTimeoutEvent(this, gameId, message)), 8, TimeUnit.SECONDS);
     }

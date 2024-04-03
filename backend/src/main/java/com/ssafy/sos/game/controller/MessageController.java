@@ -133,7 +133,7 @@ public class MessageController {
         String gameId = message.getGameId();
         Room room = board.getRoomMap().get(gameId);
         String sessionId = accessor.getSessionId();
-        ServerMessage serverMessage = null;
+        ServerMessage serverMessage;
         List<String> sessionInfo = board.getSessionMap().get(sessionId);
 
         if (message.getMessage().equals("MATCHING_ACCEPTED")) {
@@ -230,10 +230,7 @@ public class MessageController {
 
             // 정원이 다 찼을 경우 시작버튼 활성화 broadcast
             if (room.getInRoomPlayers().size() == room.getGameMode().playerLimit()) {
-                serverMessage = ServerMessage.builder()
-                        .message("PREPARE_GAME_START")
-                        .build();
-                sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+                gameTimerService.beforePrepareGameStart(gameId, "READY_PREPARE_GAME_START");
             }
         }
 
@@ -602,6 +599,14 @@ public class MessageController {
         String gameId = event.getGameId();
         String message = event.getMessage();
         Game game = board.getGameMap().get(gameId);
+        // 게임 시작 준비
+        if (message.equals("READY_PREPARE_GAME_START")) {
+            ServerMessage serverMessage;
+            serverMessage = ServerMessage.builder()
+                    .message("PREPARE_GAME_START")
+                    .build();
+            sendingOperations.convertAndSend("/sub/" + gameId, serverMessage);
+        }
 
         // 해적 시작위치 지정 응답 제한시간 초과
         if (message.equals("INIT_PIRATE_START_TIME_OUT")) {
