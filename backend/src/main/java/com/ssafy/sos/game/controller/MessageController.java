@@ -50,7 +50,9 @@ public class MessageController {
                 "message: session ID is null")
                 .toString();
 
+        System.out.println(sessionId);
         board.getSessionMap().put(sessionId, new ArrayList<>());
+        System.out.println(board.getSessionMap().get(sessionId));
     }
 
     // 소켓 연결 해제시 실행
