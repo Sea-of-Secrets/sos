@@ -17,17 +17,19 @@ export default function Camera() {
 
   useEffect(() => {
     setCamera(cameraRef);
-    if (startIntro) {
-      mainScreen();
-      setMainScreen();
-    } else {
-      introScreen();
-      setScreen("START");
-      setStartIntroScreen();
-      setTimeout(() => {
-        setShowLogo();
-      }, 4000);
-    }
+    // if (startIntro) {
+    mainScreen();
+    setMainScreen();
+    //   mainScreen();
+    //   setMainScreen();
+    // } else {
+    //   introScreen();
+    //   setScreen("START");
+    //   setStartIntroScreen();
+    //   setTimeout(() => {
+    //     setShowLogo();
+    //   }, 4000);
+    // }
   }, [
     startIntro,
     setMainScreen,
