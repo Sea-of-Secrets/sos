@@ -71,7 +71,7 @@ export const PiecePathMap = {
     src: "/common3/scene.gltf",
     size: 15,
   },
-  Zuhee: {
+  zuhee: {
     src: "/Zuhee/scene.gltf",
     size: 20,
   },
