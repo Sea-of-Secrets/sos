@@ -100,6 +100,9 @@ export default function Page() {
 
     const updatedWallet = { address : address} as WalletModel;
     setWallet(updatedWallet);
+    if (response.status === 200) {
+      alert("저장 성공")
+    }
   }
 
   return (
