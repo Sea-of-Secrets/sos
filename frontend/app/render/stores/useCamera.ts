@@ -9,6 +9,7 @@ export const DEFAULT_FOV = 50;
 interface CameraState {
   cameraRef: MutableRefObject<CameraControls> | null;
   setCamera: (newCameraRef: MutableRefObject<CameraControls>) => void;
+  introScreen: () => void;
   mainScreen: () => void;
   ShopScreen: () => void;
   RoomScreen: () => void;
@@ -30,9 +31,31 @@ export const useCamera = create<CameraState>(set => ({
       return { ...state, cameraRef: newCameraRef };
     });
   },
+  introScreen: () => {
+    set(state => {
+      if (state.cameraRef) {
+        state.cameraRef.current.smoothTime = 2;
+        state.cameraRef.current.setLookAt(
+          35000,
+          100000,
+          -200000,
+          -50000,
+          60000,
+          -30000,
+          true,
+        );
+        state.cameraRef.current.zoomTo(1, true);
+      } else {
+        console.error(`Camera not initialized...`);
+        //window.alert("카메라가 없다...");
+      }
+      return { ...state };
+    });
+  },
   mainScreen: () => {
     set(state => {
       if (state.cameraRef) {
+        state.cameraRef.current.smoothTime = 0.25;
         state.cameraRef.current.setLookAt(
           -14863,
           100000,

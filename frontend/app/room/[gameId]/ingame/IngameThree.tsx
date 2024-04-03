@@ -105,30 +105,6 @@ export default function IngameThree() {
             }
             set={setMarineThreePiece}
           />
-          {/* <Piece
-            name="PIRATE"
-            position={piratePosition}
-            pieceName="common1"
-            set={setPiratePiece}
-          />
-          <Piece
-            name="MARINE1"
-            position={marineOnePosition}
-            pieceName="common2"
-            set={setMarineOnePiece}
-          />
-          <Piece
-            name="MARINE2"
-            position={marineTwoPosition}
-            pieceName="common3"
-            set={setMarineTwoPiece}
-          />
-          <Piece
-            name="MARINE3"
-            position={marineThreePosition}
-            pieceName="Zuhee"
-            set={setMarineThreePiece}
-          /> */}
         </>
       )}
       <TreasureGroup />

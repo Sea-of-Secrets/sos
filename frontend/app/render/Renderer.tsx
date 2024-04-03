@@ -9,25 +9,21 @@ import BackButton from "./components/BackButton";
 import LoginButton from "./components/LoginButton";
 
 import Map from "./Map";
+import Camera from "./Camera";
 import Button from "./Button";
 import { useGatcha } from "./stores/useGatch";
 import useNickname from "~/store/nickname";
 import { getAccessToken, useAuth } from "~/store/auth";
-import { CameraControls } from "@react-three/drei";
-import { useCamera } from "./stores/useCamera";
 
 export default function Renderer() {
-  const cameraRef = useRef<CameraControls>(null!);
-  const { setCamera, mainScreen } = useCamera();
   const [loading, setLoading] = useState(false);
   const { setNickname } = useNickname();
   const { screen } = useScreenControl();
   const { gatchaState } = useGatcha();
 
   useEffect(() => {
-    setCamera(cameraRef);
     setNickname("");
-  }, [setNickname, setCamera]);
+  }, [setNickname]);
 
   return (
     <>
@@ -44,7 +40,7 @@ export default function Renderer() {
           setLoading(true);
         }}
       >
-        <CameraControls ref={cameraRef} />
+        <Camera />
         <ambientLight />
         <Map />
       </Canvas>
@@ -52,9 +48,12 @@ export default function Renderer() {
       {loading && screen === "MAIN" && <LoginButton />}
       {screen !== "MAIN" &&
         screen !== "FASTMATCHING" &&
+        screen !== "START" &&
         gatchaState === "GATCHA_PREV" && <BackButton />}
       {loading && screen === "MAIN" && <LoginButton />}
-      {screen !== "MAIN" && screen !== "FASTMATCHING" && <BackButton />}
+      {screen !== "MAIN" && screen !== "FASTMATCHING" && screen !== "START" && (
+        <BackButton />
+      )}
     </>
   );
 }

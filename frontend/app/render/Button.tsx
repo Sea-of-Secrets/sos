@@ -5,12 +5,13 @@ import Room from "./room";
 import Main from "./main";
 import FastMatcing from "./fastmatching";
 import Login from "./login";
+import Logo from "./logo";
 import Shop from "./shop";
 import MyPage from "../users/MyPage";
 
 export default function Button() {
   const { cameraRef, mainScreen } = useCamera();
-  const { screen, setScreen, setMainScreen } = useScreenControl();
+  const { screen, setScreen, setMainScreen, showLogo } = useScreenControl();
 
   if (screen === "MAIN") {
     return <Main />;
@@ -24,5 +25,7 @@ export default function Button() {
     return <MyPage />;
   } else if (screen === "FASTMATCHING") {
     return <FastMatcing />;
+  } else if (screen === "START" && showLogo) {
+    return <Logo />;
   }
 }
