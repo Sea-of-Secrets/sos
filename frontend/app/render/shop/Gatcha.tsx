@@ -24,12 +24,12 @@ export default function Gatcha() {
     setLoading(true);
 
     try {
-      mockGatcha().then(data => setRandomGatchaData(data)); // 돈 계속 빠져나가서 만든 테스트용 함수
+      // mockGatcha().then(data => setRandomGatchaData(data)); // 돈 계속 빠져나가서 만든 테스트용 함수
 
       // TODO: 배포시에는 이걸 사용해주세용
-      // const gatchaData = await fetchGatcha();
-      // console.log("당신의 NFT ! : ", gatchaData);
-      // setRandomGatchaData(gatchaData);
+      const gatchaData = await fetchGatcha();
+      console.log("당신의 NFT ! : ", gatchaData);
+      setRandomGatchaData(gatchaData);
       try {
         UsersApi.getUserInfo().then(res => setUser(res.data as User));
       } catch (e) {
