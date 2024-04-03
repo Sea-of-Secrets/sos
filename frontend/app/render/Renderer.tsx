@@ -43,7 +43,7 @@ export default function Renderer() {
           setLoading(true);
         }}
       >
-        <Suspense
+        {/* <Suspense
           fallback={
             <>
               <Html>
@@ -51,12 +51,12 @@ export default function Renderer() {
               </Html>
             </>
           }
-        >
-          <Camera />
-          <ambientLight />
-          <GatchaAnimation />
-          <Map />
-        </Suspense>
+        > */}
+        <Camera />
+        <ambientLight />
+        <GatchaAnimation />
+        <Map />
+        {/* </Suspense> */}
       </Canvas>
       {loading && <Button />}
       {loading && screen === "MAIN" && <LoginButton />}
