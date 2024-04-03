@@ -141,7 +141,13 @@ export default function Page() {
                     </Button>
                   </div>
                   {!user.walletAddress && (
-                    <div style={{ display: "flex" }}>
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "1rem",
+                        alignItems: "center",
+                      }}
+                    >
                       <Button onClick={handleMakeWallet} size={"sm"}>
                         지갑 만들기
                       </Button>
@@ -183,21 +189,24 @@ export default function Page() {
             <h1>발급된 지갑 정보</h1>
             <MiniModalContent>
               <p>Kaikas에 연동해서 모바일에서도 NFT를 확인해보세요!</p>
-              <div style={{ display: "flex" }}>
+              <div style={{ display: "flex", alignItems: "center" }}>
                 <p>주소 : {maskAddress(wallet.address)}</p>
                 <Button onClick={handleCopyNewAddress} size={"xs"}>
                   {newAddressCopied ? "복사됨!" : "복사하기"}
                 </Button>
               </div>
               <br />
-              <div>
-                <p>
-                  연상 기호 : <br />
-                  {wallet.mnemonic}
-                </p>
-              </div>
+              {wallet.mnemonic ? (
+                <div>
+                  <p>
+                    연상 기호 : <br />
+                    {wallet.mnemonic}
+                  </p>
+                </div>
+              ) : null}
+
               <br />
-              <div style={{ display: "flex" }}>
+              <div style={{ display: "flex", alignItems: "center" }}>
                 <p>개인키 : {maskAddress(wallet.privateKey)}</p>
                 <Button onClick={handleCopyPrivateKey} size={"xs"}>
                   {newPrivateKeyCopied ? "복사됨!" : "복사하기"}
