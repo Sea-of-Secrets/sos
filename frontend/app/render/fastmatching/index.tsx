@@ -21,18 +21,7 @@ export default function FastMatching() {
 
   const { nickname, setNickname } = useNickname();
   const { gameId, setGameId } = useGameId();
-
-  // const [isHost, setIsHost] = useState(false);
-  // const [isStart, setIsStart] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  // useEffect(() => {
-  //   if (isStart) {
-  //     if (isHost) {
-  //     }
-  //     window.location.href = `/room/${gameId}/ingame`;
-  //   }
-  // }, [isStart]);
 
   const onConnect = () => {
     subscribe(`/sub/${nickname}`, message => {
@@ -52,7 +41,7 @@ export default function FastMatching() {
             gameId,
           });
         }
-        window.location.href = `/room/${gameId}/ingame`;
+        window.location.href = `/room/${data.room.gameId}/ingame`;
       }
     });
   };

@@ -1,0 +1,11 @@
+Model Information:
+* title:	Aleksandr class archipelago frigate
+* source:	https://sketchfab.com/3d-models/aleksandr-class-archipelago-frigate-f82f40ca04d84a24868a453c4e3a16c2
+* author:	Museovirasto Museiverket Finnish Heritage Agency (https://sketchfab.com/Museovirasto)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Aleksandr class archipelago frigate" (https://sketchfab.com/3d-models/aleksandr-class-archipelago-frigate-f82f40ca04d84a24868a453c4e3a16c2) by Museovirasto Museiverket Finnish Heritage Agency (https://sketchfab.com/Museovirasto) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
