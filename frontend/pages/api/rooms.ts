@@ -73,6 +73,8 @@ export default async function handler(
   try {
     if (req.method === "POST") {
       if (req.body.type === "make") {
+        console.log(req.body);
+
         const response = await request.post(`${getBaseServerUrl()}/room/make`, {
           ...req.body,
         });

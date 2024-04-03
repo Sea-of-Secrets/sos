@@ -49,7 +49,7 @@ public class MessageController {
                 event.getMessage().getHeaders().get("simpSessionId"),
                 "message: session ID is null")
                 .toString();
-        
+
         System.out.println(sessionId);
         board.sessionMap.put(sessionId, new ArrayList<>());
         System.out.println(board.getSessionMap());
@@ -62,7 +62,6 @@ public class MessageController {
         String sessionId = accessor.getSessionId();
         List<String> sessionMemberGame = board.getSessionMap().getOrDefault(sessionId, null);
 
-        System.out.println("disconnect");
         if (sessionMemberGame == null) return;
 
         // connect 후 방 입장 되기 전에 disconnect 됐을 경우
@@ -132,9 +131,6 @@ public class MessageController {
 
         // 방 입장 (클 -> 서)
         if (message.getMessage().equals("ENTER_MATCHING_ROOM")) {
-            List<String> sessionInfo = board.getSessionMap().getOrDefault(sessionId, null);
-            sessionInfo.add(sender);
-            sessionInfo.add(gameId);
 
             // 정원이 다 찼을 경우 시작버튼 활성화 broadcast
             if (room != null) {
@@ -846,7 +842,7 @@ public class MessageController {
 
     // 게임 시작시 (게임 시작 ~ 해군3 시작위치 지정)
     @MessageMapping("/init")
-    public void init(ClientInitMessage message) {
+    public void init(ClientInitMessage message, StompHeaderAccessor accessor) {
         String gameId = message.getGameId();
         Game game = board.getGameMap().get(gameId);
         System.out.println(game.getGameStatus());
@@ -856,6 +852,12 @@ public class MessageController {
         if (message.getMessage().equals("START_GAME") &&
                 game.getGameStatus().equals(GameStatus.BEFORE_START)) {
             game.setGameStatus(IN_GAME);
+
+            List<String> sessionInfo = board.getSessionMap().getOrDefault(accessor.getSessionId(), null);
+            System.out.println("sessionInfo: " + sessionInfo);
+            sessionInfo.add(message.getSender());
+            sessionInfo.add(gameId);
+
             // 게임 시작하면 방 폭파
             board.getRoomMap().remove(gameId);
             // 해적 시작위치 지정 (서 -> 클)

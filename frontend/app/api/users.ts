@@ -20,8 +20,8 @@ export const getUserInfo2 = async () => {
 
   const res = await request.get(`${getBaseServerUrl()}/users`, {
     headers: {
-      Cookie: `access=${access}; refresh=${refresh};`,
-      Authorization: `${access},${refresh}`,
+      //Cookie: `access=${access}; refresh=${refresh};`,
+      Authorization: `Bearer ${access}`,
     },
   });
 
@@ -48,8 +48,8 @@ export const getWalletInfo2 = async () => {
 
   const res = await request.get(`${getBaseServerUrl()}/nft/wallet/info`, {
     headers: {
-      Cookie: `access=${access}; refresh=${refresh};`,
-      Authorization: `${access},${refresh}`,
+      //Cookie: `access=${access}; refresh=${refresh};`,
+      Authorization: `Bearer ${access}`,
     },
   });
   return res;
@@ -67,8 +67,8 @@ export const makeWallet2 = async () => {
   const refresh = getRefreshToken();
 
   const res = await request.post(`${getBaseServerUrl()}/nft/wallet`, {
-    Cookie: `access=${access}; refresh=${refresh};`,
-    Authorization: `${access},${refresh}`,
+    //Cookie: `access=${access}; refresh=${refresh};`,
+    Authorization: `Bearer ${access}`,
   });
   return res;
 };
@@ -79,8 +79,8 @@ export const getWallet = async () => {
 
   const res = await request.get(`${getBaseServerUrl()}/nft/wallet`, {
     headers: {
-      Cookie: `access=${access}; refresh=${refresh};`,
-      Authorization: `${access},${refresh}`,
+      //Cookie: `access=${access}; refresh=${refresh};`,
+      Authorization: `Bearer ${access}`,
     },
   });
   return res;
@@ -97,8 +97,8 @@ export const saveDefaultPiece = async (productName: string) => {
     },
     {
       headers: {
-        Cookie: `access=${access}; refresh=${refresh};`,
-        Authorization: `${access},${refresh}`,
+        // Cookie: `access=${access}; refresh=${refresh};`,
+        Authorization: `Bearer ${access}`,
       },
     },
   );
@@ -112,8 +112,8 @@ export const logout = async () => {
 
   const res = await request.post(`${getBaseServerUrl()}/logout`, {
     headers: {
-      Cookie: `access=${access}; refresh=${refresh};`,
-      Authorization: `${access},${refresh}`,
+      //Cookie: `access=${access}; refresh=${refresh};`,
+      Authorization: `Bearer ${access}`,
     },
   });
   return res;
@@ -124,14 +124,17 @@ export const addWallet = async (address: string) => {
   const refresh = getRefreshToken();
   removeToken();
 
-  const res = await request.patch(`${getBaseServerUrl()}/nft/wallet`, {
-    walletAddress: address,
-  },
-  {
-    headers: {
-      Cookie: `access=${access}; refresh=${refresh};`,
-      Authorization: `${access},${refresh}`,
+  const res = await request.patch(
+    `${getBaseServerUrl()}/nft/wallet`,
+    {
+      walletAddress: address,
     },
-  });
+    {
+      headers: {
+        //Cookie: `access=${access}; refresh=${refresh};`,
+        Authorization: `Bearer ${access}`,
+      },
+    },
+  );
   return res;
 };
