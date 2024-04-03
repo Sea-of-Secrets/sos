@@ -599,6 +599,26 @@ public class MessageController {
         String gameId = event.getGameId();
         String message = event.getMessage();
         Game game = board.getGameMap().get(gameId);
+
+        // 매칭 성공 메시지 전송 준비
+        if (message.equals("READY_MATCHING_SUCCESS")) {
+            Room room = board.getRoomMap().get(gameId);
+
+            ServerMessage serverMessage = ServerMessage.builder()
+                    .gameId(gameId)
+                    .room(room)
+                    .message("MATCHING_SUCCESS")
+                    .build();
+
+            gameService.gameStart(gameId);
+
+            // 게임에 속한 플레이어들에게 메시지 전송
+            for (int i=0; i<room.getGameMode().playerLimit(); i++) {
+                String nickname = room.getInRoomPlayers().get(i).getNickname();
+                sendingOperations.convertAndSend("/sub/"+ nickname, serverMessage);
+            }
+        }
+
         // 게임 시작 준비
         if (message.equals("READY_PREPARE_GAME_START")) {
             ServerMessage serverMessage;
@@ -1066,24 +1086,7 @@ public class MessageController {
     // 매칭
     @EventListener
     public void listenMatching(MatchingEvent event) {
-        String gameId = event.getGameId();
-        Room room = board.getRoomMap().get(gameId);
-
-        ServerMessage serverMessage = ServerMessage.builder()
-                .gameId(gameId)
-                .room(room)
-                .message("MATCHING_SUCCESS")
-                .build();
-
-        gameService.gameStart(gameId);
-
-        // 게임에 속한 플레이어들에게 메시지 전송
-        for (int i=0; i<room.getGameMode().playerLimit(); i++) {
-            String nickname = room.getInRoomPlayers().get(i).getNickname();
-            sendingOperations.convertAndSend("/sub/"+ nickname, serverMessage);
-        }
-
-        // 이후 프론트는 MATCHING_SUCCESS를 받으면 수락-거절을 띄우고 다시 요청을 서버한테 보낸다.
+        gameTimerService.afterMatchingTimer(event.getGameId(), "READY_MATCHING_SUCCESS");
     }
 
     // 채팅
