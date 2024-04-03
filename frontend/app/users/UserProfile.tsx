@@ -71,17 +71,16 @@ export default function UserProfile() {
         </div>
       )}
       <h2>현재 기본 말 : {user.productName}</h2>
-      {/* {wallet && 
-      <MiniModal>
-        title
-        <MiniModalContent>
+      {/* {wallet && (
+        <MiniModal>
+          title
+          <MiniModalContent>
             <p>{wallet.address}</p>
             <p>{wallet.mnemonic}</p>
             <p>{wallet.privateKey}</p>
-        </MiniModalContent>
-      </MiniModal>
-        
-      } */}
+          </MiniModalContent>
+        </MiniModal>
+      )} */}
     </div>
   );
 }
