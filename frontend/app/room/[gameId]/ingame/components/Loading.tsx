@@ -27,11 +27,11 @@ export default function Loading() {
       }}
     >
       <p>Loading...</p>
-      <div>
+      {/* <div>
         {renderList.map((item, index) => (
           <p key={index}>{item}</p>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 import * as THREE from "three";
 import { useScreenControl } from "./stores/useScreenControl";
@@ -9,11 +9,14 @@ import BackButton from "./components/BackButton";
 import LoginButton from "./components/LoginButton";
 
 import Map from "./Map";
+import GatchaAnimation from "./shop/OpenAnimation";
 import Camera from "./Camera";
 import Button from "./Button";
 import { useGatcha } from "./stores/useGatch";
 import useNickname from "~/store/nickname";
 import { getAccessToken, useAuth } from "~/store/auth";
+import Loading from "../room/[gameId]/ingame/components/Loading";
+import { Html, SpotLight } from "@react-three/drei";
 
 export default function Renderer() {
   const [loading, setLoading] = useState(false);
@@ -40,9 +43,20 @@ export default function Renderer() {
           setLoading(true);
         }}
       >
-        <Camera />
-        <ambientLight />
-        <Map />
+        <Suspense
+          fallback={
+            <>
+              <Html>
+                <Loading />
+              </Html>
+            </>
+          }
+        >
+          <Camera />
+          <ambientLight />
+          <GatchaAnimation />
+          <Map />
+        </Suspense>
       </Canvas>
       {loading && <Button />}
       {loading && screen === "MAIN" && <LoginButton />}

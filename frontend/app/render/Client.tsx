@@ -37,7 +37,7 @@ export default function Client() {
         <CameraControls ref={cameraRef} />
         <ambientLight />
         <directionalLight />
-        <axesHelper scale={10000000} />
+        {/* <axesHelper scale={10000000} /> */}
         <ThreeRenderer />
       </Canvas>
     </>
