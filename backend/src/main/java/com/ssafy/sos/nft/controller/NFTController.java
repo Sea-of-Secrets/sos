@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -60,6 +61,21 @@ public class NFTController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("이미 지갑이 있습니다.");
         }
         return ResponseEntity.status(HttpStatus.OK).body(wallet);
+    }
+
+    @PatchMapping("/wallet")
+    public ResponseEntity<?> addWallet(Authentication authentication, @RequestBody  Map<String, String> wallet) {
+        CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
+
+        String address = wallet.get("walletAddress");
+        if (address == null || address.length() < 27 || address.length() > 40) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("올바르지 못한 지갑 주소입니다.");
+        }
+
+        UserEntity userInfo = userService.getUserInfo(user);
+
+        String s = userService.updateWallet(userInfo, address);
+        return ResponseEntity.status(HttpStatus.OK).body(s);
     }
 
 //    @PostMapping("/upload")
