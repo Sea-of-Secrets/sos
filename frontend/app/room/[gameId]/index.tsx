@@ -21,13 +21,13 @@ export default function Room() {
   const [players, setPlayers] = useState([]);
   const { socketMessage } = useSocketMessage();
 
-  const gridColumns: { [key: number]: string } = {
-    0: "grid-cols-0",
-    1: "grid-cols-1 sm-grid-cols-2",
-    2: "grid-cols-2 sm-grid-cols-2",
-    3: "grid-cols-3 sm-grid-cols-2",
-    4: "grid-cols-4 sm-grid-cols-2",
-  };
+  // const gridColumns: { [key: number]: string } = {
+  //   0: "grid-cols-0",
+  //   1: "grid-cols-1 sm-grid-cols-2",
+  //   2: "grid-cols-2 sm-grid-cols-2",
+  //   3: "grid-cols-3 sm-grid-cols-2",
+  //   4: "grid-cols-4 sm-grid-cols-2",
+  // };
 
   const copyToClipboard = async () => {
     try {
@@ -103,14 +103,30 @@ export default function Room() {
         {players.map(player => (
           <UserContainer key={player["nickname"]}>
             <UserInfo>
-              <p className="mb-10">닉네임 : {player["nickname"]}</p>
-              <Image
-                src="/pxfuel.jpg"
-                width={100}
-                height={100}
-                alt="기본 이미지"
-                className="mx-auto h-48 w-48 rounded-full "
-              />
+              <p className="mb-1">닉네임 : {player["nickname"]}</p>
+              <p className="mb-5">
+                설정한 배 :{" "}
+                {player["userInfo"]?.["productName"]
+                  ? player["userInfo"]["productName"]
+                  : "기본"}
+              </p>
+              {player["userInfo"] && player["userInfo"]["productName"] ? (
+                <Image
+                  src={`/ship_images/${player["userInfo"]["productName"]}.png`}
+                  width={100}
+                  height={100}
+                  alt="유저 기본 배 이미지"
+                  className="mx-auto h-48 w-48 rounded-full "
+                />
+              ) : (
+                <Image
+                  src={"/pxfuel.jpg"}
+                  width={100}
+                  height={100}
+                  alt="게스트 기본 배 이미지"
+                  className="mx-auto h-48 w-48 rounded-full "
+                />
+              )}
             </UserInfo>
           </UserContainer>
         ))}
