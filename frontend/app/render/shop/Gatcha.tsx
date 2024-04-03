@@ -1,23 +1,40 @@
 import styled from "@emotion/styled";
 import Overlay from "../components/Overlay";
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useGatcha } from "../stores/useGatch";
 import { useCamera } from "../stores/useCamera";
 import Button from "../components/BackButton";
 import { useFetch } from "~/_lib/hooks/useFetch";
 import * as ShopApi from "~/app/api/shops";
+import { getUserInfo2 } from "~/app/api/users";
+import { User, useAuth } from "~/store/auth";
 
 export default function Gatcha() {
-  // const { loading, data: randomGatchaData } = useFetch(mockGatcha);
-  const { loading, data: randomGatchaData } = useFetch(fetchGatcha);
-
+  const [loading, setLoading] = useState(false);
+  const [randomGatchaData, setRandomGatchaData] =
+    useState<GatchaResponse | null>(null);
   const { setGatchaState } = useGatcha();
   const { ShopScreen } = useCamera();
+  const { setUser } = useAuth();
+
+  const fetchGatchData = useCallback(async () => {
+    if (loading || randomGatchaData) {
+      return;
+    }
+    setLoading(true);
+    mockGatcha().then(data => setRandomGatchaData(data));
+    getUserInfo2().then(res => setUser(res.data as User));
+    setLoading(false);
+  }, []);
 
   const handleClickBackButton = useCallback(() => {
     setGatchaState("GATCHA_PREV");
     ShopScreen();
-  }, [setGatchaState, ShopScreen]);
+  }, []);
+
+  useEffect(() => {
+    fetchGatchData();
+  }, []);
 
   if (loading || !randomGatchaData) {
     return (
@@ -59,6 +76,7 @@ type GatchaResponse = {
 };
 
 const mockGatcha = async (): Promise<GatchaResponse> => {
+  console.log("fetch!");
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve({
