@@ -17,15 +17,7 @@ export const makeWallet = async () => {
 };
 
 export const getWallet = async () => {
-  const access = getAccessToken();
-  const refresh = getRefreshToken();
-
-  const res = await request.get(`${getBaseServerUrl()}/nft/wallet`, {
-    headers: {
-      //Cookie: `access=${access}; refresh=${refresh};`,
-      Authorization: `Bearer ${access}`,
-    },
-  });
+  const res = await request.get(`${getBaseServerUrl()}/nft/wallet`);
   return res;
 };
 

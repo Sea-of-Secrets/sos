@@ -23,7 +23,10 @@ export default function Gatcha() {
     setLoading(true);
 
     mockGatcha().then(data => setRandomGatchaData(data)); // 돈 계속 빠져나가서 만든 테스트용 함수
-    //fetchGatcha().then(data => setRandomGatchaData(data)); // 배포시에는 이걸 사용해주세용
+    // fetchGatcha().then(data => {
+    //   console.log(data);
+    //   setRandomGatchaData(data);
+    // }); // TODO: 배포시에는 이걸 사용해주세용
     UsersApi.getUserInfo().then(res => setUser(res.data as User));
     setLoading(false);
   }, []);
