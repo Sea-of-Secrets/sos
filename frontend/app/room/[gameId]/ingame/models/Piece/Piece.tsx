@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ThreeEvent } from "@react-three/fiber";
 import { Vector3, Euler } from "three";
 
@@ -8,7 +8,9 @@ import { PieceProps } from "./types";
 
 import { useSocketMessage } from "../../stores/useSocketMessage";
 import useNickname from "~/store/nickname";
+import { NodePosition } from "~/_lib/data/types";
 
+// TODO: 이동중이면 이펙트를 없애고 이동완료되면 다시 소환
 export default function Piece({
   name,
   position,
@@ -16,13 +18,23 @@ export default function Piece({
   set,
   ...props
 }: PieceProps) {
-  const { meshRef, gltf } = useGLTF(PiecePathMap[pieceName].src);
+  const { meshRef, gltf } = useGLTF(
+    PiecePathMap[pieceName]
+      ? PiecePathMap[pieceName].src
+      : PiecePathMap["SHIBA"].src,
+  );
   const { socketMessage } = useSocketMessage();
   const { nickname } = useNickname();
-
-  // TODO: 이동중이면 이펙트를 없애고 이동완료되면 다시 소환
-
   const [hovered, setHover] = useState(false);
+  const { piecePosition, pieceRotation, visible } = useMemo(() => {
+    return getPieceOption({
+      socketMessage,
+      name,
+      nickname,
+      pieceName,
+      position,
+    });
+  }, [name, nickname, pieceName, position, socketMessage]);
 
   const handleClickPiece = useCallback((e: ThreeEvent<MouseEvent>) => {
     console.log("******** Piece Click ********");
@@ -52,9 +64,37 @@ export default function Piece({
     }
   }, [hovered]);
 
-  let piecePosition;
-  let pieceRotation;
-  let visible;
+  return (
+    <>
+      <mesh
+        {...props}
+        ref={meshRef}
+        position={piecePosition}
+        rotation={pieceRotation}
+        visible={visible}
+        scale={PiecePathMap[pieceName] ? PiecePathMap[pieceName].size : 10}
+        onClick={handleClickPiece}
+        onPointerOver={handlePointerOver}
+        onPointerOut={handlePointerOut}
+      >
+        <primitive object={gltf.scene} />
+      </mesh>
+    </>
+  );
+}
+
+const getPieceOption = (props: {
+  socketMessage: any;
+  name: "PIRATE" | "MARINE1" | "MARINE2" | "MARINE3" | undefined;
+  pieceName: keyof typeof PiecePathMap;
+  position: NodePosition;
+  nickname: string;
+}) => {
+  const { socketMessage, name, pieceName, position, nickname } = props;
+
+  let piecePosition = undefined;
+  let pieceRotation = undefined;
+  let visible = undefined;
 
   if (name === "PIRATE") {
     visible =
@@ -125,21 +165,9 @@ export default function Piece({
     piecePosition = new Vector3(position.x, position.z + 5, position.y);
   }
 
-  return (
-    <>
-      <mesh
-        {...props}
-        ref={meshRef}
-        position={piecePosition}
-        rotation={pieceRotation}
-        visible={visible}
-        scale={PiecePathMap[pieceName].size}
-        onClick={handleClickPiece}
-        onPointerOver={handlePointerOver}
-        onPointerOut={handlePointerOut}
-      >
-        <primitive object={gltf.scene} />
-      </mesh>
-    </>
-  );
-}
+  return {
+    piecePosition,
+    pieceRotation,
+    visible,
+  };
+};
