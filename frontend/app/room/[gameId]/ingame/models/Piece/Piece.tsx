@@ -55,49 +55,74 @@ export default function Piece({
   let piecePosition;
   let pieceRotation;
   let visible;
+
   if (name === "PIRATE") {
     visible =
       socketMessage?.game?.currentPosition[0] !== 0 &&
       socketMessage?.game?.players[0]?.nickname === nickname;
     piecePosition = position
-      ? new Vector3(position.x, position.z, position.y + 10)
+      ? new Vector3(position.x, position.z, position.y)
       : undefined;
-
-    if (pieceName === "PIRATE") {
-      pieceRotation = new Euler(0, Math.PI, 0);
-      piecePosition = position
-        ? new Vector3(position.x, position.z, position.y + 10)
-        : undefined;
-    }
-    if (pieceName === "legendary1") {
-      piecePosition = position
-        ? new Vector3(position.x, position.z, position.y + 10)
-        : undefined;
-    }
   } else if (name === "MARINE1") {
-    if (pieceName === "MARINE1") {
-      pieceRotation = new Euler(0, Math.PI, 0);
-    }
     piecePosition = position
       ? new Vector3(position.x, position.z + 6, position.y)
       : undefined;
     visible = socketMessage?.game?.currentPosition[1] !== 0;
   } else if (name === "MARINE2") {
-    if (pieceName === "MARINE2") {
-      pieceRotation = new Euler(0, Math.PI, 0);
-    }
     visible = socketMessage?.game?.currentPosition[2] !== 0;
     piecePosition = position
       ? new Vector3(position.x, position.z + 6, position.y)
       : undefined;
   } else if (name === "MARINE3") {
-    if (pieceName === "MARINE3") {
-      pieceRotation = new Euler(0, Math.PI, 0);
-    }
     visible = socketMessage?.game?.currentPosition[3] !== 0;
     piecePosition = position
       ? new Vector3(position.x, position.z + 6, position.y)
       : undefined;
+  }
+
+  if (pieceName === "legendary1") {
+    piecePosition = position
+      ? new Vector3(position.x, position.z, position.y + 10)
+      : undefined;
+  }
+
+  if (pieceName === "PIRATE") {
+    pieceRotation = new Euler(0, Math.PI, 0);
+    piecePosition = position
+      ? new Vector3(position.x, position.z, position.y + 10)
+      : undefined;
+  }
+
+  if (pieceName === "MARINE1") {
+    pieceRotation = new Euler(0, Math.PI, 0);
+  }
+
+  if (pieceName === "MARINE2") {
+    pieceRotation = new Euler(0, Math.PI, 0);
+  }
+
+  if (pieceName === "MARINE3") {
+    pieceRotation = new Euler(0, Math.PI, 0);
+  }
+
+  if (pieceName === "Zuhee") {
+    pieceRotation = new Euler(0, Math.PI, 0);
+    piecePosition = new Vector3(position.x - 10, position.z + 30, position.y);
+  }
+
+  if (pieceName === "common1") {
+    pieceRotation = new Euler(0, -Math.PI / 2, 0);
+    piecePosition = new Vector3(position.x, position.z + 15, position.y);
+  }
+
+  if (pieceName === "common2") {
+    pieceRotation = new Euler(0, 0, 0);
+    piecePosition = new Vector3(position.x, position.z + 10, position.y);
+  }
+
+  if (pieceName === "common3") {
+    pieceRotation = new Euler(0, Math.PI, 0);
+    piecePosition = new Vector3(position.x, position.z + 5, position.y);
   }
 
   return (

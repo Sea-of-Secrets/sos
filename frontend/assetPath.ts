@@ -61,19 +61,19 @@ export const PiecePathMap = {
   },
   common1: {
     src: "/common1/scene.gltf",
-    size: 5,
+    size: 2.5,
   },
   common2: {
     src: "/common2/scene.gltf",
-    size: 10,
+    size: 50,
   },
   common3: {
     src: "/common3/scene.gltf",
-    size: 10,
+    size: 15,
   },
   Zuhee: {
     src: "/Zuhee/scene.gltf",
-    size: 10,
+    size: 20,
   },
   RED_ARROW: {
     src: "/red_arrow_down/scene.gltf",
