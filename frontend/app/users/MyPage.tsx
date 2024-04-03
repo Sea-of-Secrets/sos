@@ -129,11 +129,16 @@ export default function Page() {
                 >
                   <div
                     style={{
-                      marginBottom: "1rem",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      gap: "1rem",
                     }}
                   >
-                    <h2 className="mb-3">{user.name}님 안녕하세요!</h2>
-                    <p>보유 코인: {user.gold}</p>
+                    <h2>{user.name}님 안녕하세요!</h2>
+                    <Button size={"xs"} onClick={handleLogout}>
+                      로그아웃
+                    </Button>
                   </div>
                   {!user.walletAddress && (
                     <div style={{ display: "flex" }}>
@@ -150,32 +155,26 @@ export default function Page() {
                       className="gap-1"
                       style={{ display: "flex", alignItems: "center" }}
                     >
-                      <p style={{ marginRight: "10px" }}>
-                        지갑 주소 : {maskAddress(user.walletAddress)}
-                      </p>
-                      <Button onClick={handleCopyAddress} size={"xs"}>
+                      {/* <Button onClick={handleCopyAddress} size={"xs"}>
                         {copied ? "복사됨!" : "복사하기"}
-                      </Button>
+                      </Button> */}
                       <Button onClick={handleGetWallet} size={"xs"}>
                         지갑 정보
                       </Button>
-                      <Button onClick={handleAddWallet} size={"sm"}>
+                      <Button onClick={handleAddWallet} size={"xs"}>
                         지갑 수정
                       </Button>
                     </div>
                   )}
-                  <h2 className="pt-5">현재 기본 말 : {user.productName}</h2>
+                  <h2 className="pt-3">
+                    현재 기본 말 :{" "}
+                    {user.productName ? user.productName : "없음"}
+                  </h2>
                 </div>
               </div>
-
-              <div></div>
-
               <UserNft />
             </div>
           </ModalContent>
-          <Button size={"sm"} onClick={handleLogout}>
-            로그아웃
-          </Button>
         </ModalStyle>
       </Container>
       {wallet && (
@@ -245,7 +244,7 @@ const Button = styled.button<{ size?: "xs" | "md" | "sm" }>`
   font-size: ${({ size }) => {
     switch (size) {
       case "xs":
-        return "10px";
+        return "14px";
       case "sm":
         return "20px";
       default:
@@ -262,8 +261,8 @@ const Button = styled.button<{ size?: "xs" | "md" | "sm" }>`
     switch (size) {
       case "xs":
         return `
-          width: 5rem;
-          height: 2rem;
+          width: 6rem;
+          height: 3rem;
         `;
       case "sm":
         return `
