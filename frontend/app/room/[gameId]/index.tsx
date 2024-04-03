@@ -49,10 +49,17 @@ export default function Room() {
 
   useEffect(() => {
     // 플레이어 입장 OR 퇴장
-    if (
-      socketMessage.message == "ENTER_SUCCESS" ||
-      socketMessage.message == "PLAYER_LEAVED"
-    ) {
+    if (socketMessage.message == "ENTER_SUCCESS") {
+      // 방 인원 새로고침
+      setPlayers(socketMessage.room.inRoomPlayers);
+
+      // 방장 여부 확인
+      if (socketMessage.room.host.nickname == nickname) {
+        setIsHost(true);
+      }
+    }
+
+    if (socketMessage.message == "PLAYER_LEAVED") {
       // 방 인원 새로고침
       setPlayers(socketMessage.room.inRoomPlayers);
 
