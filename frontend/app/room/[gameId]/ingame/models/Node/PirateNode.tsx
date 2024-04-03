@@ -1,9 +1,7 @@
-import { Cylinder, Edges, Text, useGLTF, Text3D } from "@react-three/drei";
+import { Cylinder, useGLTF, Text3D } from "@react-three/drei";
 
-import { NODE_SCALE } from "./constants";
 import { PirateNodeProps } from "./types";
 import { useNode } from "../../hooks/useNode";
-import { usePirateGraph } from "../../stores/graph";
 
 export default function PirateNode({ node, ...props }: PirateNodeProps) {
   const {
@@ -14,7 +12,6 @@ export default function PirateNode({ node, ...props }: PirateNodeProps) {
     handlePointerOver,
   } = useNode({ node });
 
-  const { movableNodeIdList } = usePirateGraph();
   const { scene } = useGLTF("/pirate_mark/scene.gltf");
   const clonedScene = scene.clone();
 

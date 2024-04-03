@@ -1,0 +1,11 @@
+Model Information:
+* title:	MEDAL | CS2 Terrorist Coin
+* source:	https://sketchfab.com/3d-models/medal-cs2-terrorist-coin-11299bdc340b4447b33a0897ae1bdd15
+* author:	6lucius (https://sketchfab.com/6lucius)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "MEDAL | CS2 Terrorist Coin" (https://sketchfab.com/3d-models/medal-cs2-terrorist-coin-11299bdc340b4447b33a0897ae1bdd15) by 6lucius (https://sketchfab.com/6lucius) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

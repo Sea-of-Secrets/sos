@@ -1,4 +1,4 @@
-import { Box, Edges } from "@react-three/drei";
+import { Cylinder, useGLTF, Edges } from "@react-three/drei";
 
 import { MarineNodeProps } from "./types";
 import { NODE_SCALE } from "./constants";
@@ -17,6 +17,9 @@ export default function MarineNode({ node, ...props }: MarineNodeProps) {
     handlePointerOut,
     handlePointerOver,
   } = useNode({ node });
+
+  const { scene } = useGLTF("/marine_mark/scene.gltf");
+  const clonedScene = scene.clone();
 
   const { movableNodeIdList } = usePirateGraph();
 
@@ -43,14 +46,19 @@ export default function MarineNode({ node, ...props }: MarineNodeProps) {
       {...props}
       ref={meshRef}
       position={position}
+      rotation={[0, -Math.PI / 2, Math.PI / 2]}
       scale={NODE_SCALE}
-      onClick={handleClickNode}
       onPointerOver={handlePointerOver}
       onPointerOut={handlePointerOut}
     >
-      <Box args={[7, 2, 7]} material-color={getColor()}>
-        <Edges color="black" />
-      </Box>
+      <primitive scale={15} object={clonedScene} />
+      <Cylinder
+        rotation={[0, 0, Math.PI / 2]}
+        args={[6, 6, 0.1]}
+        onClick={handleClickNode}
+      >
+        <meshStandardMaterial transparent opacity={0} />
+      </Cylinder>
     </mesh>
   );
 }
