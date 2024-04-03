@@ -25,20 +25,14 @@ export default function PirateNode({ node, ...props }: PirateNodeProps) {
         ref={meshRef}
         position={position}
         // scale={NODE_SCALE}
-        scale={15}
-        onClick={handleClickNode}
+
         onPointerOver={handlePointerOver}
         onPointerOut={handlePointerOut}
       >
-        <primitive object={clonedScene} />
-        {/* <Cylinder
-          args={[4, 5, 2]}
-          material-color={
-            movableNodeIdList.includes(node.nodeId) ? "#03fc39" : "orange"
-          }
-        >
-          <Edges color="black" />
-        </Cylinder> */}
+        <primitive scale={15} object={clonedScene} />
+        <Cylinder args={[14, 14, 2]} onClick={handleClickNode}>
+          <meshStandardMaterial transparent opacity={0} />
+        </Cylinder>
       </mesh>
       {/* <Text
         position={[position[0], -48, position[2]]}

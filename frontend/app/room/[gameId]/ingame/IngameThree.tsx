@@ -81,9 +81,7 @@ export default function IngameThree() {
           />
         </>
       )}
-      {/* <Canvas> */}
       <TreasureGroup />
-      {/* </Canvas> */}
     </>
   );
 }
