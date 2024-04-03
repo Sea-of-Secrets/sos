@@ -1,8 +1,7 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 
-import { enterRoom } from "~/app/api/rooms";
-import { duplicateNickname } from "~/app/api/rooms";
+import * as RoomsApi from "~/app/api/rooms";
 
 import useNickname from "~/store/nickname";
 import useGameId from "~/store/gameId";
@@ -11,34 +10,36 @@ import Modal from "../components/Modal";
 import ModalContent from "../components/ModalContent";
 import Button from "../components/Button";
 
-interface CreateRoomProps {
+interface JoinRoomProps {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function CreateRoom({ setOpen }: CreateRoomProps) {
+export default function JoinRoom({ setOpen }: JoinRoomProps) {
   const router = useRouter();
   const { nickname, setNickname } = useNickname();
   const { gameId, setGameId } = useGameId();
 
   const handleConfirm = async () => {
     try {
-      const { data: enterData } = await enterRoom({ nickname, gameId });
-      const { data: duplicateNicknameDate } = await duplicateNickname({
+      const { data: enterRoomData } = await RoomsApi.enterRoom({
         nickname,
+        gameId,
       });
-      console.log(duplicateNicknameDate);
-
-      if (enterData === "ROOM_NOT_EXIST") {
-        alert("유효하지 않은 방 코드입니다.");
-      } else if (enterData === "ALREADY_FULLED") {
-        alert("정원이 초과된 방입니다.");
-      } else if (enterData === "DUPLICATED_NICKNAME") {
-        alert("사용할 수 없는 닉네임입니다.");
-      } else {
-        router.push(`/room/${gameId}`);
+      if (enterRoomData === "ROOM_NOT_EXIST") {
+        window.alert("유효하지 않은 방 코드입니다.");
+        return;
       }
+      if (enterRoomData === "ALREADY_FULLED") {
+        window.alert("정원이 초과된 방입니다.");
+        return;
+      }
+      if (enterRoomData === "DUPLICATED_NICKNAME") {
+        window.alert("다른 닉네임을 사용해주세요");
+        return;
+      }
+      router.push(`/room/${gameId}`);
     } catch (e) {
-      alert("입장 실패");
+      console.error(e);
     }
   };
 
