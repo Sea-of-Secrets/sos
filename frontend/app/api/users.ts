@@ -119,7 +119,7 @@ export const logout = async () => {
   return res;
 };
 
-export const addWallet = async (address) => {
+export const addWallet = async (address: string) => {
   const access = getAccessToken();
   const refresh = getRefreshToken();
   removeToken();
