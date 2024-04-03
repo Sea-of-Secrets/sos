@@ -29,7 +29,7 @@ public class ProductController {
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    @GetMapping("/random")
+    @PostMapping("/random")
     public ResponseEntity<ProductDTO.Result> purchaseRandomProduct(Authentication authentication) {
         CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
 
