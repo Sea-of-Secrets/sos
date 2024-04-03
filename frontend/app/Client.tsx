@@ -5,11 +5,11 @@ import { useFetch } from "~/_lib/hooks/useFetch";
 import * as ShopApi from "~/app/api/shops";
 
 export default function Client() {
-  const {
-    loading: getProductListLoading,
-    fetch: handleClickGetProductList,
-    data: productList,
-  } = useFetch(ShopApi.getProductList);
+  // const {
+  //   loading: getProductListLoading,
+  //   fetch: handleClickGetProductList,
+  //   data: productList,
+  // } = useFetch(ShopApi.getProductList);
 
   return (
     <div>
@@ -19,7 +19,7 @@ export default function Client() {
       <Button onClick={() => window.alert("아직 기능 안넣었지롱")}>
         방 입장하기
       </Button>
-      <Button
+      {/* <Button
         onClick={handleClickGetProductList}
         disabled={getProductListLoading}
       >
@@ -29,7 +29,7 @@ export default function Client() {
       </Button>
       <div>
         가져온 상품 목록 배열의 길이 : {productList ? productList.length : "X"}
-      </div>
+      </div> */}
     </div>
   );
 }
