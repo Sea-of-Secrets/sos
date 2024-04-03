@@ -12,11 +12,10 @@ export const postGatcha = async () => {
   const access = getAccessToken();
   const refresh = getRefreshToken();
 
-  const res = await request.post(`${getBaseClientUrl()}/shops`, {
-    type: "RANDOM",
+  const res = await request.post(`${getBaseServerUrl()}/products/random`, {
     headers: {
-      Cookie: `access=${access}; refresh=${refresh};`,
-      Authorization: `${access},${refresh}`,
+      //Cookie: `access=${access}; refresh=${refresh};`,
+      Authorization: `Bearer ${access}`,
     },
   });
   return res;
