@@ -4,10 +4,12 @@ import com.ssafy.sos.global.Entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 @Entity
 @Table(name = "product")
 @Getter
+@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Product extends BaseEntity {
 
@@ -18,7 +20,8 @@ public class Product extends BaseEntity {
 
     private String name;
 
-    private String description;
+    @Enumerated(EnumType.STRING)
+    private Grade grade;
 
     @Column(length = 1024)
     private String imageUrl;
@@ -26,19 +29,15 @@ public class Product extends BaseEntity {
     private String imageName;
 
     @ColumnDefault("false")
-    private Boolean isUnique;
-
-    @ColumnDefault("false")
     private Boolean isSoldOut;
 
     @Builder
-    private Product(Integer id, String name, String description, String imageUrl, String imageName, Boolean isUnique, Boolean isSoldOut) {
+    private Product(Integer id, String name, Grade grade, String imageUrl, String imageName, Boolean isSoldOut) {
         this.id = id;
         this.name = name;
-        this.description = description;
+        this.grade = grade;
         this.imageUrl = imageUrl;
         this.imageName = imageName;
-        this.isUnique = isUnique;
         this.isSoldOut = isSoldOut;
     }
 

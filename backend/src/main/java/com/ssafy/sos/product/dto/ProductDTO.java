@@ -1,13 +1,18 @@
 package com.ssafy.sos.product.dto;
 
+import com.ssafy.sos.product.domain.Grade;
 import lombok.Builder;
 
 public class ProductDTO {
 
-    public record Post (String name, String description, Boolean isUnique) {
+    public record Post (String name, String grade) {
     }
 
     @Builder
-    public record Response (String name, String description, String imgUrl, Boolean isUnique, Boolean isSoldOut) {
+    public record Info (String name, Grade grade, String imgUrl) {
+    }
+
+    @Builder
+    public record Result(String name, Grade grade, boolean hasItemAlready, String imgUrl) {
     }
 }
