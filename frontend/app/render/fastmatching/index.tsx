@@ -22,49 +22,49 @@ export default function FastMatching() {
   const { nickname, setNickname } = useNickname();
   const { gameId, setGameId } = useGameId();
 
-  const [isHost, setIsHost] = useState(false);
-  const [isStart, setIsStart] = useState(false);
+  // const [isHost, setIsHost] = useState(false);
+  // const [isStart, setIsStart] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (isStart) {
-      if (isHost) {
-        send("/pub/room", {
-          message: "START_BUTTON_CLICKED",
-          sender: nickname,
-          gameId,
-        });
-      }
-      window.location.href = `/room/${gameId}/ingame`;
-    }
-  }, [isHost, isStart, gameId, nickname]);
+  // useEffect(() => {
+  //   if (isStart) {
+  //     if (isHost) {
+  //     }
+  //     window.location.href = `/room/${gameId}/ingame`;
+  //   }
+  // }, [isStart]);
 
   const onConnect = () => {
     subscribe(`/sub/${nickname}`, message => {
       const data = JSON.parse(message.body);
       if (data.message === "MATCHING_SUCCESS") {
+        console.log("매칭 완료");
         setGameId(data.room.gameId);
         send("/pub/matching", {
           message: "ENTER_MATCHING_ROOM",
           sender: nickname,
           gameId: data.room.gameId,
         });
-        if (data.room.inRoomPlayers[0]["nickname"] === nickname)
-          setIsHost(true);
-        setIsStart(true);
+        if (data.room.inRoomPlayers[0]["nickname"] === nickname) {
+          send("/pub/room", {
+            message: "START_BUTTON_CLICKED",
+            sender: nickname,
+            gameId,
+          });
+        }
+        window.location.href = `/room/${gameId}/ingame`;
       }
     });
   };
 
   const handleClickCheckButton = async () => {
+    connect(onConnect);
     try {
-      connect(onConnect);
       const { data } = await matching({
         nickname,
         gameId: "",
         gameMode: "ONE_VS_ONE",
       });
-
       if (data === "DUPLICATED_NICKNAME") {
         alert("사용할 수 없는 닉네임입니다.");
         disconnect();
