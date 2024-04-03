@@ -1,4 +1,5 @@
 import { IngameGraphNode } from "./types";
+import * as Helpers from "./helpers";
 
 export const ORIGIN_GRAPH: Record<string, IngameGraphNode | null> = {
   "0": {
@@ -5837,60 +5838,36 @@ export const getMarineStartNodeList = () => {
   return marineStartList.map(nodeId => getNode(nodeId));
 };
 
+const DEFAULT_NODE: IngameGraphNode = {
+  type: "MARINE",
+  nodeId: 0,
+  neighborNodeIdList: [],
+  position: { x: -100, y: -1000, z: -50 },
+};
+
 export const getNode = (nodeId: number) => {
-  // FIXME: release 할 때는 에러 터뜨리지 말기
-  if (!(String(nodeId) in ORIGIN_GRAPH)) {
-    throw new Error(
-      `버그 발생!!! : 서버에서 온 ${nodeId} 는 클라이언트에 존재하지 않음...`,
-    );
+  try {
+    return Helpers._getNode(nodeId);
+  } catch (e) {
+    return { ...DEFAULT_NODE };
   }
-
-  const node = ORIGIN_GRAPH[nodeId];
-
-  if (!node) {
-    throw new Error(
-      `버그 발생!!! : 서버에서 온 ${nodeId} 는 존재하지 않는 노드임...`,
-    );
-  }
-
-  return Object.freeze({ ...node, position: node.position });
 };
 
 export const makeEdgeId = (
   aNode: IngameGraphNode | null,
   bNode: IngameGraphNode | null,
 ) => {
-  if (aNode === null || bNode === null) {
-    throw new Error(
-      `버그 발생!!! : 서버에서 온 ${aNode} 혹은 ${bNode} 는 클라이언트에 존재하지 않음...`,
-    );
+  try {
+    return Helpers._makeEdgeId(aNode, bNode);
+  } catch (e) {
+    return "NOT#MEAN";
   }
-
-  return [aNode.nodeId, bNode.nodeId]
-    .sort((a, b) => (a < b ? -1 : 1))
-    .join("#");
 };
 
-// TODO: 해적, 해군간선 통과해서 구해야함;;;
 export const getNearEdgeIdList = (nodeId: number) => {
-  // FIXME: release 할 때는 에러 터뜨리지 말기
-  if (!(String(nodeId) in ORIGIN_GRAPH)) {
-    throw new Error(
-      `버그 발생!!! : 서버에서 온 ${nodeId} 는 클라이언트에 존재하지 않음...`,
-    );
+  try {
+    return Helpers._getNearEdgeIdList(nodeId);
+  } catch (e) {
+    return [];
   }
-
-  const node = ORIGIN_GRAPH[nodeId];
-
-  if (!node) {
-    throw new Error(
-      `버그 발생!!! : 서버에서 온 ${nodeId} 는 존재하지 않는 노드임...`,
-    );
-  }
-
-  const { neighborNodeIdList } = node;
-
-  return neighborNodeIdList.map(aNodeId =>
-    makeEdgeId(ORIGIN_GRAPH[aNodeId], node),
-  );
 };
