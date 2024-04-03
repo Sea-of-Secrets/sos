@@ -1,14 +1,12 @@
-# 온라인 배틀 퍼즐 게임 Puzzle-Pop!
+# 온라인 보드 게임 Sea of Secret!
 
 ![image.png](./readmeImage/main.gif)
 
 # Overview
 
-정적이고 맞추기만 하는 퍼즐 게임은 이제 그만!
 
-온라인으로 아이템을 사용하며 상대방과 배틀 퍼즐을 시작하세요!
 
-# Puzzle-Pop 서비스 화면
+# Sea of Secret 서비스 화면
 
 ### 인게임
 
