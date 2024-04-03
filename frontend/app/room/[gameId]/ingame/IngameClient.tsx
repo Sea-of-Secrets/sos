@@ -41,7 +41,6 @@ const { send } = gameSocket;
 
 export default function IngameClient() {
   const { loading, setLoading } = useGameLoading();
-  // const [loading2, setLoading2] = useState(true);
   const [timeOut, setTimeOut] = useState(false);
   const [isgameOver, setIsGameOver] = useState("");
 
@@ -733,16 +732,6 @@ export default function IngameClient() {
       turnOver();
     }
   }, [socketMessage]);
-
-  // useEffect(() => {
-  //   if (!loading) {
-  //     send("/pub/room", {
-  //       message: "RENDERED_COMPLETE",
-  //       sender: nickname,
-  //       gameId,
-  //     });
-  //   }
-  // }, [loading, gameId, nickname]);
 
   return (
     <>
