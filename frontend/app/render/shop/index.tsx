@@ -27,7 +27,7 @@ export default function Shop() {
 
 const ShopWrapper = () => {
   const { isOpenedModal, toggleModal } = useShopModal();
-  const { user, isLoggedIn } = useAuth();
+  const { isLoggedIn } = useAuth();
   const { gatchaState, setGatchaState } = useGatcha();
   const { setScreen } = useScreenControl();
   const { ShopGatchaScreen } = useCamera();
@@ -53,32 +53,17 @@ const ShopWrapper = () => {
         <Modal>
           <ModalContent>
             <FlexDirectionColumn>
-              {user && user.gold && user.gold >= 150 ? (
-                <>
-                  <Title>
-                    <div>150 골드를 사용하여 랜덤 가챠!</div>
-                  </Title>
-                  <ButtonContainer>
-                    <Button onClick={handleClickGatchaView} size="sm">
-                      확인
-                    </Button>
-                    <Button onClick={toggleModal} size="sm">
-                      취소
-                    </Button>
-                  </ButtonContainer>
-                </>
-              ) : (
-                <>
-                  <Title>
-                    <div>골드가 부족해요</div>
-                  </Title>
-                  <ButtonContainer>
-                    <Button onClick={toggleModal} size="sm">
-                      확인
-                    </Button>
-                  </ButtonContainer>
-                </>
-              )}
+              <Title>
+                <div>150 골드를 사용하여 랜덤 가챠!</div>
+              </Title>
+              <ButtonContainer>
+                <Button onClick={handleClickGatchaView} size="sm">
+                  확인
+                </Button>
+                <Button onClick={toggleModal} size="sm">
+                  취소
+                </Button>
+              </ButtonContainer>
             </FlexDirectionColumn>
           </ModalContent>
         </Modal>
