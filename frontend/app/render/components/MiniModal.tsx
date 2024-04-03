@@ -54,8 +54,9 @@ const MiniModalBackdrop = styled.div`
 const MiniModalContent = styled.div`
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   width: 23rem;
-  height: 33rem;
+  height: 30rem;
   padding: 4rem;
   align-items: center;
   z-index: 999;

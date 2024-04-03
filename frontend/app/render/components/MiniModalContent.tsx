@@ -19,6 +19,6 @@ const Content = styled.div`
   flex-direction: column;
   padding: 1rem 0rem;
   align-items: center;
-  font-size: 16px;
+  font-size: 14px;
   overflow: auto;
 `;
