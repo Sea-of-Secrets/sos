@@ -4,7 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useGatcha } from "../stores/useGatch";
 import { useCamera } from "../stores/useCamera";
 import Button from "../components/BackButton";
-import * as ShopApi from "~/app/api/shops";
+import * as ShopsApi from "~/app/api/shops";
 import * as UsersApi from "~/app/api/users";
 import { User, useAuth } from "~/store/auth";
 
@@ -22,13 +22,22 @@ export default function Gatcha() {
     }
     setLoading(true);
 
-    mockGatcha().then(data => setRandomGatchaData(data)); // 돈 계속 빠져나가서 만든 테스트용 함수
-    // fetchGatcha().then(data => {
-    //   console.log(data);
-    //   setRandomGatchaData(data);
-    // }); // TODO: 배포시에는 이걸 사용해주세용
-    UsersApi.getUserInfo().then(res => setUser(res.data as User));
-    setLoading(false);
+    try {
+      mockGatcha().then(data => setRandomGatchaData(data)); // 돈 계속 빠져나가서 만든 테스트용 함수
+
+      // // TODO: 배포시에는 이걸 사용해주세용
+      // const gatchaData = await fetchGatcha();
+      // console.log("당신의 NFT ! : ", gatchaData);
+      // setRandomGatchaData(gatchaData);
+      try {
+        UsersApi.getUserInfo().then(res => setUser(res.data as User));
+      } catch (e) {
+        UsersApi.getUserInfo().then(res => setUser(res.data as User));
+      }
+    } catch (e) {
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   const handleClickBackButton = useCallback(() => {
@@ -42,14 +51,14 @@ export default function Gatcha() {
 
   if (loading || !randomGatchaData) {
     return (
-      <Overlay>
+      <Overlay sens="LOW">
         <Container></Container>
       </Overlay>
     );
   }
 
   return (
-    <Overlay>
+    <Overlay sens="LOW">
       <Container>
         <Button onClick={handleClickBackButton} />
         <Wrapper></Wrapper>
@@ -69,7 +78,6 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid white;
 `;
 
 type GatchaResponse = {
@@ -88,7 +96,7 @@ const MOCK_DATA: GatchaResponse = {
 };
 
 const mockGatcha = async (): Promise<GatchaResponse> => {
-  console.log("두근두근 가챠 타임");
+  console.log("두근두근 가챠 타임 (테스트용)");
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve(MOCK_DATA);
@@ -98,8 +106,8 @@ const mockGatcha = async (): Promise<GatchaResponse> => {
 };
 
 const fetchGatcha: () => Promise<GatchaResponse> = async () => {
-  console.log("두근두근 가챠 타임");
-  const response = await ShopApi.postGatcha();
+  console.log("두근두근 가챠 타임 (확률 조작 없는 진짜!)");
+  const response = await ShopsApi.postGatcha();
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve(response.data as GatchaResponse);

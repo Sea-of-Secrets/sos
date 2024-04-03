@@ -2,7 +2,7 @@
 
 import Button from "~/_lib/components/Button";
 import { useFetch } from "~/_lib/hooks/useFetch";
-import * as ShopApi from "~/app/api/shops";
+import * as ShopsApi from "~/app/api/shops";
 
 export default function Client() {
   // const {

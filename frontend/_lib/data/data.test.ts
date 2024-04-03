@@ -1,6 +1,12 @@
 import { NEW_GRAPH, NEW_GRAPH_CENTER } from "./newNode";
 import { IngameGraphNode } from "./types";
-import { ORIGIN_EDGE, ORIGIN_GRAPH, getNode, makeEdgeId } from "./data";
+import {
+  ORIGIN_EDGE,
+  ORIGIN_GRAPH,
+  getNode,
+  makeEdgeId,
+  marineStartList,
+} from "./data";
 
 describe("너의 테스트를 작성해줘", () => {
   test("새로운 ORIGIN_GRAPH 생성 알고리즘", () => {
@@ -21,7 +27,7 @@ describe("너의 테스트를 작성해줘", () => {
           position: {
             x: x - CENTER_X,
             y: y - CENTER_Y,
-            z: 10,
+            z: -50,
           },
         };
       }
@@ -48,6 +54,14 @@ describe("너의 테스트를 작성해줘", () => {
     }
 
     //console.log(JSON.stringify(newGraph));
+
+    newGraph["0"] = {
+      nodeId: 0,
+      position: { x: -100, y: -1000, z: -50 },
+      type: "PIRATE",
+      neighborNodeIdList: [201, 202],
+    };
+    //expect(newGraph).toEqual(ORIGIN_GRAPH);
   });
 
   test("ORIGIN_GRAPH 기반으로 nodeEntries를 생성하는 알고리즘", () => {
@@ -60,7 +74,7 @@ describe("너의 테스트를 작성해줘", () => {
         return [parseInt(nodeId, 10), node];
       });
 
-    console.log(JSON.stringify(nodeEntries));
+    //console.log(JSON.stringify(nodeEntries));
   });
 
   test("ORIGIN_GRAPH 기반으로 duplicatedRemovedEdgeEntries를 생성하는 알고리즘", () => {
@@ -99,6 +113,12 @@ describe("너의 테스트를 작성해줘", () => {
       value,
     ]);
 
-    console.log(JSON.stringify(result));
+    //console.log(JSON.stringify(result));
+  });
+
+  test("marineStartNode 정합성 체크", () => {
+    expect(() => {
+      marineStartList.forEach(nodeId => getNode(nodeId));
+    }).not.toThrow();
   });
 });

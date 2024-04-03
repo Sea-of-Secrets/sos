@@ -1,7 +1,7 @@
 import styled from "@emotion/styled";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
-import { matching, matchingCancel } from "~/app/api/games";
+import * as GamesApi from "~/app/api/games";
 import { gameSocket } from "~/sockets";
 
 import { useCamera } from "../stores/useCamera";
@@ -49,7 +49,7 @@ export default function FastMatching() {
   const handleClickCheckButton = async () => {
     connect(onConnect);
     try {
-      const { data } = await matching({
+      const { data } = await GamesApi.matching({
         nickname,
         gameId: "",
         gameMode: "ONE_VS_ONE",
@@ -68,10 +68,9 @@ export default function FastMatching() {
 
   const handleClickCancelButton = async () => {
     try {
-      const { data } = await matchingCancel({
+      const { data } = await GamesApi.matchingCancel({
         nickname,
       });
-
       if (data === "CANCEL_ACCEPTED") {
         setLoading(false);
         disconnect();

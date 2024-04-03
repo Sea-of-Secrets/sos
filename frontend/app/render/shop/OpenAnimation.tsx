@@ -31,3 +31,5 @@ export default function Open() {
     </mesh>
   );
 }
+
+// coin 좌표 : position={[-50000, 120200, -168800]}
