@@ -4,15 +4,17 @@ import Image from "next/image";
 
 import { useCamera } from "../stores/useCamera";
 import { useScreenControl } from "../stores/useScreenControl";
+import { getAccessToken, useAuth } from "~/store/auth";
 
 interface LoginButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
 
 export default function LoginButton({ children, ...props }: LoginButtonProps) {
   const { cameraRef, mainScreen, LoginScreen } = useCamera();
   const { screen, setScreen, setMainScreen } = useScreenControl();
+  const { isLoggedIn } = useAuth();
   const handleClickButton = () => {
     LoginScreen();
-    setScreen("LOGIN");
+    isLoggedIn ? setScreen("MYPAGE") : setScreen("LOGIN");
   };
 
   return (
@@ -21,7 +23,7 @@ export default function LoginButton({ children, ...props }: LoginButtonProps) {
         width={100}
         height={100}
         src={"/assets/icon-user.png"}
-        alt={"로그인 버튼"}
+        alt={"로그인 or 마이페이지"}
       />
     </Button>
   );

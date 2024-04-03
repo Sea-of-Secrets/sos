@@ -124,7 +124,14 @@ export default function Page() {
                     flexDirection: "column",
                   }}
                 >
-                  <h2>{user.name}님 안녕하세요!</h2>
+                  <div
+                    style={{
+                      marginBottom: "1rem",
+                    }}
+                  >
+                    <h2 className="mb-3">{user.name}님 안녕하세요!</h2>
+                    <p>보유 코인: 1000g</p>
+                  </div>
                   {!user.walletAddress && (
                     <div style={{display: "flex"}}>
                       <Button onClick={handleMakeWallet} size={"sm"}>

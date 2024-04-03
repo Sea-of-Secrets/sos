@@ -7,7 +7,6 @@ import { useScreenControl } from "./stores/useScreenControl";
 
 import BackButton from "./components/BackButton";
 import LoginButton from "./components/LoginButton";
-import MyPageButton from "./components/MyPageButton";
 
 import Map from "./Map";
 import Button from "./Button";
@@ -19,9 +18,7 @@ import { useCamera } from "./stores/useCamera";
 
 export default function Renderer() {
   const cameraRef = useRef<CameraControls>(null!);
-  const { setCamera } = useCamera();
-
-  const { isLoggedIn } = useAuth();
+  const { setCamera, mainScreen } = useCamera();
   const [loading, setLoading] = useState(false);
   const { setNickname } = useNickname();
   const { screen } = useScreenControl();
@@ -29,11 +26,8 @@ export default function Renderer() {
 
   useEffect(() => {
     setCamera(cameraRef);
-  }, [setCamera]);
-
-  useEffect(() => {
     setNickname("");
-  }, [setNickname]);
+  }, [setNickname, setCamera]);
 
   return (
     <>
@@ -59,9 +53,7 @@ export default function Renderer() {
       {screen !== "MAIN" &&
         screen !== "FASTMATCHING" &&
         gatchaState === "GATCHA_PREV" && <BackButton />}
-      {loading &&
-        screen === "MAIN" &&
-        (isLoggedIn ? <MyPageButton /> : <LoginButton />)}
+      {loading && screen === "MAIN" && <LoginButton />}
       {screen !== "MAIN" && screen !== "FASTMATCHING" && <BackButton />}
     </>
   );
