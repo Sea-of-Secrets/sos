@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import UserNft from "./UserNft";
 
 import { WalletModel } from "./types";
-import { makeWallet2, logout, getWalletInfo2, addWallet } from "../api/users";
+import * as UserApi from "../api/users";
 import { useState, useEffect } from "react";
 
 import Container from "../render/components/Container";
@@ -27,7 +27,7 @@ export default function Page() {
 
   const handleMakeWallet = async () => {
     try {
-      const response = await makeWallet2();
+      const response = await UserApi.makeWallet2();
       const { address, mnemonic, privateKey } = response.data as WalletModel;
       setWallet(response.data as WalletModel);
     } catch (e) {
@@ -78,13 +78,13 @@ export default function Page() {
   };
 
   const handleGetWallet = async () => {
-    const response = await getWalletInfo2();
+    const response = await UserApi.getWalletInfo();
     setWallet(response.data as WalletModel);
   };
 
   const handleLogout = async () => {
     try {
-      await logout();
+      await UserApi.logout();
     } catch (e) {
     } finally {
       setUser(null);
@@ -101,7 +101,7 @@ export default function Page() {
     }
 
     try {
-      const response = await addWallet(address);
+      const response = await UserApi.addWallet(address);
       const updatedWallet = { address: address } as WalletModel;
       setWallet(updatedWallet);
       if (response.status === 200) {

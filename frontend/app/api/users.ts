@@ -6,16 +6,8 @@ export const getUserInfo = async () => {
   return res;
 };
 
-export const getWalletInfo2 = async () => {
-  const access = getAccessToken();
-  const refresh = getRefreshToken();
-
-  const res = await request.get(`${getBaseServerUrl()}/nft/wallet/info`, {
-    headers: {
-      //Cookie: `access=${access}; refresh=${refresh};`,
-      Authorization: `Bearer ${access}`,
-    },
-  });
+export const getWalletInfo = async () => {
+  const res = await request.get(`${getBaseServerUrl()}/nft/wallet/info`);
   return res;
 };
 
