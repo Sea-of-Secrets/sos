@@ -4,7 +4,7 @@ import UserNft from "./UserNft";
 
 import { WalletModel } from "./types";
 import * as UserApi from "../api/users";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import Container from "../render/components/Container";
 import { useCamera } from "../render/stores/useCamera";
@@ -27,9 +27,10 @@ export default function Page() {
 
   const handleMakeWallet = async () => {
     try {
-      const response = await UserApi.makeWallet();
-      const { address, mnemonic, privateKey } = response.data as WalletModel;
-      setWallet(response.data as WalletModel);
+      const walletResponse = await UserApi.makeWallet();
+      const userResponse = await UserApi.getUserInfo();
+      setWallet(walletResponse.data as WalletModel);
+      setUser(userResponse.data);
     } catch (e) {
       console.error(e);
     }
