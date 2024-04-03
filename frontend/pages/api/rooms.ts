@@ -72,9 +72,8 @@ export default async function handler(
   // 권한이 없다면..
   try {
     if (req.method === "POST") {
+      console.log(req.body);
       if (req.body.type === "make") {
-        console.log(req.body);
-
         const response = await request.post(`${getBaseServerUrl()}/room/make`, {
           ...req.body,
         });

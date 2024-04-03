@@ -18,16 +18,20 @@ export const makeRoom = async ({
 }) => {
   const access = getAccessToken();
   const refresh = getRefreshToken();
-  const res = await request.post<RoomData>(`${getBaseServerUrl()}/room/make`, {
-    nickname,
-    gameMode,
-    type: "make",
-  },{
-    headers: {
-      Cookie: `access=${access}; refresh=${refresh};`,
-      Authorization: `${access},${refresh}`,
+  const res = await request.post<RoomData>(
+    `${getBaseServerUrl()}/room/make`,
+    {
+      nickname,
+      gameMode,
+      type: "make",
     },
-  });
+    {
+      headers: {
+        Cookie: `access=${access}; refresh=${refresh};`,
+        Authorization: `${access},${refresh}`,
+      },
+    },
+  );
 
   return res;
 };
@@ -42,17 +46,18 @@ export const enterRoom = async ({
   const access = getAccessToken();
   const refresh = getRefreshToken();
   const res = await request.post<RoomData | string>(
-    `${getBaseServerUrl()}/rooms`,
+    `${getBaseServerUrl()}/room/enter`,
     {
       nickname,
       gameId,
       type: "enter",
-    },{
+    },
+    {
       headers: {
         Cookie: `access=${access}; refresh=${refresh};`,
         Authorization: `${access},${refresh}`,
       },
-    }
+    },
   );
   return res;
 };
