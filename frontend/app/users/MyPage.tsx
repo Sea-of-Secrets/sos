@@ -27,7 +27,7 @@ export default function Page() {
 
   const handleMakeWallet = async () => {
     try {
-      const response = await UserApi.makeWallet2();
+      const response = await UserApi.makeWallet();
       const { address, mnemonic, privateKey } = response.data as WalletModel;
       setWallet(response.data as WalletModel);
     } catch (e) {
