@@ -1,7 +1,7 @@
 "use client";
 
 import { UserModel, WalletModel } from "./types";
-import { getUserInfo2, logout, makeWallet2 } from "../api/users";
+import { makeWallet2 } from "../api/users";
 import { useEffect, useState } from "react";
 import Button from "../render/components/Button";
 

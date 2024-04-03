@@ -1,46 +1,10 @@
 import { getAccessToken, getRefreshToken, removeToken } from "~/store/auth";
 import { request, getBaseServerUrl } from "../../_lib/http";
 
-// export const getUserInfo = async () => {
-//   const access = getAccessToken();
-//   const refresh = getRefreshToken();
-//   const res = await request.get(`${getBaseClientUrl()}/users`, {
-//     headers: {
-//       Cookie: `access=${access}; refresh=${refresh};`,
-//       Authorization: `${access},${refresh}`,
-//     },
-//   });
-
-//   return res;
-// };
-
-export const getUserInfo2 = async () => {
-  const access = getAccessToken();
-  const refresh = getRefreshToken();
-
-  const res = await request.get(`${getBaseServerUrl()}/users`, {
-    headers: {
-      //Cookie: `access=${access}; refresh=${refresh};`,
-      Authorization: `Bearer ${access}`,
-    },
-  });
-
+export const getUserInfo = async () => {
+  const res = await request.get(`${getBaseServerUrl()}/users`);
   return res;
 };
-
-// export const getWalletInfo = async () => {
-//   const access = getAccessToken();
-//   const refresh = getRefreshToken();
-
-//   const res = await request.post(`${getBaseClientUrl()}/users`, {
-//     type: "get",
-//     headers: {
-//       Cookie: `access=${access}; refresh=${refresh};`,
-//       Authorization: `${access},${refresh}`,
-//     },
-//   });
-//   return res;
-// };
 
 export const getWalletInfo2 = async () => {
   const access = getAccessToken();
@@ -54,13 +18,6 @@ export const getWalletInfo2 = async () => {
   });
   return res;
 };
-
-// export const makeWallet = async () => {
-//   const res = await request.post(`${getBaseClientUrl()}/users`, {
-//     type: "post",
-//   });
-//   return res;
-// };
 
 export const makeWallet2 = async () => {
   const access = getAccessToken();
@@ -106,16 +63,8 @@ export const saveDefaultPiece = async (productName: string) => {
 };
 
 export const logout = async () => {
-  const access = getAccessToken();
-  const refresh = getRefreshToken();
   removeToken();
-
-  const res = await request.post(`${getBaseServerUrl()}/logout`, {
-    headers: {
-      //Cookie: `access=${access}; refresh=${refresh};`,
-      Authorization: `Bearer ${access}`,
-    },
-  });
+  const res = await request.post(`${getBaseServerUrl()}/logout`);
   return res;
 };
 

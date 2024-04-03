@@ -5,7 +5,7 @@ import { useGatcha } from "../stores/useGatch";
 import { useCamera } from "../stores/useCamera";
 import Button from "../components/BackButton";
 import * as ShopApi from "~/app/api/shops";
-import { getUserInfo2 } from "~/app/api/users";
+import * as UsersApi from "~/app/api/users";
 import { User, useAuth } from "~/store/auth";
 
 export default function Gatcha() {
@@ -24,7 +24,7 @@ export default function Gatcha() {
 
     mockGatcha().then(data => setRandomGatchaData(data)); // 돈 계속 빠져나가서 만든 테스트용 함수
     //fetchGatcha().then(data => setRandomGatchaData(data)); // 배포시에는 이걸 사용해주세용
-    getUserInfo2().then(res => setUser(res.data as User));
+    UsersApi.getUserInfo().then(res => setUser(res.data as User));
     setLoading(false);
   }, []);
 
