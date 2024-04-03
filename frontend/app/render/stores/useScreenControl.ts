@@ -1,4 +1,5 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 type ScreenType =
   | "START"
@@ -11,36 +12,45 @@ type ScreenType =
 
 interface ScreenControlState {
   screen: ScreenType;
-  startIntro: boolean;
+  showIntro: boolean;
   showLogo: boolean;
   setScreen: (newScreen: ScreenType) => void;
   setMainScreen: () => void;
-  setStartIntroScreen: () => void;
+  setShowIntro: () => void;
   setShowLogo: () => void;
 }
 
-export const useScreenControl = create<ScreenControlState>(set => ({
-  screen: "MAIN",
-  startIntro: false,
-  showLogo: false,
-  setStartIntroScreen: () => {
-    set(state => {
-      return { ...state, startIntro: false };
-    });
-  },
-  setShowLogo: () => {
-    set(state => {
-      return { ...state, showLogo: true };
-    });
-  },
-  setScreen: newScreen => {
-    set(state => {
-      return { ...state, screen: newScreen };
-    });
-  },
-  setMainScreen: () => {
-    set(state => {
-      return { ...state, screen: "MAIN" };
-    });
-  },
-}));
+export const useScreenControl = create<ScreenControlState>()(
+  persist(
+    set => ({
+      screen: "MAIN",
+      showIntro: false,
+      showLogo: false,
+      setShowIntro: () => {
+        set(state => {
+          return { ...state, showIntro: true };
+        });
+      },
+      setShowLogo: () => {
+        set(state => {
+          return { ...state, showLogo: true };
+        });
+      },
+      setScreen: newScreen => {
+        set(state => {
+          return { ...state, screen: newScreen };
+        });
+      },
+      setMainScreen: () => {
+        set(state => {
+          return { ...state, screen: "MAIN" };
+        });
+      },
+    }),
+    {
+      name: "intro-animation",
+      storage: createJSONStorage(() => sessionStorage),
+      partialize: state => ({ showIntro: state.showIntro }),
+    },
+  ),
+);

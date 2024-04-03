@@ -4,7 +4,7 @@ import styled from "@emotion/styled";
 import { useScreenControl } from "../stores/useScreenControl";
 
 export default function Logo() {
-  const { showLogo } = useScreenControl();
+  const { setShowIntro } = useScreenControl();
   const [isMounted, setIsMounted] = useState(false);
   const [showButton, setShowButtond] = useState(false);
 
@@ -20,7 +20,11 @@ export default function Logo() {
       <LogoContainer show={isMounted}>
         <Image src="/logo.png" alt="logo" width={350} height={100} />
       </LogoContainer>
-      {showButton && <Button show={showButton}>START</Button>}
+      {showButton && (
+        <Button onClick={() => setShowIntro()} show={showButton}>
+          START
+        </Button>
+      )}
     </Container>
   );
 }
