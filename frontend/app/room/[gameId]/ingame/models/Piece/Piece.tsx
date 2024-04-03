@@ -9,9 +9,8 @@ import { PieceProps } from "./types";
 import { useSocketMessage } from "../../stores/useSocketMessage";
 import useNickname from "~/store/nickname";
 
-// const Z_AXIS_AJ_VALUE = 0;
-
 export default function Piece({
+  name,
   position,
   pieceName,
   set,
@@ -56,29 +55,46 @@ export default function Piece({
   let piecePosition;
   let pieceRotation;
   let visible;
-  if (pieceName === "PIRATE") {
+  if (name === "PIRATE") {
     visible =
       socketMessage?.game?.currentPosition[0] !== 0 &&
       socketMessage?.game?.players[0]?.nickname === nickname;
-    pieceRotation = new Euler(0, Math.PI, 0);
     piecePosition = position
       ? new Vector3(position.x, position.z, position.y + 10)
       : undefined;
-  } else if (pieceName === "MARINE1") {
+
+    if (pieceName === "PIRATE") {
+      pieceRotation = new Euler(0, Math.PI, 0);
+      piecePosition = position
+        ? new Vector3(position.x, position.z, position.y + 10)
+        : undefined;
+    }
+    if (pieceName === "legendary1") {
+      piecePosition = position
+        ? new Vector3(position.x, position.z, position.y + 10)
+        : undefined;
+    }
+  } else if (name === "MARINE1") {
+    if (pieceName === "MARINE1") {
+      pieceRotation = new Euler(0, Math.PI, 0);
+    }
+    piecePosition = position
+      ? new Vector3(position.x, position.z + 6, position.y)
+      : undefined;
     visible = socketMessage?.game?.currentPosition[1] !== 0;
-    pieceRotation = new Euler(0, Math.PI, 0);
-    piecePosition = position
-      ? new Vector3(position.x, position.z + 6, position.y)
-      : undefined;
-  } else if (pieceName === "MARINE2") {
+  } else if (name === "MARINE2") {
+    if (pieceName === "MARINE2") {
+      pieceRotation = new Euler(0, Math.PI, 0);
+    }
     visible = socketMessage?.game?.currentPosition[2] !== 0;
-    pieceRotation = new Euler(0, Math.PI, 0);
     piecePosition = position
       ? new Vector3(position.x, position.z + 6, position.y)
       : undefined;
-  } else if (pieceName === "MARINE3") {
+  } else if (name === "MARINE3") {
+    if (pieceName === "MARINE3") {
+      pieceRotation = new Euler(0, Math.PI, 0);
+    }
     visible = socketMessage?.game?.currentPosition[3] !== 0;
-    pieceRotation = new Euler(0, Math.PI, 0);
     piecePosition = position
       ? new Vector3(position.x, position.z + 6, position.y)
       : undefined;

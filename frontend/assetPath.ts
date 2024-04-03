@@ -35,6 +35,46 @@ export const PiecePathMap = {
     src: "/marine_ship3/scene.gltf",
     size: 5,
   },
+  legendary1: {
+    src: "/legendary1/scene.gltf",
+    size: 5,
+  },
+  legendary2: {
+    src: "/legendary2/scene.gltf",
+    size: 5,
+  },
+  legendary3: {
+    src: "/legendary3/scene.gltf",
+    size: 2,
+  },
+  rare1: {
+    src: "/rare1/scene.gltf",
+    size: 5,
+  },
+  rare2: {
+    src: "/rare2/scene.gltf",
+    size: 0.2,
+  },
+  rare3: {
+    src: "/rare3/scene.gltf",
+    size: 10,
+  },
+  common1: {
+    src: "/common1/scene.gltf",
+    size: 5,
+  },
+  common2: {
+    src: "/common2/scene.gltf",
+    size: 10,
+  },
+  common3: {
+    src: "/common3/scene.gltf",
+    size: 10,
+  },
+  Zuhee: {
+    src: "/Zuhee/scene.gltf",
+    size: 10,
+  },
   RED_ARROW: {
     src: "/red_arrow_down/scene.gltf",
     size: 20,

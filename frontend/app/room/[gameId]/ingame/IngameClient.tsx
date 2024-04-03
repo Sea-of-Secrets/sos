@@ -3,9 +3,10 @@
 import React, { useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 
+import * as THREE from "three";
+
 import Timer from "./components/Timer";
 import IngameThree from "./IngameThree";
-import Loading from "./components/Loading";
 import Round from "./components/Round";
 import Turn from "./components/Turn";
 import Chat from "./components/Chat";
@@ -764,7 +765,8 @@ export default function IngameClient() {
           far: 100000,
           fov: 50,
         }}
-        onCreated={() => {
+        onCreated={({ gl, scene }) => {
+          scene.background = new THREE.Color("#AED7DD");
           send("/pub/room", {
             message: "RENDERED_COMPLETE",
             sender: nickname,

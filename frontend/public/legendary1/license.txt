@@ -1,0 +1,11 @@
+Model Information:
+* title:	Going Merry
+* source:	https://sketchfab.com/3d-models/going-merry-1760c031d3e64429b0d15c98cfa0d208
+* author:	d_kostash (https://sketchfab.com/d_kostash)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Going Merry" (https://sketchfab.com/3d-models/going-merry-1760c031d3e64429b0d15c98cfa0d208) by d_kostash (https://sketchfab.com/d_kostash) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
