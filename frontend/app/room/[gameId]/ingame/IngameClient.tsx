@@ -66,6 +66,7 @@ export default function IngameClient() {
 
   // 게임 시작
   const startAnimation = () => {
+    removeHeaderMessage();
     gameStartAnimation();
 
     setTimeout(() => {
@@ -483,6 +484,7 @@ export default function IngameClient() {
   };
 
   useEffect(() => {
+    setHeaderMessage("로딩중입니다");
     if (socketMessage.message === "RENDER_COMPLETE_ACCEPTED") {
       setLoading(false);
     }

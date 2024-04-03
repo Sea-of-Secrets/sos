@@ -19,12 +19,17 @@ export default function UserNft() {
     fetchNftList();
   }, []);
 
-  
-
   return (
-    <div style={{ display: "flex", justifyContent: "center", alignItems: "center", flexDirection:'column' }}>
-      <h1>보유 게임 기물 NFT</h1>
-      {loading && <Card nfts={nftList}/>}
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+        flexDirection: "column",
+      }}
+    >
+      <h1>보유 게임 기물 NFT ({nftList.length}개)</h1>
+      {loading && <Card nfts={nftList} />}
     </div>
   );
 }
