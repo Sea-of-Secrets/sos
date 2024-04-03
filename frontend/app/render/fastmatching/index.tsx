@@ -42,8 +42,6 @@ export default function FastMatching() {
   const onConnect = () => {
     subscribe(`/sub/${nickname}`, message => {
       const data = JSON.parse(message.body);
-      console.log(data);
-
       if (data.message === "MATCHING_SUCCESS") {
         setGameId(data.room.gameId);
         send("/pub/matching", {
