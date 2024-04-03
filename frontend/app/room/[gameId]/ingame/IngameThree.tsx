@@ -72,7 +72,7 @@ export default function IngameThree() {
             position={piratePosition}
             pieceName={
               socketMessage.game?.players[0]["userInfo"]
-                ? `${socketMessage.game?.players[0]["userInfo"]["productName"]}`
+                ? `${socketMessage.game?.players[0]["userInfo"]["productName"]?.toLowerCase()}`
                 : "PIRATE"
             }
             set={setPiratePiece}
@@ -82,7 +82,7 @@ export default function IngameThree() {
             position={marineOnePosition}
             pieceName={
               socketMessage.game?.players[1]["userInfo"]
-                ? `${socketMessage.game?.players[1]["userInfo"]["productName"]}`
+                ? `${socketMessage.game?.players[1]["userInfo"]["productName"]?.toLowerCase()}`
                 : "MARINE1"
             }
             set={setMarineOnePiece}
@@ -92,7 +92,7 @@ export default function IngameThree() {
             position={marineTwoPosition}
             pieceName={
               socketMessage.game?.players[2]["userInfo"]
-                ? `${socketMessage.game?.players[2]["userInfo"]["productName"]}`
+                ? `${socketMessage.game?.players[2]["userInfo"]["productName"]?.toLowerCase()}`
                 : "MARINE2"
             }
             set={setMarineTwoPiece}
@@ -102,7 +102,7 @@ export default function IngameThree() {
             position={marineThreePosition}
             pieceName={
               socketMessage.game?.players[3]["userInfo"]
-                ? `${socketMessage.game?.players[3]["userInfo"]["productName"]}`
+                ? `${socketMessage.game?.players[3]["userInfo"]["productName"]?.toLowerCase()}`
                 : "MARINE3"
             }
             set={setMarineThreePiece}

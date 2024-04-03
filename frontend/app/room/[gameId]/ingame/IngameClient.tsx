@@ -67,17 +67,8 @@ export default function IngameClient() {
 
   // 게임 시작
   const startAnimation = () => {
-    removeHeaderMessage();
+    setHeaderMessage("다른 사용자의 로딩을 기다리고 있습니다");
     gameStartAnimation();
-
-    setTimeout(() => {
-      // 애니메이션 끝났다고 알림
-      send("/pub/init", {
-        message: "START_GAME",
-        sender: nickname,
-        gameId,
-      });
-    }, 3000);
   };
 
   // 게임 종료
@@ -486,15 +477,28 @@ export default function IngameClient() {
 
   useEffect(() => {
     setHeaderMessage("로딩중입니다");
-    if (socketMessage.message === "RENDER_COMPLETE_ACCEPTED") {
+    if (
+      socketMessage.message === "RENDER_COMPLETE_ACCEPTED" &&
+      socketMessage.sender === nickname
+    ) {
       setLoading(false);
-    }
-
-    // 게임 시작
-    if (socketMessage.message === "ALL_RENDERED_COMPLETED") {
       setTimeout(() => {
         startAnimation();
       }, 3000);
+    }
+
+    // 게임 시작
+    if (
+      socketMessage.message === "ALL_RENDERED_COMPLETED" &&
+      socketMessage.sender === nickname
+    ) {
+      setTimeout(() => {
+        send("/pub/init", {
+          message: "START_GAME",
+          sender: nickname,
+          gameId,
+        });
+      }, 1000);
     }
 
     // 게임 종료
