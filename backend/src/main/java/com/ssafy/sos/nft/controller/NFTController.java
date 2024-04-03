@@ -73,7 +73,7 @@ public class NFTController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("올바르지 못한 지갑 주소입니다.");
         }
 
-        if (address.length() < 27 || address.length() > 40) {
+        if (address.length() < 27 || address.length() > 50) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("올바르지 못한 지갑 주소 길이입니다.");
         }
 
