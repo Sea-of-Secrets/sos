@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import UserNft from "./UserNft";
 
 import { WalletModel } from "./types";
-import { makeWallet2, logout, getWalletInfo2,addWallet } from "../api/users";
+import { makeWallet2, logout, getWalletInfo2, addWallet } from "../api/users";
 import { useState, useEffect } from "react";
 
 import Container from "../render/components/Container";
@@ -95,12 +95,12 @@ export default function Page() {
   };
 
   const handleAddWallet = async () => {
-    const address = window.prompt('지갑 주소를 입력하세요:') as string;
+    const address = window.prompt("지갑 주소를 입력하세요:") as string;
     const response = await addWallet(address);
 
-    const updatedWallet = { address : address} as WalletModel;
+    const updatedWallet = { address: address } as WalletModel;
     setWallet(updatedWallet);
-  }
+  };
 
   return (
     <>
@@ -130,10 +130,10 @@ export default function Page() {
                     }}
                   >
                     <h2 className="mb-3">{user.name}님 안녕하세요!</h2>
-                    <p>보유 코인: 1000g</p>
+                    <p>보유 코인: {user.gold}</p>
                   </div>
                   {!user.walletAddress && (
-                    <div style={{display: "flex"}}>
+                    <div style={{ display: "flex" }}>
                       <Button onClick={handleMakeWallet} size={"sm"}>
                         지갑 만들기
                       </Button>
