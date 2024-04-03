@@ -65,7 +65,7 @@ export default function IngameThree() {
       <Graph />
       {socketMessage.game?.players && (
         <>
-          {/* <Piece
+          <Piece
             name="PIRATE"
             position={piratePosition}
             pieceName={
@@ -104,8 +104,8 @@ export default function IngameThree() {
                 : "MARINE3"
             }
             set={setMarineThreePiece}
-          /> */}
-          <Piece
+          />
+          {/* <Piece
             name="PIRATE"
             position={piratePosition}
             pieceName="common1"
@@ -128,7 +128,7 @@ export default function IngameThree() {
             position={marineThreePosition}
             pieceName="Zuhee"
             set={setMarineThreePiece}
-          />
+          /> */}
         </>
       )}
       <TreasureGroup />
