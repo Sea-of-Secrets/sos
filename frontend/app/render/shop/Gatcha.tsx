@@ -85,10 +85,11 @@ const MOCK_DATA: GatchaResponse = {
 };
 
 const mockGatcha = async (): Promise<GatchaResponse> => {
-  console.log("fetch!");
+  console.log("두근두근 가챠 타임");
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve(MOCK_DATA);
+      console.log(MOCK_DATA);
     }, 4000);
   });
 };
