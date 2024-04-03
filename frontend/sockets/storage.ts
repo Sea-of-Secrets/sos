@@ -1,5 +1,5 @@
-import { defineWebStorage } from "~/_lib/webStorage";
+// import { defineWebStorage } from "~/_lib/webStorage";
 
-export const senderStorage = defineWebStorage<string>("wschat.sender");
+// export const senderStorage = defineWebStorage<string>("wschat.sender");
 
-export const gameStorage = defineWebStorage<string>("wschat.gameId");
+// export const gameStorage = defineWebStorage<string>("wschat.gameId");
