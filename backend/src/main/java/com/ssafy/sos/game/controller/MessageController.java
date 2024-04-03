@@ -10,7 +10,6 @@ import com.ssafy.sos.game.message.server.ServerMessage;
 import com.ssafy.sos.game.message.server.ServerMoveMessage;
 import com.ssafy.sos.game.service.GameService;
 import com.ssafy.sos.game.service.GameTimerService;
-import com.ssafy.sos.game.service.MatchingService;
 import com.ssafy.sos.game.event.TimerTimeoutEvent;
 import com.ssafy.sos.game.util.GameRole;
 import com.ssafy.sos.game.util.GameStatus;
@@ -40,7 +39,6 @@ public class MessageController {
     private final Board board;
     private final GameService gameService;
     private final GameTimerService gameTimerService;
-    private final MatchingService matchingService;
 
     // 소켓 연결시 실행
     @EventListener
@@ -122,8 +120,7 @@ public class MessageController {
     }
 
     @MessageMapping("/matching")
-    public void matching(ClientMessage message, StompHeaderAccessor accessor) {
-        String sessionId = accessor.getSessionId();
+    public void matching(ClientMessage message) {
         String sender = message.getSender();
         String gameId = message.getGameId();
         Room room = board.getRoomMap().get(gameId);
@@ -230,6 +227,7 @@ public class MessageController {
             if (room.getIsRendered() == room.getGameMode().playerLimit()) {
                 serverMessage = ServerMessage.builder()
                         .message("ALL_RENDERED_COMPLETED")
+                        .sender(sender)
                         .game(game)
                         .room(room)
                         .build();
