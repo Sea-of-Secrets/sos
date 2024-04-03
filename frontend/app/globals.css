@@ -33,3 +33,7 @@ body {
   background-color: #0056b3;
   cursor: wait;
 }
+
+.animated {
+  transform: rotateY(1800deg);
+}
