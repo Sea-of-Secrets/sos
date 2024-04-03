@@ -145,7 +145,7 @@ const getPieceOption = (props: {
     pieceRotation = new Euler(0, Math.PI, 0);
   }
 
-  if (pieceName === "Zuhee") {
+  if (pieceName === "zuhee") {
     pieceRotation = new Euler(0, Math.PI, 0);
     piecePosition = new Vector3(position.x - 10, position.z + 30, position.y);
   }
