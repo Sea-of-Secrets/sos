@@ -9,8 +9,15 @@ export const getProductList = async () => {
 };
 
 export const postGatcha = async () => {
+  const access = getAccessToken();
+  const refresh = getRefreshToken();
+
   const res = await request.post(`${getBaseClientUrl()}/shops`, {
     type: "RANDOM",
+    headers: {
+      Cookie: `access=${access}; refresh=${refresh};`,
+      Authorization: `${access},${refresh}`,
+    },
   });
   return res;
 };
