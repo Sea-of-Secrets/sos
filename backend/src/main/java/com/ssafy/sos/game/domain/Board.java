@@ -495,19 +495,15 @@ public class Board {
         List<Player> players = new ArrayList<>();
         Player player1 = Player.builder()
                 .nickname("zuhee")
-                .isMember(true)
                 .build();
         Player player2 = Player.builder()
                 .nickname("sangyoon")
-                .isMember(true)
                 .build();
         Player player3 = Player.builder()
                 .nickname("joopy")
-                .isMember(true)
                 .build();
         Player player4 = Player.builder()
                 .nickname("seungjun")
-                .isMember(true)
                 .build();
         players.add(player1);
         players.add(player2);

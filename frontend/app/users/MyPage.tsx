@@ -3,7 +3,7 @@ import styled from "@emotion/styled";
 import UserNft from "./UserNft";
 
 import { WalletModel } from "./types";
-import { makeWallet2, logout, getWalletInfo2 } from "../api/users";
+import { makeWallet2, logout, getWalletInfo2,addWallet } from "../api/users";
 import { useState, useEffect } from "react";
 
 import Container from "../render/components/Container";
@@ -94,6 +94,14 @@ export default function Page() {
     }
   };
 
+  const handleAddWallet = async () => {
+    const address = window.prompt('지갑 주소를 입력하세요:');
+    const response = await addWallet(address);
+
+    const updatedWallet = { address : address} as WalletModel;
+    setWallet(updatedWallet);
+  }
+
   return (
     <>
       <Container position="right">
@@ -125,9 +133,14 @@ export default function Page() {
                     <p>보유 코인: 1000g</p>
                   </div>
                   {!user.walletAddress && (
-                    <Button onClick={handleMakeWallet} size={"sm"}>
-                      지갑 만들기
-                    </Button>
+                    <div style={{display: "flex"}}>
+                      <Button onClick={handleMakeWallet} size={"sm"}>
+                        지갑 만들기
+                      </Button>
+                      <Button onClick={handleAddWallet} size={"sm"}>
+                        지갑 연동
+                      </Button>
+                    </div>
                   )}
                   {user.walletAddress && (
                     <div
@@ -142,6 +155,9 @@ export default function Page() {
                       </Button>
                       <Button onClick={handleGetWallet} size={"xs"}>
                         지갑 정보
+                      </Button>
+                      <Button onClick={handleAddWallet} size={"sm"}>
+                        지갑 수정
                       </Button>
                     </div>
                   )}

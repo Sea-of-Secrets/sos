@@ -447,7 +447,7 @@ public class GameServiceImpl implements GameService {
         for (int i = 0; i < game.getGameMode().playerLimit(); i++) {
             Player player = game.getPlayers().get(i);
             // 해당 플레이어가 회원이면 기록 저장
-            if (player.getIsMember()) {
+            if (player.getUserInfo() != null) {
                 GameRecord gameRecord = GameRecord.builder()
                         .thieve(game.getPlayers().get(0).getNickname())
                         .navy(new String[]{

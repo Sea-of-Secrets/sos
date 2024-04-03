@@ -6,6 +6,8 @@ import com.ssafy.sos.game.domain.RoomRequest;
 import com.ssafy.sos.game.domain.Room;
 import com.ssafy.sos.game.service.GameService;
 import com.ssafy.sos.game.service.MatchingService;
+import com.ssafy.sos.user.domain.CustomOAuth2User;
+import com.ssafy.sos.user.domain.UserEntity;
 import com.ssafy.sos.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -28,10 +30,16 @@ public class RoomController {
     @PostMapping("/make")
     public ResponseEntity<Room> makeRoom(@RequestBody RoomRequest roomRequest,
                                          Authentication authentication) {
-        Boolean isMember = (authentication != null);
+//        Boolean isMember = (authentication != null);
+        UserEntity userInfo = null;
+        if (authentication != null) {
+            CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
+            userInfo = userService.getUserInfo(user);
+        }
+
         Player player = Player.builder()
                 .nickname(roomRequest.getNickname())
-                .isMember(isMember)
+                .userInfo(userInfo)
                 .build();
 
         Room room = gameService.makeRoom(player, roomRequest.getGameMode());
@@ -42,12 +50,16 @@ public class RoomController {
     @PostMapping("/enter")
     public ResponseEntity<?> enterRoom(@RequestBody RoomRequest roomRequest,
                                        Authentication authentication) {
-        Boolean isMember = (authentication != null);
-
+//        Boolean isMember = (authentication != null);
+        UserEntity userInfo = null;
+        if (authentication != null) {
+            CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
+            userInfo = userService.getUserInfo(user);
+        }
         String nickname = roomRequest.getNickname();
         Player newPlayer = Player.builder()
                 .nickname(nickname)
-                .isMember(isMember)
+                .userInfo(userInfo)
                 .build();
 
         String roomCode = roomRequest.getGameId();
@@ -76,10 +88,16 @@ public class RoomController {
     @PostMapping("/matching")
     public ResponseEntity<?> tryMatching(@RequestBody RoomRequest roomRequest,
                                          Authentication authentication) {
-        Boolean isMember = (authentication != null);
+//        Boolean isMember = (authentication != null);
+        UserEntity userInfo = null;
+        if (authentication != null) {
+            CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
+            userInfo = userService.getUserInfo(user);
+        }
+
         Player player = Player.builder()
                 .nickname(roomRequest.getNickname())
-                .isMember(isMember)
+                .userInfo(userInfo)
                 .build();
         if (matchingService.enqueue(player)) {
             return ResponseEntity.ok("OK");

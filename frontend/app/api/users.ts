@@ -118,3 +118,20 @@ export const logout = async () => {
   });
   return res;
 };
+
+export const addWallet = async (address) => {
+  const access = getAccessToken();
+  const refresh = getRefreshToken();
+  removeToken();
+
+  const res = await request.patch(`${getBaseServerUrl()}/nft/wallet`, {
+    walletAddress: address,
+  },
+  {
+    headers: {
+      Cookie: `access=${access}; refresh=${refresh};`,
+      Authorization: `${access},${refresh}`,
+    },
+  });
+  return res;
+};

@@ -30,6 +30,7 @@ public class Game {
     private GameMode gameMode; // 1:1 모드, 1:3 모드
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private boolean lockRespond;
 
     public Game(String gameId) {
         this.gameId = gameId;
@@ -46,6 +47,7 @@ public class Game {
         this.gameStatus = GameStatus.BEFORE_START;
         this.investigateSuccess = new ArrayList<>();
         this.gameMode = GameMode.ONE_VS_THREE;
+        this.lockRespond = false;
     }
 
     public void increaseTurn() {
