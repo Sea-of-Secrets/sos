@@ -119,9 +119,7 @@ export default function Room() {
         {isHost && (
           <Button
             size="sm"
-            className={`${
-              !isFull ? "opacity-50 cursor-not-allowed" : "hover:bg-gray-50"
-            }`}
+            className={`${!isFull ? "opacity-50 cursor-not-allowed" : ""}`}
             onClick={handleConfirm}
             disabled={!isFull}
           >
@@ -181,7 +179,6 @@ const Button = styled.button<{ size?: "xs" | "md" | "sm" }>`
 const UserContainer = styled.div`
   display: flex;
   flex-direction: column;
-
   align-items: center;
   justify-content: center;
   width: 25rem;
@@ -207,4 +204,5 @@ const Container = styled.div`
   padding: 2rem;
   align-items: center;
   justify-content: space-around;
+  gap: 1rem;
 `;

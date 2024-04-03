@@ -51,12 +51,8 @@ export default function FastMatching() {
           sender: nickname,
           gameId: data.room.gameId,
         });
-      } else if (
-        data.message === "ENTER_SUCCESS" &&
-        data.room.host.nickname === nickname
-      ) {
-        setIsHost(true);
-      } else if (data.message === "PREPARE_GAME_START") {
+        if (data.room.inRoomPlayers[0]["nickname"] === nickname)
+          setIsHost(true);
         setIsStart(true);
       }
     });

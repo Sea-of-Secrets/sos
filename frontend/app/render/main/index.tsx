@@ -32,7 +32,6 @@ export default function TestController() {
       <Button onClick={() => zoom("FASTMATCHING")}>1:1 빠른 매칭</Button>
       <Button onClick={() => zoom("ROOM")}>사용자 게임</Button>
       <Button onClick={() => zoom("SHOP")}>상점</Button>
-      {/* <Button onClick={() => zoom("MYPAGE")}>마이페이지</Button> */}
     </Container>
   );
 }
