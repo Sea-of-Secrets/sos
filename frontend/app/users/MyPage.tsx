@@ -1,27 +1,17 @@
 import styled from "@emotion/styled";
 
-import { Center } from "@react-three/drei";
 import UserNft from "./UserNft";
-import UserProfile from "./UserProfile";
 
-import { UserModel, WalletModel } from "./types";
-import {
-  getUserInfo2,
-  makeWallet2,
-  logout,
-  getWalletInfo2,
-} from "../api/users";
-import { useEffect, useState } from "react";
-import Button from "../render/components/Button";
+import { WalletModel } from "./types";
+import { makeWallet2, logout, getWalletInfo2 } from "../api/users";
+import { useState, useEffect } from "react";
 
-import MiniModal from "../render/components/MiniModal";
-import MiniModalContent from "../render/components/MiniModalContent";
-
-import Modal from "../render/components/Modal";
 import Container from "../render/components/Container";
 import { useCamera } from "../render/stores/useCamera";
 import { useScreenControl } from "../render/stores/useScreenControl";
 import { useAuth } from "~/store/auth";
+import MiniModalContent from "../render/components/MiniModalContent";
+import MiniModal from "../render/components/MiniModal";
 
 export default function Page() {
   const { user, setUser } = useAuth();
@@ -43,6 +33,10 @@ export default function Page() {
     } catch (e) {
       console.error(e);
     }
+  };
+
+  const handleCloseWallet = () => {
+    setWallet(null);
   };
 
   if (!user) {
@@ -129,7 +123,10 @@ export default function Page() {
                     </Button>
                   )}
                   {user.walletAddress && (
-                    <div style={{ display: "flex", alignItems: "center" }}>
+                    <div
+                      className="gap-1"
+                      style={{ display: "flex", alignItems: "center" }}
+                    >
                       <p style={{ marginRight: "10px" }}>
                         지갑 주소 : {maskAddress(user.walletAddress)}
                       </p>
@@ -141,7 +138,7 @@ export default function Page() {
                       </Button>
                     </div>
                   )}
-                  <h2>현재 기본 말 : {user.productName}</h2>
+                  <h2 className="pt-5">현재 기본 말 : {user.productName}</h2>
                 </div>
               </div>
 
@@ -150,38 +147,43 @@ export default function Page() {
               <UserNft />
             </div>
           </ModalContent>
+          <Button size={"sm"} onClick={handleLogout}>
+            로그아웃
+          </Button>
         </ModalStyle>
-        <Button size={"sm"} onClick={handleLogout}>
-          로그아웃
-        </Button>
       </Container>
       {wallet && (
-        <MiniModal>
-          <h1>발급된 지갑 정보</h1>
-          <MiniModalContent>
-            <p>Kaikas에 연동해서 모바일에서도 NFT를 확인해보세요!</p>
-            <div style={{ display: "flex" }}>
-              <p>주소 : {maskAddress(wallet.address)}</p>
-              <Button onClick={handleCopyNewAddress} size={"xs"}>
-                {newAddressCopied ? "복사됨!" : "복사하기"}
+        <>
+          <MiniModal>
+            <h1>발급된 지갑 정보</h1>
+            <MiniModalContent>
+              <p>Kaikas에 연동해서 모바일에서도 NFT를 확인해보세요!</p>
+              <div style={{ display: "flex" }}>
+                <p>주소 : {maskAddress(wallet.address)}</p>
+                <Button onClick={handleCopyNewAddress} size={"xs"}>
+                  {newAddressCopied ? "복사됨!" : "복사하기"}
+                </Button>
+              </div>
+              <br />
+              <div>
+                <p>
+                  연상 기호 : <br />
+                  {wallet.mnemonic}
+                </p>
+              </div>
+              <br />
+              <div style={{ display: "flex" }}>
+                <p>개인키 : {maskAddress(wallet.privateKey)}</p>
+                <Button onClick={handleCopyPrivateKey} size={"xs"}>
+                  {newPrivateKeyCopied ? "복사됨!" : "복사하기"}
+                </Button>
+              </div>
+              <Button className="mt-5" size={"xs"} onClick={handleCloseWallet}>
+                닫기
               </Button>
-            </div>
-            <br />
-            <div>
-              <p>
-                연상 기호 : <br />
-                {wallet.mnemonic}
-              </p>
-            </div>
-            <br />
-            <div style={{ display: "flex" }}>
-              <p>개인키 : {maskAddress(wallet.privateKey)}</p>
-              <Button onClick={handleCopyPrivateKey} size={"xs"}>
-                {newPrivateKeyCopied ? "복사됨!" : "복사하기"}
-              </Button>
-            </div>
-          </MiniModalContent>
-        </MiniModal>
+            </MiniModalContent>
+          </MiniModal>
+        </>
       )}
     </>
   );
@@ -190,6 +192,7 @@ export default function Page() {
 const ModalStyle = styled.div`
   display: flex;
   flex-direction: column;
+  align-items: center;
   width: 30rem;
   height: 40rem;
   padding: 1rem;
@@ -201,5 +204,51 @@ const ModalStyle = styled.div`
 const ModalContent = styled.div`
   display: flex;
   flex-direction: column;
+  width: 30rem;
+  height: 29rem;
   padding: 5rem;
+`;
+
+const Button = styled.button<{ size?: "xs" | "md" | "sm" }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  background: url("/assets/text-background.png") no-repeat center center;
+  background-size: cover;
+  font-size: ${({ size }) => {
+    switch (size) {
+      case "xs":
+        return "10px";
+      case "sm":
+        return "20px";
+      default:
+        return "40px";
+    }
+  }};
+  color: #fff;
+  transition: transform 0.4s ease;
+  &:hover {
+    transform: scale(1.1);
+  }
+
+  ${({ size }) => {
+    switch (size) {
+      case "xs":
+        return `
+          width: 5rem;
+          height: 2rem;
+        `;
+      case "sm":
+        return `
+          width: 8rem;
+          height: 3rem;
+        `;
+      default:
+        return `
+          width: 22rem;
+          height: 8rem;
+        `;
+    }
+  }}
 `;

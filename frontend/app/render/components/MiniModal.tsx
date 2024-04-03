@@ -10,36 +10,38 @@ export default function Modal({ children, ...props }: ModalProps) {
 
   useEffect(() => {
     setIsVisible(true);
-  }, [screen]);
+  }, []);
   return (
     <>
-      <ModalBackdrop />
-      <ModalStyle isVisible={isVisible} {...props}>
-        <Content>{children}</Content>
-      </ModalStyle>
+      <MiniModalBackdrop />
+      <MiniModal isVisible={isVisible} {...props}>
+        <MiniModalContent>{children}</MiniModalContent>
+      </MiniModal>
     </>
   );
 }
 
-const ModalStyle = styled.div<{
+const MiniModal = styled.div<{
   isVisible?: boolean;
 }>`
   transition: bottom 1.5s ease;
   position: fixed;
   left: 50%;
-  font-size: 30px;
-  bottom: ${({ isVisible }) => (isVisible ? "10%" : "-100%")};
-  transform: translate(-50%);
+  font-size: 20px;
+  bottom: ${({ isVisible }) => (isVisible ? "50%" : "-100%")};
+  justify-content: center;
+  align-items: center;
+  transform: translate(-50%, 50%);
   display: flex;
   flex-direction: column;
-  min-width: 30rem;
-  min-height: 20rem;
+  width: 25rem;
+  height: 33rem;
   padding: 1rem;
   background: url("/assets/modal-background.png") no-repeat center center;
   z-index: 999;
 `;
 
-const ModalBackdrop = styled.div`
+const MiniModalBackdrop = styled.div`
   position: fixed;
   top: 0;
   left: 0;
@@ -49,11 +51,12 @@ const ModalBackdrop = styled.div`
   z-index: 999;
 `;
 
-const Content = styled.div`
+const MiniModalContent = styled.div`
   display: flex;
   flex-direction: column;
-  min-height: 30rem;
-  padding: 5rem;
+  width: 23rem;
+  height: 33rem;
+  padding: 4rem;
   align-items: center;
   z-index: 999;
 `;

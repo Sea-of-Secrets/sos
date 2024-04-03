@@ -17,10 +17,8 @@ export default function MiniModalContent({
 const Content = styled.div`
   display: flex;
   flex-direction: column;
-
-  max-width: 12rem;
-  padding: 5rem 0rem;
+  padding: 1rem 0rem;
   align-items: center;
-  font-size: 20px;
+  font-size: 16px;
   overflow: auto;
 `;
