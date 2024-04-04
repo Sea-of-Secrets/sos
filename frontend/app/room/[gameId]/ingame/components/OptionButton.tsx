@@ -16,10 +16,20 @@ const OptionImageSourceMatcher = matcher({
   DOCS: "/assets/icon-docs.png",
   OFF: "/assets/icon-off.png",
   CAMERA: "/assets/icon-camera.png",
+  MENU: "/assets/icon-menu.png",
 });
 
 export default function OptionButton() {
-  const { isChat, setIsChat, setIsDocs, setIsOff, setIsCamera } = useOption();
+  const {
+    isChat,
+    isCamera,
+    isMenu,
+    setIsMenu,
+    setIsChat,
+    setIsDocs,
+    setIsOff,
+    setIsCamera,
+  } = useOption();
   const { nickname } = useNickname();
   const { socketMessage } = useSocketMessage();
   const { zoom } = useCamera();
@@ -34,6 +44,9 @@ export default function OptionButton() {
   };
 
   const handleClickButton = (button: string) => {
+    if (button === "MENU") {
+      setIsMenu();
+    }
     if (button === "OFF") {
       setIsOff();
     }
@@ -60,69 +73,86 @@ export default function OptionButton() {
     <div className={clsx(styles.container)}>
       <div
         onClick={() => {
-          handleClickButton("OFF");
+          handleClickButton("MENU");
         }}
       >
         <Image
           width={50}
           height={50}
-          src={OptionImageSourceMatcher("OFF")}
-          alt={"OFF"}
+          src={OptionImageSourceMatcher("MENU")}
+          alt={"MENU"}
         />
-        <span>게임 종료</span>
+        <span>{isMenu ? "메뉴 닫기" : "메뉴 열기"}</span>
       </div>
-      <div
-        onClick={() => {
-          handleClickButton("CHAT");
-        }}
-      >
-        <Image
-          width={50}
-          height={50}
-          src={OptionImageSourceMatcher("CHAT")}
-          alt={"CHAT"}
-        />
-        <span>{isChat ? "채팅 끄기" : "채팅 켜기"}</span>
-      </div>
-      <div
-        onClick={() => {
-          handleClickButton("ZOOM");
-        }}
-      >
-        <Image
-          width={50}
-          height={50}
-          src={OptionImageSourceMatcher("ZOOM")}
-          alt={"ZOOM"}
-        />
-        <span>내 위치</span>
-      </div>
-      <div
-        onClick={() => {
-          handleClickButton("DOCS");
-        }}
-      >
-        <Image
-          width={50}
-          height={50}
-          src={OptionImageSourceMatcher("DOCS")}
-          alt={"DOCS"}
-        />
-        <span>자유 캠</span>
-      </div>
-      <div
-        onClick={() => {
-          handleClickButton("DOCS");
-        }}
-      >
-        <Image
-          width={50}
-          height={50}
-          src={OptionImageSourceMatcher("CAMERA")}
-          alt={"CAMERA"}
-        />
-        <span>게임 설명</span>
-      </div>
+      {isMenu && (
+        <>
+          <div
+            onClick={() => {
+              handleClickButton("OFF");
+            }}
+          >
+            <Image
+              width={50}
+              height={50}
+              src={OptionImageSourceMatcher("OFF")}
+              alt={"OFF"}
+            />
+            <span>게임 종료</span>
+          </div>
+          <div
+            onClick={() => {
+              handleClickButton("CHAT");
+            }}
+          >
+            <Image
+              width={50}
+              height={50}
+              src={OptionImageSourceMatcher("CHAT")}
+              alt={"CHAT"}
+            />
+            <span>{isChat ? "채팅 끄기" : "채팅 켜기"}</span>
+          </div>
+          <div
+            onClick={() => {
+              handleClickButton("ZOOM");
+            }}
+          >
+            <Image
+              width={50}
+              height={50}
+              src={OptionImageSourceMatcher("ZOOM")}
+              alt={"ZOOM"}
+            />
+            <span>내 위치</span>
+          </div>
+          <div
+            onClick={() => {
+              handleClickButton("DOCS");
+            }}
+          >
+            <Image
+              width={50}
+              height={50}
+              src={OptionImageSourceMatcher("DOCS")}
+              alt={"DOCS"}
+            />
+            <span>게임 설명</span>
+          </div>
+          <div
+            onClick={() => {
+              handleClickButton("CAMERA");
+            }}
+          >
+            <Image
+              width={50}
+              height={50}
+              src={OptionImageSourceMatcher("CAMERA")}
+              alt={"CAMERA"}
+            />
+            <span>{isCamera ? "자유 캠" : "고정 캠"}</span>
+          </div>
+        </>
+      )}
     </div>
   );
 }

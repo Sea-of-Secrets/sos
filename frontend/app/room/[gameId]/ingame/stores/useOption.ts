@@ -5,10 +5,12 @@ interface OptionState {
   isDocs: boolean;
   isOff: boolean;
   isCamera: boolean;
+  isMenu: boolean;
   setIsChat: () => void;
   setIsDocs: () => void;
   setIsOff: () => void;
   setIsCamera: () => void;
+  setIsMenu: () => void;
 }
 
 export const useOption = create<OptionState>(set => ({
@@ -16,6 +18,7 @@ export const useOption = create<OptionState>(set => ({
   isDocs: false,
   isOff: false,
   isCamera: true,
+  isMenu: false,
   setIsChat: () => {
     set(state => {
       return { ...state, isChat: !state.isChat };
@@ -34,6 +37,11 @@ export const useOption = create<OptionState>(set => ({
   setIsCamera: () => {
     set(state => {
       return { ...state, isCamera: !state.isCamera };
+    });
+  },
+  setIsMenu: () => {
+    set(state => {
+      return { ...state, isMenu: !state.isMenu };
     });
   },
 }));
