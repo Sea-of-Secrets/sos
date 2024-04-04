@@ -69,10 +69,10 @@ public class ProductServiceImpl implements ProductService {
         int num = secureRandom.nextInt(100) + 1;
         Grade grade;
 
-        if (num <= 10) {
+        if (num <= 5) {
             grade = Grade.LEGENDARY;
         }
-        else if (num <= 40) {
+        else if (num <= 30) {
             grade = Grade.RARE;
         }
         else {
@@ -82,6 +82,7 @@ public class ProductServiceImpl implements ProductService {
         List<Product> productList = productRepository.findByGradeAndIsDeletedFalseAndIsSoldOutFalse(grade);
 
         if (grade == Grade.LEGENDARY && productList.isEmpty()) {
+            grade = Grade.RARE;
             productList = productRepository.findByGradeAndIsDeletedFalseAndIsSoldOutFalse(Grade.RARE);
         }
 

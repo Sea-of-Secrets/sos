@@ -56,6 +56,22 @@
   - security6, oauth-client2, jjwt 0.11.5
   - JUnit5
   - Stomp 2.3.4
+
+- Blockchain API Server
+  - node.js 18.17
+  - ethers.js 6.11.1
+  - express 4.18.3
+  - NFT.storage 7.1.1
+  - web3 4.6.0
+  - blocksdk-js 3.1.0
+
+- Smart Contract
+  - @chainlink/contracts 0.2.1
+  - hardhat 2.11.0
+  - openzeppelin/contracts 5.0.0
+  - openzeppelin-solidity 2.2.0
+  - mocha 9.2.1
+
 - FrontEnd
   - npm: >=9
   - node: >=18
@@ -79,7 +95,7 @@
 - 커뮤니케이션 : Notion, MatterMost, Discord
 
 ### 서비스 아키텍처
-
+![image.png](./README_IMAGE/architecture.png)
 
 ### API 명세서
 
