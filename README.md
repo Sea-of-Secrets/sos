@@ -57,9 +57,20 @@
   - JUnit5
   - Stomp 2.3.4
 - FrontEnd
-  - HTML5, CSS3, JavaScript(ES6)
-  - Node.js 18.18, Vite 5.0.8
-  - @stomp/stompjs 7.0.0
+  - npm: >=9
+  - node: >=18
+  - TypeScript: >=5
+  - React: >=18
+  - Next.js: >=14
+  - Three.js: 0.162.0
+  - @stomp/stompjs: 7.0.0
+  - Zustand: 4.5.2
+  - sass: 1.71.1
+  - @emotion/react: 11.11.4, @emotion/styled: 11.11.0
+  - prettier: 3.2.5
+  - eslint: >=8
+  - jest: >=29
+  - leva: 0.9.35
 
 ### 협업 툴
 
