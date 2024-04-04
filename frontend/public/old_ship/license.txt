@@ -1,0 +1,11 @@
+Model Information:
+* title:	Caravel Ship
+* source:	https://sketchfab.com/3d-models/caravel-ship-c9819a0e8a57429f888b74978219fb7a
+* author:	Ginny Sutton (https://sketchfab.com/suttonj94)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Caravel Ship" (https://sketchfab.com/3d-models/caravel-ship-c9819a0e8a57429f888b74978219fb7a) by Ginny Sutton (https://sketchfab.com/suttonj94) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

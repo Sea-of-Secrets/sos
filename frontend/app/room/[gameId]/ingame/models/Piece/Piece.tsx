@@ -170,6 +170,26 @@ const getPieceOption = (props: {
     piecePosition = new Vector3(position.x, position.z + 5, position.y);
   }
 
+  if (pieceName === "민트초코배") {
+    pieceRotation = new Euler(0, Math.PI / 2, 0);
+    piecePosition = new Vector3(position.x, position.z + 25, position.y);
+  }
+
+  if (pieceName === "세련된 요트") {
+    pieceRotation = new Euler(0, Math.PI / 2, 0);
+    piecePosition = new Vector3(position.x, position.z + 10, position.y);
+  }
+
+  if (pieceName === "낡은 배") {
+    pieceRotation = new Euler(0, Math.PI * 2, 0);
+    piecePosition = new Vector3(position.x, position.z, position.y);
+  }
+
+  if (pieceName === "유령선") {
+    pieceRotation = new Euler(0, Math.PI / 2, 0);
+    piecePosition = new Vector3(position.x, position.z, position.y - 40);
+  }
+
   return {
     piecePosition,
     pieceRotation,

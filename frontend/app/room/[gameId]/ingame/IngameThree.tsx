@@ -116,6 +116,30 @@ export default function IngameThree() {
             <Piece
               name="PIRATE"
               position={piratePosition}
+              pieceName={"유령선"}
+              set={setPiratePiece}
+            />
+            <Piece
+              name="MARINE1"
+              position={marineOnePosition}
+              pieceName={"민트초코배"}
+              set={setMarineOnePiece}
+            />
+            <Piece
+              name="MARINE2"
+              position={marineTwoPosition}
+              pieceName={"세련된 요트"}
+              set={setMarineTwoPiece}
+            />
+            <Piece
+              name="MARINE3"
+              position={marineThreePosition}
+              pieceName={"낡은 배"}
+              set={setMarineThreePiece}
+            />
+            {/* <Piece
+              name="PIRATE"
+              position={piratePosition}
               pieceName={
                 socketMessage.game?.players[0]["userInfo"]
                   ? `${socketMessage.game?.players[0]["userInfo"]["productName"]?.toLowerCase()}`
@@ -144,7 +168,7 @@ export default function IngameThree() {
               position={marineThreePosition}
               pieceName={"MARINE3"}
               set={setMarineThreePiece}
-            />
+            /> */}
           </>
         )}
       <TreasureGroup />

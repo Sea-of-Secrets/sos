@@ -45,11 +45,12 @@ const { send } = gameSocket;
 
 export default function IngameClient() {
   const Loader = () => {
-    const { active, progress, errors, item, loaded, total } = useProgress();
+    const { active, progress } = useProgress();
     const roundedProgress = Math.floor(progress);
 
     useEffect(() => {
       if (!active) {
+        setHeaderMessage("다른 사용자의 로딩을 기다리고 있습니다");
         send("/pub/room", {
           message: "RENDERED_COMPLETE",
           sender: nickname,
@@ -94,7 +95,6 @@ export default function IngameClient() {
   // 게임 시작
   const startAnimation = () => {
     if (socketMessage.sender === nickname) {
-      setHeaderMessage("다른 사용자의 로딩을 기다리고 있습니다");
       gameStartAnimation();
       setLoading(false);
     }
@@ -823,6 +823,7 @@ export default function IngameClient() {
           position: [0, 200, 300],
           far: 100000,
           fov: 50,
+          near: 100,
         }}
         onCreated={({ gl, scene }) => {
           scene.background = new THREE.Color("#AED7DD");

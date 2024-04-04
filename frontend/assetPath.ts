@@ -75,6 +75,22 @@ export const PiecePathMap = {
     src: "/Zuhee/scene.gltf",
     size: 20,
   },
+  "낡은 배": {
+    src: "/old_ship/scene.gltf",
+    size: 0.4,
+  },
+  민트초코배: {
+    src: "/mint_ship/scene.gltf",
+    size: 8,
+  },
+  유령선: {
+    src: "/ghost_ship/scene.gltf",
+    size: 40,
+  },
+  "세련된 요트": {
+    src: "/yacht_ship/scene.gltf",
+    size: 10,
+  },
   RED_ARROW: {
     src: "/red_arrow_down/scene.gltf",
     size: 20,
