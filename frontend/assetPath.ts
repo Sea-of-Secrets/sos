@@ -35,16 +35,16 @@ export const PiecePathMap = {
     src: "/marine_ship3/scene.gltf",
     size: 5,
   },
-  legendary1: {
-    src: "/legendary1/scene.gltf",
+  고잉메리호: {
+    src: "/고잉메리호/scene.gltf",
     size: 5,
   },
-  legendary2: {
-    src: "/legendary2/scene.gltf",
+  청새치호: {
+    src: "/청새치호/scene.gltf",
     size: 5,
   },
-  legendary3: {
-    src: "/legendary3/scene.gltf",
+  베를린호: {
+    src: "/베를린호/scene.gltf",
     size: 2,
   },
   rare1: {

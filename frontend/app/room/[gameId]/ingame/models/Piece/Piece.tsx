@@ -120,7 +120,7 @@ const getPieceOption = (props: {
       : undefined;
   }
 
-  if (pieceName === "legendary1") {
+  if (pieceName === "고잉메리호") {
     piecePosition = position
       ? new Vector3(position.x, position.z, position.y + 10)
       : undefined;

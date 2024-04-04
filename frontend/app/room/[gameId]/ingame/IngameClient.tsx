@@ -546,7 +546,7 @@ export default function IngameClient() {
   };
 
   useEffect(() => {
-    setHeaderMessage("로딩중입니다");
+    setHeaderMessage("로딩중입니다...");
     if (socketMessage.message === "RENDER_COMPLETE_ACCEPTED") {
       startAnimation();
     }
