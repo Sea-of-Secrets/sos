@@ -76,7 +76,7 @@ export default function IngameClient() {
 
   const startGame = () => {
     if (socketMessage.sender === nickname) {
-      console.log("게임 시작 보낸다");
+      // console.log("게임 시작 보낸다");
 
       send("/pub/init", {
         message: "START_GAME",
@@ -709,13 +709,13 @@ export default function IngameClient() {
 
     // 해군의 체포 행동 성공
     if (socketMessage.message === "ACTION_ARREST_MARINE_ONE_SUCCESS") {
-      console.log("해군 1 체포 성공");
+      // console.log("해군 1 체포 성공");
     }
     if (socketMessage.message === "ACTION_ARREST_MARINE_TWO_SUCCESS") {
-      console.log("해군 2 체포 성공");
+      // console.log("해군 2 체포 성공");
     }
     if (socketMessage.message === "ACTION_ARREST_MARINE_THREE_SUCCESS") {
-      console.log("해군 3 체포 성공");
+      // console.log("해군 3 체포 성공");
     }
 
     // 해군의 체포 행동 실패

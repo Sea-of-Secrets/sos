@@ -201,7 +201,7 @@ export const useCameraTest = () => {
         if (cameraRef) {
           const { x, y, z } = cameraRef.current.camera.position;
           cameraRef.current.setPosition(nextX, y, z);
-          console.log(nextX, y, z);
+          // console.log(nextX, y, z);
         }
       },
     },
@@ -214,7 +214,7 @@ export const useCameraTest = () => {
         if (cameraRef) {
           const { x, y, z } = cameraRef.current.camera.position;
           cameraRef.current.setPosition(x, nextY, z);
-          console.log(x, nextY, z);
+          // console.log(x, nextY, z);
         }
       },
     },
@@ -227,7 +227,7 @@ export const useCameraTest = () => {
         if (cameraRef) {
           const { x, y, z } = cameraRef.current.camera.position;
           cameraRef.current.setPosition(x, y, nextZ);
-          console.log(x, y, nextZ);
+          // console.log(x, y, nextZ);
         }
       },
     },
@@ -249,7 +249,7 @@ export const useCameraTest = () => {
             true,
           );
 
-          console.log(prevX, prevY, prevZ);
+          // console.log(prevX, prevY, prevZ);
         }
       },
     },
@@ -271,7 +271,7 @@ export const useCameraTest = () => {
             true,
           );
 
-          console.log(prevX, prevY, prevZ);
+          // console.log(prevX, prevY, prevZ);
         }
       },
     },
@@ -293,7 +293,7 @@ export const useCameraTest = () => {
             true,
           );
 
-          console.log(prevX, prevY, prevZ);
+          // console.log(prevX, prevY, prevZ);
         }
       },
     },

@@ -31,7 +31,7 @@ export const useNode = ({ node }: { node: IngameGraphNode }) => {
 
   const handleClickNode = useCallback(
     (e: ThreeEvent<MouseEvent>) => {
-      console.log(`${node.nodeId}번 노드 클릭`);
+      // console.log(`${node.nodeId}번 노드 클릭`);
 
       if (
         isMarineStartGameTurn &&

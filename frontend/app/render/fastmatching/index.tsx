@@ -27,7 +27,7 @@ export default function FastMatching() {
     subscribe(`/sub/${nickname}`, message => {
       const data = JSON.parse(message.body);
       if (data.message === "MATCHING_SUCCESS") {
-        console.log("매칭 완료");
+        // console.log("매칭 완료");
         setGameId(data.room.gameId);
         send("/pub/matching", {
           message: "ENTER_MATCHING_ROOM",

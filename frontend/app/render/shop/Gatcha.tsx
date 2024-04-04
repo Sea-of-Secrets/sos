@@ -28,7 +28,7 @@ export default function Gatcha() {
 
       // TODO: 배포시에는 이걸 사용해주세용
       const gatchaData = await fetchGatcha();
-      console.log("당신의 NFT ! : ", gatchaData);
+      // console.log("당신의 NFT ! : ", gatchaData);
       setRandomGatchaData(gatchaData);
       try {
         UsersApi.getUserInfo().then(res => setUser(res.data as User));
@@ -178,17 +178,17 @@ const getColorToGrade = (grade: string) => {
 };
 
 const mockGatcha = async (): Promise<GatchaResponse> => {
-  console.log("두근두근 가챠 타임 (테스트용)");
+  // console.log("두근두근 가챠 타임 (테스트용)");
   return new Promise((resolve, reject) => {
     setTimeout(() => {
       resolve(MOCK_DATA);
-      console.log(MOCK_DATA);
+      // console.log(MOCK_DATA);
     }, 1000);
   });
 };
 
 const fetchGatcha: () => Promise<GatchaResponse> = async () => {
-  console.log("두근두근 가챠 타임 (확률 조작 없는 진짜!)");
+  // console.log("두근두근 가챠 타임 (확률 조작 없는 진짜!)");
   const response = await ShopsApi.postGatcha();
   return response.data;
 };
