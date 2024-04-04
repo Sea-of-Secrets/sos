@@ -95,7 +95,7 @@
 - 커뮤니케이션 : Notion, MatterMost, Discord
 
 ### 서비스 아키텍처
-![image.png](.README_IMAGE/architecture.png)
+![image.png](./README_IMAGE/architecture.png)
 
 ### API 명세서
 
