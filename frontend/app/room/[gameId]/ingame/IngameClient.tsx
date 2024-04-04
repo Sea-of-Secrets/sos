@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { Canvas } from "@react-three/fiber";
 
 import * as THREE from "three";
@@ -37,10 +37,35 @@ import MiniModal from "~/app/render/components/MiniModal";
 import MiniModalContent from "~/app/render/components/MiniModalContent";
 import Button from "~/app/render/components/Button";
 import Off from "./components/Off";
+import { Html, useProgress } from "@react-three/drei";
+import Loading from "./components/Loading";
+import { useOption } from "./stores/useOption";
 
 const { send } = gameSocket;
 
 export default function IngameClient() {
+  const Loader = () => {
+    const { active, progress, errors, item, loaded, total } = useProgress();
+    const roundedProgress = Math.floor(progress);
+
+    useEffect(() => {
+      if (!active) {
+        send("/pub/room", {
+          message: "RENDERED_COMPLETE",
+          sender: nickname,
+          gameId,
+        });
+        setLoading(false);
+      }
+    }, [active, send, nickname, gameId]);
+
+    return (
+      <Html center>
+        <Loading>{roundedProgress}%</Loading>
+      </Html>
+    );
+  };
+
   const { loading, setLoading } = useGameLoading();
   const [timeOut, setTimeOut] = useState(false);
   const [isgameOver, setIsGameOver] = useState("");
@@ -51,6 +76,7 @@ export default function IngameClient() {
     useCamera();
   const { handleShowTimer, handleCloseTimer } = useTimer();
   const { selectStartNode, startMarineTurn } = useWhenMarineStartGame();
+  const { isCamera } = useOption();
 
   const { socketMessage } = useSocketMessage();
   const { movePieceTwo: movePirate } = usePiratePiece();
@@ -91,7 +117,9 @@ export default function IngameClient() {
     removeHeaderMessage();
     removeFooterMessage();
     handleCloseTimer();
-    zoomFullScreen();
+    if (isCamera) {
+      zoomFullScreen();
+    }
     if (message === "PIRATE_WIN") {
       setIsGameOver("해적이 모든 보물을 획득하였습니다");
     } else if (message === "MARINE_ONE_ARREST_SUCCESS") {
@@ -149,7 +177,9 @@ export default function IngameClient() {
           : "시작 위치가 결정되었습니다",
       );
       // 해당 노드 줌 인
-      zoom(getNode(socketMessage.game.currentPosition[0]).position);
+      if (isCamera) {
+        zoom(getNode(socketMessage.game.currentPosition[0]).position);
+      }
     } else {
       setHeaderMessage("해적의 시작 위치가 결정되었습니다");
     }
@@ -163,7 +193,9 @@ export default function IngameClient() {
   const orderInitMarineStart = (number: number) => {
     // 타이머 시작
     handleShowTimer();
-    zoomMarineStart();
+    if (isCamera) {
+      zoomMarineStart();
+    }
     if (socketMessage.game.players[number]["nickname"] === nickname) {
       setHeaderMessage("시작 위치를 결정하세요");
       const stringNumber = number.toString();
@@ -197,13 +229,17 @@ export default function IngameClient() {
     handleCloseTimer();
 
     // 해당 노드 줌 인
-    zoom(getNode(socketMessage.game.currentPosition[number]).position);
+    if (isCamera) {
+      zoom(getNode(socketMessage.game.currentPosition[number]).position);
+    }
   };
 
   // 해적 시작 위치 공개
   const openPirateStart = () => {
     setHeaderMessage("해적의 출발지가 공개됩니다");
-    zoom(getNode(socketMessage.game.currentPosition[0]).position);
+    if (isCamera) {
+      zoom(getNode(socketMessage.game.currentPosition[0]).position);
+    }
   };
 
   // 해적의 이동 명령
@@ -211,14 +247,18 @@ export default function IngameClient() {
     handleShowTimer();
     if (socketMessage.game.players[0]["nickname"] === nickname) {
       setHeaderMessage("이동할 위치를 결정하세요");
-      zoom(getNode(socketMessage.game.currentPosition[0]).position, {
-        level: 2,
-      });
+      if (isCamera) {
+        zoom(getNode(socketMessage.game.currentPosition[0]).position, {
+          level: 2,
+        });
+      }
     } else {
       setHeaderMessage(
         `[해적] ${socketMessage.game.players[0]["nickname"]} 님이 이동중입니다`,
       );
-      zoomFullScreen();
+      if (isCamera) {
+        zoomFullScreen();
+      }
     }
   };
 
@@ -237,7 +277,9 @@ export default function IngameClient() {
           socketMessage.availableNode[socketMessage.game.currentPosition[0]],
         moveAnimationStyle: "JUMPTWO",
       });
-      zoom(getNode(socketMessage.game.currentPosition[0]).position);
+      if (isCamera) {
+        zoom(getNode(socketMessage.game.currentPosition[0]).position);
+      }
     } else {
       setHeaderMessage(
         `[해적] ${socketMessage.game.players[0]["nickname"]} 님의 이동이 완료되었습니다`,
@@ -252,9 +294,11 @@ export default function IngameClient() {
   // 해군의 이동 명령
   const orderMoveMarine = (number: number) => {
     handleShowTimer();
-    zoom(getNode(socketMessage.game.currentPosition[number]).position, {
-      level: 2,
-    });
+    if (isCamera) {
+      zoom(getNode(socketMessage.game.currentPosition[number]).position, {
+        level: 2,
+      });
+    }
     if (socketMessage.game.players[number]["nickname"] === nickname) {
       setHeaderMessage("이동할 위치를 결정하세요");
     } else {
@@ -280,7 +324,9 @@ export default function IngameClient() {
     }
 
     // 해군 이동
-    zoom(getNode(socketMessage.game.currentPosition[number]).position);
+    if (isCamera) {
+      zoom(getNode(socketMessage.game.currentPosition[number]).position);
+    }
     if (number === 1) {
       moveMarineOne({
         positionList:
@@ -316,7 +362,9 @@ export default function IngameClient() {
   const orderSelectWorkMarine = (number: number) => {
     handleShowTimer();
     const EnglishNumber = number === 1 ? "ONE" : number === 2 ? "TWO" : "THREE";
-    zoom(getNode(socketMessage.game.currentPosition[number]).position);
+    if (isCamera) {
+      zoom(getNode(socketMessage.game.currentPosition[number]).position);
+    }
     if (socketMessage.game.players[number]["nickname"] === nickname) {
       setHeaderMessage("행동을 선택하세요");
       setFooterMessage(<SelectMarineAction turn={EnglishNumber} />);
@@ -348,7 +396,9 @@ export default function IngameClient() {
   // 해군의 조사 행동 명령
   const orderInvestigateMarine = (number: number) => {
     handleShowTimer();
-    zoom(getNode(socketMessage.game.currentPosition[number]).position);
+    if (isCamera) {
+      zoom(getNode(socketMessage.game.currentPosition[number]).position);
+    }
     if (socketMessage.game.players[number]["nickname"] === nickname) {
       setHeaderMessage("조사할 위치를 결정하세요");
     } else {
@@ -373,10 +423,11 @@ export default function IngameClient() {
         `[해군${number}] ${socketMessage.game.players[number]["nickname"]} 님이 ${socketMessage.game.investigateSuccess[successNumber]}번에서 해적의 흔적을 발견하였습니다.`,
       );
     }
-
-    zoom(
-      getNode(socketMessage.game.investigateSuccess[successNumber]).position,
-    );
+    if (isCamera) {
+      zoom(
+        getNode(socketMessage.game.investigateSuccess[successNumber]).position,
+      );
+    }
 
     // 푸터, 시간초과 초기화
     setTimeOut(false);
@@ -438,7 +489,9 @@ export default function IngameClient() {
   // 해군의 체포 행동 명령
   const orderArrestMarine = (number: number) => {
     handleShowTimer();
-    zoom(getNode(socketMessage.game.currentPosition[number]).position);
+    if (isCamera) {
+      zoom(getNode(socketMessage.game.currentPosition[number]).position);
+    }
     if (socketMessage.game.players[number]["nickname"] === nickname) {
       setHeaderMessage("체포할 위치를 결정하세요");
     } else {
@@ -469,7 +522,9 @@ export default function IngameClient() {
   // 다음 보물 상자 도착
   const roundOver = () => {
     handleCloseTimer();
-    zoom(getNode(socketMessage.game.currentPosition[0]).position);
+    if (isCamera) {
+      zoom(getNode(socketMessage.game.currentPosition[0]).position);
+    }
     const openTreasure = socketMessage.game.treasures;
     const openTreasureCount = Object.values(openTreasure).reduce(
       (count: number, isOpen) => (isOpen ? count + 1 : count),
@@ -771,15 +826,17 @@ export default function IngameClient() {
         }}
         onCreated={({ gl, scene }) => {
           scene.background = new THREE.Color("#AED7DD");
-          send("/pub/room", {
-            message: "RENDERED_COMPLETE",
-            sender: nickname,
-            gameId,
-          });
-          setLoading(false);
+          // send("/pub/room", {
+          //   message: "RENDERED_COMPLETE",
+          //   sender: nickname,
+          //   gameId,
+          // });
+          // setLoading(false);
         }}
       >
-        <IngameThree />
+        <Suspense fallback={<Loader />}>
+          <IngameThree />
+        </Suspense>
       </Canvas>
     </>
   );

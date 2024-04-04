@@ -1,14 +1,4 @@
-import { useGameLoading } from "../stores/useGameLoading";
-import { useRenderList } from "~/app/room/[gameId]/ingame/stores/useRenderList";
-
-export default function Loading() {
-  const { loading } = useGameLoading();
-  const { renderList } = useRenderList();
-
-  if (!loading) {
-    return null;
-  }
-
+export default function Loading({ children }: any) {
   return (
     <div
       style={{
@@ -26,12 +16,7 @@ export default function Loading() {
         zIndex: 999,
       }}
     >
-      <p>Loading...</p>
-      {/* <div>
-        {renderList.map((item, index) => (
-          <p key={index}>{item}</p>
-        ))}
-      </div> */}
+      {children}
     </div>
   );
 }

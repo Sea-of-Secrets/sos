@@ -15,10 +15,11 @@ const OptionImageSourceMatcher = matcher({
   ZOOM: "/assets/icon-zoom.png",
   DOCS: "/assets/icon-docs.png",
   OFF: "/assets/icon-off.png",
+  CAMERA: "/assets/icon-camera.png",
 });
 
 export default function OptionButton() {
-  const { isChat, setIsChat, setIsDocs, setIsOff } = useOption();
+  const { isChat, setIsChat, setIsDocs, setIsOff, setIsCamera } = useOption();
   const { nickname } = useNickname();
   const { socketMessage } = useSocketMessage();
   const { zoom } = useCamera();
@@ -49,6 +50,9 @@ export default function OptionButton() {
     }
     if (button === "DOCS") {
       setIsDocs();
+    }
+    if (button === "CAMERA") {
+      setIsCamera();
     }
   };
 
@@ -103,6 +107,19 @@ export default function OptionButton() {
           height={50}
           src={OptionImageSourceMatcher("DOCS")}
           alt={"DOCS"}
+        />
+        <span>자유 캠</span>
+      </div>
+      <div
+        onClick={() => {
+          handleClickButton("DOCS");
+        }}
+      >
+        <Image
+          width={50}
+          height={50}
+          src={OptionImageSourceMatcher("CAMERA")}
+          alt={"CAMERA"}
         />
         <span>게임 설명</span>
       </div>

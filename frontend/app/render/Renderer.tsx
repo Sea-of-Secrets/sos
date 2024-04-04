@@ -15,8 +15,7 @@ import Button from "./Button";
 import { useGatcha } from "./stores/useGatch";
 import useNickname from "~/store/nickname";
 import { getAccessToken, useAuth } from "~/store/auth";
-import Loading from "../room/[gameId]/ingame/components/Loading";
-import { Html, SpotLight } from "@react-three/drei";
+import { Html, useProgress } from "@react-three/drei";
 
 export default function Renderer() {
   const [loading, setLoading] = useState(false);
@@ -43,20 +42,10 @@ export default function Renderer() {
           setLoading(true);
         }}
       >
-        {/* <Suspense
-          fallback={
-            <>
-              <Html>
-                <Loading />
-              </Html>
-            </>
-          }
-        > */}
         <Camera />
         <ambientLight />
         <GatchaAnimation />
         <Map />
-        {/* </Suspense> */}
       </Canvas>
       {loading && <Button />}
       {loading && screen === "MAIN" && <LoginButton />}
@@ -64,7 +53,6 @@ export default function Renderer() {
         screen !== "FASTMATCHING" &&
         screen !== "START" &&
         gatchaState === "GATCHA_PREV" && <BackButton />}
-      {loading && screen === "MAIN" && <LoginButton />}
       {screen !== "MAIN" && screen !== "FASTMATCHING" && screen !== "START" && (
         <BackButton />
       )}
