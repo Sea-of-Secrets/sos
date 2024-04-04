@@ -54,6 +54,11 @@ public class ProductServiceImpl implements ProductService {
     public ProductDTO.Result randomProduct(CustomOAuth2User userDTO) {
 
         UserEntity userEntity = userRepository.findByUsername(userDTO.getUsername());
+
+        if (userEntity.getWalletAddress() == null) {
+            throw new CustomException(ExceptionEnum.NOT_EXIT_WALLET);
+        }
+
         int userGold = userEntity.getGold();
 
         if (userGold < 150) {
@@ -76,8 +81,8 @@ public class ProductServiceImpl implements ProductService {
 
         List<Product> productList = productRepository.findByGradeAndIsDeletedFalseAndIsSoldOutFalse(grade);
 
-        if (grade == Grade.LEGENDARY && productList.size() == 0) {
-            productRepository.findByGradeAndIsDeletedFalseAndIsSoldOutFalse(Grade.RARE);
+        if (grade == Grade.LEGENDARY && productList.isEmpty()) {
+            productList = productRepository.findByGradeAndIsDeletedFalseAndIsSoldOutFalse(Grade.RARE);
         }
 
         userEntity.setGold(userGold - 150);
@@ -107,7 +112,6 @@ public class ProductServiceImpl implements ProductService {
                     selectedProduct.soldOut();
                 }
             } catch(Exception e) {
-                e.printStackTrace();
                 throw new CustomException(ExceptionEnum.NFT_MINTING_ERROR);
             }
         }

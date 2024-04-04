@@ -9,7 +9,7 @@ import org.springframework.http.HttpStatus;
 public enum ExceptionEnum {
 
     // Member Error: 1000 ~
-    MEMBER_NOT_FOUND(HttpStatus.NOT_FOUND, "CE1000", Message.MEMBER_NOT_FOUND),
+    NOT_EXIT_WALLET(HttpStatus.NOT_FOUND, "CE1000", Message.NOT_EXIST_WALLET),
 
 
     // Game Error: 2000 ~
@@ -31,7 +31,7 @@ public enum ExceptionEnum {
     }
 
     public interface Message{
-        String MEMBER_NOT_FOUND = "회원을 찾을 수 없습니다.";
+        String NOT_EXIST_WALLET = "지갑이 존재하지 않습니다.";
         String NOT_ENOUGH_GOLD = "보유 골드가 부족합니다.";
         String NFT_MINTING_ERROR = "NFT 발급에 실패했습니다.";
         String NOT_EXIST_GRADE = "존재하지 않는 등급입니다.";
