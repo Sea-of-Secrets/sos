@@ -115,7 +115,7 @@ export default function IngameClient() {
   const orderInitPirateStart = () => {
     handleShowTimer();
     if (socketMessage.game.players[0]["nickname"] === nickname) {
-      setHeaderMessage("시작 위치를 결정하세요");
+      setHeaderMessage("당신은 해적입니다! 시작 위치를 결정하세요");
       setFooterMessage(
         <SelectPirateLocationGrid
           nodeIdListOnTreasures={Object.keys(socketMessage.game.treasures).map(
@@ -133,7 +133,7 @@ export default function IngameClient() {
       );
     } else {
       setHeaderMessage(
-        `[해적] ${socketMessage.game.players[0]["nickname"]} 님이 시작 위치를 결정중입니다`,
+        `당신은 해군입니다! [해적] ${socketMessage.game.players[0]["nickname"]} 님이 시작 위치를 결정중입니다`,
       );
     }
   };
