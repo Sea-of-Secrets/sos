@@ -29,7 +29,7 @@ export default function Login() {
           />
         </Button>
       </a>
-      <a href="http://localhost:8080/oauth2/authorization/naver">
+      {/* <a href="http://localhost:8080/oauth2/authorization/naver">
         <Button>
           <Image
             src="/images/btnG_완성형.png"
@@ -38,7 +38,7 @@ export default function Login() {
             height={200}
           />
         </Button>
-      </a>
+      </a> */}
     </Container>
   );
 }

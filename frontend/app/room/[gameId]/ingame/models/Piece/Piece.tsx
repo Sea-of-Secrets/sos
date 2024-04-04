@@ -37,9 +37,9 @@ export default function Piece({
   }, [name, nickname, pieceName, position, socketMessage]);
 
   const handleClickPiece = useCallback((e: ThreeEvent<MouseEvent>) => {
-    console.log("******** Piece Click ********");
-    console.log("이벤트", e);
-    console.log("****************************");
+    // console.log("******** Piece Click ********");
+    // console.log("이벤트", e);
+    // console.log("****************************");
   }, []);
 
   const handlePointerOver = useCallback(() => {

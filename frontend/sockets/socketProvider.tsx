@@ -18,14 +18,14 @@ const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const { gameId } = useGameId();
 
   const onConnect = () => {
-    console.log("공용 소켓 연결 성공");
+    // console.log("공용 소켓 연결 성공");
     const gameIdFromLocalStorage = localStorage.getItem("gameId");
     if (gameIdFromLocalStorage) {
       const localGameId = JSON.parse(gameIdFromLocalStorage).state.gameId;
 
       subscribe(`/sub/${localGameId}`, message => {
         const data = JSON.parse(message.body);
-        console.log("서 > 클", data);
+        // console.log("서 > 클", data);
         if (data.message === "ALL_RENDERED_COMPLETED") {
           setLoading(false);
         }

@@ -15,21 +15,21 @@ export const createSocket = () => {
         heartbeatOutgoing: 4000,
         onStompError: error => {
           // 이건 언제 동작하누? 몰루;
-          console.log("onStompError", error);
+          // console.log("onStompError", error);
         },
         beforeConnect: () => {
           // socket connect 전에 이 핸들러가 동작한다.
-          console.log("beforeConnect");
+          // console.log("beforeConnect");
         },
         onDisconnect: () => {
-          console.log("onDisConnect");
+          // console.log("onDisConnect");
         },
         onWebSocketError: error => {
           // socket URI가 연결되지 않았다면 이 핸들러가 동작한다.
-          console.log("onWebSocketError", error);
+          // console.log("onWebSocketError", error);
         },
         onWebSocketClose: () => {
-          console.log("onWebSocketClose");
+          // console.log("onWebSocketClose");
         },
       });
     }
@@ -41,7 +41,7 @@ export const createSocket = () => {
     if (!stomp) {
       throw new Error("socket이 연결되어있지 않아요");
     }
-    console.log("클 > 서", body);
+    // console.log("클 > 서", body);
 
     stomp.publish({
       destination,
@@ -61,7 +61,7 @@ export const createSocket = () => {
       throw new Error("socket이 연결되어있지 않아요");
     }
     stomp.deactivate();
-    console.log("클라이언트 소켓이 성공적으로 닫혔어요");
+    // console.log("클라이언트 소켓이 성공적으로 닫혔어요");
   };
 
   return {
