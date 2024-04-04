@@ -35,7 +35,7 @@ public class ProductController {
         return ResponseEntity.ok().body(productService.randomProduct(user));
     }
 
-//    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<Void> postProduct(@RequestPart("product") ProductDTO.Post productDto, @RequestPart(value = "file") MultipartFile imageFile) {
 
