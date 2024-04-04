@@ -65,50 +65,90 @@ export default function IngameThree() {
       <AvailableNode />
       <Flags />
       <Graph />
-      {socketMessage.game?.players && (
-        <>
-          <Piece
-            name="PIRATE"
-            position={piratePosition}
-            pieceName={
-              socketMessage.game?.players[0]["userInfo"]
-                ? `${socketMessage.game?.players[0]["userInfo"]["productName"]?.toLowerCase()}`
-                : "PIRATE"
-            }
-            set={setPiratePiece}
-          />
-          <Piece
-            name="MARINE1"
-            position={marineOnePosition}
-            pieceName={
-              socketMessage.game?.players[1]["userInfo"]
-                ? `${socketMessage.game?.players[1]["userInfo"]["productName"]?.toLowerCase()}`
-                : "MARINE1"
-            }
-            set={setMarineOnePiece}
-          />
-          <Piece
-            name="MARINE2"
-            position={marineTwoPosition}
-            pieceName={
-              socketMessage.game?.players[2]["userInfo"]
-                ? `${socketMessage.game?.players[2]["userInfo"]["productName"]?.toLowerCase()}`
-                : "MARINE2"
-            }
-            set={setMarineTwoPiece}
-          />
-          <Piece
-            name="MARINE3"
-            position={marineThreePosition}
-            pieceName={
-              socketMessage.game?.players[3]["userInfo"]
-                ? `${socketMessage.game?.players[3]["userInfo"]["productName"]?.toLowerCase()}`
-                : "MARINE3"
-            }
-            set={setMarineThreePiece}
-          />
-        </>
-      )}
+      {socketMessage.game?.players &&
+        socketMessage.game?.gameMode ===
+          "ONE_VS_THREE"(
+            <>
+              <Piece
+                name="PIRATE"
+                position={piratePosition}
+                pieceName={
+                  socketMessage.game?.players[0]["userInfo"]
+                    ? `${socketMessage.game?.players[0]["userInfo"]["productName"]?.toLowerCase()}`
+                    : "PIRATE"
+                }
+                set={setPiratePiece}
+              />
+              <Piece
+                name="MARINE1"
+                position={marineOnePosition}
+                pieceName={
+                  socketMessage.game?.players[1]["userInfo"]
+                    ? `${socketMessage.game?.players[1]["userInfo"]["productName"]?.toLowerCase()}`
+                    : "MARINE1"
+                }
+                set={setMarineOnePiece}
+              />
+              <Piece
+                name="MARINE2"
+                position={marineTwoPosition}
+                pieceName={
+                  socketMessage.game?.players[2]["userInfo"]
+                    ? `${socketMessage.game?.players[2]["userInfo"]["productName"]?.toLowerCase()}`
+                    : "MARINE2"
+                }
+                set={setMarineTwoPiece}
+              />
+              <Piece
+                name="MARINE3"
+                position={marineThreePosition}
+                pieceName={
+                  socketMessage.game?.players[3]["userInfo"]
+                    ? `${socketMessage.game?.players[3]["userInfo"]["productName"]?.toLowerCase()}`
+                    : "MARINE3"
+                }
+                set={setMarineThreePiece}
+              />
+            </>,
+          )}
+      {socketMessage.game?.players &&
+        socketMessage.game?.gameMode ===
+          "ONE_VS_ONE"(
+            <>
+              <Piece
+                name="PIRATE"
+                position={piratePosition}
+                pieceName={
+                  socketMessage.game?.players[0]["userInfo"]
+                    ? `${socketMessage.game?.players[0]["userInfo"]["productName"]?.toLowerCase()}`
+                    : "PIRATE"
+                }
+                set={setPiratePiece}
+              />
+              <Piece
+                name="MARINE1"
+                position={marineOnePosition}
+                pieceName={
+                  socketMessage.game?.players[1]["userInfo"]
+                    ? `${socketMessage.game?.players[1]["userInfo"]["productName"]?.toLowerCase()}`
+                    : "MARINE1"
+                }
+                set={setMarineOnePiece}
+              />
+              <Piece
+                name="MARINE2"
+                position={marineTwoPosition}
+                pieceName={"MARINE2"}
+                set={setMarineTwoPiece}
+              />
+              <Piece
+                name="MARINE3"
+                position={marineThreePosition}
+                pieceName={"MARINE3"}
+                set={setMarineThreePiece}
+              />
+            </>,
+          )}
       <TreasureGroup />
     </>
   );
