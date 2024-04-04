@@ -36,6 +36,7 @@ export default function Gatcha() {
         UsersApi.getUserInfo().then(res => setUser(res.data as User));
       }
     } catch (e) {
+      window.alert("지갑을 생성해주세요!");
     } finally {
       setLoading(false);
     }
@@ -189,9 +190,5 @@ const mockGatcha = async (): Promise<GatchaResponse> => {
 const fetchGatcha: () => Promise<GatchaResponse> = async () => {
   console.log("두근두근 가챠 타임 (확률 조작 없는 진짜!)");
   const response = await ShopsApi.postGatcha();
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve(response.data as GatchaResponse);
-    }, 200);
-  });
+  return response.data;
 };

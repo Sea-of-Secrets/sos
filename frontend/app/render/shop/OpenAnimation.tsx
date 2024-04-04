@@ -13,7 +13,7 @@ export default function Open() {
       const action = actions["Take 001"];
       if (action) {
         action.clampWhenFinished = true;
-        action.reset().setDuration(2).play().setLoop(LoopOnce, 0);
+        action.reset().setDuration(5).play().setLoop(LoopOnce, 0);
       }
     }
   }, [gatchaState]);
