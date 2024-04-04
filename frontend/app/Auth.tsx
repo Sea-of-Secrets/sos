@@ -1,7 +1,7 @@
 "use client";
 
 import { PropsWithChildren, useEffect } from "react";
-import { useAuth } from "~/store/auth";
+import { removeToken, useAuth } from "~/store/auth";
 import * as UsersApi from "./api/users";
 
 export default function Auth({ children }: PropsWithChildren) {
@@ -14,8 +14,11 @@ export default function Auth({ children }: PropsWithChildren) {
       if (access && refresh) {
         const { data } = await UsersApi.getUserInfo();
         setUser(data);
+        return;
       }
+      removeToken();
     } catch (e) {
+      removeToken();
       setUser(null);
     }
   };
