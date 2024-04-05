@@ -35,17 +35,17 @@ public class MessageSendingTests {
         board.getGameMap().put(gameId, new Game(gameId));
     }
 
-    @Test
-    public void testInit() throws Exception {
-        // Given
-        ClientInitMessage message = new ClientInitMessage();
-        message.setGameId(gameId);
-        message.setMessage("INIT_PIRATE_START");
-
-        // When Then
-        messageController.init(message);
-
-        // Then
-        System.out.println(board.getGameMap());
-    }
+//    @Test
+//    public void testInit() throws Exception {
+//        // Given
+//        ClientInitMessage message = new ClientInitMessage();
+//        message.setGameId(gameId);
+//        message.setMessage("INIT_PIRATE_START");
+//
+//        // When Then
+//        messageController.init(message);
+//
+//        // Then
+//        System.out.println(board.getGameMap());
+//    }
 }

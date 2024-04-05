@@ -34,7 +34,7 @@ public class UserService {
 
     public boolean checkAttendance(Long userId) {
         // 이미 오늘 방문했으면
-        if (todayVisitedRepository.existsById("TodayVisited:" + userId)) {
+        if (todayVisitedRepository.existsById(userId)) {
             return false;
             // 오늘 방문한 적이 없으면
         } else {
