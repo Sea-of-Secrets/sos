@@ -14,6 +14,7 @@ public class ProductMapper {
                 .name(product.getName())
                 .grade(product.getGrade())
                 .imgUrl(product.getImageUrl())
+                .isSoldOut(product.getIsSoldOut())
                 .build()).toList();
     }
 

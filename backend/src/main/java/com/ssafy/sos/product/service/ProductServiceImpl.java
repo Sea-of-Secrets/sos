@@ -51,6 +51,27 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    public void registerProduct(ProductDTO.Post productDTO, MultipartFile imageFile) {
+        Grade grade;
+
+        try {
+            grade = Grade.valueOf(productDTO.grade().toUpperCase());
+        } catch (Exception e) {
+            throw new CustomException(ExceptionEnum.NOT_EXIST_GRADE);
+        }
+
+        String imageName = s3Service.saveUploadFile(imageFile);
+        String imageUrl = s3Service.getFilePath(imageName);
+
+        productRepository.save(Product.builder()
+                .name(productDTO.name())
+                .grade(grade)
+                .imageName(imageName)
+                .imageUrl(imageUrl)
+                .build());
+    }
+
+    @Override
     public ProductDTO.Result randomProduct(CustomOAuth2User userDTO) {
 
         UserEntity userEntity = userRepository.findByUsername(userDTO.getUsername());
@@ -121,26 +142,5 @@ public class ProductServiceImpl implements ProductService {
         }
 
         return productMapper.entityToDto(selectedProduct, hasItemAlready);
-    }
-
-    @Override
-    public void registerProduct(ProductDTO.Post productDTO, MultipartFile imageFile) {
-        Grade grade;
-
-        try {
-            grade = Grade.valueOf(productDTO.grade().toUpperCase());
-        } catch (Exception e) {
-            throw new CustomException(ExceptionEnum.NOT_EXIST_GRADE);
-        }
-
-        String imageName = s3Service.saveUploadFile(imageFile);
-        String imageUrl = s3Service.getFilePath(imageName);
-
-        productRepository.save(Product.builder()
-                .name(productDTO.name())
-                .grade(grade)
-                .imageName(imageName)
-                .imageUrl(imageUrl)
-                .build());
     }
 }

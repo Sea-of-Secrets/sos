@@ -24,11 +24,10 @@ export default function Gatcha() {
     setLoading(true);
 
     try {
-      // mockGatcha().then(data => setRandomGatchaData(data)); // 돈 계속 빠져나가서 만든 테스트용 함수
+      //mockGatcha().then(data => setRandomGatchaData(data)); // 돈 계속 빠져나가서 만든 테스트용 함수
 
       // TODO: 배포시에는 이걸 사용해주세용
       const gatchaData = await fetchGatcha();
-      // console.log("당신의 NFT ! : ", gatchaData);
       setRandomGatchaData(gatchaData);
       try {
         UsersApi.getUserInfo().then(res => setUser(res.data as User));
@@ -89,6 +88,7 @@ export default function Gatcha() {
               </h2>
               <img
                 src={randomGatchaData.imgUrl || ""}
+                alt=""
                 style={{
                   maxWidth: "300px",
                   maxHeight: "300px",
@@ -103,6 +103,15 @@ export default function Gatcha() {
               >
                 {randomGatchaData.name || ""}
               </p>
+              {randomGatchaData.hasItemAlready && (
+                <h3
+                  style={{
+                    color: "#b2adad",
+                  }}
+                >
+                  이미 가지고 있는 상품이에요
+                </h3>
+              )}
             </NftCard>
           </CenterBox>
         </Wrapper>
@@ -134,12 +143,12 @@ const CenterBox = styled.div`
 
 const NftCard = styled.div`
   display: flex;
-  flexdirection: column;
-  alignitems: center;
+  flex-direction: column;
+  align-items: center;
   border: 1px solid #ccc;
-  borderradius: 10px;
+  border-radius: 10px;
   padding: 20px;
-  boxshadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
   transition: transform 1s ease-in-out; // 애니메이션 효과 적용
 `;
 
@@ -155,7 +164,7 @@ type GatchaResponse = {
 const MOCK_DATA: GatchaResponse = {
   name: "zuhee",
   grade: "LEGENDARY",
-  hasItemAlready: false,
+  hasItemAlready: true,
   imgUrl:
     "https://a710choi.s3.ap-northeast-2.amazonaws.com/f150b925-5f5c-4fe3-9676-3b6c9e41b536.png",
 };
