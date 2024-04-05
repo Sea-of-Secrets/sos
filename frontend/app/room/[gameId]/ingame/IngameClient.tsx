@@ -30,7 +30,6 @@ import SelectPirateLocationGrid from "./components/SelectPirateLocationGrid";
 import { useTimer } from "./stores/useTimer";
 import { useWhenMarineStartGame } from "./stores/useWhenMarineStartGame";
 import SelectMarineAction from "./components/SelectMarineAction";
-import { useGameLoading } from "./stores/useGameLoading";
 import OptionButton from "./components/OptionButton";
 import Docs from "./components/Docs";
 import MiniModal from "~/app/render/components/MiniModal";
@@ -46,7 +45,6 @@ const { send } = gameSocket;
 export default function IngameClient() {
   const Loader = () => {
     const { active, progress } = useProgress();
-    const roundedProgress = Math.floor(progress);
 
     useEffect(() => {
       if (!active) {
@@ -56,18 +54,16 @@ export default function IngameClient() {
           sender: nickname,
           gameId,
         });
-        setLoading(false);
       }
     }, [active, send, nickname, gameId]);
 
     return (
       <Html center>
-        <Loading>{roundedProgress}%</Loading>
+        <Loading>{Math.floor(progress)}%</Loading>
       </Html>
     );
   };
 
-  const { loading, setLoading } = useGameLoading();
   const [timeOut, setTimeOut] = useState(false);
   const [isgameOver, setIsGameOver] = useState("");
 
@@ -96,7 +92,6 @@ export default function IngameClient() {
   const startAnimation = () => {
     if (socketMessage.sender === nickname) {
       gameStartAnimation();
-      setLoading(false);
     }
   };
 
@@ -827,12 +822,6 @@ export default function IngameClient() {
         }}
         onCreated={({ gl, scene }) => {
           scene.background = new THREE.Color("#AED7DD");
-          // send("/pub/room", {
-          //   message: "RENDERED_COMPLETE",
-          //   sender: nickname,
-          //   gameId,
-          // });
-          // setLoading(false);
         }}
       >
         <Suspense fallback={<Loader />}>

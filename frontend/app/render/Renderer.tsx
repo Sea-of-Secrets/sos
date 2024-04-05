@@ -16,6 +16,7 @@ import { useGatcha } from "./stores/useGatch";
 import useNickname from "~/store/nickname";
 import { getAccessToken, useAuth } from "~/store/auth";
 import { Html, useProgress } from "@react-three/drei";
+import ThreeRenderer from "./ThreeRenderer";
 
 export default function Renderer() {
   const [loading, setLoading] = useState(false);

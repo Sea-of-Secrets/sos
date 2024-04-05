@@ -1,7 +1,7 @@
 export const PiecePathMap = {
   SHIBA: {
     src: "/shiba/scene.gltf",
-    size: 0.05,
+    size: 5,
   },
   TREASURE1: {
     src: "/treasure_chest1/scene.gltf",
@@ -79,7 +79,7 @@ export const PiecePathMap = {
     src: "/old_ship/scene.gltf",
     size: 0.4,
   },
-  민트초코배: {
+  민초배: {
     src: "/mint_ship/scene.gltf",
     size: 8,
   },

@@ -170,7 +170,7 @@ const getPieceOption = (props: {
     piecePosition = new Vector3(position.x, position.z + 5, position.y);
   }
 
-  if (pieceName === "민트초코배") {
+  if (pieceName === "민초배") {
     pieceRotation = new Euler(0, Math.PI / 2, 0);
     piecePosition = new Vector3(position.x, position.z + 25, position.y);
   }
