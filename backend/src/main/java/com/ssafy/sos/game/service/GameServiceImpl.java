@@ -477,7 +477,7 @@ public class GameServiceImpl implements GameService {
                 // gold는 승리한 플레이어만 증가
                 if((gameResult && i == GameRole.PIRATE.getRoleNumber()) ||
                         (!gameResult && i != GameRole.PIRATE.getRoleNumber())) {
-                    userRepository.addGoldByUsername(username);
+                    userRepository.addGoldByUsername(game.getPlayers().get(i).getUserInfo().getUsername());
                 }
 
                 gameRecordMember.getGameRecords().add(gameRecord);
