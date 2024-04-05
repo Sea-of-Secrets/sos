@@ -5,6 +5,7 @@ import Image from "next/image";
 import styled from "@emotion/styled";
 
 import Container from "../components/Container";
+import Client from "./Client";
 
 export default function Login() {
   return (
@@ -29,16 +30,7 @@ export default function Login() {
           />
         </Button>
       </a>
-      {/* <a href="http://localhost:8080/oauth2/authorization/naver">
-        <Button>
-          <Image
-            src="/images/btnG_완성형.png"
-            alt="Naver login"
-            width={350}
-            height={200}
-          />
-        </Button>
-      </a> */}
+      <Client />
     </Container>
   );
 }
