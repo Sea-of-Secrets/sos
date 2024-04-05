@@ -26,15 +26,6 @@ public class ProductController {
         return ResponseEntity.ok().body(productService.getAllProducts());
     }
 
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @PostMapping("/random")
-    public ResponseEntity<?> purchaseRandomProduct(Authentication authentication) {
-
-        CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
-
-        return ResponseEntity.ok().body(productService.randomProduct(user));
-    }
-
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping
     public ResponseEntity<Void> postProduct(@RequestPart("product") ProductDTO.Post productDto, @RequestPart(value = "file") MultipartFile imageFile) {
@@ -42,5 +33,14 @@ public class ProductController {
         productService.registerProduct(productDto, imageFile);
 
         return ResponseEntity.ok().body(null);
+    }
+
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PostMapping("/random")
+    public ResponseEntity<?> purchaseRandomProduct(Authentication authentication) {
+
+        CustomOAuth2User user = (CustomOAuth2User) authentication.getPrincipal();
+
+        return ResponseEntity.ok().body(productService.randomProduct(user));
     }
 }

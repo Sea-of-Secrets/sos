@@ -9,7 +9,7 @@ public class ProductDTO {
     }
 
     @Builder
-    public record Info (String name, Grade grade, String imgUrl) {
+    public record Info (String name, Grade grade, String imgUrl, Boolean isSoldOut) {
     }
 
     @Builder
