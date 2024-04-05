@@ -16,6 +16,7 @@ import MiniModal from "../render/components/MiniModal";
 export default function Page() {
   const { user, setUser } = useAuth();
   const [copied, setCopied] = useState(false);
+  const [menuTogle, setMenuTogle] = useState("ship");
   const [newAddressCopied, setNewAddressCopied] = useState(false);
   const [newMnemonicCopied, setNewMnemonicCopied] = useState(false);
   const [newPrivateKeyCopied, setNewPrivateKeysCopied] = useState(false);
@@ -79,6 +80,7 @@ export default function Page() {
   };
 
   const handleGetWallet = async () => {
+    setMenuTogle("wallet");
     const response = await UserApi.getWalletInfo();
     setWallet(response.data as WalletModel);
   };
@@ -144,9 +146,6 @@ export default function Page() {
                     }}
                   >
                     <h2>{user.name}님 안녕하세요!</h2>
-                    <Button size={"xs"} onClick={handleLogout}>
-                      로그아웃
-                    </Button>
                   </div>
                   {!user.walletAddress && (
                     <div
@@ -162,6 +161,9 @@ export default function Page() {
                       <Button onClick={handleAddWallet} size={"sm"}>
                         지갑 연동
                       </Button>
+                      <Button size={"xs"} onClick={handleLogout}>
+                        로그아웃
+                      </Button>
                     </div>
                   )}
                   {user.walletAddress && (
@@ -169,19 +171,19 @@ export default function Page() {
                       className="gap-1"
                       style={{ display: "flex", alignItems: "center" }}
                     >
-                      {/* <Button onClick={handleCopyAddress} size={"xs"}>
-                        {copied ? "복사됨!" : "복사하기"}
-                      </Button> */}
                       <Button onClick={handleGetWallet} size={"xs"}>
                         지갑 정보
                       </Button>
                       <Button onClick={handleAddWallet} size={"xs"}>
                         지갑 수정
                       </Button>
+                      <Button size={"xs"} onClick={handleLogout}>
+                        로그아웃
+                      </Button>
                     </div>
                   )}
                   <h2 className="pt-3">
-                    현재 기본 말 :{" "}
+                    현재 설정된 배 :{" "}
                     {user.productName ? user.productName : "없음"}
                   </h2>
                 </div>

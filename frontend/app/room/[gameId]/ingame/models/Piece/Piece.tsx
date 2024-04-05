@@ -9,6 +9,7 @@ import { PieceProps } from "./types";
 import { useSocketMessage } from "../../stores/useSocketMessage";
 import useNickname from "~/store/nickname";
 import { NodePosition } from "~/_lib/data/types";
+import { Outlines } from "@react-three/drei";
 
 // TODO: 이동중이면 이펙트를 없애고 이동완료되면 다시 소환
 export default function Piece({
@@ -65,21 +66,19 @@ export default function Piece({
   }, [hovered]);
 
   return (
-    <>
-      <mesh
-        {...props}
-        ref={meshRef}
-        position={piecePosition}
-        rotation={pieceRotation}
-        visible={visible}
-        scale={PiecePathMap[pieceName] ? PiecePathMap[pieceName].size : 10}
-        onClick={handleClickPiece}
-        onPointerOver={handlePointerOver}
-        onPointerOut={handlePointerOut}
-      >
-        <primitive object={gltf.scene} />
-      </mesh>
-    </>
+    <mesh
+      {...props}
+      ref={meshRef}
+      position={piecePosition}
+      rotation={pieceRotation}
+      visible={visible}
+      scale={PiecePathMap[pieceName] ? PiecePathMap[pieceName].size : 10}
+      onClick={handleClickPiece}
+      onPointerOver={handlePointerOver}
+      onPointerOut={handlePointerOut}
+    >
+      <primitive object={gltf.scene} />
+    </mesh>
   );
 }
 
