@@ -107,7 +107,7 @@ public class ProductServiceImpl implements ProductService {
             productList = productRepository.findByGradeAndIsDeletedFalseAndIsSoldOutFalse(Grade.RARE);
         }
 
-        userEntity.setGold(userGold - 150);
+        userRepository.subGoldById(userEntity.getId());
 
         int index = secureRandom.nextInt(productList.size());
         boolean hasItemAlready = false;
