@@ -4,7 +4,7 @@ import * as Helpers from "./helpers";
 export const ORIGIN_GRAPH: Record<string, IngameGraphNode | null> = {
   "0": {
     nodeId: 0,
-    position: { x: -100, y: -1000, z: -50 },
+    position: { x: -1000, y: -1000, z: -1000 },
     type: "PIRATE",
     neighborNodeIdList: [201, 202],
   },

@@ -12,7 +12,7 @@ const { connect, subscribe, send, disconnect } = gameSocket;
 
 const SocketProvider = ({ children }: { children: React.ReactNode }) => {
   const { setSocketMessage, setChatMessage } = useSocketMessage();
-  const { setLoading } = useGameLoading();
+  const { setAllLoading } = useGameLoading();
   const { renderList, setRenderList } = useRenderList();
   const { nickname } = useNickname();
   const { gameId } = useGameId();
@@ -25,13 +25,13 @@ const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
       subscribe(`/sub/${localGameId}`, message => {
         const data = JSON.parse(message.body);
-        // console.log("서 > 클", data);
-        if (data.message === "ALL_RENDERED_COMPLETED") {
-          setLoading(false);
-        }
-        if (data.message === "RENDER_COMPLETE_ACCEPTED") {
-          setRenderList(data.sender);
-        }
+        console.log("서 > 클", data);
+        // if (data.message === "ALL_RENDERED_COMPLETED") {
+        //   setAllLoading(true);
+        // }
+        // if (data.message === "RENDER_COMPLETE_ACCEPTED") {
+        //   setRenderList(data.sender);
+        // }
         if (data.message === "CHATTING") {
           setChatMessage(data);
         } else {

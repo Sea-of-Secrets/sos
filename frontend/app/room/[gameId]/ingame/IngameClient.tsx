@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, Suspense } from "react";
+import React, { useState, useEffect } from "react";
 import { Canvas } from "@react-three/fiber";
 
 import * as THREE from "three";
@@ -36,36 +36,19 @@ import MiniModal from "~/app/render/components/MiniModal";
 import MiniModalContent from "~/app/render/components/MiniModalContent";
 import Button from "~/app/render/components/Button";
 import Off from "./components/Off";
-import { Html, useProgress } from "@react-three/drei";
-import Loading from "./components/Loading";
 import { useOption } from "./stores/useOption";
+import { useGameLoading } from "./stores/useGameLoading";
+import { useRenderList } from "./stores/useRenderList";
+import LoadingScreen from "./components/LoadingScreen";
 
 const { send } = gameSocket;
 
 export default function IngameClient() {
-  const Loader = () => {
-    const { active, progress } = useProgress();
-
-    useEffect(() => {
-      if (!active) {
-        setHeaderMessage("다른 사용자의 로딩을 기다리고 있습니다");
-        send("/pub/room", {
-          message: "RENDERED_COMPLETE",
-          sender: nickname,
-          gameId,
-        });
-      }
-    }, [active, send, nickname, gameId]);
-
-    return (
-      <Html center>
-        <Loading>{Math.floor(progress)}%</Loading>
-      </Html>
-    );
-  };
-
-  const [timeOut, setTimeOut] = useState(false);
+  const [timeOver, setTimeOver] = useState(false);
   const [isgameOver, setIsGameOver] = useState("");
+  const { allLoading, setAllLoading, myLoading, setMyLoading } =
+    useGameLoading();
+  const { setRenderList } = useRenderList();
 
   const { nickname } = useNickname();
   const { gameId } = useGameId();
@@ -97,13 +80,14 @@ export default function IngameClient() {
 
   const startGame = () => {
     if (socketMessage.sender === nickname) {
-      // console.log("게임 시작 보낸다");
-
-      send("/pub/init", {
-        message: "START_GAME",
-        sender: nickname,
-        gameId,
-      });
+      setTimeout(() => {
+        // console.log("게임 시작 요청");
+        send("/pub/init", {
+          message: "START_GAME",
+          sender: nickname,
+          gameId,
+        });
+      }, 3000);
     }
   };
 
@@ -167,7 +151,7 @@ export default function IngameClient() {
     if (socketMessage.game.players[0]["nickname"] === nickname) {
       // 시간 초과 여부에 따라 메시지 출력
       setHeaderMessage(
-        timeOut
+        timeOver
           ? "시간초과! 시작 위치가 랜덤으로 결정되었습니다"
           : "시작 위치가 결정되었습니다",
       );
@@ -180,7 +164,7 @@ export default function IngameClient() {
     }
 
     // 푸터, 시간초과 초기화
-    setTimeOut(false);
+    setTimeOver(false);
     removeFooterMessage();
   };
 
@@ -208,11 +192,11 @@ export default function IngameClient() {
     if (socketMessage.game.players[number]["nickname"] === nickname) {
       // 시간 초과 여부에 따라 메시지 출력
       setHeaderMessage(
-        timeOut
+        timeOver
           ? "시간초과! 시작 위치가 랜덤으로 결정되었습니다"
           : "시작 위치가 결정되었습니다",
       );
-      if (timeOut) {
+      if (timeOver) {
         selectStartNode(socketMessage.game.currentPosition[number]);
       }
     } else {
@@ -220,7 +204,7 @@ export default function IngameClient() {
         `[해군${number}] ${socketMessage.game.players[number]["nickname"]} 님의 시작 위치가 결정되었습니다`,
       );
     }
-    setTimeOut(false);
+    setTimeOver(false);
     handleCloseTimer();
 
     // 해당 노드 줌 인
@@ -262,7 +246,7 @@ export default function IngameClient() {
     handleCloseTimer();
     if (socketMessage.game.players[0]["nickname"] === nickname) {
       setHeaderMessage(
-        timeOut
+        timeOver
           ? "시간초과! 이동 위치가 랜덤으로 결정되었습니다"
           : "이동 위치가 결정되었습니다",
       );
@@ -282,7 +266,7 @@ export default function IngameClient() {
     }
 
     // 푸터, 시간초과 초기화
-    setTimeOut(false);
+    setTimeOver(false);
     removeFooterMessage();
   };
 
@@ -308,7 +292,7 @@ export default function IngameClient() {
     handleCloseTimer();
     if (socketMessage.game.players[number]["nickname"] === nickname) {
       setHeaderMessage(
-        timeOut
+        timeOver
           ? "시간초과! 이동 위치가 랜덤으로 결정되었습니다"
           : "이동 위치가 결정되었습니다",
       );
@@ -349,7 +333,7 @@ export default function IngameClient() {
     }
 
     // 푸터, 시간초과 초기화
-    setTimeOut(false);
+    setTimeOver(false);
     removeFooterMessage();
   };
 
@@ -375,7 +359,7 @@ export default function IngameClient() {
     handleCloseTimer();
     if (socketMessage.game.players[number]["nickname"] === nickname) {
       setHeaderMessage(
-        timeOut ? "시간초과! 조사가 선택되었습니다." : "조사를 선택하셨습니다",
+        timeOver ? "시간초과! 조사가 선택되었습니다." : "조사를 선택하셨습니다",
       );
     } else {
       setHeaderMessage(
@@ -384,7 +368,7 @@ export default function IngameClient() {
     }
 
     // 푸터, 시간초과 초기화
-    setTimeOut(false);
+    setTimeOver(false);
     removeFooterMessage();
   };
 
@@ -409,7 +393,7 @@ export default function IngameClient() {
     const successNumber = socketMessage.game.investigateSuccess.length - 1;
     if (socketMessage.game.players[number]["nickname"] === nickname) {
       setHeaderMessage(
-        timeOut
+        timeOver
           ? `시간초과! ${socketMessage.game.investigateSuccess[successNumber]}번에서 해적의 흔적이 발견되었습니다`
           : `조사한 ${socketMessage.game.investigateSuccess[successNumber]}번에서 해적의 흔적이 발견되었습니다`,
       );
@@ -425,7 +409,7 @@ export default function IngameClient() {
     }
 
     // 푸터, 시간초과 초기화
-    setTimeOut(false);
+    setTimeOver(false);
     removeFooterMessage();
   };
 
@@ -434,7 +418,7 @@ export default function IngameClient() {
     handleCloseTimer();
     if (socketMessage.game.players[number]["nickname"] === nickname) {
       setHeaderMessage(
-        timeOut
+        timeOver
           ? `시간초과! 해적의 흔적이 발견되지 않았습니다`
           : `해적의 흔적이 발견되지 않았습니다`,
       );
@@ -445,7 +429,7 @@ export default function IngameClient() {
     }
 
     // 푸터, 시간초과 초기화
-    setTimeOut(false);
+    setTimeOver(false);
     removeFooterMessage();
   };
 
@@ -477,7 +461,7 @@ export default function IngameClient() {
     }
 
     // 푸터, 시간초과 초기화
-    setTimeOut(false);
+    setTimeOver(false);
     removeFooterMessage();
   };
 
@@ -501,7 +485,7 @@ export default function IngameClient() {
     handleCloseTimer();
     if (socketMessage.game.players[number]["nickname"] === nickname) {
       setHeaderMessage(
-        timeOut ? "시간초과! 체포를 실패하였습니다" : "체포를 실패하였습니다",
+        timeOver ? "시간초과! 체포를 실패하였습니다" : "체포를 실패하였습니다",
       );
     } else {
       setHeaderMessage(
@@ -510,7 +494,7 @@ export default function IngameClient() {
     }
 
     // 푸터, 시간초과 초기화
-    setTimeOut(false);
+    setTimeOver(false);
     removeFooterMessage();
   };
 
@@ -541,13 +525,14 @@ export default function IngameClient() {
   };
 
   useEffect(() => {
-    setHeaderMessage("로딩중입니다...");
     if (socketMessage.message === "RENDER_COMPLETE_ACCEPTED") {
+      setRenderList(socketMessage.sender);
       startAnimation();
     }
 
     // 게임 시작
     if (socketMessage.message === "ALL_RENDERED_COMPLETED") {
+      setAllLoading(true);
       startGame();
     }
 
@@ -594,7 +579,7 @@ export default function IngameClient() {
       socketMessage.message === "ARREST_MARINE_TWO_TIME_OUT" ||
       socketMessage.message === "ARREST_MARINE_THREE_TIME_OUT"
     ) {
-      setTimeOut(true);
+      setTimeOver(true);
     }
 
     // 해적의 시작위치 지정 명령
@@ -792,7 +777,7 @@ export default function IngameClient() {
 
   return (
     <>
-      {/* <Loading /> */}
+      {!allLoading && <LoadingScreen />}
       {isgameOver !== "" && (
         <MiniModal>
           게임 종료
@@ -820,13 +805,11 @@ export default function IngameClient() {
           fov: 50,
           near: 100,
         }}
-        onCreated={({ gl, scene }) => {
+        onCreated={({ scene }) => {
           scene.background = new THREE.Color("#AED7DD");
         }}
       >
-        <Suspense fallback={<Loader />}>
-          <IngameThree />
-        </Suspense>
+        <IngameThree />
       </Canvas>
     </>
   );

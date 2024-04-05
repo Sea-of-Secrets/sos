@@ -84,7 +84,7 @@ export const PiecePathMap = {
     size: 8,
   },
   유령선: {
-    src: "/ghost_ship/scene.gltf",
+    src: "/유령선/scene.gltf",
     size: 40,
   },
   "세련된 요트": {

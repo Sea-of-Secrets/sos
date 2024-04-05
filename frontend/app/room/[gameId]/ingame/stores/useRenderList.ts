@@ -6,7 +6,7 @@ interface RenderListState {
 }
 
 export const useRenderList = create<RenderListState>(set => ({
-  renderList: ["렌더링 목록"],
+  renderList: [],
   setRenderList: newNickname => {
     set(state => ({
       renderList: [...state.renderList, newNickname],

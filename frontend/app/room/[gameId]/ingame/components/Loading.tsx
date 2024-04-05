@@ -1,22 +1,30 @@
-export default function Loading({ children }: any) {
-  return (
-    <div
-      style={{
-        position: "fixed",
-        top: 0,
-        left: 0,
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        background: "black",
-        color: "white",
-        fontSize: "24px",
-        zIndex: 999,
-      }}
-    >
-      {children}
-    </div>
-  );
+import { Html, useProgress } from "@react-three/drei";
+import { useEffect } from "react";
+import { gameSocket } from "~/sockets";
+import { useSystemPrompt } from "../stores/useSystemPrompt";
+import useNickname from "~/store/nickname";
+import useGameId from "~/store/gameId";
+import { useSocketMessage } from "../stores/useSocketMessage";
+import { useGameLoading } from "../stores/useGameLoading";
+
+const { send } = gameSocket;
+
+export default function Loading() {
+  const { nickname } = useNickname();
+  const { gameId } = useGameId();
+  const { active } = useProgress();
+  const { setMyLoading } = useGameLoading();
+
+  useEffect(() => {
+    if (!active) {
+      setMyLoading(true);
+      send("/pub/room", {
+        message: "RENDERED_COMPLETE",
+        sender: nickname,
+        gameId,
+      });
+    }
+  }, [active, nickname, gameId]);
+
+  return null;
 }

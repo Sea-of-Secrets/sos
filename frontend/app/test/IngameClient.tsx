@@ -18,12 +18,12 @@ import OptionButton from "../room/[gameId]/ingame/components/OptionButton";
 import Docs from "../room/[gameId]/ingame/components/Docs";
 
 export default function IngameClient() {
-  const { loading, setLoading } = useGameLoading();
+  // const { loading, setLoading } = useGameLoading();
 
   return (
     <>
       <Timer />
-      {loading && <Loading />}
+      {/* {loading && <Loading />} */}
       {/* <Round topLeft={[200, 1]} />
       <Turn topLeft={[500, 1]} currentTurn={1} /> */}
       <Round topLeft={[60, 1]} />
@@ -35,7 +35,7 @@ export default function IngameClient() {
           far: 10000,
           fov: 50,
         }}
-        onCreated={() => setLoading(false)}
+        // onCreated={() => setLoading(false)}
       >
         <IngameThree />
       </Canvas>
