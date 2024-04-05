@@ -4,7 +4,7 @@ import Image from "next/image";
 
 import { useCamera } from "../stores/useCamera";
 import { useScreenControl } from "../stores/useScreenControl";
-import { getAccessToken, useAuth } from "~/store/auth";
+import { useAuth } from "~/app/auth/useAuth";
 
 interface LoginButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
 

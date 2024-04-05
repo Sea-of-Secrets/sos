@@ -6,7 +6,7 @@ import styled from "@emotion/styled";
 import Button from "../components/Button";
 import Container from "../components/Container";
 
-import { useAuth } from "~/store/auth";
+import { useAuth } from "~/app/auth/useAuth";
 import { useGatcha } from "../stores/useGatch";
 import { useScreenControl } from "../stores/useScreenControl";
 

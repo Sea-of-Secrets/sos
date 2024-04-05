@@ -1,11 +1,11 @@
-import Auth from "~/app/Auth";
+import { AuthClient } from "~/app/auth/AuthClient";
 import Index from "./index";
 import "./index.css";
 import Renderer from "./Renderer";
 
 export default function Page() {
   return (
-    <Auth>
+    <AuthClient>
       <div id="container">
         <div id="index-container">
           <Index />
@@ -14,6 +14,6 @@ export default function Page() {
           <Renderer />
         </div>
       </div>
-    </Auth>
+    </AuthClient>
   );
 }

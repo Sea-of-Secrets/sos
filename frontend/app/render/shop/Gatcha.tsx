@@ -6,7 +6,9 @@ import { useCamera } from "../stores/useCamera";
 import Button from "../components/BackButton";
 import * as ShopsApi from "~/app/api/shops";
 import * as UsersApi from "~/app/api/users";
-import { User, useAuth } from "~/store/auth";
+import { useAuth } from "~/app/auth/useAuth";
+import { User } from "~/app/auth/types";
+import { deleteAuthCookie } from "~/app/auth/cookie";
 
 export default function Gatcha() {
   const nftRef = useRef<HTMLDivElement>(null);
@@ -22,20 +24,23 @@ export default function Gatcha() {
       return;
     }
     setLoading(true);
-
     try {
       //mockGatcha().then(data => setRandomGatchaData(data)); // 돈 계속 빠져나가서 만든 테스트용 함수
 
       // TODO: 배포시에는 이걸 사용해주세용
       const gatchaData = await fetchGatcha();
+      UsersApi.getUserInfo().then(res => {
+        if (res.data.name) {
+          setUser(res.data as User);
+        } else {
+          setUser(res.data as User);
+          deleteAuthCookie();
+        }
+      });
       setRandomGatchaData(gatchaData);
-      try {
-        UsersApi.getUserInfo().then(res => setUser(res.data as User));
-      } catch (e) {
-        UsersApi.getUserInfo().then(res => setUser(res.data as User));
-      }
     } catch (e) {
-      window.alert("지갑을 생성해주세요!");
+      // TODO : 모달로 변경
+      console.error("지갑없음!");
     } finally {
       setLoading(false);
     }

@@ -9,7 +9,7 @@ import { useState } from "react";
 import Container from "../render/components/Container";
 import { useCamera } from "../render/stores/useCamera";
 import { useScreenControl } from "../render/stores/useScreenControl";
-import { useAuth } from "~/store/auth";
+import { useAuth } from "~/app/auth/useAuth";
 import MiniModalContent from "../render/components/MiniModalContent";
 import MiniModal from "../render/components/MiniModal";
 
@@ -40,13 +40,9 @@ export default function Page() {
     setWallet(null);
   };
 
-  if (!user) {
-    return <h1>유저가 없음... 로딩중일수도 있음...</h1>;
-  }
-
   // 주소를 클립보드에 복사합니다.
   const handleCopyAddress = () => {
-    if (user.walletAddress) {
+    if (user && user.walletAddress) {
       navigator.clipboard.writeText(user.walletAddress);
       setCopied(true);
     }
@@ -112,6 +108,10 @@ export default function Page() {
       window.alert("올바른 지갑 주소를 입력해주세요");
     }
   };
+
+  if (!user) {
+    return <h1>유저가 없음... 로딩중일수도 있음...</h1>;
+  }
 
   return (
     <>

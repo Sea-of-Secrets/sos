@@ -7,7 +7,7 @@ import Button from "../render/components/Button";
 
 import MiniModal from "../render/components/MiniModal";
 import MiniModalContent from "../render/components/MiniModalContent";
-import { useAuth } from "~/store/auth";
+import { useAuth } from "~/app/auth/useAuth";
 
 export default function UserProfile() {
   const { user } = useAuth();

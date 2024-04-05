@@ -2,7 +2,7 @@
 
 import styled from "@emotion/styled";
 import Button from "../components/Button";
-import { useAuth } from "~/store/auth";
+import { useAuth } from "~/app/auth/useAuth";
 import { useShopModal } from "./useShopModal";
 import { RANDOM_GATCHA_PRICE } from "~/_lib/constants";
 

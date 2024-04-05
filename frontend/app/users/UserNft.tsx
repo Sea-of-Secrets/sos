@@ -11,6 +11,7 @@ export default function UserNft() {
 
   const fetchNftList = async () => {
     const response = await UsersApi.getWallet();
+    console.log(response.data);
     setNftList(response.data);
     setLoading(true);
   };
