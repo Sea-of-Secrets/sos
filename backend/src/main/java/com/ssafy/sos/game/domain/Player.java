@@ -8,6 +8,5 @@ import lombok.Data;
 @Builder
 public class Player {
     private String nickname; // 닉네임
-//    private Boolean isMember; // 회원여부
     private UserEntity userInfo;
 }
