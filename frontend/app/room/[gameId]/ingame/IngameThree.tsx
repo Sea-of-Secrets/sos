@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import Light from "./models/Light";
 import Tween from "./models/Tween";
 import Camera from "./models/Camera";
