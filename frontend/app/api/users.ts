@@ -1,5 +1,5 @@
-import { getAccessToken, getRefreshToken, removeToken } from "~/store/auth";
 import { request, getBaseServerUrl } from "../../_lib/http";
+import { deleteAuthCookie } from "../auth/cookie";
 
 export const getUserInfo = async () => {
   const res = await request.get(`${getBaseServerUrl()}/users`);
@@ -29,27 +29,14 @@ export const saveDefaultPiece = async (productName: string) => {
 };
 
 export const logout = async () => {
-  removeToken();
+  deleteAuthCookie();
   const res = await request.post(`${getBaseServerUrl()}/logout`);
   return res;
 };
 
-export const addWallet = async (address: string) => {
-  const access = getAccessToken();
-  const refresh = getRefreshToken();
-  removeToken();
-
-  const res = await request.patch(
-    `${getBaseServerUrl()}/nft/wallet`,
-    {
-      walletAddress: address,
-    },
-    {
-      headers: {
-        //Cookie: `access=${access}; refresh=${refresh};`,
-        Authorization: `Bearer ${access}`,
-      },
-    },
-  );
+export const addWallet = async (walletAddress: string) => {
+  const res = await request.patch(`${getBaseServerUrl()}/nft/wallet`, {
+    walletAddress,
+  });
   return res;
 };
