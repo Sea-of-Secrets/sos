@@ -1,6 +1,5 @@
 "use client";
 
-import { UserModel, WalletModel } from "./types";
 import * as UsersApi from "../api/users";
 import { useEffect, useState } from "react";
 import Button from "../render/components/Button";
@@ -8,18 +7,19 @@ import Button from "../render/components/Button";
 import MiniModal from "../render/components/MiniModal";
 import MiniModalContent from "../render/components/MiniModalContent";
 import { useAuth } from "~/app/auth/useAuth";
+import { WalletType } from "../auth/types";
 
 export default function UserProfile() {
   const { user } = useAuth();
   const [copied, setCopied] = useState(false); // 복사 버튼 클릭 상태를 관리합니다.
   const [walletLoading, setWalletLoading] = useState(false);
-  const [wallet, setWallet] = useState<WalletModel | null>(null);
+  const [wallet, setWallet] = useState<WalletType | null>(null);
 
   const handleMakeWallet = async () => {
     try {
       const response = await UsersApi.makeWallet();
-      const { address, mnemonic, privateKey } = response.data as WalletModel;
-      setWallet(response.data as WalletModel);
+      const { address, mnemonic, privateKey } = response.data as WalletType;
+      setWallet(response.data as WalletType);
     } catch (e) {
       console.error(e);
     }
