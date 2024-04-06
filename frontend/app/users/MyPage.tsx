@@ -3,13 +3,13 @@ import styled from "@emotion/styled";
 import UserNft from "./UserNft";
 
 import { WalletModel } from "./types";
-import * as UserApi from "../api/users";
+import * as UsersApi from "../api/users";
 import { useState } from "react";
 
 import Container from "../render/components/Container";
 import { useCamera } from "../render/stores/useCamera";
 import { useScreenControl } from "../render/stores/useScreenControl";
-import { useAuth } from "~/app/auth/useAuth";
+import { useAuth, validateUser } from "~/app/auth/useAuth";
 import MiniModalContent from "../render/components/MiniModalContent";
 import MiniModal from "../render/components/MiniModal";
 
@@ -27,12 +27,22 @@ export default function Page() {
 
   const handleMakeWallet = async () => {
     try {
-      const walletResponse = await UserApi.makeWallet();
-      const userResponse = await UserApi.getUserInfo();
+      const walletResponse = await UsersApi.makeWallet();
       setWallet(walletResponse.data as WalletModel);
-      setUser(userResponse.data);
     } catch (e) {
       console.error(e);
+    }
+
+    // 유저 정보 업데이트
+    try {
+      const { data: userData } = await UsersApi.getUserInfo();
+      if (validateUser(userData)) {
+        setUser(userData);
+        return;
+      }
+      console.error("fetch fail user");
+    } catch (e) {
+      console.error("fetch fail user");
     }
   };
 
@@ -75,13 +85,13 @@ export default function Page() {
   };
 
   const handleGetWallet = async () => {
-    const response = await UserApi.getWalletInfo();
+    const response = await UsersApi.getWalletInfo();
     setWallet(response.data as WalletModel);
   };
 
   const handleLogout = async () => {
     try {
-      await UserApi.logout();
+      await UsersApi.logout();
     } catch (e) {
     } finally {
       setUser(null);
@@ -98,7 +108,7 @@ export default function Page() {
     }
 
     try {
-      const response = await UserApi.addWallet(address);
+      const response = await UsersApi.addWallet(address);
       const updatedWallet = { address: address } as WalletModel;
       setWallet(updatedWallet);
       if (response.status === 200) {

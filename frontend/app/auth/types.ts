@@ -8,3 +8,14 @@ export type User = {
   username: string;
   walletAddress: string | null;
 };
+
+export const UserTypeKeys: (keyof User)[] = [
+  "email",
+  "gold",
+  "id",
+  "name",
+  "productName",
+  "role",
+  "username",
+  "walletAddress",
+];

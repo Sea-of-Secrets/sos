@@ -1,34 +1,25 @@
 import { create } from "zustand";
-import { User } from "./types";
+import { User, UserTypeKeys } from "./types";
 
 interface AuthStoreState {
   user: User | null;
   isLoggedIn: boolean;
-  setUser: (nextUser: any) => void;
+  setUser: (userData: any) => void;
 }
 
 export const useAuth = create<AuthStoreState>(set => ({
   user: null,
   isLoggedIn: false,
-  setUser: nextUser => {
+  setUser: userData => {
     set(state => {
-      if (validateUser(nextUser)) {
-        return { ...state, user: nextUser, isLoggedIn: true };
+      if (validateUser(userData)) {
+        return { ...state, user: userData, isLoggedIn: true };
       }
       return { ...state, user: null, isLoggedIn: false };
     });
   },
 }));
 
-const validateUser = (user: any) => {
-  return !!user && user.username;
-
-  // id: number;
-  // name: string;
-  // email: string;
-  // role: string;
-  // username: string;
-  // walletAddress: string | null;
-  // gold: number | null;
-  // productName: number | string | null;
+export const validateUser = (userData: any) => {
+  return userData && UserTypeKeys.every(key => key in userData);
 };

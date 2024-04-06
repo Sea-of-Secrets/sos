@@ -6,9 +6,7 @@ import { useCamera } from "../stores/useCamera";
 import Button from "../components/BackButton";
 import * as ShopsApi from "~/app/api/shops";
 import * as UsersApi from "~/app/api/users";
-import { useAuth } from "~/app/auth/useAuth";
-import { User } from "~/app/auth/types";
-import { deleteAuthCookie } from "~/app/auth/cookie";
+import { useAuth, validateUser } from "~/app/auth/useAuth";
 
 export default function Gatcha() {
   const nftRef = useRef<HTMLDivElement>(null);
@@ -29,20 +27,24 @@ export default function Gatcha() {
 
       // TODO: 배포시에는 이걸 사용해주세용
       const gatchaData = await fetchGatcha();
-      UsersApi.getUserInfo().then(res => {
-        if (res.data.name) {
-          setUser(res.data as User);
-        } else {
-          setUser(res.data as User);
-          deleteAuthCookie();
-        }
-      });
       setRandomGatchaData(gatchaData);
     } catch (e) {
       // TODO : 모달로 변경
       console.error("지갑없음!");
     } finally {
       setLoading(false);
+    }
+
+    // 유저 데이터 업데이트
+    try {
+      const userData = await UsersApi.getUserInfo();
+      if (validateUser(userData)) {
+        setUser(userData);
+        return;
+      }
+      console.error("fetch fail user");
+    } catch (e) {
+      console.error("fetch fail user");
     }
   }, []);
 
