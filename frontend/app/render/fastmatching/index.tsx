@@ -47,6 +47,12 @@ export default function FastMatching() {
   };
 
   const handleClickCheckButton = async () => {
+    const TEMP_KEY = window.localStorage.getItem("TEMP_KEY");
+    if (TEMP_KEY !== "유일무이이주희") {
+      window.alert("점검 중인 기능이에요");
+      return;
+    }
+
     connect(onConnect);
     try {
       const { data } = await GamesApi.matching({
