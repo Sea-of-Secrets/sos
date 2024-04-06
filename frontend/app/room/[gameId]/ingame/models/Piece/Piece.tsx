@@ -83,7 +83,6 @@ export default function Piece({
       >
         <primitive object={gltf.scene} />
       </mesh>
-      <PieceEffect effectName="GOLD_EFFECT" position={piecePosition} />
     </>
   );
 }
