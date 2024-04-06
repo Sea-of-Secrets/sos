@@ -9,9 +9,7 @@ import { PieceProps } from "./types";
 import { useSocketMessage } from "../../stores/useSocketMessage";
 import useNickname from "~/store/nickname";
 import { NodePosition } from "~/_lib/data/types";
-import PieceEffect from "./PieceEffect";
 
-// TODO: 이동중이면 이펙트를 없애고 이동완료되면 다시 소환
 export default function Piece({
   name,
   position,
@@ -40,11 +38,7 @@ export default function Piece({
     });
   }, [name, nickname, pieceName, position, socketMessage]);
 
-  const handleClickPiece = useCallback((e: ThreeEvent<MouseEvent>) => {
-    // console.log("******** Piece Click ********");
-    // console.log("이벤트", e);
-    // console.log("****************************");
-  }, []);
+  const handleClickPiece = useCallback((e: ThreeEvent<MouseEvent>) => {}, []);
 
   const handlePointerOver = useCallback(() => {
     setHover(true);

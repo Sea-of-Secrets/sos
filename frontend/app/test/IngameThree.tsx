@@ -1,5 +1,3 @@
-import { useEffect } from "react";
-
 import Tween from "../room/[gameId]/ingame/models/Tween";
 import Camera from "../room/[gameId]/ingame/models/Camera";
 import Graph from "../room/[gameId]/ingame/models/Graph";
@@ -26,7 +24,7 @@ export default function IngameThree() {
         pieceName="SHIBA"
         set={setPiratePiece}
       />
-      <PieceEffect effectName="GOLD_EFFECT" position={getNode(107).position} />
+      <PieceEffect effectName="GOLD_EFFECT1" position={getNode(107).position} />
       <SelectableMarineNodeMarkerGroup />
       <Map />
       <Light />
