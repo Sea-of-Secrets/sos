@@ -1,10 +1,12 @@
 import { create } from "zustand";
-import { User, UserTypeKeys } from "./types";
+import { NFTType, User, UserTypeKeys } from "./types";
 
 interface AuthStoreState {
   user: User | null;
   isLoggedIn: boolean;
   setUser: (userData: any) => void;
+  nftList: NFTType[];
+  setNftList: (nftListData: any) => void;
 }
 
 export const useAuth = create<AuthStoreState>(set => ({
@@ -18,8 +20,21 @@ export const useAuth = create<AuthStoreState>(set => ({
       return { ...state, user: null, isLoggedIn: false };
     });
   },
+  nftList: [],
+  setNftList: nftListData => {
+    set(state => {
+      if (validateNftListData(nftListData)) {
+        return { ...state, nftList: nftListData };
+      }
+      return { ...state };
+    });
+  },
 }));
 
 export const validateUser = (userData: any) => {
-  return userData && UserTypeKeys.every(key => key in userData);
+  return userData && UserTypeKeys.some(key => key in userData);
+};
+
+export const validateNftListData = (nftListData: any) => {
+  return Array.isArray(nftListData);
 };

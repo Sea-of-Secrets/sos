@@ -2,7 +2,6 @@ import styled from "@emotion/styled";
 
 import UserNft from "./UserNft";
 
-import { WalletModel } from "./types";
 import * as UsersApi from "../api/users";
 import { useState } from "react";
 
@@ -12,6 +11,7 @@ import { useScreenControl } from "../render/stores/useScreenControl";
 import { useAuth, validateUser } from "~/app/auth/useAuth";
 import MiniModalContent from "../render/components/MiniModalContent";
 import MiniModal from "../render/components/MiniModal";
+import { WalletType } from "../auth/types";
 
 export default function Page() {
   const { user, setUser } = useAuth();
@@ -20,7 +20,7 @@ export default function Page() {
   const [newMnemonicCopied, setNewMnemonicCopied] = useState(false);
   const [newPrivateKeyCopied, setNewPrivateKeysCopied] = useState(false);
   const [walletLoading, setWalletLoading] = useState(false);
-  const [wallet, setWallet] = useState<WalletModel | null>(null);
+  const [wallet, setWallet] = useState<WalletType | null>(null);
 
   const { cameraRef, mainScreen, LoginScreen } = useCamera();
   const { screen, setScreen, setMainScreen } = useScreenControl();
@@ -28,7 +28,7 @@ export default function Page() {
   const handleMakeWallet = async () => {
     try {
       const walletResponse = await UsersApi.makeWallet();
-      setWallet(walletResponse.data as WalletModel);
+      setWallet(walletResponse.data as WalletType);
     } catch (e) {
       console.error(e);
     }
@@ -86,7 +86,7 @@ export default function Page() {
 
   const handleGetWallet = async () => {
     const response = await UsersApi.getWalletInfo();
-    setWallet(response.data as WalletModel);
+    setWallet(response.data as WalletType);
   };
 
   const handleLogout = async () => {
@@ -109,7 +109,7 @@ export default function Page() {
 
     try {
       const response = await UsersApi.addWallet(address);
-      const updatedWallet = { address: address } as WalletModel;
+      const updatedWallet = { address: address } as WalletType;
       setWallet(updatedWallet);
       if (response.status === 200) {
         window.alert("저장 성공");

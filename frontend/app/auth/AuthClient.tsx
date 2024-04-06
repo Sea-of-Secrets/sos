@@ -3,10 +3,10 @@
 import { PropsWithChildren, useEffect } from "react";
 import * as UsersApi from "../api/users";
 import { deleteAuthCookie } from "./cookie";
-import { useAuth, validateUser } from "./useAuth";
+import { useAuth, validateNftListData, validateUser } from "./useAuth";
 
 export function AuthClient({ children }: PropsWithChildren) {
-  const { setUser } = useAuth();
+  const { setUser, setNftList } = useAuth();
 
   const fetchUser = async () => {
     try {
@@ -23,8 +23,25 @@ export function AuthClient({ children }: PropsWithChildren) {
     }
   };
 
+  const fetchNftList = async () => {
+    try {
+      const { data: nftListData } = await UsersApi.getWallet();
+      if (validateNftListData(nftListData)) {
+        setNftList(nftListData);
+      }
+      return;
+    } catch (e) {
+      console.error("fetch fail nftList");
+    }
+  };
+
+  const fetchNFTUserData = async () => {
+    await fetchUser();
+    await fetchNftList();
+  };
+
   useEffect(() => {
-    fetchUser();
+    fetchNFTUserData();
   }, []);
 
   return <>{children}</>;

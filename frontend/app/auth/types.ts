@@ -9,6 +9,18 @@ export type User = {
   walletAddress: string | null;
 };
 
+export type NFTType = {
+  name: string;
+  description: string | null;
+  image: string | null;
+};
+
+export type WalletType = {
+  address: string;
+  mnemonic: string;
+  privateKey: string;
+};
+
 export const UserTypeKeys: (keyof User)[] = [
   "email",
   "gold",

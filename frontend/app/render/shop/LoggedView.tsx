@@ -13,7 +13,13 @@ export default function LoggedView() {
 
   return (
     <Container>
-      <StyledDiv>보유 골드 : {user ? user.gold : 0} G</StyledDiv>
+      <StyledDiv>
+        보유 골드 :{" "}
+        {user && user.gold && !Number.isNaN(user.gold)
+          ? Math.max(user.gold, 0)
+          : 0}{" "}
+        G
+      </StyledDiv>
       <Button onClick={toggleModal}>{RANDOM_GATCHA_PRICE} G</Button>
     </Container>
   );
