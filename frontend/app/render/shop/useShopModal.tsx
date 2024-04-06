@@ -6,30 +6,40 @@ import {
   useMemo,
   useState,
 } from "react";
+import { GatchaType } from "~/app/auth/types";
 
 interface ShopModalContextState {
   isOpenedModal: boolean;
+  randomGatcha: GatchaType | null;
   toggleModal: () => void;
+  setRandomGatcha: (gatcha: GatchaType) => void;
 }
 
 const ShopModalContext = createContext<ShopModalContextState>({
   isOpenedModal: false,
+  randomGatcha: null,
   toggleModal: () => {},
+  setRandomGatcha: () => {},
 });
 
 export const ShopModalProvier = ({ children }: PropsWithChildren) => {
   const [isOpenedModal, setIsOpenedModal] = useState(false);
+  const [randomGatcha, _setRandomGatcha] = useState<GatchaType | null>(null);
 
   const toggleModal = useCallback(() => {
     setIsOpenedModal(prev => !prev);
   }, []);
 
+  const setRandomGatcha = useCallback(async (gatcha: GatchaType) => {}, []);
+
   const value = useMemo(
     () => ({
       isOpenedModal,
+      randomGatcha,
+      setRandomGatcha,
       toggleModal,
     }),
-    [isOpenedModal, toggleModal],
+    [isOpenedModal, randomGatcha, setRandomGatcha, toggleModal],
   );
 
   return (

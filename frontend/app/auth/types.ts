@@ -21,6 +21,15 @@ export type WalletType = {
   privateKey: string;
 };
 
+export type Grade = "LEGENDARY" | "RARE" | "COMMON";
+
+export type GatchaType = {
+  name: string;
+  grade: Grade;
+  hasItemAlready: boolean;
+  imgUrl: string;
+};
+
 export const UserTypeKeys: (keyof User)[] = [
   "email",
   "gold",

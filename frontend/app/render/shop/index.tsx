@@ -54,7 +54,7 @@ const ShopWrapper = () => {
         <Modal>
           <ModalContent>
             <FlexDirectionColumn>
-              {user && user.gold && user.gold >= RANDOM_GATCHA_PRICE ? (
+              {!(user && user.gold && user.gold >= RANDOM_GATCHA_PRICE) ? (
                 <>
                   <Title>
                     <div>
@@ -87,10 +87,9 @@ const ShopWrapper = () => {
         </Modal>
       )}
       <Container position="right">
-        {isLoggedIn ? (
+        {!isLoggedIn ? (
           <LoggedView />
         ) : (
-          // <LoggedView />
           <Button onClick={handleClickLogin}>로그인</Button>
         )}
       </Container>
