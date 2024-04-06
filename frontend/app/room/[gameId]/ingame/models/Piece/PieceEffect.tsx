@@ -29,7 +29,9 @@ export default function PieceEffect({
   return (
     <mesh
       ref={meshRef}
-      position={[position.x, position.z, position.y]}
+      position={
+        position ? [position.x, position.z - 50, position.y] : undefined
+      }
       scale={DEFAULT_SCALE} // node size
       {...props}
     >

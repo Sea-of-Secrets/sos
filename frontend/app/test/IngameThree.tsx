@@ -8,37 +8,25 @@ import Map from "../room/[gameId]/ingame/models/Map";
 import Light from "../room/[gameId]/ingame/models/Light";
 import SelectableMarineNodeMarkerGroup from "../room/[gameId]/ingame/models/Piece/SelectableMarineNodeMarkerGroup";
 
+import { getNode } from "~/_lib/data/data";
+import PieceEffect from "../room/[gameId]/ingame/models/Piece/PieceEffect";
 import { usePiratePiece } from "../room/[gameId]/ingame/stores/piece";
 
-import { getNode } from "~/_lib/data/data";
-
-const TEST_NODE_ID = 107; // 시바견을 일단 107번 노드에 띄워보자
-
 export default function IngameThree() {
-  const {
-    setPiece: setPiratePiece,
-    setPosition: setPiratePosition,
-    position: piratePosition,
-  } = usePiratePiece();
-
-  useEffect(() => {
-    // 해적말 처음 위치 초기화
-    setPiratePosition(getNode(TEST_NODE_ID).position);
-  }, [setPiratePosition]);
+  const { setPiece: setPiratePiece } = usePiratePiece();
 
   return (
     <>
       <Tween />
       <Camera />
       <Graph />
-      {piratePosition && (
-        <Piece
-          name="PIRATE"
-          position={piratePosition}
-          pieceName="SHIBA"
-          set={setPiratePiece}
-        />
-      )}
+      <Piece
+        name="PIRATE"
+        position={getNode(107).position}
+        pieceName="SHIBA"
+        set={setPiratePiece}
+      />
+      <PieceEffect effectName="GOLD_EFFECT" position={getNode(107).position} />
       <SelectableMarineNodeMarkerGroup />
       <Map />
       <Light />

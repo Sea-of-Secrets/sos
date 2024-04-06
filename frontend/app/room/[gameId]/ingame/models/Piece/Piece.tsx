@@ -9,6 +9,7 @@ import { PieceProps } from "./types";
 import { useSocketMessage } from "../../stores/useSocketMessage";
 import useNickname from "~/store/nickname";
 import { NodePosition } from "~/_lib/data/types";
+import PieceEffect from "./PieceEffect";
 
 // TODO: 이동중이면 이펙트를 없애고 이동완료되면 다시 소환
 export default function Piece({
@@ -23,6 +24,9 @@ export default function Piece({
       ? PiecePathMap[pieceName].src
       : PiecePathMap["SHIBA"].src,
   );
+
+  console.log(meshRef, gltf);
+
   const { socketMessage } = useSocketMessage();
   const { nickname } = useNickname();
   const [hovered, setHover] = useState(false);
@@ -79,6 +83,7 @@ export default function Piece({
       >
         <primitive object={gltf.scene} />
       </mesh>
+      <PieceEffect effectName="GOLD_EFFECT" position={piecePosition} />
     </>
   );
 }

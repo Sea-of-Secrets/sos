@@ -223,6 +223,9 @@ export default function TestController() {
           해군 행동
         </Button>
       </Test>
+      <Test>
+        <Button onClick={() => zoomMarineStart()}>해군 시작 위치 줌</Button>
+      </Test>
     </ContainerStyle>
   );
 }

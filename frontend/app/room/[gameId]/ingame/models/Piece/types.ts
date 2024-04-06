@@ -14,7 +14,7 @@ export interface PieceProps
 export interface PieceEffectProps
   extends Omit<PrimitiveProps, "object" | "position"> {
   effectName: keyof typeof PieceEffectPathMap;
-  position: NodePosition;
+  position?: NodePosition;
 }
 
 export interface TreasureProps {
