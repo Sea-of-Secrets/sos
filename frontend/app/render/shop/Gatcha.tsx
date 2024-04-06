@@ -1,18 +1,24 @@
 import styled from "@emotion/styled";
-import Overlay from "../components/Overlay";
 import { useCallback, useEffect, useRef, useState } from "react";
+
 import { useGatcha } from "../stores/useGatch";
 import { useCamera } from "../stores/useCamera";
-import Button from "../components/BackButton";
+
 import * as ShopsApi from "~/app/api/shops";
 import * as UsersApi from "~/app/api/users";
+
 import { useAuth, validateNftListData, validateUser } from "~/app/auth/useAuth";
+import { GatchaType } from "~/app/auth/types";
+
+import Button from "../components/BackButton";
+import Overlay from "../components/Overlay";
 
 export default function Gatcha() {
   const nftRef = useRef<HTMLDivElement>(null);
   const [loading, setLoading] = useState(false);
-  const [randomGatchaData, setRandomGatchaData] =
-    useState<GatchaResponse | null>(null);
+  const [randomGatchaData, setRandomGatchaData] = useState<GatchaType | null>(
+    null,
+  );
   const { setGatchaState } = useGatcha();
   const { ShopScreen } = useCamera();
   const { setUser, setNftList } = useAuth();
@@ -164,16 +170,7 @@ const NftCard = styled.div`
   transition: transform 1s ease-in-out; // 애니메이션 효과 적용
 `;
 
-type Grade = "LEGENDARY" | "RARE" | "COMMON";
-
-type GatchaResponse = {
-  name: string;
-  grade: Grade;
-  hasItemAlready: boolean;
-  imgUrl: string;
-};
-
-const MOCK_DATA: GatchaResponse = {
+const MOCK_DATA: GatchaType = {
   name: "zuhee",
   grade: "LEGENDARY",
   hasItemAlready: true,
@@ -198,7 +195,7 @@ const getColorToGrade = (grade: string) => {
   return "white";
 };
 
-const mockGatcha = async (): Promise<GatchaResponse> => {
+const mockGatcha = async (): Promise<GatchaType> => {
   // console.log("두근두근 가챠 타임 (테스트용)");
   return new Promise((resolve, reject) => {
     setTimeout(() => {
