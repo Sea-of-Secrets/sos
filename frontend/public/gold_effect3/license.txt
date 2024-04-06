@@ -1,0 +1,11 @@
+Model Information:
+* title:	中国风底纹出场特效光圈Appearance effect light beam
+* source:	https://sketchfab.com/3d-models/appearance-effect-light-beam-fd37b7bec4ca48a8b6539dc4048787cf
+* author:	Yuki (https://sketchfab.com/SHLER)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "中国风底纹出场特效光圈Appearance effect light beam" (https://sketchfab.com/3d-models/appearance-effect-light-beam-fd37b7bec4ca48a8b6539dc4048787cf) by Yuki (https://sketchfab.com/SHLER) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

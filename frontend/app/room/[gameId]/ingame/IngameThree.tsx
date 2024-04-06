@@ -23,6 +23,7 @@ import { Suspense, useEffect, useRef } from "react";
 import { CameraControls } from "@react-three/drei";
 import { useCamera } from "./stores/useCamera";
 import Loading from "./components/Loading";
+import PieceEffect from "./models/Piece/PieceEffect";
 
 export default function IngameThree() {
   const cameraRef = useRef<CameraControls>(null!);
@@ -83,6 +84,7 @@ export default function IngameThree() {
                     }
                     set={setPiratePiece}
                   />
+
                   <Piece
                     name="MARINE1"
                     position={marineOnePosition}
@@ -95,6 +97,7 @@ export default function IngameThree() {
                     }
                     set={setMarineOnePiece}
                   />
+
                   <Piece
                     name="MARINE2"
                     position={marineTwoPosition}
@@ -107,6 +110,7 @@ export default function IngameThree() {
                     }
                     set={setMarineTwoPiece}
                   />
+
                   <Piece
                     name="MARINE3"
                     position={marineThreePosition}
@@ -118,6 +122,22 @@ export default function IngameThree() {
                         : "MARINE3"
                     }
                     set={setMarineThreePiece}
+                  />
+                  <PieceEffect
+                    effectName="GOLD_EFFECT1"
+                    position={piratePosition}
+                  />
+                  <PieceEffect
+                    effectName="GOLD_EFFECT2"
+                    position={marineOnePosition}
+                  />
+                  <PieceEffect
+                    effectName="GOLD_EFFECT3"
+                    position={marineTwoPosition}
+                  />
+                  <PieceEffect
+                    effectName="GOLD_EFFECT4"
+                    position={marineThreePosition}
                   />
                 </>
               )}
@@ -159,6 +179,22 @@ export default function IngameThree() {
                     position={marineThreePosition}
                     pieceName={"MARINE3"}
                     set={setMarineThreePiece}
+                  />
+                  <PieceEffect
+                    effectName="GOLD_EFFECT1"
+                    position={piratePosition}
+                  />
+                  <PieceEffect
+                    effectName="GOLD_EFFECT2"
+                    position={marineOnePosition}
+                  />
+                  <PieceEffect
+                    effectName="GOLD_EFFECT3"
+                    position={marineTwoPosition}
+                  />
+                  <PieceEffect
+                    effectName="GOLD_EFFECT4"
+                    position={marineThreePosition}
                   />
                 </>
               )}

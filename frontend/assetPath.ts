@@ -106,7 +106,10 @@ export const PiecePathMap = {
 } as const;
 
 export const PieceEffectPathMap = {
-  GOLD_EFFECT: "/gold_effect/scene.gltf",
+  GOLD_EFFECT1: "/gold_effect1/scene.gltf",
+  GOLD_EFFECT2: "/gold_effect2/scene.gltf",
+  GOLD_EFFECT3: "/gold_effect3/scene.gltf",
+  GOLD_EFFECT4: "/gold_effect4/scene.gltf",
 } as const;
 
 export const MapPathMap = {
