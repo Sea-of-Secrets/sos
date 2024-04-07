@@ -14,11 +14,12 @@ export default function GatchaCard() {
     <Container>
       <CenterBox>
         <FadeInUpDiv>
-          {randomGatcha.hasItemAlready ? (
+          {/* {randomGatcha.hasItemAlready ? (
             <Message>이미 가지고 있는 NFT 에요</Message>
           ) : (
             <Message>새로운 NFT를 획득했어요!</Message>
-          )}
+          )} */}
+          <Message>새로운 NFT를 획득했어요!</Message>
           <Card>
             <HologramCard2
               name={randomGatcha.name}
@@ -43,7 +44,7 @@ const Container = styled.div`
 
 const Message = styled.div`
   position: absolute;
-  top: 20%;
+  top: 10%;
   left: 35%;
   background-color: rgba(0, 0, 0, 0.6);
   padding: 1rem 2rem;
