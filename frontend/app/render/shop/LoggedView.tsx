@@ -5,6 +5,7 @@ import Button from "../components/Button";
 import { useAuth } from "~/app/auth/useAuth";
 import { useShopModal } from "./useShopModal";
 import { RANDOM_GATCHA_PRICE } from "~/_lib/constants";
+import { AssetPath } from "~/assetPath";
 
 export default function LoggedView() {
   const { toggleModal } = useShopModal();
@@ -20,7 +21,14 @@ export default function LoggedView() {
           : 0}{" "}
         G
       </StyledDiv>
-      <Button onClick={toggleModal}>{RANDOM_GATCHA_PRICE} G</Button>
+      <Button onClick={toggleModal}>
+        <GatchaButtonWrapper>
+          <div>
+            <img src={AssetPath["GATCHA_BUTTON_LEFT_NFT"]} alt="" />
+          </div>
+          <div>1개 뽑기</div>
+        </GatchaButtonWrapper>
+      </Button>
     </Container>
   );
 }
@@ -79,4 +87,21 @@ const StyledDiv = styled.div<{ size?: "xs" | "md" | "sm" }>`
         `;
     }
   }}
+`;
+
+const GatchaButtonWrapper = styled.div`
+  position: relative;
+  padding-top: 0.1rem;
+  padding-left: 1.2rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  > div:first-of-type {
+    position: absolute;
+    top: 0.6rem;
+    left: 2.2rem;
+    display: block;
+    width: 45px;
+  }
 `;

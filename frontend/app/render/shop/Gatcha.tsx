@@ -28,33 +28,33 @@ export default function Gatcha() {
       return;
     }
     setLoading(true);
-    //mockGatcha().then(data => setRandomGatchaData(data)); // 돈 계속 빠져나가서 만든 테스트용 함수
+    mockGatcha().then(data => setRandomGatchaData(data)); // 돈 계속 빠져나가서 만든 테스트용 함수
 
-    // TODO: 배포시에는 이걸 사용해주세용
-    ShopsApi.postGatcha()
-      .then(res => setRandomGatchaData(res.data))
-      .catch(e => {
-        console.error("지갑없음!");
-      });
+    // // TODO: 배포시에는 이걸 사용해주세용
+    // ShopsApi.postGatcha()
+    //   .then(res => setRandomGatchaData(res.data))
+    //   .catch(e => {
+    //     console.error("지갑없음!");
+    //   });
 
-    // 가챠 뽑고 유저 데이터 업데이트
-    UsersApi.getUserInfo()
-      .then(res => {
-        if (validateUser(res.data)) {
-          setUser(res.data);
-        }
-      })
-      .catch(e => {
-        console.error("fetch fail user");
-      });
+    // // 가챠 뽑고 유저 데이터 업데이트
+    // UsersApi.getUserInfo()
+    //   .then(res => {
+    //     if (validateUser(res.data)) {
+    //       setUser(res.data);
+    //     }
+    //   })
+    //   .catch(e => {
+    //     console.error("fetch fail user");
+    //   });
 
-    UsersApi.getWallet()
-      .then(res => {
-        if (validateNftListData(res.data)) {
-          setNftList(res.data);
-        }
-      })
-      .catch(e => console.error("fetch fail nftList"));
+    // UsersApi.getWallet()
+    //   .then(res => {
+    //     if (validateNftListData(res.data)) {
+    //       setNftList(res.data);
+    //     }
+    //   })
+    //   .catch(e => console.error("fetch fail nftList"));
 
     setLoading(false);
   }, [loading, randomGatchaData, setNftList, setUser]);
