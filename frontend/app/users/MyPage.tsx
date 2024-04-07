@@ -135,16 +135,13 @@ export default function Page() {
               </p>
               {!user.walletAddress && (
                 <div
-                  style={{
-                    display: "flex",
-                    gap: "1rem",
-                    alignItems: "center",
-                  }}
+                  className="gap-1"
+                  style={{ display: "flex", alignItems: "center" }}
                 >
-                  <Button onClick={handleMakeWallet} size={"sm"}>
-                    지갑 만들기
+                  <Button onClick={handleMakeWallet} size={"xs"}>
+                    지갑 생성
                   </Button>
-                  <Button onClick={handleAddWallet} size={"sm"}>
+                  <Button onClick={handleAddWallet} size={"xs"}>
                     지갑 연동
                   </Button>
                   <Button size={"xs"} onClick={handleLogout}>

@@ -1,18 +1,15 @@
 "use client";
 
 import * as UsersApi from "../api/users";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Button from "../render/components/Button";
 
-import MiniModal from "../render/components/MiniModal";
-import MiniModalContent from "../render/components/MiniModalContent";
 import { useAuth } from "~/app/auth/useAuth";
 import { WalletType } from "../auth/types";
 
 export default function UserProfile() {
   const { user } = useAuth();
   const [copied, setCopied] = useState(false); // 복사 버튼 클릭 상태를 관리합니다.
-  const [walletLoading, setWalletLoading] = useState(false);
   const [wallet, setWallet] = useState<WalletType | null>(null);
 
   const handleMakeWallet = async () => {
@@ -26,7 +23,7 @@ export default function UserProfile() {
   };
 
   if (!user) {
-    return <h1>유저가 없음... 로딩중일수도 있음...</h1>;
+    return <h1>로딩중...</h1>;
   }
 
   // 주소를 클립보드에 복사합니다.
@@ -69,16 +66,6 @@ export default function UserProfile() {
           </Button>
         </div>
       )}
-      {/* {wallet && (
-        <MiniModal>
-          title
-          <MiniModalContent>
-            <p>{wallet.address}</p>
-            <p>{wallet.mnemonic}</p>
-            <p>{wallet.privateKey}</p>
-          </MiniModalContent>
-        </MiniModal>
-      )} */}
     </div>
   );
 }
