@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { NFTModel } from "~/app/users/types";
 import styled from "@emotion/styled";
 import Button from "./Button";
 import * as UsersApi from "~/app/api/users";
-import { useAuth } from "~/store/auth";
+import { NFTType } from "~/app/auth/types";
+import { useAuth } from "../../auth/useAuth";
 
 interface NftCarouselProps {
-  nfts: NFTModel[];
+  nfts: NFTType[];
 }
 
 export default function NftCarousel({ nfts }: NftCarouselProps) {
