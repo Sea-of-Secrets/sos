@@ -2,7 +2,7 @@
 
 import styled from "@emotion/styled";
 import Button from "../components/Button";
-import { useAuth } from "~/store/auth";
+import { useAuth } from "~/app/auth/useAuth";
 import { useShopModal } from "./useShopModal";
 import { RANDOM_GATCHA_PRICE } from "~/_lib/constants";
 
@@ -13,7 +13,13 @@ export default function LoggedView() {
 
   return (
     <Container>
-      <StyledDiv>보유 골드 : {user ? user.gold : 0} G</StyledDiv>
+      <StyledDiv>
+        보유 골드 :{" "}
+        {user && user.gold && !Number.isNaN(user.gold)
+          ? Math.max(user.gold, 0)
+          : 0}{" "}
+        G
+      </StyledDiv>
       <Button onClick={toggleModal}>{RANDOM_GATCHA_PRICE} G</Button>
     </Container>
   );

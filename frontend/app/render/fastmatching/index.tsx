@@ -47,6 +47,12 @@ export default function FastMatching() {
   };
 
   const handleClickCheckButton = async () => {
+    const TEMP_KEY = window.localStorage.getItem("TEMP_KEY");
+    if (TEMP_KEY !== "유일무이이주희") {
+      window.alert("발표 시연을 위해 잠시 막아두었어요");
+      return;
+    }
+
     connect(onConnect);
     try {
       const { data } = await GamesApi.matching({

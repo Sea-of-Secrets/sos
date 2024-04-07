@@ -2,16 +2,16 @@ import styled from "@emotion/styled";
 
 import UserNft from "./UserNft";
 
-import { WalletModel } from "./types";
-import * as UserApi from "../api/users";
+import * as UsersApi from "../api/users";
 import { useState } from "react";
 
 import Container from "../render/components/Container";
 import { useCamera } from "../render/stores/useCamera";
 import { useScreenControl } from "../render/stores/useScreenControl";
-import { useAuth } from "~/store/auth";
+import { useAuth, validateUser } from "~/app/auth/useAuth";
 import MiniModalContent from "../render/components/MiniModalContent";
 import MiniModal from "../render/components/MiniModal";
+import { WalletType } from "../auth/types";
 
 export default function Page() {
   const { user, setUser } = useAuth();
@@ -21,19 +21,29 @@ export default function Page() {
   const [newMnemonicCopied, setNewMnemonicCopied] = useState(false);
   const [newPrivateKeyCopied, setNewPrivateKeysCopied] = useState(false);
   const [walletLoading, setWalletLoading] = useState(false);
-  const [wallet, setWallet] = useState<WalletModel | null>(null);
+  const [wallet, setWallet] = useState<WalletType | null>(null);
 
   const { cameraRef, mainScreen, LoginScreen } = useCamera();
   const { screen, setScreen, setMainScreen } = useScreenControl();
 
   const handleMakeWallet = async () => {
     try {
-      const walletResponse = await UserApi.makeWallet();
-      const userResponse = await UserApi.getUserInfo();
-      setWallet(walletResponse.data as WalletModel);
-      setUser(userResponse.data);
+      const walletResponse = await UsersApi.makeWallet();
+      setWallet(walletResponse.data as WalletType);
     } catch (e) {
       console.error(e);
+    }
+
+    // 유저 정보 업데이트
+    try {
+      const { data: userData } = await UsersApi.getUserInfo();
+      if (validateUser(userData)) {
+        setUser(userData);
+        return;
+      }
+      console.error("fetch fail user");
+    } catch (e) {
+      console.error("fetch fail user");
     }
   };
 
@@ -41,13 +51,9 @@ export default function Page() {
     setWallet(null);
   };
 
-  if (!user) {
-    return <h1>유저가 없음... 로딩중일수도 있음...</h1>;
-  }
-
   // 주소를 클립보드에 복사합니다.
   const handleCopyAddress = () => {
-    if (user.walletAddress) {
+    if (user && user.walletAddress) {
       navigator.clipboard.writeText(user.walletAddress);
       setCopied(true);
     }
@@ -81,13 +87,13 @@ export default function Page() {
 
   const handleGetWallet = async () => {
     setMenuTogle("wallet");
-    const response = await UserApi.getWalletInfo();
-    setWallet(response.data as WalletModel);
+    const response = await UsersApi.getWalletInfo();
+    setWallet(response.data as WalletType);
   };
 
   const handleLogout = async () => {
     try {
-      await UserApi.logout();
+      await UsersApi.logout();
     } catch (e) {
     } finally {
       setUser(null);
@@ -104,8 +110,8 @@ export default function Page() {
     }
 
     try {
-      const response = await UserApi.addWallet(address);
-      const updatedWallet = { address: address } as WalletModel;
+      const response = await UsersApi.addWallet(address);
+      const updatedWallet = { address: address } as WalletType;
       setWallet(updatedWallet);
       if (response.status === 200) {
         window.alert("저장 성공");
@@ -114,6 +120,10 @@ export default function Page() {
       window.alert("올바른 지갑 주소를 입력해주세요");
     }
   };
+
+  if (!user) {
+    return <h1>유저가 없음... 로딩중일수도 있음...</h1>;
+  }
 
   return (
     <>

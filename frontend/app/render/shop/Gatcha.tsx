@@ -6,7 +6,7 @@ import { useCamera } from "../stores/useCamera";
 import Button from "../components/BackButton";
 import * as ShopsApi from "~/app/api/shops";
 import * as UsersApi from "~/app/api/users";
-import { User, useAuth } from "~/store/auth";
+import { useAuth, validateNftListData, validateUser } from "~/app/auth/useAuth";
 
 export default function Gatcha() {
   const nftRef = useRef<HTMLDivElement>(null);
@@ -15,40 +15,52 @@ export default function Gatcha() {
     useState<GatchaResponse | null>(null);
   const { setGatchaState } = useGatcha();
   const { ShopScreen } = useCamera();
-  const { setUser } = useAuth();
+  const { setUser, setNftList } = useAuth();
 
   const fetchGatchData = useCallback(async () => {
     if (loading || randomGatchaData) {
       return;
     }
     setLoading(true);
+    //mockGatcha().then(data => setRandomGatchaData(data)); // 돈 계속 빠져나가서 만든 테스트용 함수
 
-    try {
-      //mockGatcha().then(data => setRandomGatchaData(data)); // 돈 계속 빠져나가서 만든 테스트용 함수
+    // TODO: 배포시에는 이걸 사용해주세용
+    ShopsApi.postGatcha()
+      .then(res => setRandomGatchaData(res.data))
+      .catch(e => {
+        console.error("지갑없음!");
+      });
 
-      // TODO: 배포시에는 이걸 사용해주세용
-      const gatchaData = await fetchGatcha();
-      setRandomGatchaData(gatchaData);
-      try {
-        UsersApi.getUserInfo().then(res => setUser(res.data as User));
-      } catch (e) {
-        UsersApi.getUserInfo().then(res => setUser(res.data as User));
-      }
-    } catch (e) {
-      window.alert("지갑을 생성해주세요!");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+    // 가챠 뽑고 유저 데이터 업데이트
+    UsersApi.getUserInfo()
+      .then(res => {
+        if (validateUser(res.data)) {
+          setUser(res.data);
+        }
+      })
+      .catch(e => {
+        console.error("fetch fail user");
+      });
+
+    UsersApi.getWallet()
+      .then(res => {
+        if (validateNftListData(res.data)) {
+          setNftList(res.data);
+        }
+      })
+      .catch(e => console.error("fetch fail nftList"));
+
+    setLoading(false);
+  }, [loading, randomGatchaData, setNftList, setUser]);
 
   const handleClickBackButton = useCallback(() => {
     setGatchaState("GATCHA_PREV");
     ShopScreen();
-  }, []);
+  }, [ShopScreen, setGatchaState]);
 
   useEffect(() => {
     fetchGatchData();
-  }, []);
+  }, [fetchGatchData]);
 
   if (loading || !randomGatchaData) {
     return (
@@ -194,10 +206,4 @@ const mockGatcha = async (): Promise<GatchaResponse> => {
       // console.log(MOCK_DATA);
     }, 1000);
   });
-};
-
-const fetchGatcha: () => Promise<GatchaResponse> = async () => {
-  // console.log("두근두근 가챠 타임 (확률 조작 없는 진짜!)");
-  const response = await ShopsApi.postGatcha();
-  return response.data;
 };

@@ -1,7 +1,7 @@
 export const PiecePathMap = {
   SHIBA: {
     src: "/shiba/scene.gltf",
-    size: 5,
+    size: 20,
   },
   TREASURE1: {
     src: "/treasure_chest1/scene.gltf",
@@ -106,8 +106,10 @@ export const PiecePathMap = {
 } as const;
 
 export const PieceEffectPathMap = {
-  FOOTHOLD_LIGHT_BEAM: "/appearance_effect_light_beam/scene.gltf", // 약간 하늘색
-  FOOTHOLD_STARLIGHT: "/appearance_effect_starlight/scene.gltf", // 흰색
+  GOLD_EFFECT1: "/gold_effect1/scene.gltf",
+  GOLD_EFFECT2: "/gold_effect2/scene.gltf",
+  GOLD_EFFECT3: "/gold_effect3/scene.gltf",
+  GOLD_EFFECT4: "/gold_effect4/scene.gltf",
 } as const;
 
 export const MapPathMap = {

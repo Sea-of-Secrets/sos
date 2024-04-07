@@ -11,7 +11,6 @@ import useNickname from "~/store/nickname";
 import { NodePosition } from "~/_lib/data/types";
 import { Outlines } from "@react-three/drei";
 
-// TODO: 이동중이면 이펙트를 없애고 이동완료되면 다시 소환
 export default function Piece({
   name,
   position,
@@ -24,6 +23,9 @@ export default function Piece({
       ? PiecePathMap[pieceName].src
       : PiecePathMap["SHIBA"].src,
   );
+
+  console.log(meshRef, gltf);
+
   const { socketMessage } = useSocketMessage();
   const { nickname } = useNickname();
   const [hovered, setHover] = useState(false);
@@ -37,11 +39,7 @@ export default function Piece({
     });
   }, [name, nickname, pieceName, position, socketMessage]);
 
-  const handleClickPiece = useCallback((e: ThreeEvent<MouseEvent>) => {
-    // console.log("******** Piece Click ********");
-    // console.log("이벤트", e);
-    // console.log("****************************");
-  }, []);
+  const handleClickPiece = useCallback((e: ThreeEvent<MouseEvent>) => {}, []);
 
   const handlePointerOver = useCallback(() => {
     setHover(true);

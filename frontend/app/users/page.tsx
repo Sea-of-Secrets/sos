@@ -1,12 +1,12 @@
-import Auth from "../Auth";
+import { AuthClient } from "../auth/AuthClient";
 import UserNft from "./UserNft";
 import UserProfile from "./UserProfile";
 
 export default function Page() {
   return (
-    <Auth>
+    <AuthClient>
       <UserProfile />
       <UserNft />
-    </Auth>
+    </AuthClient>
   );
 }

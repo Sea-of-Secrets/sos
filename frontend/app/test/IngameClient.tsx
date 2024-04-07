@@ -1,6 +1,7 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
+import styled from "@emotion/styled";
 import { Canvas } from "@react-three/fiber";
 
 import Timer from "../room/[gameId]/ingame/components/Timer";
@@ -20,8 +21,15 @@ import Docs from "../room/[gameId]/ingame/components/Docs";
 export default function IngameClient() {
   // const { loading, setLoading } = useGameLoading();
 
+  const [showTestController, setShowTestController] = useState(false);
+
   return (
     <>
+      <TestControllerShowButton
+        onClick={() => setShowTestController(prev => !prev)}
+      >
+        TestController 켜기 / 끄기
+      </TestControllerShowButton>
       <Timer />
       {/* {loading && <Loading />} */}
       {/* <Round topLeft={[200, 1]} />
@@ -39,10 +47,19 @@ export default function IngameClient() {
       >
         <IngameThree />
       </Canvas>
-      {/* <TestController /> */}
+      {showTestController && <TestController />}
       {/* <Chat />
       <OptionButton />
       <Docs /> */}
     </>
   );
 }
+
+const TestControllerShowButton = styled.button`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200px;
+  background-color: white;
+  z-index: 999;
+`;

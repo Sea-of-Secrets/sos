@@ -6,7 +6,7 @@ import { PieceEffectProps } from "./types";
 import { useGLTF } from "../../hooks/useGLTF";
 
 const ACTION_NAME = "Take 001";
-const DEFAULT_SCALE = 15;
+const DEFAULT_SCALE = 20;
 
 export default function PieceEffect({
   effectName,
@@ -29,7 +29,7 @@ export default function PieceEffect({
   return (
     <mesh
       ref={meshRef}
-      position={[position.x, position.z, position.y]}
+      position={position ? [position.x, position.z, position.y] : undefined}
       scale={DEFAULT_SCALE} // node size
       {...props}
     >
