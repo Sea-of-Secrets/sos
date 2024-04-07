@@ -93,7 +93,7 @@ export default function IngameThree() {
                         "productName"
                       ]
                         ? `${socketMessage.game?.players[1]["userInfo"]["productName"]?.toLowerCase()}`
-                        : "MARINE1"
+                        : "common1"
                     }
                     set={setMarineOnePiece}
                   />
@@ -106,7 +106,7 @@ export default function IngameThree() {
                         "productName"
                       ]
                         ? `${socketMessage.game?.players[2]["userInfo"]["productName"]?.toLowerCase()}`
-                        : "MARINE2"
+                        : "common2"
                     }
                     set={setMarineTwoPiece}
                   />
@@ -119,7 +119,7 @@ export default function IngameThree() {
                         "productName"
                       ]
                         ? `${socketMessage.game?.players[3]["userInfo"]["productName"]?.toLowerCase()}`
-                        : "MARINE3"
+                        : "common3"
                     }
                     set={setMarineThreePiece}
                   />
@@ -164,20 +164,20 @@ export default function IngameThree() {
                         "productName"
                       ]
                         ? `${socketMessage.game?.players[1]["userInfo"]["productName"]?.toLowerCase()}`
-                        : "MARINE1"
+                        : "common1"
                     }
                     set={setMarineOnePiece}
                   />
                   <Piece
                     name="MARINE2"
                     position={marineTwoPosition}
-                    pieceName={"MARINE2"}
+                    pieceName={"common2"}
                     set={setMarineTwoPiece}
                   />
                   <Piece
                     name="MARINE3"
                     position={marineThreePosition}
-                    pieceName={"MARINE3"}
+                    pieceName={"common3"}
                     set={setMarineThreePiece}
                   />
                   <PieceEffect

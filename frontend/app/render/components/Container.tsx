@@ -25,6 +25,7 @@ export default function Container({ children, position }: ContainerProps) {
 const ContainerStyle = styled.div<{ isVisible: boolean; position: string }>`
   position: absolute;
   top: 50%;
+
   transform: translateY(-50%);
   ${({ position }) => (position === "left" ? "left" : "right")}: ${({
     isVisible,
@@ -42,10 +43,11 @@ const ContainerStyle = styled.div<{ isVisible: boolean; position: string }>`
       transform: translateX(
         ${({ position }) => (position === "left" ? "-1000%" : "1000%")}
       );
-    to {
-      transform: translateX(10%);
+      to {
+        transform: translateX(10%);
+      }
     }
+    align-items: center;
+    justify-content: center;
   }
-  align-items: center;
-  justify-content: center;
 `;

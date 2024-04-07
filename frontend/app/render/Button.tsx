@@ -1,4 +1,3 @@
-import { useCamera } from "./stores/useCamera";
 import { useScreenControl } from "./stores/useScreenControl";
 
 import Room from "./room";
@@ -10,8 +9,7 @@ import Shop from "./shop";
 import MyPage from "../users/MyPage";
 
 export default function Button() {
-  const { cameraRef, mainScreen } = useCamera();
-  const { screen, setScreen, setMainScreen, showLogo } = useScreenControl();
+  const { screen, showLogo } = useScreenControl();
 
   if (screen === "MAIN") {
     return <Main />;

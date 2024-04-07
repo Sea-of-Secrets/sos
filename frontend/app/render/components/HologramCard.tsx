@@ -38,6 +38,17 @@ export default function HologramCard({
     setRotateY(0);
   };
 
+  const getBoxShadowColor = (grade: GradeType) => {
+    switch (grade) {
+      case "RARE":
+        return "0 0 1rem rgba(0, 255, 0, 1)";
+      case "LEGENDARY":
+        return "0 0 1rem rgba(255, 255, 0, 1)";
+      default:
+        return "0 0 1rem rgba(255, 255, 255, 1)";
+    }
+  };
+
   return (
     <div
       style={{
@@ -47,12 +58,13 @@ export default function HologramCard({
       <Card
         style={{
           transform: `perspective(350px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
+          boxShadow: getBoxShadowColor(grade),
         }}
         onMouseMove={handleMouseMove}
         onMouseOut={handleMouseOut}
       >
         <Overlay
-          width={width}
+          // width={width}
           grade={grade}
           style={{
             backgroundPosition: `${opacity * 5}%`,
@@ -65,7 +77,7 @@ export default function HologramCard({
         <Description>
           <div className="top-row">{name}</div>
           <div className="bottom-row">
-            <div>sos</div>
+            {/* <div>sos</div> */}
             <Grade grade={grade}>{grade.toUpperCase()}</Grade>
           </div>
         </Description>
@@ -77,7 +89,8 @@ export default function HologramCard({
 const Card = styled.div`
   position: relative;
   box-sizing: border-box;
-  width: 100%;
+  // width: 100%;
+  width: 11rem;
   padding: 0.4rem;
   border-radius: 0.5rem;
 
@@ -93,11 +106,14 @@ const Card = styled.div`
   cursor: pointer;
 `;
 
-const Overlay = styled.div<{ width: number; grade: string }>`
+const Overlay = styled.div<{
+  // width: number;
+  grade: string;
+}>`
   position: absolute;
   top: 0;
   left: 0;
-  width: ${({ width }) => `${width}px`};
+  width: 11rem;
   height: 100%;
 
   background: ${({ grade }) => getBackgroundStyle(grade).overlayBackground};
@@ -105,6 +121,7 @@ const Overlay = styled.div<{ width: number; grade: string }>`
   mix-blend-mode: color-dodge;
   transition: all 0.1s;
 `;
+//width: ${({ width }) => `${width}px`};
 
 const Image = styled.div`
   box-sizing: border-box;

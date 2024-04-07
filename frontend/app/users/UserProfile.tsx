@@ -54,7 +54,6 @@ export default function UserProfile() {
         flexDirection: "column",
       }}
     >
-      <h2>{user.name}님 안녕하세요!</h2>
       {!user.walletAddress && (
         <Button onClick={handleMakeWallet} size={"sm"}>
           지갑 만들기
@@ -70,7 +69,6 @@ export default function UserProfile() {
           </Button>
         </div>
       )}
-      <h2>현재 기본 말 : {user.productName}</h2>
       {/* {wallet && (
         <MiniModal>
           title

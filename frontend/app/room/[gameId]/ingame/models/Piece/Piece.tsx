@@ -9,6 +9,7 @@ import { PieceProps } from "./types";
 import { useSocketMessage } from "../../stores/useSocketMessage";
 import useNickname from "~/store/nickname";
 import { NodePosition } from "~/_lib/data/types";
+import { Outlines } from "@react-three/drei";
 
 export default function Piece({
   name,
@@ -63,21 +64,19 @@ export default function Piece({
   }, [hovered]);
 
   return (
-    <>
-      <mesh
-        {...props}
-        ref={meshRef}
-        position={piecePosition}
-        rotation={pieceRotation}
-        visible={visible}
-        scale={PiecePathMap[pieceName] ? PiecePathMap[pieceName].size : 10}
-        onClick={handleClickPiece}
-        onPointerOver={handlePointerOver}
-        onPointerOut={handlePointerOut}
-      >
-        <primitive object={gltf.scene} />
-      </mesh>
-    </>
+    <mesh
+      {...props}
+      ref={meshRef}
+      position={piecePosition}
+      rotation={pieceRotation}
+      visible={visible}
+      scale={PiecePathMap[pieceName] ? PiecePathMap[pieceName].size : 10}
+      onClick={handleClickPiece}
+      onPointerOver={handlePointerOver}
+      onPointerOut={handlePointerOut}
+    >
+      <primitive object={gltf.scene} />
+    </mesh>
   );
 }
 

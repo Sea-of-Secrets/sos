@@ -1,16 +1,12 @@
 import { useProgress } from "@react-three/drei";
-import { gameSocket } from "~/sockets";
-import { useSocketMessage } from "../stores/useSocketMessage";
 import { useGameLoading } from "../stores/useGameLoading";
 import { useRenderList } from "../stores/useRenderList";
 
-const { send } = gameSocket;
-
 export default function Loading() {
   const { progress } = useProgress();
-  const { socketMessage } = useSocketMessage();
   const { myLoading } = useGameLoading();
   const { renderList } = useRenderList();
+  const completedUsers = renderList.join(", ");
 
   return (
     <div
@@ -37,7 +33,7 @@ export default function Loading() {
         className="flex flex-col"
       >
         <span>{!myLoading && `${Math.floor(progress)}%`}</span>
-        <span>로딩 완료 유저 : [{renderList}]</span>
+        <span>로딩 완료 유저 : [{completedUsers}]</span>
       </div>
     </div>
   );

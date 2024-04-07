@@ -12,15 +12,18 @@ import { useAuth, validateUser } from "~/app/auth/useAuth";
 import MiniModalContent from "../render/components/MiniModalContent";
 import MiniModal from "../render/components/MiniModal";
 import { WalletType } from "../auth/types";
+import UserProfile from "./UserProfile";
 
 export default function Page() {
   const { user, setUser } = useAuth();
   const [copied, setCopied] = useState(false);
+  const [menuTogle, setMenuTogle] = useState("ship");
   const [newAddressCopied, setNewAddressCopied] = useState(false);
   const [newMnemonicCopied, setNewMnemonicCopied] = useState(false);
   const [newPrivateKeyCopied, setNewPrivateKeysCopied] = useState(false);
   const [walletLoading, setWalletLoading] = useState(false);
   const [wallet, setWallet] = useState<WalletType | null>(null);
+  const [address, setAddress] = useState("");
 
   const { cameraRef, mainScreen, LoginScreen } = useCamera();
   const { screen, setScreen, setMainScreen } = useScreenControl();
@@ -44,10 +47,6 @@ export default function Page() {
     } catch (e) {
       console.error("fetch fail user");
     }
-  };
-
-  const handleCloseWallet = () => {
-    setWallet(null);
   };
 
   // 주소를 클립보드에 복사합니다.
@@ -79,12 +78,13 @@ export default function Page() {
   // 주소를 마스킹하는 함수
   const maskAddress = (address: string) => {
     if (!address) return "";
-    const visibleChars = 6; // 보여질 문자열 길이
+    const visibleChars = 12; // 보여질 문자열 길이
     const maskedPart = "..."; // 마스킹할 부분
     return address.slice(0, visibleChars) + maskedPart;
   };
 
   const handleGetWallet = async () => {
+    setMenuTogle("wallet");
     const response = await UsersApi.getWalletInfo();
     setWallet(response.data as WalletType);
   };
@@ -101,12 +101,6 @@ export default function Page() {
   };
 
   const handleAddWallet = async () => {
-    const address = window.prompt("지갑 주소를 입력하세요:") as string;
-
-    if (!address) {
-      return;
-    }
-
     try {
       const response = await UsersApi.addWallet(address);
       const updatedWallet = { address: address } as WalletType;
@@ -128,115 +122,185 @@ export default function Page() {
       <Container position="right">
         <ModalStyle>
           <ModalContent>
-            <div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  flexDirection: "column",
-                }}
-              >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column",
+              }}
+            >
+              <p>
+                <span className="text-xl">{user.name}</span> 님 안녕하세요!
+              </p>
+              {!user.walletAddress && (
                 <div
                   style={{
                     display: "flex",
-                    justifyContent: "center",
+                    gap: "1rem",
                     alignItems: "center",
-                    flexDirection: "column",
                   }}
                 >
+                  <Button onClick={handleMakeWallet} size={"sm"}>
+                    지갑 만들기
+                  </Button>
+                  <Button onClick={handleAddWallet} size={"sm"}>
+                    지갑 연동
+                  </Button>
+                  <Button size={"xs"} onClick={handleLogout}>
+                    로그아웃
+                  </Button>
+                </div>
+              )}
+              {user.walletAddress && (
+                <div
+                  className="gap-1"
+                  style={{ display: "flex", alignItems: "center" }}
+                >
+                  <Button
+                    onClick={() => {
+                      setMenuTogle("ship");
+                    }}
+                    size={"xs"}
+                  >
+                    배 NFT
+                  </Button>
+                  <Button onClick={handleGetWallet} size={"xs"}>
+                    지갑 정보
+                  </Button>
+                  <Button size={"xs"} onClick={handleLogout}>
+                    로그아웃
+                  </Button>
+                </div>
+              )}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                  marginTop: "1rem",
+                  width: "20rem",
+                  height: "23rem",
+                }}
+              >
+                {menuTogle === "ship" ? (
+                  <UserNft />
+                ) : (
                   <div
                     style={{
                       display: "flex",
-                      justifyContent: "center",
+                      position: "relative",
                       alignItems: "center",
-                      gap: "1rem",
+                      flexDirection: "column",
+                      width: "100%",
+                      height: "100%",
                     }}
                   >
-                    <h2>{user.name}님 안녕하세요!</h2>
-                    <Button size={"xs"} onClick={handleLogout}>
-                      로그아웃
-                    </Button>
-                  </div>
-                  {!user.walletAddress && (
+                    <h1 className="text-xl">지갑 정보</h1>
+                    <span className="text-sm mt-1">
+                      Kaikas에 연동해서 모바일에서도 NFT를 확인해보세요!
+                    </span>
                     <div
                       style={{
                         display: "flex",
-                        gap: "1rem",
+                        flexDirection: "column",
                         alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%",
+                        height: "100%",
+                        gap: "1rem",
                       }}
                     >
-                      <Button onClick={handleMakeWallet} size={"sm"}>
-                        지갑 만들기
-                      </Button>
-                      <Button onClick={handleAddWallet} size={"sm"}>
-                        지갑 연동
-                      </Button>
+                      <div
+                        style={{
+                          display: "flex",
+                          position: "relative",
+                          alignItems: "center",
+                          width: "100%",
+                        }}
+                      >
+                        <span>
+                          지갑 주소 : {maskAddress(wallet?.address as string)}
+                        </span>
+                        <Button
+                          style={{
+                            position: "absolute",
+                            right: 0,
+                          }}
+                          onClick={handleCopyNewAddress}
+                          size={"xs"}
+                        >
+                          {newAddressCopied ? "복사됨!" : "복사하기"}
+                        </Button>
+                      </div>
+                      {wallet?.privateKey && (
+                        <div
+                          style={{
+                            display: "flex",
+                            position: "relative",
+                            alignItems: "center",
+                            width: "100%",
+                          }}
+                        >
+                          <span>
+                            개인키 : {maskAddress(wallet?.privateKey as string)}
+                          </span>
+                          <Button
+                            style={{
+                              position: "absolute",
+                              right: 0,
+                            }}
+                            onClick={handleCopyPrivateKey}
+                            size={"xs"}
+                          >
+                            {newPrivateKeyCopied ? "복사됨!" : "복사하기"}
+                          </Button>
+                        </div>
+                      )}
+                      {wallet?.mnemonic && (
+                        <div>
+                          <span>연상 기호 :{wallet?.mnemonic}</span>
+                        </div>
+                      )}
+                      <div
+                        style={{
+                          display: "flex",
+                          position: "relative",
+                          alignItems: "center",
+                          width: "100%",
+                          gap: "0.3rem",
+                        }}
+                      >
+                        <span>지갑 수정 : </span>
+                        <input
+                          type="text"
+                          name="name"
+                          id="name"
+                          value={address}
+                          onChange={e => setAddress(e.target.value)}
+                          className="text-center block w-36 h-7 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          placeholder="변경할 지갑 주소"
+                        />
+                        <Button
+                          style={{
+                            position: "absolute",
+                            right: 0,
+                          }}
+                          onClick={handleAddWallet}
+                          size={"xs"}
+                        >
+                          수정하기
+                        </Button>
+                      </div>
                     </div>
-                  )}
-                  {user.walletAddress && (
-                    <div
-                      className="gap-1"
-                      style={{ display: "flex", alignItems: "center" }}
-                    >
-                      {/* <Button onClick={handleCopyAddress} size={"xs"}>
-                        {copied ? "복사됨!" : "복사하기"}
-                      </Button> */}
-                      <Button onClick={handleGetWallet} size={"xs"}>
-                        지갑 정보
-                      </Button>
-                      <Button onClick={handleAddWallet} size={"xs"}>
-                        지갑 수정
-                      </Button>
-                    </div>
-                  )}
-                  <h2 className="pt-3">
-                    현재 기본 말 :{" "}
-                    {user.productName ? user.productName : "없음"}
-                  </h2>
-                </div>
+                  </div>
+                )}
               </div>
-              <UserNft />
             </div>
           </ModalContent>
         </ModalStyle>
       </Container>
-      {wallet && (
-        <>
-          <MiniModal>
-            <h1>발급된 지갑 정보</h1>
-            <MiniModalContent>
-              <p>Kaikas에 연동해서 모바일에서도 NFT를 확인해보세요!</p>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <p>주소 : {maskAddress(wallet.address)}</p>
-                <Button onClick={handleCopyNewAddress} size={"xs"}>
-                  {newAddressCopied ? "복사됨!" : "복사하기"}
-                </Button>
-              </div>
-              <br />
-              {wallet.mnemonic ? (
-                <div>
-                  <p>
-                    연상 기호 : <br />
-                    {wallet.mnemonic}
-                  </p>
-                </div>
-              ) : null}
-
-              <br />
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <p>개인키 : {maskAddress(wallet.privateKey)}</p>
-                <Button onClick={handleCopyPrivateKey} size={"xs"}>
-                  {newPrivateKeyCopied ? "복사됨!" : "복사하기"}
-                </Button>
-              </div>
-              <Button className="mt-5" size={"xs"} onClick={handleCloseWallet}>
-                닫기
-              </Button>
-            </MiniModalContent>
-          </MiniModal>
-        </>
-      )}
     </>
   );
 }
