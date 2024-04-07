@@ -9,7 +9,7 @@ import BackButton from "./components/BackButton";
 import LoginButton from "./components/LoginButton";
 
 import Map from "./Map";
-import GatchaAnimation from "./shop/OpenAnimation";
+import GatchaBox3DAnimation from "./shop/GatchaBox3DAnimation";
 import Camera from "./Camera";
 import Button from "./Button";
 import { useGatcha } from "./stores/useGatch";
@@ -40,7 +40,8 @@ export default function Renderer() {
           setLoading(true);
         }}
       >
-        {gatchaState !== "GATCHA_PREV" && <GatchaAnimation />}
+        {/* {gatchaState !== "GATCHA_PREV" && <GatchaAnimation />} */}
+        {gatchaState !== "GATCHA_PREV" && <GatchaBox3DAnimation />}
         <Camera />
         <ambientLight />
         <Map />

@@ -10,14 +10,11 @@ import Button from "../components/BackButton";
 import Overlay from "../components/Overlay";
 
 export default function Gatcha() {
-  const { setGatchaState } = useGatcha();
-  const { ShopScreen } = useCamera();
   const { loading, randomGatcha, fetchRandomGatcha } = useRandomGatcha();
 
   const handleClickBackButton = useCallback(() => {
-    setGatchaState("GATCHA_PREV");
-    ShopScreen();
-  }, [ShopScreen, setGatchaState]);
+    window.location.href = "/";
+  }, []);
 
   useEffect(() => {
     fetchRandomGatcha();

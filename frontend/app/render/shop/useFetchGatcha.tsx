@@ -24,15 +24,14 @@ const RandomGatchaContext = createContext<RandomGatchaContextState>({
 });
 
 export const RandomGatchaProvider = ({ children }: PropsWithChildren) => {
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [randomGatcha, setRandomGatcha] = useState<GatchaType | null>(null);
   const { setUser, setNftList } = useAuth();
 
   const fetchRandomGatcha = useCallback(async () => {
-    if (loading || randomGatcha) {
+    if (randomGatcha) {
       return;
     }
-    setLoading(true);
     mockGatcha().then(data => setRandomGatcha(data)); // 돈 계속 빠져나가서 만든 테스트용 함수
 
     // // TODO: 배포시에는 이걸 사용해주세용
@@ -104,6 +103,6 @@ const mockGatcha = async (): Promise<GatchaType> => {
     setTimeout(() => {
       resolve(MOCK_DATA);
       // console.log(MOCK_DATA);
-    }, 1000);
+    }, 5000);
   });
 };
