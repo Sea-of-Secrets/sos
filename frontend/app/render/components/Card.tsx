@@ -7,7 +7,6 @@ import * as UsersApi from "~/app/api/users";
 import { GradeType, NFTType } from "~/app/auth/types";
 import { useAuth, validateNftListData } from "../../auth/useAuth";
 import HologramCard from "./HologramCard";
-import Carousel from "./Carousel";
 
 interface NftCarouselProps {
   nfts: NFTType[];
