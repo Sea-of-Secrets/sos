@@ -8,7 +8,6 @@ import { useCamera } from "../stores/useCamera";
 import { useGatcha } from "../stores/useGatch";
 import { useScreenControl } from "../stores/useScreenControl";
 import { ShopModalProvider, useShopModal } from "./useShopModal";
-import { RandomGatchaProvider } from "./useFetchGatcha";
 
 import Button from "../components/Button";
 import Container from "../components/Container";
@@ -22,9 +21,7 @@ import { RANDOM_GATCHA_PRICE } from "~/_lib/constants";
 export default function Shop() {
   return (
     <ShopModalProvider>
-      <RandomGatchaProvider>
-        <ShopWrapper />
-      </RandomGatchaProvider>
+      <ShopWrapper />
     </ShopModalProvider>
   );
 }

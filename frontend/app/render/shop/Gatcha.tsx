@@ -1,13 +1,9 @@
 import { useCallback, useEffect } from "react";
 import styled from "@emotion/styled";
 
-import { useRandomGatcha } from "./useFetchGatcha";
-
-import { useGatcha } from "../stores/useGatch";
-import { useCamera } from "../stores/useCamera";
-
 import Button from "../components/BackButton";
 import Overlay from "../components/Overlay";
+import { useRandomGatcha } from "../stores/useRandomGatcha";
 
 export default function Gatcha() {
   const { loading, randomGatcha, fetchRandomGatcha } = useRandomGatcha();
