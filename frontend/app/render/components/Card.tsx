@@ -3,33 +3,29 @@
 import { useEffect, useState } from "react";
 import Button from "./Button";
 import * as UsersApi from "~/app/api/users";
-import { GradeType, NFTType } from "~/app/auth/types";
+import { GradeType } from "~/app/auth/types";
 import { useAuth, validateNftListData } from "../../auth/useAuth";
 import HologramCard from "./HologramCard";
 import Carousel from "./Carousel";
 
-interface NftCarouselProps {
-  nfts: NFTType[];
-}
-
-export default function NftCarousel({ nfts }: NftCarouselProps) {
-  const { user, setNftList } = useAuth();
+export default function NftCarousel() {
+  const { user, nftList, setNftList } = useAuth();
   const [shipsetting, setShipsetting] = useState("기본으로 설정");
   const [goToSlide, setGoToSlide] = useState<number>(0);
 
   useEffect(() => {
-    if (nfts[0]?.name === user?.productName) {
+    if (nftList[0]?.name === user?.productName) {
       setShipsetting("기본 배");
     }
-  }, [nfts, user?.productName]);
+  }, [nftList, user?.productName]);
 
-  if (!nfts || nfts.length === 0) {
+  if (!nftList || nftList.length === 0) {
     return <p>가지고 있는 NFT가 없습니다.</p>;
   }
 
   const saveHandler = async () => {
     try {
-      await UsersApi.saveDefaultPiece(nfts[goToSlide].name);
+      await UsersApi.saveDefaultPiece(nftList[goToSlide].name);
       setShipsetting("완료됨!");
 
       // 지갑 정보 업데이트
@@ -48,7 +44,7 @@ export default function NftCarousel({ nfts }: NftCarouselProps) {
     }
   };
 
-  const slides = nfts.map((nft, index) => ({
+  const slides = nftList.map((nft, index) => ({
     key: index,
     content: (
       <HologramCard
@@ -83,7 +79,7 @@ export default function NftCarousel({ nfts }: NftCarouselProps) {
         />
       </div>
       <Button size={"sm"} onClick={saveHandler} className="absolute bottom-0">
-        {user?.productName === nfts[goToSlide].name
+        {user?.productName === nftList[goToSlide].name
           ? "기본 배"
           : `${shipsetting}`}
       </Button>

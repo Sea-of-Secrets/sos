@@ -18,7 +18,7 @@ export default function UserNft() {
       }}
     >
       <h1 className="text-xl mb-3">보유한 배 NFT ({nftList.length}개)</h1>
-      <Card nfts={nftList} />
+      <Card />
     </div>
   );
 }
