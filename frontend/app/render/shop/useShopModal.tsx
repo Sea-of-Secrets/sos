@@ -17,7 +17,7 @@ const ShopModalContext = createContext<ShopModalContextState>({
   toggleModal: () => {},
 });
 
-export const ShopModalProvier = ({ children }: PropsWithChildren) => {
+export const ShopModalProvider = ({ children }: PropsWithChildren) => {
   const [isOpenedModal, setIsOpenedModal] = useState(false);
 
   const toggleModal = useCallback(() => {

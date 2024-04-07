@@ -40,9 +40,9 @@ export default function Renderer() {
           setLoading(true);
         }}
       >
+        {gatchaState !== "GATCHA_PREV" && <GatchaAnimation />}
         <Camera />
         <ambientLight />
-        <GatchaAnimation />
         <Map />
       </Canvas>
       {loading && <Button />}
