@@ -9,7 +9,6 @@ import { PieceProps } from "./types";
 import { useSocketMessage } from "../../stores/useSocketMessage";
 import useNickname from "~/store/nickname";
 import { NodePosition } from "~/_lib/data/types";
-import { Outlines } from "@react-three/drei";
 
 export default function Piece({
   name,
@@ -23,9 +22,6 @@ export default function Piece({
       ? PiecePathMap[pieceName].src
       : PiecePathMap["SHIBA"].src,
   );
-
-  console.log(meshRef, gltf);
-
   const { socketMessage } = useSocketMessage();
   const { nickname } = useNickname();
   const [hovered, setHover] = useState(false);

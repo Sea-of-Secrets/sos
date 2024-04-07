@@ -19,7 +19,7 @@ export default function Loading() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: "black",
+        backgroundImage: "/assets/game_rule_background.png",
         color: "white",
         zIndex: 999,
       }}

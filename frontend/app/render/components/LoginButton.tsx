@@ -9,8 +9,8 @@ import { useAuth } from "~/app/auth/useAuth";
 interface LoginButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {}
 
 export default function LoginButton({ children, ...props }: LoginButtonProps) {
-  const { cameraRef, mainScreen, LoginScreen } = useCamera();
-  const { screen, setScreen, setMainScreen } = useScreenControl();
+  const { LoginScreen } = useCamera();
+  const { setScreen } = useScreenControl();
   const { isLoggedIn } = useAuth();
   const handleClickButton = () => {
     LoginScreen();
