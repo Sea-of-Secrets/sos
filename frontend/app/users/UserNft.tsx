@@ -20,16 +20,21 @@ export default function UserNft() {
   }, []);
 
   return (
-    <div
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
-      }}
-    >
-      <h1>보유 게임 기물 NFT ({nftList.length}개)</h1>
-      {loading && <Card nfts={nftList} />}
-    </div>
+    <>
+      {loading ? (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            flexDirection: "column",
+          }}
+        >
+          <h1>보유 게임 말 NFT ({nftList.length}개)</h1>
+          <Card nfts={nftList} />
+        </div>
+      ) : (
+        <span>NFT 정보를 로드중입니다...</span>
+      )}
+    </>
   );
 }

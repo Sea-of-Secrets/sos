@@ -120,79 +120,83 @@ export default function Page() {
       <Container position="right">
         <ModalStyle>
           <ModalContent>
-            <div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  flexDirection: "column",
-                }}
-              >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                flexDirection: "column",
+              }}
+            >
+              <p>
+                <span className="text-xl">{user.name}</span> 님 안녕하세요!
+              </p>
+              {!user.walletAddress && (
                 <div
                   style={{
                     display: "flex",
-                    justifyContent: "center",
+                    gap: "1rem",
                     alignItems: "center",
-                    flexDirection: "column",
                   }}
                 >
-                  <div
-                    style={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      gap: "1rem",
-                    }}
-                  >
-                    <h2>{user.name}님 안녕하세요!</h2>
-                  </div>
-                  {!user.walletAddress && (
-                    <div
-                      style={{
-                        display: "flex",
-                        gap: "1rem",
-                        alignItems: "center",
-                      }}
-                    >
-                      <Button onClick={handleMakeWallet} size={"sm"}>
-                        지갑 만들기
-                      </Button>
-                      <Button onClick={handleAddWallet} size={"sm"}>
-                        지갑 연동
-                      </Button>
-                      <Button size={"xs"} onClick={handleLogout}>
-                        로그아웃
-                      </Button>
-                    </div>
-                  )}
-                  {user.walletAddress && (
-                    <div
-                      className="gap-1"
-                      style={{ display: "flex", alignItems: "center" }}
-                    >
-                      <Button onClick={handleGetWallet} size={"xs"}>
-                        지갑 정보
-                      </Button>
-                      <Button onClick={handleAddWallet} size={"xs"}>
-                        지갑 수정
-                      </Button>
-                      <Button size={"xs"} onClick={handleLogout}>
-                        로그아웃
-                      </Button>
-                    </div>
-                  )}
-                  <h2 className="pt-3">
-                    현재 설정된 배 :{" "}
-                    {user.productName ? user.productName : "없음"}
-                  </h2>
+                  <Button onClick={handleMakeWallet} size={"sm"}>
+                    지갑 만들기
+                  </Button>
+                  <Button onClick={handleAddWallet} size={"sm"}>
+                    지갑 연동
+                  </Button>
+                  <Button size={"xs"} onClick={handleLogout}>
+                    로그아웃
+                  </Button>
                 </div>
+              )}
+              {user.walletAddress && (
+                <div
+                  className="gap-1"
+                  style={{ display: "flex", alignItems: "center" }}
+                >
+                  <Button
+                    onClick={() => {
+                      setMenuTogle("ship");
+                    }}
+                    size={"xs"}
+                  >
+                    배 NFT
+                  </Button>
+                  <Button onClick={handleGetWallet} size={"xs"}>
+                    지갑 정보
+                  </Button>
+                  {/* <Button onClick={handleAddWallet} size={"xs"}>
+                    지갑 수정
+                  </Button> */}
+                  <Button size={"xs"} onClick={handleLogout}>
+                    로그아웃
+                  </Button>
+                </div>
+              )}
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexDirection: "column",
+                  border: "1px black solid",
+                  marginTop: "1rem",
+                  width: "20rem",
+                  height: "23rem",
+                }}
+              >
+                {/* <p className="m-3 text-xl">
+                  현재 설정된 배 :{" "}
+                  {user.productName ? user.productName : "없음"}
+                </p> */}
+                {menuTogle === "ship" ? <UserNft /> : <p>없음</p>}
               </div>
-              <UserNft />
             </div>
           </ModalContent>
         </ModalStyle>
       </Container>
+
       {wallet && (
         <>
           <MiniModal>
@@ -216,12 +220,15 @@ export default function Page() {
               ) : null}
 
               <br />
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <p>개인키 : {maskAddress(wallet.privateKey)}</p>
-                <Button onClick={handleCopyPrivateKey} size={"xs"}>
-                  {newPrivateKeyCopied ? "복사됨!" : "복사하기"}
-                </Button>
-              </div>
+              {wallet.privateKey ? (
+                <div style={{ display: "flex", alignItems: "center" }}>
+                  <p>개인키 : {maskAddress(wallet.privateKey)}</p>
+                  <Button onClick={handleCopyPrivateKey} size={"xs"}>
+                    {newPrivateKeyCopied ? "복사됨!" : "복사하기"}
+                  </Button>
+                </div>
+              ) : null}
+
               <Button className="mt-5" size={"xs"} onClick={handleCloseWallet}>
                 닫기
               </Button>
