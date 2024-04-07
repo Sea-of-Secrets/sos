@@ -787,17 +787,22 @@ export default function IngameClient() {
           </Button>
         </MiniModal>
       )}
-      <Chat />
-      <Docs />
-      <Off />
-      <OptionButton />
-      <Timer />
-      <Round topLeft={[200, 1]} />
-      <Turn
-        topLeft={[500, 1]}
-        currentTurn={socketMessage.game ? socketMessage.game.turn : 0}
-      />
-      <SystemPrompt />
+      {allLoading && (
+        <>
+          <Chat />
+          <Docs />
+          <Off />
+          <OptionButton />
+          <Timer />
+          <Round topLeft={[200, 1]} />
+          <Turn
+            topLeft={[500, 1]}
+            currentTurn={socketMessage.game ? socketMessage.game.turn : 0}
+          />
+          <SystemPrompt />
+        </>
+      )}
+
       <Canvas
         camera={{
           position: [0, 200, 300],
