@@ -11,21 +11,29 @@ export default function GatchaCard() {
   }
 
   return (
-    <Wrapper>
+    <Container>
       <CenterBox>
         <FadeInUpDiv>
-          <HologramCard2
-            name={randomGatcha.name}
-            grade={randomGatcha.grade}
-            src={randomGatcha.imgUrl}
-          />
+          {randomGatcha.hasItemAlready ? (
+            <Message>이미 가지고 있는 NFT 에요</Message>
+          ) : (
+            <Message>새로운 NFT를 획득했어요!</Message>
+          )}
+          <Card>
+            <HologramCard2
+              name={randomGatcha.name}
+              grade={randomGatcha.grade}
+              src={randomGatcha.imgUrl}
+            />
+          </Card>
         </FadeInUpDiv>
       </CenterBox>
-    </Wrapper>
+    </Container>
   );
 }
 
-const Wrapper = styled.div`
+const Container = styled.div`
+  position: relative;
   width: 100%;
   height: 100%;
   display: flex;
@@ -33,12 +41,28 @@ const Wrapper = styled.div`
   align-items: center;
 `;
 
+const Message = styled.div`
+  position: absolute;
+  top: 20%;
+  left: 35%;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 1rem 2rem;
+  color: white;
+  border-radius: 0.5rem;
+
+  box-shadow:
+    rgba(60, 64, 67, 0.3) 0px 1px 2px 0px,
+    rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
+`;
+
 const CenterBox = styled.div`
   width: 240px;
   display: flex;
   justify-content: center;
   align-items: center;
+`;
 
+const Card = styled.div`
   &:hover {
     scale: 1.2;
     transition: all 0.1s;
