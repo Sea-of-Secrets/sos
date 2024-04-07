@@ -1,18 +1,16 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import styled from "@emotion/styled";
 import { GradeType } from "~/app/auth/types";
 
 interface HologramCard2Props {
-  width: number;
   name: string;
   grade: GradeType;
   src: string;
 }
 
 export default function HologramCard2({
-  width,
   name,
   grade,
   src,
@@ -21,56 +19,52 @@ export default function HologramCard2({
   const [rotateY, setRotateY] = useState(0);
   const [opacity, setOpacity] = useState(0);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    const x = e.nativeEvent.offsetX;
-    const y = e.nativeEvent.offsetY;
-    const newRotateY = (-1 / 5) * x + 20;
-    const newRotateX = (4 / 30) * y - 20;
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      const x = e.nativeEvent.offsetX;
+      const y = e.nativeEvent.offsetY;
+      const newRotateY = (-1 / 5) * x + 20;
+      const newRotateX = (4 / 30) * y - 20;
 
-    setRotateX(newRotateX);
-    setRotateY(newRotateY);
-    setOpacity(x / 200);
-  };
+      setRotateX(newRotateX);
+      setRotateY(newRotateY);
+      setOpacity(x / 200);
+    },
+    [],
+  );
 
-  const handleMouseOut = () => {
+  const handleMouseOut = useCallback(() => {
     setOpacity(0);
     setRotateX(0);
     setRotateY(0);
-  };
+  }, []);
 
   return (
-    <div
+    <Card
       style={{
-        maxWidth: width,
+        transform: `perspective(350px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
       }}
+      onMouseMove={handleMouseMove}
+      onMouseOut={handleMouseOut}
     >
-      <Card
+      <Overlay
+        grade={grade}
         style={{
-          transform: `perspective(350px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
+          backgroundPosition: `${opacity * 5}%`,
+          filter: `opacity(${opacity}) brightness(1.2)`,
         }}
-        onMouseMove={handleMouseMove}
-        onMouseOut={handleMouseOut}
-      >
-        <Overlay
-          width={width}
-          grade={grade}
-          style={{
-            backgroundPosition: `${opacity * 5}%`,
-            filter: `opacity(${opacity}) brightness(1.2)`,
-          }}
-        ></Overlay>
-        <Image>
-          <img src={src} />
-        </Image>
-        <Description>
-          <div className="top-row">{name}</div>
-          <div className="bottom-row">
-            <div>sos</div>
-            <Grade grade={grade}>{grade.toUpperCase()}</Grade>
-          </div>
-        </Description>
-      </Card>
-    </div>
+      ></Overlay>
+      <Image>
+        <img src={src} />
+      </Image>
+      <Description>
+        <div className="top-row">{name}</div>
+        <div className="bottom-row">
+          <div>sos</div>
+          <Grade grade={grade}>{grade.toUpperCase()}</Grade>
+        </div>
+      </Description>
+    </Card>
   );
 }
 
@@ -93,11 +87,11 @@ const Card = styled.div`
   cursor: pointer;
 `;
 
-const Overlay = styled.div<{ width: number; grade: string }>`
+const Overlay = styled.div<{ grade: string }>`
   position: absolute;
   top: 0;
   left: 0;
-  width: ${({ width }) => `${width}px`};
+  width: 100%;
   height: 100%;
 
   background: ${({ grade }) => getBackgroundStyle(grade).overlayBackground};

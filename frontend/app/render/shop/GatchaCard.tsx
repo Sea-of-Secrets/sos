@@ -1,5 +1,7 @@
+import { keyframes } from "@emotion/react";
 import styled from "@emotion/styled";
 import { useRandomGatcha } from "../stores/useRandomGatcha";
+import HologramCard2 from "../components/HologramCard2";
 
 export default function GatchaCard() {
   const { randomGatcha } = useRandomGatcha();
@@ -11,54 +13,13 @@ export default function GatchaCard() {
   return (
     <Wrapper>
       <CenterBox>
-        <NftCard
-          className={randomGatcha ? "animated" : ""}
-          style={{
-            width: "30rem",
-            height: "28rem",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            border: "none",
-            borderRadius: "10px",
-            padding: "10px",
-          }}
-        >
-          <h2
-            style={{
-              fontSize: "3rem",
-              color: `${getColorToGrade(randomGatcha.grade)}`,
-            }}
-          >
-            {randomGatcha.grade}
-          </h2>
-          <img
-            src={randomGatcha.imgUrl || ""}
-            alt=""
-            style={{
-              maxWidth: "300px",
-              maxHeight: "300px",
-            }}
+        <FadeInUpDiv>
+          <HologramCard2
+            name={randomGatcha.name}
+            grade={randomGatcha.grade}
+            src={randomGatcha.imgUrl}
           />
-          <p
-            style={{
-              fontSize: "2rem",
-              color: "#b2adad",
-            }}
-            className="mt-2"
-          >
-            {randomGatcha.name || ""}
-          </p>
-          {randomGatcha.hasItemAlready && (
-            <h3
-              style={{
-                color: "#b2adad",
-              }}
-            >
-              이미 가지고 있는 상품이에요
-            </h3>
-          )}
-        </NftCard>
+        </FadeInUpDiv>
       </CenterBox>
     </Wrapper>
   );
@@ -73,37 +34,28 @@ const Wrapper = styled.div`
 `;
 
 const CenterBox = styled.div`
-  width: 400px;
-  height: 500px;
+  width: 240px;
   display: flex;
   justify-content: center;
   align-items: center;
+
+  &:hover {
+    scale: 1.2;
+    transition: all 0.1s;
+  }
 `;
 
-const NftCard = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.5);
-  transition: transform 1s ease-in-out; // 애니메이션 효과 적용
+const fadeInAndUp = keyframes`
+  from {
+    opacity: 0;
+    transform: translateY(2rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 `;
 
-const getColorToGrade = (grade: string) => {
-  grade = grade.toLowerCase();
-  if (grade === "legendary") {
-    return "#ffc800";
-  }
-
-  if (grade === "rare") {
-    return "#73e337";
-  }
-
-  if (grade === "common") {
-    return "#b2adad";
-  }
-
-  return "white";
-};
+const FadeInUpDiv = styled.div`
+  animation: ${fadeInAndUp} 1s ease-in-out; /* 1초 동안 천천히 나타나며 위로 조금 뜸 */
+`;
