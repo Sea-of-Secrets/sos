@@ -26,6 +26,7 @@ export default function Loading() {
         alignItems: "center",
         backgroundImage: "url(/assets/game_rule_background.png)",
         backgroundSize: "cover",
+        zIndex: 999,
       }}
     >
       <div
