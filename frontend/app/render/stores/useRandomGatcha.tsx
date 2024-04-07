@@ -21,11 +21,10 @@ export const useRandomGatcha = create<RandomGatchaStoreState>((set, get) => ({
 }));
 
 const MOCK_DATA: GatchaType = {
-  name: "zuhee",
+  name: "고잉메리호",
   grade: "LEGENDARY",
   hasItemAlready: true,
-  imgUrl:
-    "https://a710choi.s3.ap-northeast-2.amazonaws.com/f150b925-5f5c-4fe3-9676-3b6c9e41b536.png",
+  imgUrl: "/ship_images/고잉메리호.png",
 };
 
 const mockGatcha = async (): Promise<GatchaType> => {

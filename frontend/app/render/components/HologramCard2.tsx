@@ -39,10 +39,22 @@ export default function HologramCard2({
     setRotateY(0);
   }, []);
 
+  const getBoxShadowColor = (grade: GradeType) => {
+    switch (grade) {
+      case "RARE":
+        return "0 0 2rem rgba(0, 255, 0, 1)";
+      case "LEGENDARY":
+        return "0 0 2rem rgba(255, 255, 0, 1)";
+      default:
+        return "0 0 2rem rgba(255, 255, 255, 1)";
+    }
+  };
+
   return (
     <Card
       style={{
         transform: `perspective(350px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`,
+        boxShadow: getBoxShadowColor(grade),
       }}
       onMouseMove={handleMouseMove}
       onMouseOut={handleMouseOut}
@@ -60,7 +72,7 @@ export default function HologramCard2({
       <Description>
         <div className="top-row">{name}</div>
         <div className="bottom-row">
-          <div>sos</div>
+          {/* <div>sos</div> */}
           <Grade grade={grade}>{grade.toUpperCase()}</Grade>
         </div>
       </Description>
