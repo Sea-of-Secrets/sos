@@ -98,6 +98,9 @@ public class GameServiceImpl implements GameService {
             index++;
         }
 
+        //시연을 위해 위치 강제 삽입
+        treasures[0] = 100;
+
         game = board.getGameMap().get(gameId);
         HashMap<Integer, Boolean> treasuresMap = game.getTreasures();
         for (int i=0; i<4; i++) {
