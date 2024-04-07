@@ -3,26 +3,26 @@
 import { useCallback } from "react";
 import styled from "@emotion/styled";
 
-import Button from "../components/Button";
-import Container from "../components/Container";
-
 import { useAuth } from "~/app/auth/useAuth";
+import { useCamera } from "../stores/useCamera";
 import { useGatcha } from "../stores/useGatch";
 import { useScreenControl } from "../stores/useScreenControl";
+import { ShopModalProvider, useShopModal } from "./useShopModal";
 
-import Gatcha from "./Gatcha";
-import LoggedView from "./LoggedView";
-import { ShopModalProvier, useShopModal } from "./useShopModal";
+import Button from "../components/Button";
+import Container from "../components/Container";
 import Modal from "../components/Modal";
 import ModalContent from "../components/ModalContent";
-import { useCamera } from "../stores/useCamera";
+import Gatcha from "./Gatcha";
+import LoggedView from "./LoggedView";
+
 import { RANDOM_GATCHA_PRICE } from "~/_lib/constants";
 
 export default function Shop() {
   return (
-    <ShopModalProvier>
+    <ShopModalProvider>
       <ShopWrapper />
-    </ShopModalProvier>
+    </ShopModalProvider>
   );
 }
 
@@ -90,7 +90,6 @@ const ShopWrapper = () => {
         {isLoggedIn ? (
           <LoggedView />
         ) : (
-          // <LoggedView />
           <Button onClick={handleClickLogin}>로그인</Button>
         )}
       </Container>

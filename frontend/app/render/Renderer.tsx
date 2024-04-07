@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState, Suspense } from "react";
+import React, { useEffect, useState, Suspense, useMemo } from "react";
 import { Canvas } from "@react-three/fiber";
 import * as THREE from "three";
 import { useScreenControl } from "./stores/useScreenControl";
@@ -9,17 +9,40 @@ import BackButton from "./components/BackButton";
 import LoginButton from "./components/LoginButton";
 
 import Map from "./Map";
-import GatchaAnimation from "./shop/OpenAnimation";
+import GatchaBox3DAnimation from "./shop/GatchaBox3DAnimation";
 import Camera from "./Camera";
 import Button from "./Button";
 import { useGatcha } from "./stores/useGatch";
 import useNickname from "~/store/nickname";
+import { useRandomGatcha } from "./stores/useRandomGatcha";
 
 export default function Renderer() {
   const [loading, setLoading] = useState(false);
   const { setNickname } = useNickname();
   const { screen } = useScreenControl();
   const { gatchaState } = useGatcha();
+  const { loading: randomGatchaLoading } = useRandomGatcha();
+
+  const isShowBackButton = useMemo(() => {
+    if (randomGatchaLoading) {
+      return false;
+    }
+
+    if (screen !== "MAIN" && screen !== "FASTMATCHING" && screen !== "START") {
+      return true;
+    }
+
+    if (
+      screen !== "MAIN" &&
+      screen !== "FASTMATCHING" &&
+      screen !== "START" &&
+      gatchaState === "GATCHA_PREV"
+    ) {
+      return true;
+    }
+
+    return false;
+  }, [gatchaState, screen, randomGatchaLoading]);
 
   useEffect(() => {
     setNickname("");
@@ -40,20 +63,14 @@ export default function Renderer() {
           setLoading(true);
         }}
       >
+        {gatchaState !== "GATCHA_PREV" && <GatchaBox3DAnimation />}
         <Camera />
         <ambientLight />
-        <GatchaAnimation />
         <Map />
       </Canvas>
       {loading && <Button />}
       {loading && screen === "MAIN" && <LoginButton />}
-      {screen !== "MAIN" &&
-        screen !== "FASTMATCHING" &&
-        screen !== "START" &&
-        gatchaState === "GATCHA_PREV" && <BackButton />}
-      {screen !== "MAIN" && screen !== "FASTMATCHING" && screen !== "START" && (
-        <BackButton />
-      )}
+      {isShowBackButton && <BackButton />}
     </>
   );
 }

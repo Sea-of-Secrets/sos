@@ -135,3 +135,7 @@ export const ActionIcon = {
     src: "/assets/icon-arrest.png",
   },
 };
+
+export const AssetPath = {
+  GATCHA_BUTTON_LEFT_NFT: "/assets/gatcha-button-left-nft.png",
+} as const;

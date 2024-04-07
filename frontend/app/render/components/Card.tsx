@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { useEffect, useState } from "react";
 import Carousel from "react-spring-3d-carousel";
 import Button from "./Button";
@@ -5,6 +7,7 @@ import * as UsersApi from "~/app/api/users";
 import { GradeType, NFTType } from "~/app/auth/types";
 import { useAuth, validateNftListData } from "../../auth/useAuth";
 import HologramCard from "./HologramCard";
+import Carousel from "./Carousel";
 
 interface NftCarouselProps {
   nfts: NFTType[];

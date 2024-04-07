@@ -25,7 +25,7 @@ const ModalBackdrop = styled.div<{ sens?: "LOW" | "MIDDLE" | "HIGH" }>`
 
 const getSens = (sens?: "LOW" | "MIDDLE" | "HIGH") => {
   if (sens === "LOW") {
-    return 0.1;
+    return 0;
   }
 
   if (sens === "MIDDLE") {
