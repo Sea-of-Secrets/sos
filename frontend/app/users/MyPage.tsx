@@ -12,6 +12,7 @@ import { useAuth, validateUser } from "~/app/auth/useAuth";
 import MiniModalContent from "../render/components/MiniModalContent";
 import MiniModal from "../render/components/MiniModal";
 import { WalletType } from "../auth/types";
+import UserProfile from "./UserProfile";
 
 export default function Page() {
   const { user, setUser } = useAuth();
@@ -22,6 +23,7 @@ export default function Page() {
   const [newPrivateKeyCopied, setNewPrivateKeysCopied] = useState(false);
   const [walletLoading, setWalletLoading] = useState(false);
   const [wallet, setWallet] = useState<WalletType | null>(null);
+  const [address, setAddress] = useState("");
 
   const { cameraRef, mainScreen, LoginScreen } = useCamera();
   const { screen, setScreen, setMainScreen } = useScreenControl();
@@ -45,10 +47,6 @@ export default function Page() {
     } catch (e) {
       console.error("fetch fail user");
     }
-  };
-
-  const handleCloseWallet = () => {
-    setWallet(null);
   };
 
   // 주소를 클립보드에 복사합니다.
@@ -80,7 +78,7 @@ export default function Page() {
   // 주소를 마스킹하는 함수
   const maskAddress = (address: string) => {
     if (!address) return "";
-    const visibleChars = 6; // 보여질 문자열 길이
+    const visibleChars = 12; // 보여질 문자열 길이
     const maskedPart = "..."; // 마스킹할 부분
     return address.slice(0, visibleChars) + maskedPart;
   };
@@ -103,12 +101,6 @@ export default function Page() {
   };
 
   const handleAddWallet = async () => {
-    const address = window.prompt("지갑 주소를 입력하세요:") as string;
-
-    if (!address) {
-      return;
-    }
-
     try {
       const response = await UsersApi.addWallet(address);
       const updatedWallet = { address: address } as WalletType;
@@ -176,9 +168,6 @@ export default function Page() {
                   <Button onClick={handleGetWallet} size={"xs"}>
                     지갑 정보
                   </Button>
-                  {/* <Button onClick={handleAddWallet} size={"xs"}>
-                    지갑 수정
-                  </Button> */}
                   <Button size={"xs"} onClick={handleLogout}>
                     로그아웃
                   </Button>
@@ -190,62 +179,128 @@ export default function Page() {
                   alignItems: "center",
                   justifyContent: "center",
                   flexDirection: "column",
-                  border: "1px black solid",
                   marginTop: "1rem",
                   width: "20rem",
                   height: "23rem",
                 }}
               >
-                {/* <p className="m-3 text-xl">
-                  현재 설정된 배 :{" "}
-                  {user.productName ? user.productName : "없음"}
-                </p> */}
-                {menuTogle === "ship" ? <UserNft /> : <p>없음</p>}
+                {menuTogle === "ship" ? (
+                  <UserNft />
+                ) : (
+                  <div
+                    style={{
+                      display: "flex",
+                      position: "relative",
+                      alignItems: "center",
+                      flexDirection: "column",
+                      width: "100%",
+                      height: "100%",
+                    }}
+                  >
+                    <h1 className="text-xl">지갑 정보</h1>
+                    <span className="text-sm mt-1">
+                      Kaikas에 연동해서 모바일에서도 NFT를 확인해보세요!
+                    </span>
+                    <div
+                      style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        width: "100%",
+                        height: "100%",
+                        gap: "1rem",
+                      }}
+                    >
+                      <div
+                        style={{
+                          display: "flex",
+                          position: "relative",
+                          alignItems: "center",
+                          width: "100%",
+                        }}
+                      >
+                        <span>
+                          지갑 주소 : {maskAddress(wallet?.address as string)}
+                        </span>
+                        <Button
+                          style={{
+                            position: "absolute",
+                            right: 0,
+                          }}
+                          onClick={handleCopyNewAddress}
+                          size={"xs"}
+                        >
+                          {newAddressCopied ? "복사됨!" : "복사하기"}
+                        </Button>
+                      </div>
+                      {wallet?.privateKey && (
+                        <div
+                          style={{
+                            display: "flex",
+                            position: "relative",
+                            alignItems: "center",
+                            width: "100%",
+                          }}
+                        >
+                          <span>
+                            개인키 : {maskAddress(wallet?.privateKey as string)}
+                          </span>
+                          <Button
+                            style={{
+                              position: "absolute",
+                              right: 0,
+                            }}
+                            onClick={handleCopyPrivateKey}
+                            size={"xs"}
+                          >
+                            {newPrivateKeyCopied ? "복사됨!" : "복사하기"}
+                          </Button>
+                        </div>
+                      )}
+                      {wallet?.mnemonic && (
+                        <div>
+                          <span>연상 기호 :{wallet?.mnemonic}</span>
+                        </div>
+                      )}
+                      <div
+                        style={{
+                          display: "flex",
+                          position: "relative",
+                          alignItems: "center",
+                          width: "100%",
+                          gap: "0.3rem",
+                        }}
+                      >
+                        <span>지갑 수정 : </span>
+                        <input
+                          type="text"
+                          name="name"
+                          id="name"
+                          value={address}
+                          onChange={e => setAddress(e.target.value)}
+                          className="text-center block w-36 h-7 rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          placeholder="변경할 지갑 주소"
+                        />
+                        <Button
+                          style={{
+                            position: "absolute",
+                            right: 0,
+                          }}
+                          onClick={handleAddWallet}
+                          size={"xs"}
+                        >
+                          수정하기
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </ModalContent>
         </ModalStyle>
       </Container>
-
-      {wallet && (
-        <>
-          <MiniModal>
-            <h1>발급된 지갑 정보</h1>
-            <MiniModalContent>
-              <p>Kaikas에 연동해서 모바일에서도 NFT를 확인해보세요!</p>
-              <div style={{ display: "flex", alignItems: "center" }}>
-                <p>주소 : {maskAddress(wallet.address)}</p>
-                <Button onClick={handleCopyNewAddress} size={"xs"}>
-                  {newAddressCopied ? "복사됨!" : "복사하기"}
-                </Button>
-              </div>
-              <br />
-              {wallet.mnemonic ? (
-                <div>
-                  <p>
-                    연상 기호 : <br />
-                    {wallet.mnemonic}
-                  </p>
-                </div>
-              ) : null}
-
-              <br />
-              {wallet.privateKey ? (
-                <div style={{ display: "flex", alignItems: "center" }}>
-                  <p>개인키 : {maskAddress(wallet.privateKey)}</p>
-                  <Button onClick={handleCopyPrivateKey} size={"xs"}>
-                    {newPrivateKeyCopied ? "복사됨!" : "복사하기"}
-                  </Button>
-                </div>
-              ) : null}
-
-              <Button className="mt-5" size={"xs"} onClick={handleCloseWallet}>
-                닫기
-              </Button>
-            </MiniModalContent>
-          </MiniModal>
-        </>
-      )}
     </>
   );
 }

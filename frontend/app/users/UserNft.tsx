@@ -10,12 +10,14 @@ export default function UserNft() {
     <div
       style={{
         display: "flex",
-        justifyContent: "center",
+        position: "relative",
         alignItems: "center",
         flexDirection: "column",
+        width: "100%",
+        height: "100%",
       }}
     >
-      <h1>보유 게임 기물 NFT ({nftList.length}개)</h1>
+      <h1 className="text-xl mb-3">보유한 배 NFT ({nftList.length}개)</h1>
       <Card nfts={nftList} />
     </div>
   );
