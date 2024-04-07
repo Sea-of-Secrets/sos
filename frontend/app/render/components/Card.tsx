@@ -18,7 +18,7 @@ export default function NftCarousel({ nfts }: NftCarouselProps) {
   const [goToSlide, setGoToSlide] = useState<number>(0);
 
   useEffect(() => {
-    if (nfts[0].name === user?.productName) {
+    if (nfts[0]?.name === user?.productName) {
       setShipsetting("기본 배");
     }
   }, [nfts, user?.productName]);
