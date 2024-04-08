@@ -14,9 +14,10 @@ export default function Loading() {
   const { gameId } = useGameId();
   const { active } = useProgress();
   const { setMyLoading } = useGameLoading();
+  const { socketMessage } = useSocketMessage();
 
   useEffect(() => {
-    if (!active) {
+    if (!active && socketMessage.sender !== nickname) {
       setMyLoading(true);
       send("/pub/room", {
         message: "RENDERED_COMPLETE",
