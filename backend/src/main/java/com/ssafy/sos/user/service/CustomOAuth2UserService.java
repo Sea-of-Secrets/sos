@@ -67,7 +67,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userEntity = userRepository.findByUsername(username);
             // 오늘 출석하지 않았으면 골드 지급
             if (userService.checkAttendance(userEntity.getId())) {
-                userRepository.addGoldById(userEntity.getId());
+                userRepository.addGoldByIdForEvent(userEntity.getId());
             }
 
             UserDTO userDTO = new UserDTO();
@@ -85,7 +85,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             userRepository.save(existData);
 
             if (userService.checkAttendance(existData.getId())) {
-                userRepository.addGoldById(existData.getId());
+                userRepository.addGoldByIdForEvent(existData.getId());
             }
 
             UserDTO userDTO = new UserDTO();

@@ -87,8 +87,7 @@ public class ProductServiceImpl implements ProductService {
         }
 
         SecureRandom secureRandom = new SecureRandom();
-//        int num = secureRandom.nextInt(100) + 1;
-        int num = 1;
+        int num = secureRandom.nextInt(100) + 1;
         Grade grade;
 
         if (num <= 5) {
@@ -131,9 +130,9 @@ public class ProductServiceImpl implements ProductService {
             try {
                 nftService.mintingNFT(userEntity, selectedProduct);
 
-//                if(grade == Grade.LEGENDARY) {
-//                    selectedProduct.soldOut();
-//                }
+                if(grade == Grade.LEGENDARY) {
+                    selectedProduct.soldOut();
+                }
             } catch(Exception e) {
                 throw new CustomException(ExceptionEnum.NFT_MINTING_ERROR);
             }
