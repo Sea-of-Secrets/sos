@@ -37,16 +37,27 @@ async function mintNFT(data) {
 
 // 무작위 지갑 생성
 function createRandomWallet() {
-    const wallet = ethers.Wallet.createRandom();
-    return wallet;
+    try {
+        const wallet = ethers.Wallet.createRandom();
+        return wallet;
+    } catch (error) {
+        console.error('Error making Wallet', error);
+        return error;
+    }
 }
 
 //지갑 nft 조회
 async function getNFTs(dto) {
-    const walletAddress = dto.walletAddress;
-    const result = await contract.getAllNFTs(walletAddress);
+    try {
+        const walletAddress = dto.walletAddress;
+        const result = await contract.getAllNFTs(walletAddress);
     
-    return result;
+        return result;
+    } catch (error) {
+        console.error('Error get NFT list');
+        return error;
+    }
+    
 }
 
 module.exports = { mintNFT, createRandomWallet, getNFTs };
