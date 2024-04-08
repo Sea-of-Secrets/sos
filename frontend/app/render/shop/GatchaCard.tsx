@@ -14,6 +14,7 @@ export default function GatchaCard() {
     <Container>
       <CenterBox>
         <FadeInUpDiv>
+          {/* // 발표용 세팅 */}
           {/* {randomGatcha.hasItemAlready ? (
             <Message>이미 가지고 있는 NFT 에요</Message>
           ) : (
