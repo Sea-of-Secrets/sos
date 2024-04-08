@@ -146,92 +146,58 @@ export default function IngameThree() {
             {socketMessage.game?.players &&
               socketMessage.game?.gameMode === "ONE_VS_ONE" && (
                 <>
-                  {TEMP_KEY === "유일무이이주희" ? (
-                    <>
-                      <Piece
-                        name="PIRATE"
-                        position={piratePosition}
-                        pieceName={"PIRATE"}
-                        set={setPiratePiece}
-                      />
-                      <Piece
-                        name="MARINE1"
-                        position={marineOnePosition}
-                        pieceName={"common2"}
-                        set={setMarineOnePiece}
-                      />
-                      <Piece
-                        name="MARINE2"
-                        position={marineTwoPosition}
-                        pieceName={"common2-1"}
-                        set={setMarineTwoPiece}
-                      />
-                      <Piece
-                        name="MARINE3"
-                        position={marineThreePosition}
-                        pieceName={"common2-2"}
-                        set={setMarineThreePiece}
-                      />
-                    </>
-                  ) : (
-                    <>
-                      <Piece
-                        name="PIRATE"
-                        position={piratePosition}
-                        pieceName={
-                          socketMessage.game?.players[0]["userInfo"]?.[
-                            "productName"
-                          ]
-                            ? `${socketMessage.game?.players[0]["userInfo"]["productName"]?.toLowerCase()}`
-                            : "PIRATE"
-                        }
-                        set={setPiratePiece}
-                      />
-                      <Piece
-                        name="MARINE1"
-                        position={marineOnePosition}
-                        pieceName={
-                          socketMessage.game?.players[1]["userInfo"]?.[
-                            "productName"
-                          ]
-                            ? `${socketMessage.game?.players[1]["userInfo"]["productName"]?.toLowerCase()}`
-                            : "common1"
-                        }
-                        set={setMarineOnePiece}
-                      />
-                      <Piece
-                        name="MARINE2"
-                        position={marineTwoPosition}
-                        pieceName={"common2"}
-                        set={setMarineTwoPiece}
-                      />
-                      <Piece
-                        name="MARINE3"
-                        position={marineThreePosition}
-                        pieceName={"common3"}
-                        set={setMarineThreePiece}
-                      />
-                    </>
-                  )}
-
-                  <PieceEffect
-                    effectName="GOLD_EFFECT1"
+                  <Piece
+                    name="PIRATE"
                     position={piratePosition}
+                    pieceName={
+                      socketMessage.game?.players[0]["userInfo"]?.[
+                        "productName"
+                      ]
+                        ? `${socketMessage.game?.players[0]["userInfo"]["productName"]?.toLowerCase()}`
+                        : "PIRATE"
+                    }
+                    set={setPiratePiece}
                   />
-                  <PieceEffect
-                    effectName="GOLD_EFFECT2"
+                  <Piece
+                    name="MARINE1"
                     position={marineOnePosition}
+                    pieceName={
+                      socketMessage.game?.players[1]["userInfo"]?.[
+                        "productName"
+                      ]
+                        ? `${socketMessage.game?.players[1]["userInfo"]["productName"]?.toLowerCase()}`
+                        : "common1"
+                    }
+                    set={setMarineOnePiece}
                   />
-                  <PieceEffect
-                    effectName="GOLD_EFFECT3"
+                  <Piece
+                    name="MARINE2"
                     position={marineTwoPosition}
+                    pieceName={"common2"}
+                    set={setMarineTwoPiece}
                   />
-                  <PieceEffect
-                    effectName="GOLD_EFFECT4"
+                  <Piece
+                    name="MARINE3"
                     position={marineThreePosition}
+                    pieceName={"common3"}
+                    set={setMarineThreePiece}
                   />
                 </>
               )}
+
+            <PieceEffect effectName="GOLD_EFFECT1" position={piratePosition} />
+            <PieceEffect
+              effectName="GOLD_EFFECT2"
+              position={marineOnePosition}
+            />
+            <PieceEffect
+              effectName="GOLD_EFFECT3"
+              position={marineTwoPosition}
+            />
+            <PieceEffect
+              effectName="GOLD_EFFECT4"
+              position={marineThreePosition}
+            />
           </>
         ) : (
           <>

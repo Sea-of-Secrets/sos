@@ -14,13 +14,11 @@ export default function GatchaCard() {
     <Container>
       <CenterBox>
         <FadeInUpDiv>
-          {/* // 발표용 세팅 */}
-          {/* {randomGatcha.hasItemAlready ? (
+          {randomGatcha.hasItemAlready ? (
             <Message>이미 가지고 있는 NFT 에요</Message>
           ) : (
             <Message>새로운 NFT를 획득했어요!</Message>
-          )} */}
-          <Message>새로운 NFT를 획득했어요!</Message>
+          )}
           <Card>
             <HologramCard2
               name={randomGatcha.name}

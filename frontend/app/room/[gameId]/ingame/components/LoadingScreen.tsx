@@ -71,7 +71,7 @@ export default function Loading() {
           alt={"로딩 이미지"}
         />
         <span className="text-xl">
-          {!myLoading ? `${Math.floor(progress)}%` : "로딩 완료"}
+          {!myLoading ? `${Math.floor(progress)}%` : "상대방 대기중"}
         </span>
         {/* <span>로딩 완료 유저 : [{completedUsers}]</span> */}
       </div>

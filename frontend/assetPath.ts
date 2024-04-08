@@ -47,6 +47,10 @@ export const PiecePathMap = {
     src: "/베를린호/scene.gltf",
     size: 2,
   },
+  거북선: {
+    src: "/거북선/scene.gltf",
+    size: 4,
+  },
   rare1: {
     src: "/rare1/scene.gltf",
     size: 0.3,

@@ -16,11 +16,8 @@ export const useRandomGatcha = create<RandomGatchaStoreState>((set, get) => ({
       return;
     }
     set(state => ({ ...state, loading: true }));
-    // 발표용 세팅
-    const randomGatcha = await mockGatcha();
-    set(state => ({ ...state, randomGatcha, loading: false }));
-    // const res = await postGatcha();
-    // set(state => ({ ...state, randomGatcha: res.data, loading: false }));
+    const res = await postGatcha();
+    set(state => ({ ...state, randomGatcha: res.data, loading: false }));
   },
 }));
 

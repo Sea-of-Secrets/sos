@@ -25,7 +25,7 @@ const SocketProvider = ({ children }: { children: React.ReactNode }) => {
 
       subscribe(`/sub/${localGameId}`, message => {
         const data = JSON.parse(message.body);
-        console.log("서 > 클", data);
+        // console.log("서 > 클", data);
         // if (data.message === "ALL_RENDERED_COMPLETED") {
         //   setAllLoading(true);
         // }
