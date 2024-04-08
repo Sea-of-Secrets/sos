@@ -67,6 +67,14 @@ export const PiecePathMap = {
     src: "/common2/scene.gltf",
     size: 50,
   },
+  "common2-1": {
+    src: "/common2-1/scene.gltf",
+    size: 50,
+  },
+  "common2-2": {
+    src: "/common2-2/scene.gltf",
+    size: 50,
+  },
   common3: {
     src: "/common3/scene.gltf",
     size: 15,

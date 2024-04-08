@@ -163,13 +163,13 @@ export default function IngameThree() {
                       <Piece
                         name="MARINE2"
                         position={marineTwoPosition}
-                        pieceName={"common2"}
+                        pieceName={"common2-1"}
                         set={setMarineTwoPiece}
                       />
                       <Piece
                         name="MARINE3"
                         position={marineThreePosition}
-                        pieceName={"common2"}
+                        pieceName={"common2-2"}
                         set={setMarineThreePiece}
                       />
                     </>
