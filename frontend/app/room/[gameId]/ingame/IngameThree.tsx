@@ -157,7 +157,7 @@ export default function IngameThree() {
                       <Piece
                         name="MARINE1"
                         position={marineOnePosition}
-                        pieceName={"common1"}
+                        pieceName={"common2"}
                         set={setMarineOnePiece}
                       />
                       <Piece
@@ -169,7 +169,7 @@ export default function IngameThree() {
                       <Piece
                         name="MARINE3"
                         position={marineThreePosition}
-                        pieceName={"낡은 배"}
+                        pieceName={"common2"}
                         set={setMarineThreePiece}
                       />
                     </>
