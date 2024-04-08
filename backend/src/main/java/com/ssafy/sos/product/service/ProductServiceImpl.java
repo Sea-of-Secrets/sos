@@ -87,10 +87,10 @@ public class ProductServiceImpl implements ProductService {
         }
 
         SecureRandom secureRandom = new SecureRandom();
-        int num = secureRandom.nextInt(100) + 1;
+        int num = secureRandom.nextInt(1000) + 1;
         Grade grade;
 
-        if (num <= 5) {
+        if (num <= 1) {
             grade = Grade.LEGENDARY;
         }
         else if (num <= 30) {
