@@ -34,6 +34,12 @@ const ShopWrapper = () => {
   const { ShopGatchaScreen } = useCamera();
 
   const handleClickGatchaView = useCallback(() => {
+    // 발표용 세팅
+    const TEMP_KEY = window.localStorage.getItem("TEMP_KEY");
+    if (TEMP_KEY !== "유일무이이주희") {
+      return null;
+    }
+
     toggleModal();
     setGatchaState("GATCHA_READY");
     ShopGatchaScreen();
