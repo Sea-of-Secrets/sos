@@ -5,7 +5,6 @@ import Image from "next/image";
 import styled from "@emotion/styled";
 
 import Container from "../components/Container";
-import Client from "./Client";
 
 export default function Login() {
   return (
@@ -30,7 +29,6 @@ export default function Login() {
           />
         </Button>
       </a>
-      <Client />
     </Container>
   );
 }

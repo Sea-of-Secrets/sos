@@ -62,7 +62,7 @@ export default function FastMatching() {
       }
     } catch (e) {
       disconnect();
-      alert("입장 실패");
+      alert("입장 실패(로그안 or 로그아웃 후 다시 시도해보세요)");
     }
   };
 
