@@ -1,36 +1,23 @@
-# 온라인 보드 게임 Sea of Secret!
+# 🏴‍☠️ SOS : Sea of Secrets
+해적과 해군의 쫓고 쫓기는 추리/추격 온라인 보드 게임 ! 
 
-![image.png](./readmeImage/main.gif)
+![main](./README_IMAGE/main.png)
 
-# Overview
+## 💡 주요 기능
+- `게임` 플레이어와 함께 추격 보드 게임을 즐길 수 있습니다.
+- `상점` 획득한 골드로 나만의 NFT 말을 뽑을 수 있습니다.
+- `NFT` NFT 지갑을 발행해주고, 획득한 게임 말을 지갑에서 확인할 수 있습니다.
 
+## 🔎 서비스 소개
 
+![rule](./README_IMAGE/rule.png)
+![page](./README_IMAGE/page.png)
+![store](./README_IMAGE/store.png)
 
-# Sea of Secret 서비스 화면
-
-### 인게임
-
-
-### 빠른 매칭
-
-
-### 대기실
-
-
-### 상점
+## 🖥️ 화면 예시
 
 
-### NFT
-
-
-# 주요 기능
-
-### 서비스 소개
-
-
-### 프로젝트 기능
-
-
+## ⚒️ 기술 소개
 ### 개발환경
 
 - OS
@@ -94,7 +81,7 @@
 - 형상 관리 : Gitlab, Git
 - 커뮤니케이션 : Notion, MatterMost, Discord
 
-### 서비스 아키텍처
+### 아키텍처 다이어그램
 ![image.png](./README_IMAGE/architecture.png)
 
 ### API 명세서
@@ -118,23 +105,17 @@ type: subject
 
 ex) 회원가입 기능
 
-- feat: Join in
+- feat: Join in #Jira Issue Number
 ```
 
 ### Git Branch 전략
-
-`git-flow`전략
 
 - `master`
 - `develop`
 - `feat/fe/function1`
 - `feat/be/function2`
 
-### Jira
-
-
 ### ERD
-
 
 ### EC2 포트 정리
 
@@ -149,5 +130,7 @@ ex) 회원가입 기능
 | 4000 | Express.js app            |
 
 
-### 팀원 역할
-
+## 팀원
+|**김재형**|**용상윤**|**이재종**|**이주연**|**이주희**|**최승준**|
+|:--:|:--:|:--:|:--:|:--:|:--:|
+|BE(게임엔진)|FE(상점)|FE(인게임)|BE(마이페이지) <br> 블록체인|BE(게임엔진) <br> 팀장|BE(상점)<br> 인프라
