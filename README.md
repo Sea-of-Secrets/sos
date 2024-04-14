@@ -1,5 +1,7 @@
 # 🏴‍☠️ SOS : Sea of Secrets
-해적과 해군의 쫓고 쫓기는 추리/추격 온라인 보드 게임 ! 
+해적과 해군의 쫓고 쫓기는 추리/추격 온라인 보드 게임 !
+
+[소개 영상(Youtube)](https://www.youtube.com/watch?v=BRsZ-QLNDRM)
 
 ![main](./README_IMAGE/main.png)
 
