@@ -1,14 +1,30 @@
 # 🏴‍☠️ SOS : Sea of Secrets
-해적과 해군의 쫓고 쫓기는 추리/추격 온라인 보드 게임 !
 
-[소개 영상(Youtube)](https://www.youtube.com/watch?v=BRsZ-QLNDRM)
+## ✨서비스 설명
 
 ![main](./README_IMAGE/main.png)
 
-## 💡 주요 기능
-- `게임` 플레이어와 함께 추격 보드 게임을 즐길 수 있습니다.
-- `상점` 획득한 골드로 나만의 NFT 말을 뽑을 수 있습니다.
-- `NFT` NFT 지갑을 발행해주고, 획득한 게임 말을 지갑에서 확인할 수 있습니다.
+### 개요 🧾
+
+- 해적과 해군의 쫓고 쫓기는 **추리/추격 온라인 보드 게임**!
+- 서비스 명 : **SOS: Sea of Secrets**
+
+### 주요 기능 💡
+- `게임` 온라인으로 사람들과 함께 추격/추리 보드 게임을 즐기자!
+- `상점` 획득한 골드로 나만의 NFT 말을 획득하자!
+- `NFT` NFT 지갑을 발행받고, 획득한 게임 말을 나의 지갑에서 확인해보자!
+
+## UCC 🎞️
+
+**↓ 클릭 후 UCC 페이지로 이동**
+
+[![Video Label](https://img.youtube.com/vi/BRsZ-QLNDRM/mqdefault.jpg)](https://youtu.be/BRsZ-QLNDRM)
+
+해적과 해군의 쫓고 쫓기는 추리/추격 온라인 보드 게임! SOS: Sea of Secrets의 UCC입니다.
+
+## 수상🏆
+
+- 🥇
 
 ## 🔎 서비스 소개
 
